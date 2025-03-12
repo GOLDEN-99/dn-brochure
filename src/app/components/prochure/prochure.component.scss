@@ -1,0 +1,24 @@
+.prochure {
+  height: var(--a4-height-150);
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+
+  .header-image {
+  }
+
+  .prochure-content {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+  }
+
+  .footer-image {
+  }
+}
+
+.prochure-width {
+  width: var(--a4-width-150);
+}

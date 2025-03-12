@@ -1,0 +1,18 @@
+@let cardlist = data();
+<!---->
+<div class="prochure prochure-width">
+  <img
+    [src]="headerUrl()"
+    alt="prochure header"
+    class="header-image prochure-width"
+  />
+  @if (cardlist.length !== 0) {
+  <div class="prochure-content">
+    @for (card of cardlist; track $index) {
+
+    <app-prochure-card [props]="card" [color]="color()" />
+    }
+  </div>
+  }
+  <img [src]="footerUrl()" alt="prochure footer" class="prochure-width" />
+</div>
