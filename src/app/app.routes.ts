@@ -4,7 +4,7 @@ import { ProchurePageComponent } from './pages/prochure-page/prochure-page.compo
 
 export const routes: Routes = [
     {
-        path: "prochure",
+        path: "prochure/:id",
         component: ProchurePageComponent
     },
     {
