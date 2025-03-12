@@ -1,6 +1,5 @@
 import { Component, computed, input } from '@angular/core';
-import { TCardColor, TCardProps } from '../../types/card.type';
-import { single } from 'rxjs';
+import { TColor, TCardProps } from '../../types';
 
 @Component({
   selector: 'app-prochure-card',
@@ -10,7 +9,7 @@ import { single } from 'rxjs';
   styleUrl: './prochure-card.component.scss'
 })
 export class ProchureCardComponent {
-  color = input<TCardColor>('purple')
+  color = input<TColor>('purple')
   nameStyle = computed(() => {
     const clr = this.color()
     switch (clr) {

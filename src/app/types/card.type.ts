@@ -13,4 +13,3 @@ export type TCardProps = {
     isFlag: boolean
 }
 
-export type TCardColor = 'green' | 'purple'

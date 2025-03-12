@@ -1,18 +1,18 @@
+@let cardlist = data();
+<!---->
 <div class="prochure prochure-width">
   <img
-    src="/image/purple/header-purple-gen.png"
+    [src]="headerUrl()"
     alt="prochure header"
     class="header-image prochure-width"
   />
+  @if (cardlist.length !== 0) {
   <div class="prochure-content">
-    @for (item of items; track $index) {
+    @for (card of cardlist; track $index) {
 
-    <app-prochure-card />
+    <app-prochure-card [props]="card" [color]="color()" />
     }
   </div>
-  <img
-    src="/image/purple/footer-purple.png"
-    alt="prochure footer"
-    class="prochure-width"
-  />
+  }
+  <img [src]="footerUrl()" alt="prochure footer" class="prochure-width" />
 </div>
