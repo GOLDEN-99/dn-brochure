@@ -1,1 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Importing Bootstrap SCSS file. */
+@import "bootstrap/scss/bootstrap";
+
+:root {
+  --color-yellow: #ffde17;
+  --color-red: #ec1a23;
+  --brand-purple-300: #c8adff;
+  --brand-purple-500: #994bff;
+  --brand-purple-700: #851bed;
+  --brand-purple-primary: #851bed;
+  --brand-green-300: #69ff6f;
+  --brand-green-500: #04f200;
+  --brand-green-800: #007203;
+  --brand-green-primary: #007203;
+
+  --a4-width-150: 1240px;
+  --a4-height-150: 1754px;
+
+  --a4-width-300: 2480px;
+  --a4-height-300: 3508px;
+}
