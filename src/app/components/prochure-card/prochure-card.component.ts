@@ -10,25 +10,14 @@ import { TColor, TCardProps } from '../../types';
 })
 export class ProchureCardComponent {
   color = input<TColor>('purple')
+  isStatic = input(false)
   nameStyle = computed(() => {
     const clr = this.color()
+    const mode = this.isStatic()
     switch (clr) {
-      case 'green': return "label card-green res-round-large res-padding-large"
-      case 'purple': return "label card-purple res-round-large res-padding-large"
+      case 'green': return mode ? 'card-green static-round-large static-p-large' : "card-green res-round-large res-p-large"
+      case 'purple': return mode ? 'card-purple static-round-large static-p-large' : "card-purple res-round-large res-p-large"
     }
   })
-  props = input<TCardProps>(
-    {
-      name: "product name",
-      code: "product code",
-      image: "https://fastly.picsum.photos/id/237/200/300.jpg?hmac=TmmQSbShHz9CdQm0NkEjx1Dyh_Y984R9LpNrpvH2D_U",
-      priceTier: {
-        standard: 1200,
-        silver: 1100,
-        gold: 999,
-      },
-      displayPrice: 999,
-      isFlag: false
-    }
-  )
+  props = input.required<TCardProps>()
 }

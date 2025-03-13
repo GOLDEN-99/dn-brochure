@@ -1,8 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { ProchureComponent } from "../../components/prochure/prochure.component";
 import { ActivatedRoute, Router } from '@angular/router';
 import { TColor, TSupplier } from '../../types';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { exporter } from '../../lib';
 
 @Component({
   selector: 'app-prochure-page',
@@ -16,6 +17,7 @@ export class ProchurePageComponent implements OnInit {
   private router = inject(Router)
   color = signal<TColor>("green")
   supplier = signal<TSupplier>("gen")
+  brochure = viewChild<ProchureComponent>('brochure')
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(
@@ -44,7 +46,12 @@ export class ProchurePageComponent implements OnInit {
     }
   )
 
-  onExport() {
-    window.print();
+  async onExport() {
+    const b = document.querySelector('.prochure.static') as HTMLElement | null
+    if (b) {
+      await exporter(b)
+      return
+    }
+    alert('มีข้อผิดพลาด')
   }
 }

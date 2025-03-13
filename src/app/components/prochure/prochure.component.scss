@@ -1,25 +1,32 @@
 .prochure {
-  aspect-ratio: 1.414;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 
-  .header-image,
-  .footer-image {
+  &.static {
+    size: A4;
+    width: 210mm;
+    height: 297mm;
     position: relative;
   }
 }
 
-.prochure-width {
-  max-width: var(--a4-width-150);
+@media print {
+  .prochure {
+    margin: 0;
+  }
 }
 
-.prochure-content {
+.content {
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   align-items: center;
+}
+
+.res-prochure-grid {
   row-gap: 4px;
   column-gap: 4px;
   padding: 4px 0;
@@ -57,7 +64,7 @@
 .date {
   width: 33%;
   position: relative;
-  right: 0;
+  z-index: 1;
   translate: 190% -110%;
   font-size: 12px;
   @media (min-width: 370px) {
@@ -91,4 +98,11 @@
     font-size: 32px;
     translate: 187% -140%;
   }
+}
+
+.date-static {
+  width: 40%;
+  position: relative;
+  z-index: 1;
+  translate: 155% -175%;
 }

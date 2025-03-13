@@ -1,17 +1,27 @@
 .prochure-card {
   aspect-ratio: 1;
-  max-width: calc(var(--a4-width-150) / 3);
   margin: auto;
-
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
+
+  &.res {
+    max-width: calc(var(--a4-width-150) / 3);
+  }
+
+  &.static {
+    max-width: 70mm;
+  }
 
   .card-header {
     display: flex;
     flex-direction: column;
     grid-column-start: 1;
     grid-column-end: 3;
+
+    .subtext.static {
+      margin-bottom: 1mm;
+    }
   }
   .card-flag {
     display: flex;
@@ -37,11 +47,9 @@
     grid-row-end: 4;
     flex-direction: column;
 
-    .tier {
-      .tier-price {
-        display: flex;
-        justify-content: space-between;
-      }
+    .tier .tier-price {
+      display: flex;
+      justify-content: space-between;
     }
 
     .price {
@@ -134,7 +142,7 @@
   }
 }
 
-.res-padding {
+.res-p {
   padding: 2px;
   @media (min-width: 768px) {
     padding: 4px;
@@ -144,7 +152,7 @@
   }
 }
 
-.res-padding-large {
+.res-p-large {
   padding: 4px;
   @media (min-width: 768px) {
     padding: 8px;
@@ -183,46 +191,74 @@
 .res-text {
   font-size: 8px;
   line-height: 1.2;
-  @media (min-width: 768px) {
+  @media (min-width: 475px) {
     font-size: 12px;
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 992px) {
     font-size: 16px;
     line-height: normal;
   }
 }
 
-.price-text {
+.res-price-text {
   font-size: 12px;
 
-  @media (min-width: 768px) {
+  @media (min-width: 475px) {
     font-size: 18px;
   }
 
-  @media (min-width: 1024px) {
-    font-size: 24px;
-  }
-}
-
-.price-number {
-  font-size: 12px;
-  @media (min-width: 768px) {
-    font-size: 18px;
-  }
-  @media (min-width: 1024px) {
+  @media (min-width: 992px) {
     font-size: 24px;
   }
 }
 
 .tier-label {
-  font-size: 9px;
-  text-transform: capitalize;
   font-weight: 700;
-  @media (min-width: 768px) {
-    font-size: 14px;
+  text-transform: capitalize;
+  &.static {
+    font-size: 3mm;
   }
-  @media (min-width: 1024px) {
-    font-size: 18px;
+  &.res {
+    font-size: 9px;
+    @media (min-width: 475px) {
+      font-size: 14px;
+    }
+    @media (min-width: 992px) {
+      font-size: 18px;
+    }
   }
+}
+
+.static-price-text {
+  font-size: 3mm;
+}
+
+.static-round {
+  border-radius: 2mm;
+}
+
+.static-p {
+  padding: 1mm;
+}
+
+.static-text {
+  font-size: 2mm;
+}
+
+.static-grid-gap {
+  row-gap: 1mm;
+  column-gap: 1mm;
+}
+
+.static-round-large {
+  border-radius: 4mm;
+}
+
+.static-p-large {
+  padding: 2mm;
+}
+
+.static-px-small {
+  padding: 0 1mm;
 }

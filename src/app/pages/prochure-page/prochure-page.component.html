@@ -65,4 +65,12 @@
   <div class="content-wrapper">
     <app-prochure [color]="color()" [supplier]="supplier()" />
   </div>
+  <div class="not-show">
+    <app-prochure
+      id="static-prochure"
+      [color]="color()"
+      [supplier]="supplier()"
+      [isStatic]="true"
+    />
+  </div>
 </section>

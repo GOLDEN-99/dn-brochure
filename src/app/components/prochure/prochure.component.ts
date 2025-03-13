@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { ProchureCardComponent } from "../prochure-card/prochure-card.component";
 import { TCardProps, TColor, TSupplier } from '../../types';
 import { ProchureService } from '../../service/prochure/prochure.service';
@@ -9,7 +9,8 @@ import { ProchureService } from '../../service/prochure/prochure.service';
   standalone: true,
   imports: [ProchureCardComponent],
   templateUrl: './prochure.component.html',
-  styleUrl: './prochure.component.scss'
+  styleUrl: './prochure.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class ProchureComponent implements OnInit {
 
@@ -18,6 +19,7 @@ export class ProchureComponent implements OnInit {
   private prochureServcie = inject(ProchureService)
   private prochure$ = this.prochureServcie.getProchureList('test parasm')
   private today = signal<string>(new Date().toISOString())
+  isStatic = input(false)
   formattedDate = computed(() => this.formateDate(this.today()))
   data = signal<TCardProps[]>([])
   ngOnInit(): void {
@@ -40,8 +42,4 @@ export class ProchureComponent implements OnInit {
   }
 
   items = [...Array(6)].map((_, i) => i)
-
-  onExport() {
-
-  }
 }

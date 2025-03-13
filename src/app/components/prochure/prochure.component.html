@@ -1,20 +1,17 @@
-@let cardlist = data();
+@let cardlist = data(); @let static = isStatic();
 <!---->
-<div class="prochure prochure-width">
-  <img
-    [src]="headerUrl()"
-    alt="prochure header"
-    class="header-image prochure-width"
-  />
-  <div class="date">{{ formattedDate() }}</div>
+<div [className]="static ? 'static prochure' : 'prochure'">
+  <img [src]="headerUrl()" alt="prochure header" class="header-image" />
+  <div [className]="static ? 'date-static' : 'date'">
+    {{ formattedDate() }}
+  </div>
   @if (cardlist.length !== 0) {
-  <div class="prochure-content">
+  <div [className]="static ? 'content static' : 'content res-prochure-grid'">
     @for (card of cardlist; track $index) {
 
-    <app-prochure-card [props]="card" [color]="color()" />
+    <app-prochure-card [props]="card" [color]="color()" [isStatic]="static" />
     }
   </div>
   }
-  <img [src]="footerUrl()" alt="prochure footer" class="prochure-width" />
+  <img [src]="footerUrl()" alt="prochure footer" />
 </div>
-<!-- <div>test static html</div> -->
