@@ -1,40 +1,40 @@
 @let data = props(); @let priceTier = data.priceTier;
 <!---->
-<div class="prochure-card border">
+<div class="prochure-card border res-round res-grid-gap res-text res-padding">
   <div class="card-header">
-    <div>( {{ data.code }} )</div>
+    <div class="res-mb-small">( {{ data.code }} )</div>
     <div [className]="nameStyle()">{{ data.name }}</div>
   </div>
   @if (data.isFlag) {
-  <div class="card-flag">flag here</div>
+  <div class="card-flag"></div>
   }
   <div class="card-image">image here</div>
   <div class="card-body">
     <div class="tier">
-      <div class="tier-label background-standard">standard</div>
-      <div class="tier-price">
+      <div class="tier-label background-standard res-px-small">standard</div>
+      <div class="tier-price res-px-small">
         <div>ราคา</div>
         <div>{{ priceTier.standard }}</div>
         <div>บาท</div>
       </div>
     </div>
     <div class="tier">
-      <div class="tier-label background-silver">silver</div>
-      <div class="tier-price">
+      <div class="tier-label background-silver res-px-small">silver</div>
+      <div class="tier-price res-px-small">
         <div>ราคา</div>
         <div>{{ priceTier.silver }}</div>
         <div>บาท</div>
       </div>
     </div>
     <div class="tier">
-      <div class="tier-label background-gold">gold</div>
-      <div class="tier-price">
+      <div class="tier-label background-gold res-px-small">gold</div>
+      <div class="tier-price res-px-small">
         <div>ราคา</div>
         <div>{{ priceTier.gold }}</div>
         <div>บาท</div>
       </div>
     </div>
-    <div class="price">
+    <div class="price res-px-small">
       <div class="price-text">ราคา</div>
       <div class="price-number text-center">{{ data.displayPrice }}.-</div>
       <div class="price-text text-end">บาท</div>

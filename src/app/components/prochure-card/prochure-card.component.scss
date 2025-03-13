@@ -1,9 +1,5 @@
 .prochure-card {
   aspect-ratio: 1;
-  border-radius: 16px;
-  padding: 8px;
-  row-gap: 8px;
-  column-gap: 8px;
   max-width: calc(var(--a4-width-150) / 3);
   margin: auto;
 
@@ -16,11 +12,6 @@
     flex-direction: column;
     grid-column-start: 1;
     grid-column-end: 3;
-
-    .label {
-      padding: 16px;
-      border-radius: 24px;
-    }
   }
   .card-flag {
     display: flex;
@@ -47,14 +38,7 @@
     flex-direction: column;
 
     .tier {
-      .tier-label {
-        font-size: 18px;
-        font-weight: 700;
-        text-transform: capitalize;
-        padding: 0 4px;
-      }
       .tier-price {
-        padding: 0 4px;
         display: flex;
         justify-content: space-between;
       }
@@ -63,20 +47,10 @@
     .price {
       flex: 1 1 auto;
       display: flex;
-      padding: 0 4px;
       flex-direction: column;
+      justify-content: space-between;
       background-color: var(--color-yellow);
-
       color: var(--color-red);
-
-      .price-text {
-        font-size: 24px;
-      }
-
-      .price-number {
-        flex: 1 1 auto;
-        font-size: 20px;
-      }
     }
   }
 }
@@ -123,4 +97,132 @@
     rgba(140, 77, 28, 1) 66%,
     rgba(189, 129, 36, 1) 81%
   );
+}
+
+.res-mb-small {
+  margin-bottom: 2px;
+  @media (min-width: 768px) {
+    margin-bottom: 4px;
+  }
+
+  @media (min-width: 1024px) {
+    margin-bottom: 8px;
+  }
+}
+
+.res-round {
+  border-radius: 4px;
+
+  @media (min-width: 768px) {
+    border-radius: 8;
+  }
+
+  @media (min-width: 1024px) {
+    border-radius: 16px;
+  }
+}
+
+.res-round-large {
+  border-radius: 6px;
+
+  @media (min-width: 768px) {
+    border-radius: 12px;
+  }
+
+  @media (min-width: 1024px) {
+    border-radius: 24px;
+  }
+}
+
+.res-padding {
+  padding: 2px;
+  @media (min-width: 768px) {
+    padding: 4px;
+  }
+  @media (min-width: 1024px) {
+    padding: 8px;
+  }
+}
+
+.res-padding-large {
+  padding: 4px;
+  @media (min-width: 768px) {
+    padding: 8px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 16px;
+  }
+}
+
+.res-grid-gap {
+  row-gap: 2px;
+  column-gap: 2px;
+  @media (min-width: 768px) {
+    row-gap: 4px;
+    column-gap: 4px;
+  }
+  @media (min-width: 1024px) {
+    row-gap: 8px;
+    column-gap: 8px;
+  }
+}
+
+.res-px-small {
+  padding: 0 1px;
+
+  @media (min-width: 768px) {
+    padding: 0 2px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 0 4px;
+  }
+}
+
+.res-text {
+  font-size: 8px;
+  line-height: 1.2;
+  @media (min-width: 768px) {
+    font-size: 12px;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 16px;
+    line-height: normal;
+  }
+}
+
+.price-text {
+  font-size: 12px;
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 24px;
+  }
+}
+
+.price-number {
+  font-size: 12px;
+  @media (min-width: 768px) {
+    font-size: 18px;
+  }
+  @media (min-width: 1024px) {
+    font-size: 24px;
+  }
+}
+
+.tier-label {
+  font-size: 9px;
+  text-transform: capitalize;
+  font-weight: 700;
+  @media (min-width: 768px) {
+    font-size: 14px;
+  }
+  @media (min-width: 1024px) {
+    font-size: 18px;
+  }
 }

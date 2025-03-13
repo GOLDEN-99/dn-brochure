@@ -13,8 +13,8 @@ export class ProchureCardComponent {
   nameStyle = computed(() => {
     const clr = this.color()
     switch (clr) {
-      case 'green': return "label card-green"
-      case 'purple': return "label card-purple"
+      case 'green': return "label card-green res-round-large res-padding-large"
+      case 'purple': return "label card-purple res-round-large res-padding-large"
     }
   })
   props = input<TCardProps>(

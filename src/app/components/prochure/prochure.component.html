@@ -6,6 +6,7 @@
     alt="prochure header"
     class="header-image prochure-width"
   />
+  <div class="date">{{ formattedDate() }}</div>
   @if (cardlist.length !== 0) {
   <div class="prochure-content">
     @for (card of cardlist; track $index) {
@@ -16,3 +17,4 @@
   }
   <img [src]="footerUrl()" alt="prochure footer" class="prochure-width" />
 </div>
+<!-- <div>test static html</div> -->

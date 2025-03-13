@@ -1,5 +1,67 @@
 <section class="container">
-  <div class="my-2">menu</div>
+  <div class="my-2">
+    <form
+      style="display: flex; border-bottom: solid 1px black"
+      [formGroup]="navigateForm"
+    >
+      <div>
+        <input
+          type="radio"
+          name="supplier"
+          id="sup-gen"
+          value="gen"
+          formControlName="supplier"
+        />
+        <label for="sub-gen">ร้านทั่วไป</label>
+      </div>
+      <div>
+        <input
+          type="radio"
+          name="supplier"
+          id="sup-dent"
+          value="dent"
+          formControlName="supplier"
+        />
+        <label for="sub-dent">ร้านทันตะ</label>
+      </div>
+      <div>
+        <input
+          type="radio"
+          name="supplier"
+          id="sup-phar"
+          value="phar"
+          formControlName="supplier"
+        />
+        <label for="sub-phar">ร้านเภสัช</label>
+      </div>
+    </form>
+    <form
+      style="display: flex; border-bottom: solid 1px black"
+      [formGroup]="navigateForm"
+    >
+      <div>
+        <input
+          type="radio"
+          name="color"
+          id="color-green"
+          value="green"
+          formControlName="color"
+        />
+        <label for="color-green">green prochure</label>
+      </div>
+      <div>
+        <input
+          type="radio"
+          name="color"
+          id="color-purple"
+          formControlName="color"
+          value="purple"
+        />
+        <label for="color-purple">purple prochure</label>
+      </div>
+    </form>
+    <button class="btn btn-primary" (click)="onExport()">export</button>
+  </div>
   <div class="content-wrapper">
     <app-prochure [color]="color()" [supplier]="supplier()" />
   </div>
