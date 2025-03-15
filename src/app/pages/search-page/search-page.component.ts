@@ -16,9 +16,9 @@ export class SearchPageComponent {
   private nnfb = inject(NonNullableFormBuilder)
   private router = inject(Router)
   optionRef: TDropdownProps<TPromotionType>[] = [
-    { value: 'Monthly', label: 'monthly' },
+    { value: 'Monthly', label: 'โปรโมชั่น รายเดือน' },
     { value: 'SP', label: 'special' },
-    { value: 'Hot', label: 'hot price' }
+    { value: 'Hot', label: 'โปรโมชั่น hotprice' }
   ]
   searchForm = this.nnfb.group({
     wholeCode: this.nnfb.control("", Validators.required),

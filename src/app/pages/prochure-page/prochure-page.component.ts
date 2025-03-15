@@ -5,11 +5,12 @@ import { TColor, TGroupItemList, TItem, TItemList, TMaybe, TSupplier } from '../
 import { exporter, transformItemList } from '../../lib';
 import { map, tap } from 'rxjs';
 import { ToastService } from '../../service/toast/toast.service';
+import { PromotionPipe } from '../../pipe/promotion/promotion-pipe.pipe';
 
 @Component({
   selector: 'app-prochure-page',
   standalone: true,
-  imports: [ProchureComponent, RouterLink],
+  imports: [ProchureComponent, RouterLink, PromotionPipe],
   templateUrl: './prochure-page.component.html',
   styleUrl: './prochure-page.component.scss'
 })
