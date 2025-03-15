@@ -1,10 +1,10 @@
 @let optionlist = options(); @let ctrl = control();
 <div class="mb-3">
-  <label for="promotion-dropdown">เลือกประเภทโบรชัว</label>
+  <label for="dropdown">เลือกประเภทโบรชัว</label>
   <select
     [formControl]="ctrl"
     name="promotype"
-    id="promotype-dropdown"
+    id="dropdown"
     class="form-select"
   >
     @for (opt of optionlist; track $index) {
