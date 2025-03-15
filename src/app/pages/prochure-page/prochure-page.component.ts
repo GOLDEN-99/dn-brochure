@@ -1,57 +1,57 @@
-import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { ProchureComponent } from "../../components/prochure/prochure.component";
-import { ActivatedRoute, Router } from '@angular/router';
-import { TColor, TSupplier } from '../../types';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { exporter } from '../../lib';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TColor, TGroupItemList, TItem, TItemList, TMaybe, TSupplier } from '../../types';
+import { exporter, transformItemList } from '../../lib';
+import { map, tap } from 'rxjs';
+import { ToastService } from '../../service/toast/toast.service';
 
 @Component({
   selector: 'app-prochure-page',
   standalone: true,
-  imports: [ProchureComponent, ReactiveFormsModule],
+  imports: [ProchureComponent, RouterLink],
   templateUrl: './prochure-page.component.html',
   styleUrl: './prochure-page.component.scss'
 })
 export class ProchurePageComponent implements OnInit {
   private route = inject(ActivatedRoute)
-  private router = inject(Router)
   color = signal<TColor>("green")
   supplier = signal<TSupplier>("gen")
   brochure = viewChild<ProchureComponent>('brochure')
-
+  isHeadReady = signal(false)
+  head = signal<TMaybe<TBorchureHead>>(null)
+  isContentReady = signal(false)
+  content = signal<TGroupItemList>([])
+  totalPage = computed(() => [...Array(this.content().length)].map((_, idx) => idx))
+  currentPage = signal(0)
+  currentGroup = computed<TItem[]>(() => {
+    const currentContent = this.content()
+    if (currentContent.length === 0) return []
+    const page = this.currentPage()
+    return currentContent[page]
+  })
+  private toastService = inject(ToastService)
   ngOnInit(): void {
-    this.route.queryParams.subscribe(
-      (p) => {
-        console.log(p)
-        const supplier = p['supplier'] ?? "gen"
-        this.supplier.update(() => supplier)
-        const clr = p['color'] ?? "green"
-        this.color.update(() => clr)
-      }
-    )
-
-    this.navigateForm.valueChanges.subscribe({
-      next: ({ color, supplier }) => {
-        if (!color || !supplier) return
-        this.router.navigate([], { queryParams: { color, supplier } })
-      }
-    })
+    this.route.data.pipe(
+      map(({ itemList }) => (itemList as TItemList)),
+      tap(({ wholeName, wholeType, zone, promotionType }) => this.head.update(() => ({ wholeName, wholeType, zone, promotionType }))),
+      map(({ promotion }) => promotion.reduce(transformItemList, []))
+    ).subscribe((pro) => this.content.update(() => pro))
   }
 
-  private fb = inject(FormBuilder)
-  navigateForm = this.fb.group(
-    {
-      color: this.fb.control<TColor>("green"),
-      supplier: this.fb.control<TSupplier>("gen")
-    }
-  )
+  onClick(page: number) {
+    this.currentPage.update(() => page)
+  }
 
   async onExport() {
     const b = document.querySelector('.prochure.static') as HTMLElement | null
     if (b) {
       await exporter(b)
+      this.toastService.success("export สำเร็จ")
       return
     }
-    alert('มีข้อผิดพลาด')
+    this.toastService.danger("ไม่สามารถ export ได้")
   }
 }
+
+type TBorchureHead = Omit<TItemList, 'promotion'>

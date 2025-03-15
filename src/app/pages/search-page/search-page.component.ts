@@ -2,43 +2,39 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
 import { debounceTime, filter, map, switchMap, tap } from 'rxjs';
 import { ShopService } from '../../service/shop/shop.service';
-import { TMaybe, TShopRecord } from '../../types';
-import { RouterLink } from '@angular/router';
+import { TDropdownProps, TMaybe, TPromotionType, TShopRecord } from '../../types';
+import { Router, RouterLink } from '@angular/router';
+import { DropdownComponent } from "../../components/dropdown/dropdown.component";
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, DropdownComponent],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.scss'
 })
-export class SearchPageComponent implements OnInit {
+export class SearchPageComponent {
   private nnfb = inject(NonNullableFormBuilder)
-  private shopService = inject(ShopService);
+  private router = inject(Router)
+  optionRef: TDropdownProps<TPromotionType>[] = [
+    { value: 'Monthly', label: 'monthly' },
+    { value: 'SP', label: 'special' },
+    { value: 'Hot', label: 'hot price' }
+  ]
   searchForm = this.nnfb.group({
-    shopCode: this.nnfb.control("", Validators.required)
+    wholeCode: this.nnfb.control("", Validators.required),
+    promoType: this.nnfb.control<TPromotionType>("Monthly")
   })
-  private seachForm$ = this.searchForm.valueChanges.pipe(
-    map(({ shopCode }) => shopCode?.trim()),
-    filter(predicateEmpty),
-    debounceTime(500),
-    tap(() => this.startFetch())
-  )
-  loading = signal<boolean>(false)
-  data = signal<TShopRecord[]>([])
-  error = signal<TMaybe<string>>(null)
 
-  ngOnInit(): void {
-    this.seachForm$.pipe(
-      switchMap((term) => this.shopService.search(term))
-    ).subscribe(
-      (shop) => { this.loading.update(() => false); this.data.update(() => shop); }
-    )
+
+  handleSubmit() {
+    const { wholeCode, promoType } = this.searchForm.getRawValue()
+    try {
+      this.router.navigateByUrl(`/prochure/${wholeCode}/${promoType}`)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
-  private startFetch() {
-    this.loading.update(() => true);
-    this.error.update(() => null)
-  }
 }
 
 const predicateEmpty = (value: unknown): value is string => {

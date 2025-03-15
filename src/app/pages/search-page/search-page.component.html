@@ -1,58 +1,24 @@
 <section class="container search-page">
-  <h1 class="text-center my-3 search-page-header">prochure dn online</h1>
-  <form [formGroup]="searchForm">
+  <h1 class="text-center my-3 search-page-header">Brochure DN Online</h1>
+  <form
+    [formGroup]="searchForm"
+    class="search-form"
+    (ngSubmit)="handleSubmit()"
+  >
     <div class="mb-3">
-      <label for="shop-code" class="form-label" style="display: none"
-        >ค้นหาร้านค้า</label
-      >
+      <label for="shop-code" class="form-label">ค้นหาร้านค้า</label>
       <input
         type="text"
         class="form-control"
         id="shop-code"
         placeholder="ใส่รหัสร้านค้า"
-        formControlName="shopCode"
+        formControlName="wholeCode"
       />
     </div>
+    <app-dropdown
+      [control]="searchForm.controls.promoType"
+      [options]="optionRef"
+    />
+    <button class="btn btn-primary w-100" type="submit">ค้นหา</button>
   </form>
-  @let load = loading(); @let shoplist = data(); @let errorMsg = error();
-  <!-- -->
-  @if (load) {
-  <div>loading</div>
-  } @if (!load && !!errorMsg) {
-  <div>
-    somthing wrong
-    <div>
-      <div>message</div>
-      <div>{{ errorMsg }}</div>
-    </div>
-  </div>
-  }
-  <!-- -->
-  @if(!load && shoplist.length !== 0) {
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">name</th>
-        <th scope="col">column2</th>
-        <th scope="col">column3</th>
-        <th scope="col">column4</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (shop of shoplist; track $index) {
-      <tr>
-        <td>{{ shop.shopName }}</td>
-        <td>value2</td>
-        <td>value3</td>
-        <td>
-          <a [routerLink]="'prochure/' + shop.id"> value4 </a>
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
-  } @if (!load && shoplist.length === 0 && searchForm.touched) {
-  <div>ไม่พบร้าน</div>
-  }
-  <!-- -->
 </section>

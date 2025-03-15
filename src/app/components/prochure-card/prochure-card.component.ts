@@ -1,5 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { TColor, TCardProps } from '../../types';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-prochure-card',
@@ -9,7 +10,7 @@ import { TColor, TCardProps } from '../../types';
   styleUrl: './prochure-card.component.scss'
 })
 export class ProchureCardComponent {
-  color = input<TColor>('purple')
+  color = input.required<TColor>()
   isStatic = input(false)
   nameStyle = computed(() => {
     const clr = this.color()
@@ -20,4 +21,5 @@ export class ProchureCardComponent {
     }
   })
   props = input.required<TCardProps>()
+  imageUrl = computed(() => `${environment.imagePath}/${this.props().goodCode}.jpg`)
 }

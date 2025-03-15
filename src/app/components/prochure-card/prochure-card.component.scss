@@ -32,12 +32,13 @@
   }
   .card-image {
     display: flex;
-    display: flex;
-    background-color: black;
     grid-column-start: 1;
     grid-column-end: 3;
     grid-row-start: 2;
     grid-row-end: 4;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
   }
   .card-body {
     display: flex;

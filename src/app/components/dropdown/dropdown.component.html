@@ -1,0 +1,14 @@
+@let optionlist = options(); @let ctrl = control();
+<div class="mb-3">
+  <label for="promotion-dropdown">เลือกประเภทโบรชัว</label>
+  <select
+    [formControl]="ctrl"
+    name="promotype"
+    id="promotype-dropdown"
+    class="form-select"
+  >
+    @for (opt of optionlist; track $index) {
+    <option [value]="opt.value">{{ opt.label }}</option>
+    }
+  </select>
+</div>

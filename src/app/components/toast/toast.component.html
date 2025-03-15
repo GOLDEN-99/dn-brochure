@@ -1,0 +1,10 @@
+@if (successMessage) {
+<div style="position: fixed; z-index: 10000; left: 0; right: 0" class="px-2">
+  <ngb-alert
+    #selfClosingAlert
+    [type]="severity"
+    (closed)="successMessage = ''"
+    >{{ successMessage }}</ngb-alert
+  >
+</div>
+}

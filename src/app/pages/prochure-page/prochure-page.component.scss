@@ -1,3 +1,7 @@
+.shop-name {
+  color: var(--brand-purple-500);
+}
+
 .content-wrapper {
   max-width: var(--a4-width-150);
   overflow: hidden;
@@ -7,4 +11,17 @@
 
 .not-show {
   position: fixed;
+  translate: (0 100%);
+}
+
+.pagination {
+  overflow-x: scroll;
+  scrollbar-width: thin;
+}
+
+.action {
+  gap: 16px;
+  .btn {
+    flex: 1 1 auto;
+  }
 }

@@ -6,16 +6,9 @@
   justify-content: space-between;
 
   &.static {
-    size: A4;
     width: 210mm;
-    height: 297mm;
+    height: 296.7mm;
     position: relative;
-  }
-}
-
-@media print {
-  .prochure {
-    margin: 0;
   }
 }
 
@@ -23,7 +16,6 @@
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  align-items: center;
 }
 
 .res-prochure-grid {
@@ -105,4 +97,13 @@
   position: relative;
   z-index: 1;
   translate: 155% -175%;
+}
+
+@media print {
+  .prochure.static {
+    size: A4;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 }

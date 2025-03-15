@@ -1,7 +1,8 @@
 import { Component, computed, inject, input, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { ProchureCardComponent } from "../prochure-card/prochure-card.component";
-import { TCardProps, TColor, TSupplier } from '../../types';
+import { TCardProps, TColor, TGroupItemList, TItem, TSupplier, TWhole, TZone } from '../../types';
 import { ProchureService } from '../../service/prochure/prochure.service';
+import { zoneToColor } from '../../lib';
 
 
 @Component({
@@ -12,24 +13,23 @@ import { ProchureService } from '../../service/prochure/prochure.service';
   styleUrl: './prochure.component.scss',
   encapsulation: ViewEncapsulation.None
 })
-export class ProchureComponent implements OnInit {
+export class ProchureComponent {
 
-  supplier = input.required<TSupplier>()
-  color = input.required<TColor>()
-  private prochureServcie = inject(ProchureService)
-  private prochure$ = this.prochureServcie.getProchureList('test parasm')
+  itemList = input.required<TItem[]>()
+  wholeType = input.required<TWhole>()
+  data = computed<TCardProps[]>(() => this.itemList().map((i) => ({ ...i, isFlag: false })))
+  zone = input.required<TZone>()
+  color = computed(() => zoneToColor(this.zone()))
   private today = signal<string>(new Date().toISOString())
   isStatic = input(false)
   formattedDate = computed(() => this.formateDate(this.today()))
-  data = signal<TCardProps[]>([])
-  ngOnInit(): void {
-    this.prochure$.subscribe((d) => {
-      this.data.update(() => d)
-    })
-  }
 
   headerUrl = computed(() => {
-    return `/image/${this.color()}/${this.supplier()}.png`
+    const whole = this.wholeType()
+    if (whole === 'Normal') {
+      return `/image/${this.color()}/phar.png`
+    }
+    throw Error('unhandle wholetype')
   })
 
   footerUrl = computed(() => {
@@ -41,5 +41,4 @@ export class ProchureComponent implements OnInit {
     return `${date}/${month}/${year}`
   }
 
-  items = [...Array(6)].map((_, i) => i)
 }
