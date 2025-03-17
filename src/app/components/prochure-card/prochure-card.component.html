@@ -18,7 +18,10 @@
   <div class="card-flag"></div>
   }
   <div class="card-image">
-    <img [attr.src]="imageUrl()" width="130" height="130" />
+    <img
+      [attr.src]="imageUrl()"
+      [className]="static ? 'img-static' : 'img-res'"
+    />
   </div>
   <div class="card-body">
     <div class="tier">
