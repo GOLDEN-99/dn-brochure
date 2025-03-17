@@ -16,6 +16,7 @@ import { zoneToColor } from '../../lib';
 export class ProchureComponent {
 
   itemList = input.required<TItem[]>()
+  size = input.required<6 | 9>()
   wholeType = input.required<TWhole>()
   data = computed<TCardProps[]>(() => this.itemList().map((i) => ({ ...i, isFlag: false })))
   zone = input.required<TZone>()
@@ -23,6 +24,20 @@ export class ProchureComponent {
   private today = signal<string>(new Date().toISOString())
   isStatic = input(false)
   formattedDate = computed(() => this.formateDate(this.today()))
+  template = computed(() => {
+    const stat = this.isStatic()
+    const len = this.size()
+    if (!stat) {
+      if (len === 6) {
+        return 'content res-prochure-grid item-6'
+      }
+      return 'content res-prochure-grid item-9'
+    }
+    if (len === 6) {
+      return 'content static item-6'
+    }
+    return 'content static item-9'
+  })
 
   headerUrl = computed(() => {
     const whole = this.wholeType()

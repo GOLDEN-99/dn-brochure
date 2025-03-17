@@ -1,7 +1,7 @@
 import { TColor, TGroupItemList, TItem, TZone } from "../types";
 
-export const transformItemList = (acc: TGroupItemList, cur: TItem, idx: number): TGroupItemList => {
-    if (idx % 6 === 0) {
+export const transformItemList = (maxItem: number) => (acc: TGroupItemList, cur: TItem, idx: number): TGroupItemList => {
+    if (idx % maxItem === 0) {
         return [...acc, [cur]]
     }
     const len = acc.length

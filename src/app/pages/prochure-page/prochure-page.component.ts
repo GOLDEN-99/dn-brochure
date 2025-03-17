@@ -24,6 +24,7 @@ export class ProchurePageComponent implements OnInit {
   isContentReady = signal(false)
   content = signal<TGroupItemList>([])
   totalPage = computed(() => [...Array(this.content().length)].map((_, idx) => idx))
+  maxItem = computed(() => this.head()?.promotionType === 'Hot' ? 6 : 9)
   currentPage = signal(0)
   currentGroup = computed<TItem[]>(() => {
     const currentContent = this.content()
@@ -36,7 +37,7 @@ export class ProchurePageComponent implements OnInit {
     this.route.data.pipe(
       map(({ itemList }) => (itemList as TItemList)),
       tap(({ wholeName, wholeType, zone, promotionType }) => this.head.update(() => ({ wholeName, wholeType, zone, promotionType }))),
-      map(({ promotion }) => promotion.reduce(transformItemList, []))
+      map(({ promotion }) => promotion.reduce(transformItemList(this.maxItem()), []))
     ).subscribe((pro) => this.content.update(() => pro))
   }
 
