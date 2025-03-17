@@ -46,13 +46,15 @@ export class ProchurePageComponent implements OnInit {
   }
 
   async onExport() {
-    const b = document.querySelector('.prochure.static') as HTMLElement | null
-    if (b) {
-      await exporter(b)
+    const b = document.querySelectorAll('.static.prochure')
+    console.log(b)
+    try {
+      await exporter(Array.from(b) as HTMLElement[])
       this.toastService.success("export สำเร็จ")
-      return
+    } catch (err) {
+      console.log(err)
+      this.toastService.danger("ไม่สามารถ export ได้")
     }
-    this.toastService.danger("ไม่สามารถ export ได้")
   }
 }
 
