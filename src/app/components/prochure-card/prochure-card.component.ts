@@ -16,8 +16,8 @@ export class ProchureCardComponent {
     const clr = this.color()
     const mode = this.isStatic()
     switch (clr) {
-      case 'green': return mode ? 'card-green static-round-large static-p-large text-header' : "card-green res-round-large res-p-large text-header"
-      case 'purple': return mode ? 'card-purple static-round-large static-p-large text-header' : "card-purple res-round-large res-p-large text-header"
+      case 'green': return mode ? 'card-green static-round-large static-p-large' : "card-green res-round-large res-p-large"
+      case 'purple': return mode ? 'card-purple static-round-large static-p-large' : "card-purple res-round-large res-p-large"
     }
   })
   props = input.required<TCardProps>()

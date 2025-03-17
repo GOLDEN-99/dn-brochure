@@ -19,10 +19,6 @@
     grid-column-start: 1;
     grid-column-end: 3;
 
-    .text-header {
-      color: #fff;
-    }
-
     .subtext.static {
       margin-bottom: 1mm;
     }
@@ -31,14 +27,9 @@
     display: flex;
     grid-column-start: 3;
     grid-row-start: 1;
-    border: none;
-    background: linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0) 50%,
-      rgba(236, 26, 35, 1) 50%
-    );
+    background-color: var(--color-red);
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
   }
-
   .card-image {
     display: flex;
     grid-column-start: 1;
