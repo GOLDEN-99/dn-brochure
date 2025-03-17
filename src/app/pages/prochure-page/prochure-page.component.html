@@ -14,6 +14,7 @@
       [zone]="headdata.zone"
       [wholeType]="headdata.wholeType"
       [itemList]="currentGroup()"
+      [size]="maxItem()"
     />
   </div>
   <nav class="mt-3 d-flex justify-content-center">
@@ -36,11 +37,14 @@
   </div>
 </section>
 <div class="not-show">
+  @for (g of content(); track $index) {
   <app-prochure
     [zone]="headdata.zone"
     [wholeType]="headdata.wholeType"
-    [itemList]="currentGroup()"
+    [itemList]="g"
     [isStatic]="true"
+    [size]="maxItem()"
   />
+  }
 </div>
 }
