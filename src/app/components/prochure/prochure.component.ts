@@ -26,10 +26,11 @@ export class ProchureComponent {
 
   headerUrl = computed(() => {
     const whole = this.wholeType()
-    if (whole === 'Normal') {
-      return `/image/${this.color()}/phar.png`
+    switch (whole) {
+      case 'Normal': return `/image/${this.color()}/phar.png`
+      case 'Dental': return `/image/${this.color()}/gen.png`
+      case 'Clinic': return `/image/${this.color()}/dent.png`
     }
-    throw Error('unhandle wholetype')
   })
 
   footerUrl = computed(() => {

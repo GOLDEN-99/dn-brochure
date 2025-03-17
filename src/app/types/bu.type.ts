@@ -15,7 +15,7 @@ export type TPromotionType = 'Monthly' | 'SP' | 'Hot'
 
 export type TZone = 'BKK' | 'UPC'
 
-export type TWhole = 'Normal'
+export type TWhole = 'Normal' | 'Dental' | 'Clinic'
 
 export type TPrice = {
     price: number
