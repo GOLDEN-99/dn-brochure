@@ -32,6 +32,7 @@ export class ProchurePageComponent implements OnInit {
     const page = this.currentPage()
     return currentContent[page]
   })
+  progress = signal(0)
   private toastService = inject(ToastService)
   ngOnInit(): void {
     this.route.data.pipe(
@@ -47,9 +48,8 @@ export class ProchurePageComponent implements OnInit {
 
   async onExport() {
     const b = document.querySelectorAll('.static.prochure')
-    console.log(b)
     try {
-      await exporter(Array.from(b) as HTMLElement[])
+      await exporter(Array.from(b) as HTMLElement[], `${this.head()?.wholeName}-${this.head()?.promotionType}`)
       this.toastService.success("export สำเร็จ")
     } catch (err) {
       console.log(err)

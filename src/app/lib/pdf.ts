@@ -1,11 +1,18 @@
+import html2PDF from 'jspdf-html2canvas';
 import html2pdf from 'jspdf-html2canvas'
 
-export const exporter = async (html: HTMLElement[]) => {
+export const exporter = async (html: HTMLElement[], filename: string) => {
     const timpstampe = new Date().getTime();
 
     await Promise.all(html.map(imageLoader))
 
-    await html2pdf(html, { jsPDF: { format: 'a4', compress: true }, margin: { right: 1, left: 1, top: 1, bottom: 1 }, autoResize: true, output: `${timpstampe}.pdf` })
+    await html2pdf(html,
+        {
+            jsPDF: { format: 'a4', compress: true, orientation: "portrait" },
+            margin: { right: 1, left: 1, top: 1, bottom: 1 },
+            autoResize: true,
+            output: `-${filename}-${timpstampe}.pdf`
+        })
 }
 
 const imageLoader = async (ele: HTMLElement) => {

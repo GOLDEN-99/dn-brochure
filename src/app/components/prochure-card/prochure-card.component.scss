@@ -199,27 +199,33 @@
 }
 
 .res-text {
-  font-size: 8px;
-  line-height: 1.2;
+  font-size: 6px;
+  line-height: 1.1;
   @media (min-width: 475px) {
-    font-size: 12px;
+    font-size: 8px;
+  }
+  @media (min-width: 770px) {
+    font-size: 10px;
   }
 
   @media (min-width: 992px) {
-    font-size: 16px;
+    font-size: 12px;
     line-height: normal;
   }
 }
 
 .res-price-text {
-  font-size: 12px;
+  font-size: 10px;
 
   @media (min-width: 475px) {
-    font-size: 18px;
+    font-size: 10px;
+  }
+  @media (min-width: 770px) {
+    font-size: 12px;
   }
 
   @media (min-width: 992px) {
-    font-size: 24px;
+    font-size: 14px;
   }
 }
 
@@ -232,10 +238,13 @@
   &.res {
     font-size: 9px;
     @media (min-width: 475px) {
-      font-size: 14px;
+      font-size: 10px;
+    }
+    @media (min-width: 770px) {
+      font-size: 12px;
     }
     @media (min-width: 992px) {
-      font-size: 18px;
+      font-size: 14px;
     }
   }
 }
@@ -271,4 +280,26 @@
 
 .static-px-small {
   padding: 0 1mm;
+}
+
+img {
+  &.img-static {
+    max-width: 130px;
+    max-height: 130px;
+  }
+
+  &.img-res {
+    max-width: 140px;
+    max-height: 140px;
+
+    @media (min-width: 770px) {
+      max-width: 130px;
+      max-height: 130px;
+    }
+
+    @media (min-width: 1240px) {
+      max-width: 200px;
+      max-height: 200px;
+    }
+  }
 }
