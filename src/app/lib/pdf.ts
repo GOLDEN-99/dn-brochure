@@ -11,7 +11,7 @@ export const exporter = async (html: HTMLElement[], filename: string) => {
             jsPDF: { format: 'a4', compress: true, orientation: "portrait" },
             margin: { right: 1, left: 1, top: 1, bottom: 1 },
             autoResize: true,
-            output: `-${filename}-${timpstampe}.pdf`
+            output: `${filename}-${timpstampe}.pdf`
         })
 }
 

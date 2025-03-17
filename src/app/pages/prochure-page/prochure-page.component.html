@@ -47,4 +47,14 @@
   />
   }
 </div>
+} @if (inprogress()) {
+<div class="loading">
+  <div
+    class="spinner-border text-success"
+    role="status"
+    style="width: 10rem; height: 10rem"
+  >
+    <span class="sr-only"></span>
+  </div>
+</div>
 }

@@ -17,6 +17,10 @@
       width: 210mm;
     }
   }
+
+  &:not(.static) {
+    aspect-ratio: 1.414;
+  }
 }
 
 .content {
