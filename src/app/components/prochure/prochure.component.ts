@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { ProchureCardComponent } from "../prochure-card/prochure-card.component";
-import { TCardProps, TColor, TGroupItemList, TItem, TSupplier, TWhole, TZone } from '../../types';
+import { TBorchureHead, TCardProps, TColor, TGroupItemList, TItem, TSupplier, TWhole, TZone } from '../../types';
 import { ProchureService } from '../../service/prochure/prochure.service';
 import { zoneToColor } from '../../lib';
 
@@ -14,15 +14,18 @@ import { zoneToColor } from '../../lib';
   encapsulation: ViewEncapsulation.None
 })
 export class ProchureComponent {
-
+  //props
   itemList = input.required<TItem[]>()
   size = input.required<6 | 9>()
-  wholeType = input.required<TWhole>()
+  head = input.required<TBorchureHead>()
+  isStatic = input(false)
+
+  //computed
+  wholeType = computed<TWhole>(() => this.head().wholeType)
   data = computed<TCardProps[]>(() => this.itemList().map((i) => ({ ...i, isFlag: false })))
-  zone = input.required<TZone>()
+  zone = computed<TZone>(() => this.head().zone)
   color = computed(() => zoneToColor(this.zone()))
   private today = signal<string>(new Date().toISOString())
-  isStatic = input(false)
   formattedDate = computed(() => this.formateDate(this.today()))
   template = computed(() => {
     const stat = this.isStatic()
@@ -40,16 +43,13 @@ export class ProchureComponent {
   })
 
   headerUrl = computed(() => {
-    const whole = this.wholeType()
-    switch (whole) {
-      case 'Normal': return `/image/${this.color()}/phar.png`
-      case 'Dental': return `/image/${this.color()}/gen.png`
-      case 'Clinic': return `/image/${this.color()}/dent.png`
-    }
+    const { wholeType, promotionType, zone } = this.head()
+    return `/image/${promotionType}/${zone}/${wholeType}.png`
   })
 
   footerUrl = computed(() => {
-    return `/image/${this.color()}/footer.png`
+    const { zone } = this.head()
+    return `/image/footer/${zone}.png`
   })
 
   private formateDate(isodate: string) {

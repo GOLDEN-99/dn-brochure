@@ -5,13 +5,13 @@
   <div [className]="static ? 'date-static' : 'date'">
     {{ formattedDate() }}
   </div>
-  @if (cardlist.length !== 0) {
+
   <div [className]="template()">
     @for (card of cardlist; track $index) {
 
     <app-prochure-card [props]="card" [color]="color()" [isStatic]="static" />
     }
   </div>
-  }
+
   <img [src]="footerUrl()" alt="prochure footer" class="footer-image" />
 </div>
