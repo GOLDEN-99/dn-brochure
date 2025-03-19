@@ -4,6 +4,7 @@ import { ProchurePageComponent } from './pages/prochure-page/prochure-page.compo
 import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
 import { ExternalBrochureComponent } from './pages/external-brochure/external-brochure.component';
+import { NotfoundComponent } from './pages/notfound/notfound.component';
 
 export const routes: Routes = [
     {
@@ -15,6 +16,10 @@ export const routes: Routes = [
         path: "marketing/:promoType/:isBkk/:isNew/:wholeType/:token",
         component: ExternalBrochureComponent,
         resolve: { itemList: marketingResolver },
+    },
+    {
+        path: "notfound",
+        component: NotfoundComponent
     },
     {
         path: "",
