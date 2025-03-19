@@ -44,3 +44,13 @@ export type TGroupItemList = Array<TItem[]>
 export type TCardProps = {
     isFlag: boolean
 } & TItem
+
+
+export type TMarketingParams = {
+    wholeType: TWhole
+    isNewCustomer: boolean
+    isBkk: boolean
+    promoType: TPromotionType
+    token: string
+}
+export type TBorchureHead = Omit<TItemList, 'promotion'>
