@@ -25,4 +25,5 @@ export const isNewHandler = paramsHandlerV2('isNew')
 export const isBkkHandler = paramsHandlerV2('isBkk')
 export const wholeHandler = paramsHandler('wholeType')(predicateWhole)
 export const tokenHandler = paramsHandler('token')(predicateString)
+export const wholeCodeHandler = paramsHandler('wholeCode')(predicateString)
 

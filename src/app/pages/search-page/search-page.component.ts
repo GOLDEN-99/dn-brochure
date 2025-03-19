@@ -1,9 +1,7 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
-import { debounceTime, filter, map, switchMap, tap } from 'rxjs';
-import { ShopService } from '../../service/shop/shop.service';
-import { TDropdownProps, TMaybe, TPromotionType, TShopRecord } from '../../types';
-import { Router, RouterLink } from '@angular/router';
+import { TDropdownProps, TPromotionType } from '../../types';
+import { Router } from '@angular/router';
 import { DropdownComponent } from "../../components/dropdown/dropdown.component";
 @Component({
   selector: 'app-search-page',
@@ -36,10 +34,3 @@ export class SearchPageComponent {
   }
 
 }
-
-const predicateEmpty = (value: unknown): value is string => {
-  if (typeof value !== 'string') {
-    return false
-  }
-  return true
-} 

@@ -17,6 +17,6 @@ export const marketingResolver: ResolveFn<TItemList> = (route, state) => {
   } catch (err) {
     console.log(err)
     const router = inject(Router)
-    return new RedirectCommand(router.parseUrl("notfound"))
+    return new RedirectCommand(router.parseUrl("/notfound"))
   }
 };

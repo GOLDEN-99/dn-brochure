@@ -19,6 +19,12 @@
       [control]="searchForm.controls.promoType"
       [options]="optionRef"
     />
-    <button class="btn btn-primary w-100" type="submit">ค้นหา</button>
+    <button
+      class="btn btn-primary w-100"
+      type="submit"
+      [disabled]="searchForm.invalid"
+    >
+      ค้นหา
+    </button>
   </form>
 </section>
