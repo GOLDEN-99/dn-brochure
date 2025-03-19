@@ -6,6 +6,7 @@ import { exporter, transformItemList } from '../../lib';
 import { map, tap } from 'rxjs';
 import { ToastService } from '../../service/toast/toast.service';
 import { PromotionPipe } from '../../pipe/promotion/promotion-pipe.pipe';
+import { ProchureService } from '../../service/prochure/prochure.service';
 
 @Component({
   selector: 'app-prochure-page',
@@ -16,11 +17,12 @@ import { PromotionPipe } from '../../pipe/promotion/promotion-pipe.pipe';
 })
 export class ProchurePageComponent implements OnInit {
   private route = inject(ActivatedRoute)
-  color = signal<TColor>("green")
-  head = signal<TMaybe<TBorchureHead>>(null)
-  content = signal<TGroupItemList>([])
-  totalPage = computed(() => [...Array(this.content().length)].map((_, idx) => idx))
-  maxItem = computed(() => this.head()?.promotionType === 'Hot' ? 6 : 9)
+  private brochureSerrv = inject(ProchureService)
+  color = this.brochureSerrv.color
+  head = this.brochureSerrv.head
+  content = this.brochureSerrv.content
+  totalPage = this.brochureSerrv.totalPage
+  maxItem = this.brochureSerrv.maxItem
   currentPage = signal(0)
   currentGroup = computed<TItem[]>(() => {
     const currentContent = this.content()
@@ -31,11 +33,7 @@ export class ProchurePageComponent implements OnInit {
   inprogress = signal(false)
   private toastService = inject(ToastService)
   ngOnInit(): void {
-    this.route.data.pipe(
-      map(({ itemList }) => (itemList as TItemList)),
-      tap(({ wholeName, wholeType, zone, promotionType }) => this.head.update(() => ({ wholeName, wholeType, zone, promotionType }))),
-      map(({ promotion }) => promotion.reduce(transformItemList(this.maxItem()), [[]]))
-    ).subscribe((pro) => this.content.update(() => pro))
+    this.route.data.subscribe()
   }
 
   onClick(page: number) {
