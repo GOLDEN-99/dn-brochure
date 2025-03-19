@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { ProchureComponent } from "../../components/prochure/prochure.component";
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TColor, TGroupItemList, TItem, TItemList, TMaybe, TSupplier } from '../../types';
+import { TBorchureHead, TColor, TGroupItemList, TItem, TItemList, TMaybe, TSupplier } from '../../types';
 import { exporter, transformItemList } from '../../lib';
 import { map, tap } from 'rxjs';
 import { ToastService } from '../../service/toast/toast.service';
@@ -17,11 +17,7 @@ import { PromotionPipe } from '../../pipe/promotion/promotion-pipe.pipe';
 export class ProchurePageComponent implements OnInit {
   private route = inject(ActivatedRoute)
   color = signal<TColor>("green")
-  supplier = signal<TSupplier>("gen")
-  brochure = viewChild<ProchureComponent>('brochure')
-  isHeadReady = signal(false)
   head = signal<TMaybe<TBorchureHead>>(null)
-  isContentReady = signal(false)
   content = signal<TGroupItemList>([])
   totalPage = computed(() => [...Array(this.content().length)].map((_, idx) => idx))
   maxItem = computed(() => this.head()?.promotionType === 'Hot' ? 6 : 9)
@@ -38,7 +34,7 @@ export class ProchurePageComponent implements OnInit {
     this.route.data.pipe(
       map(({ itemList }) => (itemList as TItemList)),
       tap(({ wholeName, wholeType, zone, promotionType }) => this.head.update(() => ({ wholeName, wholeType, zone, promotionType }))),
-      map(({ promotion }) => promotion.reduce(transformItemList(this.maxItem()), []))
+      map(({ promotion }) => promotion.reduce(transformItemList(this.maxItem()), [[]]))
     ).subscribe((pro) => this.content.update(() => pro))
   }
 
@@ -61,4 +57,4 @@ export class ProchurePageComponent implements OnInit {
   }
 }
 
-type TBorchureHead = Omit<TItemList, 'promotion'>
+

@@ -11,8 +11,7 @@
 
   <div class="content-wrapper">
     <app-prochure
-      [zone]="headdata.zone"
-      [wholeType]="headdata.wholeType"
+      [head]="headdata"
       [itemList]="currentGroup()"
       [size]="maxItem()"
     />
@@ -39,11 +38,10 @@
 <div class="not-show">
   @for (g of content(); track $index) {
   <app-prochure
-    [zone]="headdata.zone"
-    [wholeType]="headdata.wholeType"
-    [itemList]="g"
-    [isStatic]="true"
+    [head]="headdata"
+    [itemList]="currentGroup()"
     [size]="maxItem()"
+    [isStatic]="true"
   />
   }
 </div>
