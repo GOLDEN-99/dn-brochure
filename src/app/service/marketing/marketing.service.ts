@@ -28,7 +28,6 @@ export class MarketingService {
 
 
   private api = inject(ApiService);
-  private params$ = new Subject<TMarketingParams>()
 
   private url = "https://api.drugnetcenter.com/ItemService2/PaperPro/v2"
 
@@ -48,10 +47,4 @@ export class MarketingService {
 
 }
 
-type a = {
-  ProType: TPromotionType
-  IsBkk: boolean
-  IsNewCustomer: boolean
-  WholeTypeGroup: TWhole
-}
 
