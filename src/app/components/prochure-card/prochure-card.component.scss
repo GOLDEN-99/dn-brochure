@@ -10,7 +10,8 @@
   }
 
   &.static {
-    max-width: 65mm;
+    max-width: 60mm;
+    font-size: 8px;
 
     @media (min-width: 1024px) {
       max-width: 120mm;
@@ -29,6 +30,7 @@
       color: #fff;
 
       &.static-round-large.static-p-large {
+        font-size: 10px;
         @media (min-width: 1024px) {
           font-size: 18px;
         }
@@ -36,7 +38,7 @@
     }
 
     .subtext.static {
-      margin-bottom: 1mm;
+      margin-bottom: 8px;
 
       @media (min-width: 1024px) {
         margin-bottom: 16px;
@@ -249,7 +251,7 @@
   font-weight: 700;
   text-transform: capitalize;
   &.static {
-    font-size: 3mm;
+    font-size: 8px;
     @media (min-width: 1024px) {
       font-size: 16px;
     }
@@ -269,7 +271,7 @@
 }
 
 .static-price-text {
-  font-size: 3mm;
+  font-size: 9px;
   @media (min-width: 1024px) {
     font-size: 18px;
   }
@@ -283,14 +285,14 @@
 }
 
 .static-round {
-  border-radius: 2mm;
+  border-radius: 8px;
   @media (min-width: 1024px) {
     border-radius: 16px;
   }
 }
 
 .static-p {
-  padding: 1mm;
+  padding: 8px;
 
   @media (min-width: 1024px) {
     padding: 16px;
@@ -298,7 +300,7 @@
 }
 
 .static-text {
-  font-size: 2mm;
+  font-size: 12px;
 
   @media (min-width: 1024px) {
     font-size: 24px;
@@ -306,8 +308,8 @@
 }
 
 .static-grid-gap {
-  row-gap: 1mm;
-  column-gap: 1mm;
+  row-gap: 4px;
+  column-gap: 4px;
 
   @media (min-width: 1024px) {
     row-gap: 8px;
@@ -316,7 +318,7 @@
 }
 
 .static-round-large {
-  border-radius: 4mm;
+  border-radius: 16px;
 
   @media (min-width: 1024px) {
     border-radius: 32px;
@@ -324,7 +326,7 @@
 }
 
 .static-p-large {
-  padding: 2mm;
+  padding: 8px;
 
   @media (min-width: 1024px) {
     padding: 16px;
@@ -332,7 +334,7 @@
 }
 
 .static-px-small {
-  padding: 0 1mm;
+  padding: 0 4px;
 
   @media (min-width: 1024px) {
     padding: 0 8px;
