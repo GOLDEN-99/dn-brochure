@@ -1,0 +1,30 @@
+<section class="container search-page">
+  <h1 class="text-center my-3 search-page-header">Brochure DN Online</h1>
+  <form
+    [formGroup]="searchForm"
+    class="search-form"
+    (ngSubmit)="handleSubmit()"
+  >
+    <div class="mb-3">
+      <label for="shop-code" class="form-label">ค้นหาร้านค้า</label>
+      <input
+        type="text"
+        class="form-control"
+        id="shop-code"
+        placeholder="ใส่รหัสร้านค้า"
+        formControlName="wholeCode"
+      />
+    </div>
+    <app-dropdown
+      [control]="searchForm.controls.promoType"
+      [options]="optionRef"
+    />
+    <button
+      class="btn btn-primary w-100"
+      type="submit"
+      [disabled]="searchForm.invalid"
+    >
+      ค้นหา
+    </button>
+  </form>
+</section>

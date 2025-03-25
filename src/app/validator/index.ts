@@ -1,0 +1,1 @@
+export { promoTypValidator } from './literalTypeValidator'

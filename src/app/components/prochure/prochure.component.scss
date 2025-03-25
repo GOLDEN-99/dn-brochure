@@ -1,0 +1,132 @@
+@page {
+  size: A4;
+}
+.prochure {
+  padding: 0;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &.static {
+    width: 210mm;
+    height: 296.7mm;
+
+    .header-image,
+    .footer-imgae {
+      width: 210mm;
+    }
+  }
+
+  &:not(.static) {
+    aspect-ratio: 1.414;
+  }
+}
+
+.content {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+
+  &.item-6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &.item-9 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.res-prochure-grid {
+  row-gap: 4px;
+  column-gap: 4px;
+  padding: 4px 0;
+  margin-top: -18px;
+
+  @media (min-width: 370px) {
+    margin-top: -24px;
+  }
+
+  @media (min-width: 475px) {
+    margin-top: -24px;
+  }
+
+  @media (min-width: 570px) {
+    margin-top: -30px;
+    row-gap: 8px;
+    column-gap: 8px;
+    padding: 8px 0;
+  }
+
+  @media (min-width: 922px) {
+    margin-top: -36px;
+    row-gap: 12px;
+    column-gap: 12px;
+    padding: 12px 0;
+  }
+  @media (min-width: 1200px) {
+    row-gap: 16px;
+    column-gap: 16px;
+    padding: 16px 0;
+    margin-top: -48px;
+  }
+}
+
+.date {
+  width: 33%;
+  position: relative;
+  z-index: 1;
+  translate: 190% -110%;
+  font-size: 12px;
+  @media (min-width: 370px) {
+    font-size: 16px;
+    translate: 190% -110%;
+  }
+
+  @media (min-width: 475px) {
+    font-size: 16px;
+    translate: 190% -120%;
+  }
+
+  @media (min-width: 570px) {
+    font-size: 20px;
+    translate: 190% -115%;
+  }
+
+  @media (min-width: 768px) {
+    translate: 187% -140%;
+  }
+
+  @media (min-width: 922px) {
+    font-size: 24px;
+    translate: 187% -135%;
+  }
+  @media (min-width: 1200px) {
+    font-size: 32px;
+    translate: 187% -135%;
+  }
+  @media (min-width: 1400px) {
+    font-size: 32px;
+    translate: 187% -140%;
+  }
+}
+
+.date-static {
+  width: 33%;
+  position: relative;
+  z-index: 1;
+  translate: 187% -170%;
+}
+
+// @media print {
+//   @page {
+//     size: A4;
+//     margin: 1mm;
+//   }
+//   .prochure.static {
+//     size: A4;
+//     margin: 0;
+//     padding: 0;
+//     box-sizing: border-box;
+//   }
+// }

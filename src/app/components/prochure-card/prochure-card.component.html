@@ -1,0 +1,109 @@
+@let data = props(); @let priceTier = data.price;@let static = isStatic();
+<!---->
+<div
+  class="prochure-card border res-round res-grid-gap res-text res-p"
+  [className]="
+    static
+      ? 'prochure-card static border static-round static-grid-gap static-text static-p'
+      : 'prochure-card res border res-round res-grid-gap res-text res-p'
+  "
+>
+  <div class="card-header">
+    <div [className]="static ? 'subtext static' : 'res-mb-small'">
+      ( {{ data.goodCode }} )
+    </div>
+    <div [className]="nameStyle()">{{ data.goodName }}</div>
+  </div>
+  @if (data.isFlag) {
+  <div class="card-flag"></div>
+  }
+  <div class="card-image">
+    <img
+      [attr.src]="imageUrl()"
+      [className]="static ? 'img-static' : 'img-res'"
+    />
+  </div>
+  <div class="card-body">
+    <div class="tier">
+      <div
+        [className]="
+          static
+            ? 'tier-label static background-standard static-px-small'
+            : 'tier-label res background-standard res-px-small'
+        "
+      >
+        standard
+      </div>
+      <div
+        [className]="
+          static ? 'tier-price static-px-small' : 'tier-price res-px-small'
+        "
+      >
+        <div>ราคา</div>
+        <div>{{ priceTier.priceStandard }}</div>
+        <div>บาท</div>
+      </div>
+    </div>
+    <div class="tier">
+      <div
+        [className]="
+          static
+            ? 'tier-label static background-silver static-px-small'
+            : 'tier-label res background-silver res-px-small'
+        "
+      >
+        silver
+      </div>
+      <div
+        [className]="
+          static ? 'tier-price static-px-small' : 'tier-price res-px-small'
+        "
+      >
+        <div>ราคา</div>
+        <div>{{ priceTier.priceSilver }}</div>
+        <div>บาท</div>
+      </div>
+    </div>
+    <div class="tier">
+      <div
+        [className]="
+          static
+            ? 'tier-label static background-gold static-px-small'
+            : 'tier-label res background-gold res-px-small'
+        "
+      >
+        gold
+      </div>
+      <div
+        [className]="
+          static ? 'tier-price static-px-small' : 'tier-price res-px-small'
+        "
+      >
+        <div>ราคา</div>
+        <div>{{ priceTier.priceGold }}</div>
+        <div>บาท</div>
+      </div>
+    </div>
+    <div [className]="static ? 'price static-px-small' : 'price res-px-small'">
+      <div [className]="static ? 'static-price-text' : 'res-price-text'">
+        ราคา
+      </div>
+      <div
+        [className]="
+          static
+            ? 'static-price-text text-center'
+            : 'res-price-text text-center'
+        "
+      >
+        {{ priceTier.price }}
+      </div>
+      <div
+        [className]="
+          static ? 'static-price-text text-end' : 'res-price-text text-end'
+        "
+      >
+        บาท
+      </div>
+    </div>
+  </div>
+</div>
