@@ -39,7 +39,7 @@
   @for (g of content(); track $index) {
   <app-prochure
     [head]="headdata"
-    [itemList]="currentGroup()"
+    [itemList]="g"
     [size]="maxItem()"
     [isStatic]="true"
   />
