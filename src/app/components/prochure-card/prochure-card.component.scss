@@ -11,6 +11,12 @@
 
   &.static {
     max-width: 65mm;
+
+    @media (min-width: 1024px) {
+      max-width: 120mm;
+      font-size: 16px;
+      border-radius: 16px;
+    }
   }
 
   .card-header {
@@ -21,10 +27,20 @@
 
     .text-header {
       color: #fff;
+
+      &.static-round-large.static-p-large {
+        @media (min-width: 1024px) {
+          font-size: 18px;
+        }
+      }
     }
 
     .subtext.static {
       margin-bottom: 1mm;
+
+      @media (min-width: 1024px) {
+        margin-bottom: 16px;
+      }
     }
   }
   .card-flag {
@@ -234,6 +250,9 @@
   text-transform: capitalize;
   &.static {
     font-size: 3mm;
+    @media (min-width: 1024px) {
+      font-size: 16px;
+    }
   }
   &.res {
     font-size: 9px;
@@ -251,41 +270,84 @@
 
 .static-price-text {
   font-size: 3mm;
+  @media (min-width: 1024px) {
+    font-size: 18px;
+  }
+
+  &.text-center {
+    font-weight: 700;
+    @media (min-width: 1024px) {
+      font-size: 18px;
+    }
+  }
 }
 
 .static-round {
   border-radius: 2mm;
+  @media (min-width: 1024px) {
+    border-radius: 16px;
+  }
 }
 
 .static-p {
   padding: 1mm;
+
+  @media (min-width: 1024px) {
+    padding: 16px;
+  }
 }
 
 .static-text {
   font-size: 2mm;
+
+  @media (min-width: 1024px) {
+    font-size: 24px;
+  }
 }
 
 .static-grid-gap {
   row-gap: 1mm;
   column-gap: 1mm;
+
+  @media (min-width: 1024px) {
+    row-gap: 8px;
+    column-gap: 8px;
+  }
 }
 
 .static-round-large {
   border-radius: 4mm;
+
+  @media (min-width: 1024px) {
+    border-radius: 32px;
+  }
 }
 
 .static-p-large {
   padding: 2mm;
+
+  @media (min-width: 1024px) {
+    padding: 16px;
+  }
 }
 
 .static-px-small {
   padding: 0 1mm;
+
+  @media (min-width: 1024px) {
+    padding: 0 8px;
+  }
 }
 
 img {
   &.img-static {
     max-width: 130px;
     max-height: 130px;
+
+    @media (min-width: 1024px) {
+      max-width: 260px;
+      max-height: 260px;
+    }
   }
 
   &.img-res {

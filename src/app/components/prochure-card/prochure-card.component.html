@@ -1,7 +1,6 @@
 @let data = props(); @let priceTier = data.price;@let static = isStatic();
 <!---->
 <div
-  class="prochure-card border res-round res-grid-gap res-text res-p"
   [className]="
     static
       ? 'prochure-card static border static-round static-grid-gap static-text static-p'
@@ -10,7 +9,7 @@
 >
   <div class="card-header">
     <div [className]="static ? 'subtext static' : 'res-mb-small'">
-      ( {{ data.goodCode }} )
+      ( {{ data.barCode }} )
     </div>
     <div [className]="nameStyle()">{{ data.goodName }}</div>
   </div>
