@@ -12,9 +12,18 @@
     width: 210mm;
     height: 296.7mm;
 
+    @media (min-width: 1024px) {
+      width: 420mm;
+      height: 593.7mm;
+    }
+
     .header-image,
     .footer-imgae {
       width: 210mm;
+
+      @media (min-width: 1024px) {
+        width: 420mm;
+      }
     }
   }
 
@@ -116,6 +125,10 @@
   position: relative;
   z-index: 1;
   translate: 187% -170%;
+
+  @media (min-width: 1024px) {
+    font-size: 32px;
+  }
 }
 
 // @media print {
