@@ -52,5 +52,6 @@ export type TMarketingParams = {
     isBkk: boolean
     promoType: TPromotionType
     token: string
+    idPromotion: string
 }
 export type TBorchureHead = Omit<TItemList, 'promotion'>

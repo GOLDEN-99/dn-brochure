@@ -13,7 +13,7 @@ export const routes: Routes = [
         resolve: { itemList: promotionResolver }
     },
     {
-        path: "marketing/:promoType/:isBkk/:isNew/:wholeType/:token",
+        path: "marketing/:promoType/:isBkk/:isNew/:wholeType/:token/:idPromotion",
         component: ExternalBrochureComponent,
         resolve: { itemList: marketingResolver },
     },

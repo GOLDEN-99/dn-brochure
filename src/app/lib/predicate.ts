@@ -21,3 +21,9 @@ export const predicateWhole = (value: unknown): value is TWhole => {
 export const predicateString = (value: unknown): value is string => {
     return typeof value === 'string'
 }
+
+export const predicateNumber = (value: unknown): value is `${number}` => {
+    const prased = Number(value)
+    if (isNaN(prased)) return false
+    return true
+}

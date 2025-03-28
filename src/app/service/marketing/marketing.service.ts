@@ -31,7 +31,7 @@ export class MarketingService {
 
   private url = "https://api.drugnetcenter.com/ItemService2/PaperPro/v2"
 
-  getBrochureList({ promoType, wholeType, isNewCustomer, isBkk, token }: TMarketingParams) {
+  getBrochureList({ promoType, wholeType, isNewCustomer, isBkk, token, idPromotion }: TMarketingParams) {
     return this.api.get<TItemList>(this.url, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -40,7 +40,8 @@ export class MarketingService {
         ProType: promoType,
         IsBkk: isBkk,
         IsNewCustomer: isNewCustomer,
-        WholeTypeGroup: wholeType
+        WholeTypeGroup: wholeType,
+        IdPromotion: Number(idPromotion)
       }
     }).pipe(tap(this.setState))
   }
