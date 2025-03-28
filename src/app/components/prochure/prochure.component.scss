@@ -50,25 +50,29 @@
   row-gap: 4px;
   column-gap: 4px;
   padding: 4px 0;
-  margin-top: -18px;
+  margin-top: -15px;
 
   @media (min-width: 370px) {
-    margin-top: -24px;
+    margin-top: -15px;
   }
 
   @media (min-width: 475px) {
-    margin-top: -24px;
+    margin-top: -15px;
   }
 
   @media (min-width: 570px) {
-    margin-top: -30px;
+    margin-top: -18px;
     row-gap: 8px;
     column-gap: 8px;
     padding: 8px 0;
   }
 
-  @media (min-width: 922px) {
-    margin-top: -36px;
+  @media (min-width: 768px) {
+    margin-top: -24px;
+  }
+
+  @media (min-width: 992px) {
+    margin-top: -30px;
     row-gap: 12px;
     column-gap: 12px;
     padding: 12px 0;
@@ -77,46 +81,54 @@
     row-gap: 16px;
     column-gap: 16px;
     padding: 16px 0;
-    margin-top: -48px;
+    margin-top: -36px;
+  }
+
+  @media (min-width: 1400px) {
+    row-gap: 32px;
+    column-gap: 32px;
+    padding: 32px 0;
+    margin-top: -42px;
   }
 }
 
 .date {
-  width: 33%;
+  width: 40%;
   position: relative;
   z-index: 1;
   translate: 190% -110%;
-  font-size: 12px;
+  font-size: 10px;
   @media (min-width: 370px) {
-    font-size: 16px;
-    translate: 190% -110%;
+    font-size: 10px;
+    translate: 150% -130%;
   }
 
   @media (min-width: 475px) {
-    font-size: 16px;
-    translate: 190% -120%;
+    font-size: 10px;
+    translate: 150% -150%;
   }
 
   @media (min-width: 570px) {
-    font-size: 20px;
-    translate: 190% -115%;
+    font-size: 12px;
+    translate: 150% -150%;
   }
 
   @media (min-width: 768px) {
-    translate: 187% -140%;
+    font-size: 16px;
+    translate: 150% -150%;
   }
 
-  @media (min-width: 922px) {
-    font-size: 24px;
-    translate: 187% -135%;
+  @media (min-width: 992px) {
+    font-size: 20px;
+    translate: 150% -150%;
   }
   @media (min-width: 1200px) {
-    font-size: 32px;
-    translate: 187% -135%;
+    font-size: 24px;
+    translate: 150% -150%;
   }
   @media (min-width: 1400px) {
-    font-size: 32px;
-    translate: 187% -140%;
+    font-size: 28px;
+    translate: 150% -150%;
   }
 }
 

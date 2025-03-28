@@ -32,6 +32,8 @@ export type TItem = {
 }
 
 export type TItemList = {
+    fromDate?: string | null
+    toDate?: string | null
     wholeName: string
     wholeType: TWhole
     zone: TZone

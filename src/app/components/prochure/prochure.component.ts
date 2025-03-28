@@ -25,8 +25,15 @@ export class ProchureComponent {
   data = computed<TCardProps[]>(() => this.itemList().map((i) => ({ ...i, isFlag: false })))
   zone = computed<TZone>(() => this.head().zone)
   color = computed(() => zoneToColor(this.zone()))
-  private today = signal<string>(new Date().toISOString())
-  formattedDate = computed(() => this.formateDate(this.today()))
+  date = computed(() => {
+    const head = this.head()
+    const toDate = head?.toDate
+    const fromDate = head?.fromDate
+    if (!fromDate || !toDate) {
+      return this.getDefaultDate()
+    }
+    return `${this.formateDate(fromDate)} - ${this.formateDate(toDate)}`
+  })
   template = computed(() => {
     const stat = this.isStatic()
     const len = this.size()
@@ -53,8 +60,47 @@ export class ProchureComponent {
   })
 
   private formateDate(isodate: string) {
-    const [year, month, date] = isodate.split('T')[0].split('-')
-    return `${date}/${month}/${year}`
+    const [year, month, date] = isodate.split('T')[0].split('-').map(Number)
+    return `${date} ${this.convertMonth(month)} ${this.convertYear(year)}`
+  }
+
+  private getDefaultDate() {
+    const [year, month, _] = new Date().toISOString().split("T")[0].split("-").map(Number)
+    const monthText = this.convertMonth(month)
+    const be = this.convertYear(year)
+    if (month === 2) {
+      return this.isLeap(year) ? `1 ${monthText} ${be} - 29 ${monthText} ${be}` : `1 ${monthText} ${be} - 28 ${monthText} ${be}`
+    }
+    if ([4, 6, 9, 11].includes(month)) {
+      return `1 ${monthText} ${be} - 30 ${monthText} ${be}`
+    }
+    return `1 ${monthText} ${be} - 31 ${monthText} ${be}`
+  }
+
+  private isLeap(year: number) {
+    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
+  }
+
+  private convertMonth(month: number) {
+    switch (month) {
+      case 1: return 'มกราคม'
+      case 2: return 'กุมภาพันธ์'
+      case 3: return 'มีนาคม'
+      case 4: return 'เมษายน'
+      case 5: return 'พฤษภาคม'
+      case 6: return 'มิถุนายน'
+      case 7: return 'กรกฏาคม'
+      case 8: return 'สิงหาคม'
+      case 9: return 'กันยายน'
+      case 10: return 'ตุลาคม'
+      case 11: return 'พฤศจิกายน'
+      case 12: return 'ธันวาคม'
+      default: throw new Error('วันที่ผิด')
+    }
+  }
+
+  private convertYear(year: number) {
+    return year + 543
   }
 
 }
