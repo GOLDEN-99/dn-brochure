@@ -6,12 +6,11 @@ import { zoneToColor } from '../../lib';
 
 
 @Component({
-  selector: 'app-prochure',
-  standalone: true,
-  imports: [ProchureCardComponent],
-  templateUrl: './prochure.component.html',
-  styleUrl: './prochure.component.scss',
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-prochure',
+    imports: [ProchureCardComponent],
+    templateUrl: './prochure.component.html',
+    styleUrl: './prochure.component.scss',
+    encapsulation: ViewEncapsulation.None
 })
 export class ProchureComponent {
   //props

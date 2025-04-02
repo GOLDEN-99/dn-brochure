@@ -31,6 +31,8 @@ export type TItem = {
     price: TPrice
 }
 
+export type TNewCustomer = 'OC' | 'NC'
+
 export type TItemList = {
     fromDate?: string | null
     toDate?: string | null
@@ -38,6 +40,7 @@ export type TItemList = {
     wholeType: TWhole
     zone: TZone
     promotionType: TPromotionType
+    isNewCustomer: TNewCustomer
     promotion: TItem[]
 }
 

@@ -13,8 +13,8 @@ export class MarketingService {
   constructor() {
   }
 
-  private setState = ({ wholeName, wholeType, zone, promotionType, promotion }: TItemList) => {
-    this.head.update(() => ({ wholeName, wholeType, zone, promotionType }))
+  private setState = ({ wholeName, wholeType, zone, promotionType, promotion, isNewCustomer }: TItemList) => {
+    this.head.update(() => ({ wholeName, wholeType, zone, promotionType, isNewCustomer }))
     const size = promotionType === "Hot" ? 6 : 9
     this.content.update(() => promotion.reduce(transformItemList(size), [[]]))
   }

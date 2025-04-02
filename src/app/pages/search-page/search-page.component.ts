@@ -4,11 +4,10 @@ import { TDropdownProps, TPromotionType } from '../../types';
 import { Router } from '@angular/router';
 import { DropdownComponent } from "../../components/dropdown/dropdown.component";
 @Component({
-  selector: 'app-search-page',
-  standalone: true,
-  imports: [ReactiveFormsModule, DropdownComponent],
-  templateUrl: './search-page.component.html',
-  styleUrl: './search-page.component.scss'
+    selector: 'app-search-page',
+    imports: [ReactiveFormsModule, DropdownComponent],
+    templateUrl: './search-page.component.html',
+    styleUrl: './search-page.component.scss'
 })
 export class SearchPageComponent {
   private nnfb = inject(NonNullableFormBuilder)
