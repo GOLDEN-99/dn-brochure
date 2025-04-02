@@ -7,11 +7,10 @@ import { ProchureComponent } from "../../components/prochure/prochure.component"
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-external-brochure',
-  standalone: true,
-  imports: [PromotionPipe, ProchureComponent],
-  templateUrl: './external-brochure.component.html',
-  styleUrl: './external-brochure.component.scss'
+    selector: 'app-external-brochure',
+    imports: [PromotionPipe, ProchureComponent],
+    templateUrl: './external-brochure.component.html',
+    styleUrl: './external-brochure.component.scss'
 })
 export class ExternalBrochureComponent implements OnInit {
   private route = inject(ActivatedRoute)

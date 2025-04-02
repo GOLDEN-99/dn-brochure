@@ -6,11 +6,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastService } from '../../service/toast/toast.service';
 
 @Component({
-  selector: 'app-toast',
-  standalone: true,
-  imports: [NgbAlertModule],
-  templateUrl: './toast.component.html',
-  styleUrl: './toast.component.scss'
+    selector: 'app-toast',
+    imports: [NgbAlertModule],
+    templateUrl: './toast.component.html',
+    styleUrl: './toast.component.scss'
 })
 export class ToastComponent {
   private _message$ = new Subject<string>();

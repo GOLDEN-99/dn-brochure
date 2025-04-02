@@ -3,7 +3,7 @@
 <div [className]="static ? 'static prochure' : 'prochure'">
   <img [src]="headerUrl()" alt="prochure header" class="header-image" />
   <div [className]="static ? 'date-static' : 'date'">
-    {{ formattedDate() }}
+    {{ date() }}
   </div>
 
   <div [className]="template()">

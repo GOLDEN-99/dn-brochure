@@ -31,11 +31,16 @@ export type TItem = {
     price: TPrice
 }
 
+export type TNewCustomer = 'OC' | 'NC'
+
 export type TItemList = {
+    fromDate?: string | null
+    toDate?: string | null
     wholeName: string
     wholeType: TWhole
     zone: TZone
     promotionType: TPromotionType
+    isNewCustomer: TNewCustomer
     promotion: TItem[]
 }
 
@@ -52,5 +57,6 @@ export type TMarketingParams = {
     isBkk: boolean
     promoType: TPromotionType
     token: string
+    idPromotion: string
 }
 export type TBorchureHead = Omit<TItemList, 'promotion'>

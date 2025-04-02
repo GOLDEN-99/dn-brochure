@@ -9,11 +9,10 @@ import { PromotionPipe } from '../../pipe/promotion/promotion-pipe.pipe';
 import { ProchureService } from '../../service/prochure/prochure.service';
 
 @Component({
-  selector: 'app-prochure-page',
-  standalone: true,
-  imports: [ProchureComponent, RouterLink, PromotionPipe],
-  templateUrl: './prochure-page.component.html',
-  styleUrl: './prochure-page.component.scss'
+    selector: 'app-prochure-page',
+    imports: [ProchureComponent, RouterLink, PromotionPipe],
+    templateUrl: './prochure-page.component.html',
+    styleUrl: './prochure-page.component.scss'
 })
 export class ProchurePageComponent implements OnInit {
   private route = inject(ActivatedRoute)
