@@ -18,9 +18,6 @@ export class ProchureComponent {
   size = input.required<8 | 12>()
   head = input.required<TBorchureHead>()
   isStatic = input(false)
-  constructor() {
-    const eff = effect(() => console.log(this.data()))
-  }
   //computed
   isNewCustomer = computed(() => this.head().isNewCustomer)
   wholeType = computed<TWhole>(() => this.head().wholeType)
