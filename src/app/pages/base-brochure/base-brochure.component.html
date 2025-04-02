@@ -30,9 +30,7 @@
       }
     </ul>
   </nav>
-  <div class="d-flex align-items-center mb-3 justify-content-between action">
-    <button class="btn btn-primary" (click)="onExport()">export</button>
-  </div>
+  <app-navigate-btn (export)="onExport()" />
 </section>
 <div class="not-show">
   @for (g of content(); track $index) {

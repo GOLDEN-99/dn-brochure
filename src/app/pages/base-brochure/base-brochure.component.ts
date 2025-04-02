@@ -1,15 +1,15 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { BROCHURE_TOKEN, exporter } from '../../lib';
 import { ActivatedRoute } from '@angular/router';
-import { ProchureService } from '../../service/prochure/prochure.service';
 import { TItem } from '../../types';
 import { ToastService } from '../../service/toast/toast.service';
 import { ProchureComponent } from '../../components/prochure/prochure.component';
 import { PromotionPipe } from '../../pipe/promotion/promotion-pipe.pipe';
+import { NavigateBtnComponent } from "../../components/navigate-btn/navigate-btn.component";
 
 @Component({
   selector: 'app-base-brochure',
-  imports: [ProchureComponent, PromotionPipe],
+  imports: [ProchureComponent, PromotionPipe, NavigateBtnComponent],
   templateUrl: './base-brochure.component.html',
   styleUrl: './base-brochure.component.scss',
 })

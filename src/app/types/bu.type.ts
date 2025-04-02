@@ -7,8 +7,6 @@ export type TPriceTier = {
 export type TShopRecord = {
     id: number
     shopName: string
-    // wholeCode : string
-    // wholeType:
 }
 
 export type TPromotionType = 'Monthly' | 'SP' | 'Hot'
@@ -31,7 +29,7 @@ export type TItem = {
     price: TPrice
 }
 
-export type TNewCustomer = 'OC' | 'NC'
+export type TNewCustomer = 'OC' | 'NC' | null
 
 export type TItemList = {
     fromDate?: string | null
