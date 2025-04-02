@@ -1,12 +1,13 @@
 import { Component, computed, input } from '@angular/core';
 import { TColor, TCardProps } from '../../types';
 import { environment } from '../../../environments/environment';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
-    selector: 'app-prochure-card',
-    imports: [],
-    templateUrl: './prochure-card.component.html',
-    styleUrl: './prochure-card.component.scss'
+  selector: 'app-prochure-card',
+  imports: [DecimalPipe],
+  templateUrl: './prochure-card.component.html',
+  styleUrl: './prochure-card.component.scss'
 })
 export class ProchureCardComponent {
   color = input.required<TColor>()
