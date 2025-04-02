@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProchurePageComponent } from './prochure-page.component';
+import { BaseBrochureComponent } from './base-brochure.component';
 
-describe('ProchurePageComponent', () => {
-  let component: ProchurePageComponent;
-  let fixture: ComponentFixture<ProchurePageComponent>;
+describe('BaseBrochureComponent', () => {
+  let component: BaseBrochureComponent;
+  let fixture: ComponentFixture<BaseBrochureComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProchurePageComponent]
+      imports: [BaseBrochureComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ProchurePageComponent);
+    fixture = TestBed.createComponent(BaseBrochureComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
