@@ -1,6 +1,9 @@
+:host {
+  width: fit-content;
+  aspect-ratio: 1;
+}
 .prochure-card {
   aspect-ratio: 1;
-  margin: auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -10,11 +13,11 @@
   }
 
   &.static {
-    max-width: 60mm;
+    max-width: 55mm;
     font-size: 8px;
 
     @media (min-width: 1024px) {
-      max-width: 120mm;
+      max-width: 110mm;
       font-size: 16px;
       border-radius: 16px;
     }
@@ -30,7 +33,7 @@
       color: #fff;
 
       &.static-round-large.static-p-large {
-        font-size: 10px;
+        font-size: 9px;
         @media (min-width: 1024px) {
           font-size: 18px;
         }
@@ -38,10 +41,12 @@
     }
 
     .subtext.static {
-      margin-bottom: 8px;
+      font-size: 7px;
+      margin-bottom: 4px;
 
       @media (min-width: 1024px) {
-        margin-bottom: 16px;
+        font-size: 14px;
+        margin-bottom: 8px;
       }
     }
   }
@@ -78,6 +83,14 @@
     .tier .tier-price {
       display: flex;
       justify-content: space-between;
+
+      &.static-px-small {
+        font-size: 6px;
+
+        @media (min-width: 1024px) {
+          font-size: 12px;
+        }
+      }
     }
 
     .price {
@@ -279,6 +292,10 @@
 
   &.text-center {
     font-weight: 700;
+    font-size: 18px;
+    @media (min-width: 1024px) {
+      font-size: 36px;
+    }
   }
 
   @media (min-width: 1024px) {
@@ -320,10 +337,10 @@
 }
 
 .static-round-large {
-  border-radius: 16px;
+  border-radius: 4px;
 
   @media (min-width: 1024px) {
-    border-radius: 32px;
+    border-radius: 8px;
   }
 }
 

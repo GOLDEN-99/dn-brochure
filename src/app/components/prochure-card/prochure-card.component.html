@@ -83,7 +83,13 @@
         <div>บาท</div>
       </div>
     </div>
-    <div [className]="static ? 'price static-px-small' : 'price res-px-small'">
+    <div
+      [className]="
+        static
+          ? 'price static-px-small static-round-large'
+          : 'price res-px-small'
+      "
+    >
       <div [className]="static ? 'static-price-text' : 'res-price-text'">
         ราคา
       </div>

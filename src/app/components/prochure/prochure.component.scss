@@ -6,9 +6,10 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   .header-image,
-  .footer-imgae {
+  .footer-image {
     max-width: 100%;
   }
   &.static {
@@ -21,7 +22,7 @@
     }
 
     .header-image.static,
-    .footer-imgae.static {
+    .footer-image.static {
       width: 210mm;
 
       @media (min-width: 1024px) {
@@ -38,14 +39,49 @@
 .content {
   flex: 1 1 auto;
   display: grid;
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
 
   &.item-6 {
     grid-template-columns: repeat(2, 1fr);
+
+    :ng-deep {
+      &:nth-child(odd) {
+        justify-self: end;
+      }
+
+      &:nth-child(even) {
+        justify-self: start;
+      }
+    }
   }
 
   &.item-9 {
     grid-template-columns: repeat(3, 1fr);
+
+    :ng-deep {
+      &:nth-child(3n + 1) {
+        justify-self: end;
+      }
+
+      &:nth-child(3n + 2) {
+        justify-self: center;
+      }
+
+      &:nth-child(3n) {
+        justify-self: start;
+      }
+    }
+  }
+
+  &.static {
+    width: 80%;
+    padding: 16px;
+    column-gap: 16px;
+    justify-content: center;
+
+    @media (min-width: 1024px) {
+      column-gap: 24px;
+    }
   }
 }
 
@@ -54,11 +90,11 @@
   column-gap: 4px;
   padding: 4px 0;
 
-  @media (min-width: 370px) {
-  }
+  // @media (min-width: 370px) {
+  // }
 
-  @media (min-width: 475px) {
-  }
+  // @media (min-width: 475px) {
+  // }
 
   @media (min-width: 570px) {
     row-gap: 8px;
@@ -66,8 +102,8 @@
     padding: 8px 0;
   }
 
-  @media (min-width: 768px) {
-  }
+  // @media (min-width: 768px) {
+  // }
 
   @media (min-width: 992px) {
     row-gap: 12px;
@@ -134,17 +170,30 @@
 
 .date-static {
   width: 33%;
-  position: relative;
+  position: absolute;
   z-index: 1;
-  translate: 187% -170%;
   font-size: 16px;
+  right: 60px;
+  bottom: 20px;
 
   @media (min-width: 1024px) {
     font-size: 32px;
+    right: 100px;
+    bottom: 40px;
   }
 }
 
-.customer-label:not(static) {
+.customer-label.static {
+  font-size: 17px;
+  position: absolute;
+  right: 0;
+  translate: -80% 50%;
+  @media (min-width: 1024px) {
+    font-size: 34px;
+  }
+}
+
+.customer-label:not(.static) {
   font-size: 9px;
   position: absolute;
   right: 0;
