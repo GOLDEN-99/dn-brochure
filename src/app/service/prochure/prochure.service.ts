@@ -2,13 +2,13 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { TBorchureHead, TColor, TGroupItemList, TItemList, TMaybe, TPromotionType } from '../../types';
 import { environment } from '../../../environments/environment';
-import { IBrochureService, transformItemList } from '../../lib';
+import { transformItemList } from '../../lib';
 import { tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProchureService implements IBrochureService {
+export class ProchureService {
 
   constructor() { }
 

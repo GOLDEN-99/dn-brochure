@@ -1,21 +1,22 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { BROCHURE_TOKEN, exporter } from '../../lib';
-import { ActivatedRoute } from '@angular/router';
-import { ProchureService } from '../../service/prochure/prochure.service';
-import { TItem } from '../../types';
+import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
+import { ProchureComponent } from "../../components/prochure/prochure.component";
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TBorchureHead, TColor, TGroupItemList, TItem, TItemList, TMaybe, TSupplier } from '../../types';
+import { exporter, transformItemList } from '../../lib';
+import { map, tap } from 'rxjs';
 import { ToastService } from '../../service/toast/toast.service';
-import { ProchureComponent } from '../../components/prochure/prochure.component';
 import { PromotionPipe } from '../../pipe/promotion/promotion-pipe.pipe';
+import { ProchureService } from '../../service/prochure/prochure.service';
 
 @Component({
-  selector: 'app-base-brochure',
-  imports: [ProchureComponent, PromotionPipe],
-  templateUrl: './base-brochure.component.html',
-  styleUrl: './base-brochure.component.scss',
+    selector: 'app-prochure-page',
+    imports: [ProchureComponent, RouterLink, PromotionPipe],
+    templateUrl: './prochure-page.component.html',
+    styleUrl: './prochure-page.component.scss'
 })
-export class BaseBrochureComponent implements OnInit {
+export class ProchurePageComponent implements OnInit {
   private route = inject(ActivatedRoute)
-  private brochureSerrv = inject(BROCHURE_TOKEN)
+  private brochureSerrv = inject(ProchureService)
   color = this.brochureSerrv.color
   head = this.brochureSerrv.head
   content = this.brochureSerrv.content
@@ -52,3 +53,5 @@ export class BaseBrochureComponent implements OnInit {
     }
   }
 }
+
+

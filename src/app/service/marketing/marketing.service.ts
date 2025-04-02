@@ -1,14 +1,14 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
-import { TBorchureHead, TColor, TGroupItemList, TItemList, TMarketingParams, TMaybe } from '../../types';
-import { tap } from 'rxjs';
-import { IBrochureService, transformItemList } from '../../lib';
+import { TBorchureHead, TColor, TGroupItemList, TItem, TItemList, TMarketingParams, TMaybe, TPromotionType, TSupplier, TWhole } from '../../types';
+import { Subject, switchMap, tap } from 'rxjs';
+import { transformItemList } from '../../lib';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class MarketingService implements IBrochureService {
+export class MarketingService {
 
   constructor() {
   }

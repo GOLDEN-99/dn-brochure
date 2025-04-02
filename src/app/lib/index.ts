@@ -1,4 +1,3 @@
-export * from './token'
 export * from './pdf'
 export { transformItemList, zoneToColor } from './transformer'
 export { tokenHandler, isBkkHandler, isNewHandler, wholeHandler, promoHandler, idPromotionHandler } from './paramsHandler'
