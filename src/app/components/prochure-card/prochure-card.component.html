@@ -39,7 +39,7 @@
         "
       >
         <div>ราคา</div>
-        <div>{{ priceTier.priceStandard }}</div>
+        <div>{{ priceTier.priceStandard | number : "1.2-2" }}</div>
         <div>บาท</div>
       </div>
     </div>
@@ -59,7 +59,7 @@
         "
       >
         <div>ราคา</div>
-        <div>{{ priceTier.priceSilver }}</div>
+        <div>{{ priceTier.priceSilver | number : "1.2-2" }}</div>
         <div>บาท</div>
       </div>
     </div>
@@ -79,11 +79,17 @@
         "
       >
         <div>ราคา</div>
-        <div>{{ priceTier.priceGold }}</div>
+        <div>{{ priceTier.priceGold | number : "1.2-2" }}</div>
         <div>บาท</div>
       </div>
     </div>
-    <div [className]="static ? 'price static-px-small' : 'price res-px-small'">
+    <div
+      [className]="
+        static
+          ? 'price static-px-small static-round-large'
+          : 'price res-px-small res-round-large'
+      "
+    >
       <div [className]="static ? 'static-price-text' : 'res-price-text'">
         ราคา
       </div>
@@ -94,7 +100,7 @@
             : 'res-price-text text-center'
         "
       >
-        {{ priceTier.price }}
+        {{ priceTier.price | number : "1.2-2" }}
       </div>
       <div
         [className]="

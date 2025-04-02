@@ -14,7 +14,7 @@ export class ProchureService {
 
   head = signal<TMaybe<TBorchureHead>>(null)
   content = signal<TGroupItemList>([[]])
-  maxItem = computed(() => this.head()?.promotionType === 'Hot' ? 6 : 9)
+  maxItem = computed(() => this.head()?.promotionType === 'Hot' ? 8 : 12)
   totalPage = computed(() => [...Array(this.content().length)].map((_, idx) => idx))
   color = computed<TColor>(() => this.head()?.zone === "BKK" ? "purple" : "green")
 
@@ -23,7 +23,7 @@ export class ProchureService {
 
   private setState = ({ wholeName, wholeType, zone, promotionType, promotion, isNewCustomer }: TItemList) => {
     this.head.update(() => ({ wholeName, wholeType, zone, promotionType, isNewCustomer }))
-    const size = promotionType === "Hot" ? 6 : 9
+    const size = promotionType === "Hot" ? 8 : 12
     this.content.update(() => promotion.reduce(transformItemList(size), [[]]))
   }
 
