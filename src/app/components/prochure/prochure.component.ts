@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { ProchureCardComponent } from "../prochure-card/prochure-card.component";
 import { TBorchureHead, TCardProps, TColor, TGroupItemList, TItem, TSupplier, TWhole, TZone } from '../../types';
 import { ProchureService } from '../../service/prochure/prochure.service';
@@ -6,20 +6,23 @@ import { zoneToColor } from '../../lib';
 
 
 @Component({
-    selector: 'app-prochure',
-    imports: [ProchureCardComponent],
-    templateUrl: './prochure.component.html',
-    styleUrl: './prochure.component.scss',
-    encapsulation: ViewEncapsulation.None
+  selector: 'app-prochure',
+  imports: [ProchureCardComponent],
+  templateUrl: './prochure.component.html',
+  styleUrl: './prochure.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class ProchureComponent {
   //props
   itemList = input.required<TItem[]>()
-  size = input.required<6 | 9>()
+  size = input.required<8 | 12>()
   head = input.required<TBorchureHead>()
   isStatic = input(false)
-
+  constructor() {
+    const eff = effect(() => console.log(this.data()))
+  }
   //computed
+  isNewCustomer = computed(() => this.head().isNewCustomer)
   wholeType = computed<TWhole>(() => this.head().wholeType)
   data = computed<TCardProps[]>(() => this.itemList().map((i) => ({ ...i, isFlag: false })))
   zone = computed<TZone>(() => this.head().zone)
@@ -37,12 +40,12 @@ export class ProchureComponent {
     const stat = this.isStatic()
     const len = this.size()
     if (!stat) {
-      if (len === 6) {
+      if (len === 8) {
         return 'content res-prochure-grid item-6'
       }
       return 'content res-prochure-grid item-9'
     }
-    if (len === 6) {
+    if (len === 8) {
       return 'content static item-6'
     }
     return 'content static item-9'

@@ -1,11 +1,19 @@
 @let cardlist = data(); @let static = isStatic();
 
 <div [className]="static ? 'static prochure' : 'prochure'">
-  <img [src]="headerUrl()" alt="prochure header" class="header-image" />
-  <div [className]="static ? 'date-static' : 'date'">
-    {{ date() }}
+  <div style="position: relative">
+    <span [className]="static ? 'customer-label static' : 'customer-label'">
+      {{ isNewCustomer() }}
+    </span>
+    <img
+      [src]="headerUrl()"
+      alt="prochure header"
+      [className]="static ? 'header-image static' : 'header-image'"
+    />
+    <span [className]="static ? 'date-static' : 'date'">
+      {{ date() }}
+    </span>
   </div>
-
   <div [className]="template()">
     @for (card of cardlist; track $index) {
 
@@ -13,5 +21,9 @@
     }
   </div>
 
-  <img [src]="footerUrl()" alt="prochure footer" class="footer-image" />
+  <img
+    [src]="footerUrl()"
+    alt="prochure footer"
+    [className]="static ? 'footer-image static' : 'footer-image'"
+  />
 </div>
