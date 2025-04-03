@@ -47,7 +47,7 @@ export type TCnType = 'whole' | 'some'
 export interface ICnForm {
     wholeCode: FormControl
     wholeName: FormControl
-    transfer: FormControl
+    transfer: FormControl<TTransfer | null>
     reason: FormControl<TCnSpecialReason | null>
     result: FormControl<TCnResult | null>
     ws: FormControl

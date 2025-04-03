@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ICnForm, TCnResult, TCnSpecialReason } from '../../types/cn.type';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { cnReasonRef } from '../../lib/cn/cnRef';
+import { cnReasonRef, transferRef } from '../../lib/cn/cnRef';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ export class FormService {
   constructor() {
     this.baseForm.controls.transfer.valueChanges
       .pipe(takeUntilDestroyed())
-      .subscribe((trans) => this.isTransfer.update(() => trans == 0))
+      .subscribe((trans) => this.isTransfer.update(() => trans === 'โอนคืน'))
 
     this.baseForm.controls.reason.valueChanges
       .pipe(takeUntilDestroyed())
@@ -25,13 +25,14 @@ export class FormService {
     wholeCode: this.fb.nonNullable.control(""),
     wholeName: this.fb.nonNullable.control(""),
     ws: this.fb.nonNullable.control(""),
-    transfer: this.fb.control<'0' | '1'>('1'),
-    reason: this.fb.control<TCnSpecialReason>('คลังส่งขาด'),
-    result: this.fb.control<TCnResult>('ลูกค้ารับ'),
+    transfer: this.fb.control('ไม่โอนคืน'),
+    reason: this.fb.control('คลังส่งขาด'),
+    result: this.fb.control('ลูกค้ารับ'),
     note: this.fb.control(""),
     cnType: this.fb.control(null)
   })
 
+  possibleBank = signal([...transferRef])
   possibleReason = signal([...cnReasonRef])
 
   private provideResult = (reason: TCnSpecialReason | null): TCnResult[] => {

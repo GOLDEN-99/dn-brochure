@@ -1,15 +1,11 @@
 import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ICnForm, TBank } from '../../../../types/cn.type';
-import { TMapForm } from '../../../../types';
+import { ReactiveFormsModule } from '@angular/forms';
 import { TransferFormComponent } from "../transfer-form/transfer-form.component";
-import { tap } from 'rxjs';
 import { FormService } from '../../../../service/form/form.service';
-import { BankDropdownComponent } from "../../dropdown/bank-dropdown/bank-dropdown.component";
 
 @Component({
   selector: 'app-base-form',
-  imports: [ReactiveFormsModule, TransferFormComponent, BankDropdownComponent],
+  imports: [ReactiveFormsModule, TransferFormComponent],
   templateUrl: './base-form.component.html',
   styleUrl: './base-form.component.scss'
 })
@@ -20,10 +16,10 @@ export class BaseFormComponent implements OnInit {
   }
 
   private formServ = inject(FormService)
-  private fb = inject(FormBuilder)
 
   isTransfer = this.formServ.isTransfer
   cnForm = this.formServ.baseForm
+  bankOpt = this.formServ.possibleBank
   reasonOpt = this.formServ.possibleReason
   resultOpt = this.formServ.possibleResult
 

@@ -22,7 +22,22 @@
     <label for="ws">เลขที่ WS</label>
     <input type="text" name="ws" id="ws" formControlName="ws" />
   </div>
-  <app-bank-dropdown [control]="cnForm.controls.transfer" />
+  <div class="mb-3">
+    <label for="transfer">สถานะ</label>
+    <select
+      formControlName="transfer"
+      name="transfer"
+      id="transfer"
+      class="form-select"
+    >
+      <option disabled>กรุณาเลือก</option>
+      @for (opt of bankOpt(); track $index) {
+      <option [value]="opt">
+        {{ opt }}
+      </option>
+      }
+    </select>
+  </div>
   @if (isTransfer()) {
   <app-transfer-form />
   }

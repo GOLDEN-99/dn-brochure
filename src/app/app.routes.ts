@@ -7,6 +7,8 @@ import { BaseBrochureComponent } from './pages/base-brochure/base-brochure.compo
 import { BROCHURE_TOKEN } from './lib';
 import { ProchureService } from './service/prochure/prochure.service';
 import { MarketingService } from './service/marketing/marketing.service';
+import { CnComponent } from './pages/cn/cn.component';
+import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
 
 export const routes: Routes = [
     {
@@ -23,6 +25,28 @@ export const routes: Routes = [
         resolve: { itemList: marketingResolver },
         providers: [
             { provide: BROCHURE_TOKEN, useExisting: MarketingService }
+        ]
+    },
+    {
+        path: "cn",
+        component: CnLayoutComponent,
+        children: [
+            {
+                path: "",
+                component: CnComponent
+            },
+            {
+                path: "all",
+                loadComponent: () => import('./pages/cn-all/cn-all.component').then(r => r.CnAllComponent)
+            },
+            {
+                path: "some",
+                loadComponent: () => import('./pages/cn-some/cn-some.component').then(r => r.CnSomeComponent)
+            },
+            {
+                path: "upload",
+                loadComponent: () => import('./pages/cn-upload/cn-upload.component').then(r => r.CnUploadComponent)
+            },
         ]
     },
     {
