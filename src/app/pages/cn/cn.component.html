@@ -1,0 +1,9 @@
+@let form = formServ.baseForm;
+<app-base-form />
+<button
+  class="btn btn-primary w-100"
+  (click)="onClick()"
+  [disabled]="form.invalid || !form.touched"
+>
+  ถัดไป
+</button>
