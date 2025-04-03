@@ -1,0 +1,24 @@
+<ng-container [formGroup]="parentCtrl.controls.transferData">
+  <div class="app-form-field">
+    <label for="bank">ธนาคาร</label>
+    <input type="text" name="bank" id="bank" formControlName="bank" />
+  </div>
+  <div class="app-form-field">
+    <label for="accountNumber">เลขที่บัญชี</label>
+    <input
+      type="text"
+      name="accountNumber"
+      id="accountNumber"
+      formControlName="accountNumber"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="accountName">ชื่อบัญชี</label>
+    <input
+      type="text"
+      name="accountName"
+      id="accountName"
+      formControlName="accountName"
+    />
+  </div>
+</ng-container>
