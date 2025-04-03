@@ -1,0 +1,90 @@
+<form [formGroup]="cnForm">
+  <h1 class="text-center">แจ้ง CN สินค้า</h1>
+  <div class="app-form-field">
+    <label for="wholeCode">รหัสร้านค้า</label>
+    <input
+      type="text"
+      name="wholeCode"
+      id="wholeCode"
+      formControlName="wholeCode"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="wholeName">ชื่อร้านค้า</label>
+    <input
+      type="text"
+      name="wholeName"
+      id="wholeName"
+      formControlName="wholeName"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="ws">เลขที่ WS</label>
+    <input type="text" name="ws" id="ws" formControlName="ws" />
+  </div>
+  <app-bank-dropdown [control]="cnForm.controls.transfer" />
+  @if (isTransfer()) {
+  <app-transfer-form />
+  }
+  <div class="mb-3">
+    <label for="reason">สาเหตุ</label>
+    <select
+      formControlName="reason"
+      name="reason"
+      id="reason"
+      class="form-select"
+    >
+      <option disabled>กรุณาเลือก</option>
+      @for (opt of reasonOpt(); track $index) {
+      <option [value]="opt">
+        {{ opt }}
+      </option>
+      }
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="result">เลือกเพิ่มเติม</label>
+    <select
+      formControlName="result"
+      name="result"
+      id="result"
+      class="form-select"
+    >
+      <option disabled>กรุณาเลือก</option>
+      @for (opt of resultOpt(); track $index) {
+      <option [value]="opt">
+        {{ opt }}
+      </option>
+      }
+    </select>
+  </div>
+  <div class="app-form-field">
+    <label for="note">หมายเหตุ</label>
+    <input type="text" name="note" id="note" formControlName="note" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">เลือก cn บางรายการ/ทั้งบิล</label>
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="cnType"
+        id="cnSome"
+        formControlName="cnType"
+        value="some"
+      />
+      <label class="form-check-label" for="cnSome"> cn บางรายการ </label>
+    </div>
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="cnType"
+        id="cnWhole"
+        value="whole"
+        formControlName="cnType"
+      />
+      <label class="form-check-label" for="cnWhole"> cn ทั้งบิล </label>
+    </div>
+  </div>
+</form>
