@@ -31,7 +31,7 @@ export class ProchureComponent {
     if (!fromDate || !toDate) {
       return this.getDefaultDate()
     }
-    return `${this.formateDate(fromDate)} - ${this.formateDate(toDate)}`
+    return `${this.formateDate(this.addHour(fromDate))} - ${this.formateDate(this.addHour(toDate))}`
   })
   template = computed(() => {
     const stat = this.isStatic()
@@ -100,6 +100,12 @@ export class ProchureComponent {
 
   private convertYear(year: number) {
     return year + 543
+  }
+
+  private addHour = (date: string) => {
+    const unix = new Date(date).getTime()
+    const next = 7 * 60 * 60 * 1000
+    return new Date(unix + next).toISOString()
   }
 
 }
