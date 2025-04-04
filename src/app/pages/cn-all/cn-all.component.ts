@@ -1,11 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { UploaderComponent } from "../../components/uploader/uploader.component";
+import { FormService } from '../../service/form/form.service';
+import { TMaybe } from '../../types';
 
 @Component({
   selector: 'app-cn-all',
-  imports: [],
+  imports: [UploaderComponent],
   templateUrl: './cn-all.component.html',
   styleUrl: './cn-all.component.scss'
 })
 export class CnAllComponent {
+  private formServ = inject(FormService)
+  file: TMaybe<File> = null
 
+  submit() {
+    console.log(this.file)
+  }
 }

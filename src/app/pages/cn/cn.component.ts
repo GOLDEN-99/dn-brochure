@@ -15,12 +15,7 @@ export class CnComponent {
   router = inject(Router)
 
   onClick() {
-    const { cnType } = this.formServ.baseForm.getRawValue()
-    if (!cnType) return
-    if (cnType === 'whole') {
-      this.router.navigateByUrl(`cn/upload`)
-    } else {
-      this.router.navigateByUrl(`cn/some`)
-    }
+    const endpoint = this.formServ.endpointNavigation()
+    this.router.navigateByUrl(`cn/${endpoint}`)
   }
 }

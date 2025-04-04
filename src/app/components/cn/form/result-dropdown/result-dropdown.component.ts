@@ -16,6 +16,7 @@ import { FormGroupDirective, ReactiveFormsModule } from '@angular/forms';
 })
 export class ResultDropdownComponent implements OnInit, OnDestroy {
   private formServ = inject(FormService)
+  private fb = this.formServ.fb
   private parent = inject(FormGroupDirective)
   get parentCtrl() {
     return this.parent.form
@@ -23,7 +24,7 @@ export class ResultDropdownComponent implements OnInit, OnDestroy {
   resultOpt = this.formServ.possibleResult
 
   ngOnInit(): void {
-
+    this.parentCtrl.registerControl("result", this.fb.nonNullable.control(""))
   }
 
   ngOnDestroy(): void {

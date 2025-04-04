@@ -1,6 +1,9 @@
 <p>cn-upload works!</p>
 <h1 class="text-center">CN สินค้าทั้งบิล</h1>
-<div class="mb-3">รวมเป็นเงิน ..... api ??</div>
+<div class="mb-3">
+  <label for="amount">จำนวนเงิน</label>
+  <input type="number" name="amount" id="amount" [(value)]="amount" />
+</div>
 <app-uploader (outfile)="file = $event" />
 <div class="btn-wrapper">
   <a routerLink=".." class="btn btn-outline-danger">ย้อนกลับ</a>

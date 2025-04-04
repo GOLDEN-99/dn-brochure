@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ICnForm, TCnResult, TCnSpecialReason } from '../../types/cn.type';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { cnReasonRef, transferRef } from '../../lib/cn/cnRef';
+import { EMPTY, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class FormService {
 
   constructor() { }
 
-  private fb = inject(FormBuilder)
+  fb = inject(FormBuilder)
 
   baseForm = this.fb.group<ICnForm>({
     wholeCode: this.fb.nonNullable.control("", Validators.required),
@@ -47,4 +48,15 @@ export class FormService {
   possibleResult = computed<TCnResult[]>(() => this.provideResult(this.reasonSignal()))
 
   isTransfer = computed(() => this.bankSignal() === 'โอนคืน')
+
+  showCnSignal = toSignal(this.baseForm.controls.cnType?.valueChanges ?? of(null))
+
+  endpointNavigation = computed(() => {
+    const notShowResult = this.notShowResult()
+    const showCn = this.showCnSignal()
+    if (!notShowResult) return 'upload'
+    if (showCn === 'some') return 'some'
+    if (showCn === 'whole') return 'all'
+    return 'upload'
+  })
 }
