@@ -2,12 +2,13 @@
   <div>
     <input
       #fileInput
-      name="file-upload"
+      id="fileInput"
+      name="fileInput"
       type="file"
       style="display: none"
       (change)="onSelectFile($event)"
     />
-    <label for="file-upload" class="me-3">แนบรูปภาพ</label>
+    <label for="fileInput" class="me-3">แนบรูปภาพ</label>
     @if (!preview) {
 
     <button (click)="fileInput.click()" class="btn btn-outline-dark">
