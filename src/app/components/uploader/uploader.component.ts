@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, output, signal } from '@angular/core';
 import { TMaybe } from '../../types';
 
 @Component({
@@ -9,6 +9,7 @@ import { TMaybe } from '../../types';
 })
 export class UploaderComponent {
   preview: TMaybe<string> = null;
+  previewList = signal<string[]>([])
   isUploading = false;
   uploadProgress = 0;
   selectedFile: TMaybe<File> = null;
@@ -37,7 +38,10 @@ export class UploaderComponent {
     this.outfile.emit(file)
     const reader = new FileReader();
     reader.onload = (e) => {
-      this.preview = e.target?.result as string
+      const file = e.target?.result as string
+      console.log(file)
+      this.preview = file
+      this.previewList.update((prev) => [...prev, file])
     };
     reader.readAsDataURL(file);
   }

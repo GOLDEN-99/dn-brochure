@@ -9,7 +9,6 @@
       (change)="onSelectFile($event)"
     />
     <label for="fileInput" class="me-3">แนบรูปภาพ</label>
-    @if (!preview) {
 
     <button (click)="fileInput.click()" class="btn btn-outline-dark">
       <svg
@@ -30,18 +29,20 @@
         />
       </svg>
     </button>
-    }
+
     <!---->
     @if (preview) {
     <button (click)="clearSelection()" class="btn btn-warning">ยกเลิก</button>
     }
     <!---->
   </div>
-  @if (preview) {
+  @let lst = previewList(); @if (lst.length !== 0) {
+  <!--  -->
+  @for (item of lst; track $index) {
   <img
-    [src]="preview"
+    [src]="item"
     alt="receipt image"
     style="max-width: 80%; align-self: center"
   />
-  }
+  } }
 </div>

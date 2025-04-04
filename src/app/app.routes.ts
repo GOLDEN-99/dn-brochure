@@ -28,7 +28,7 @@ export const routes: Routes = [
         ]
     },
     {
-        path: "cn",
+        path: "cn/:saleCode/:wholeCode/:wholeNumb",
         component: CnLayoutComponent,
         children: [
             {

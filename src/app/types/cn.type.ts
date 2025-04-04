@@ -55,3 +55,22 @@ export interface ICnForm {
     result?: FormControl<TCnResult | null>
     cnType?: FormControl<TCnType | null>
 }
+
+
+export type TCNQueryParams = {
+    saleCode: string
+    wholeCode: string
+    wholeNumb: string
+}
+
+export type TWholeItem = {
+    wholeCode: string //"2981",
+    wholeName: string // "ร้านยาวีแคร์ จ.นครปฐม",
+    bankNumb: string // "8830398004",
+    bankCode: string // "3",
+    bankAcName: string // " คุณธัญภรณ์ กิจทวี ",
+    code: string // "KTB",
+    name: string // "กรุงไทย",
+    wholeNumb: string // "25035799",
+    wholeDate: string // "03/12/2025 00:00:00"
+}
