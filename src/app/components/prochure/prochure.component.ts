@@ -28,7 +28,9 @@ export class ProchureComponent {
     const head = this.head()
     const toDate = head?.toDate
     const fromDate = head?.fromDate
+    console.log(fromDate, toDate)
     if (!fromDate || !toDate) {
+      console.log('fallback')
       return this.getDefaultDate()
     }
     return `${this.formateDate(this.addHour(fromDate))} - ${this.formateDate(this.addHour(toDate))}`
