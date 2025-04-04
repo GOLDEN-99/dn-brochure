@@ -2,10 +2,9 @@ import { inject } from '@angular/core';
 import { RedirectCommand, ResolveFn, Router } from '@angular/router';
 import { ProchureService } from '../../service/prochure/prochure.service';
 import { TItemList } from '../../types';
-import { promoTypValidator } from '../../validator';
 import { catchError, EMPTY } from 'rxjs';
 import { ToastService } from '../../service/toast/toast.service';
-import { promoHandler, wholeHandler } from '../../lib';
+import { promoHandler } from '../../lib';
 import { wholeCodeHandler } from '../../lib/paramsHandler';
 
 export const promotionResolver: ResolveFn<TItemList> = (route, state) => {
