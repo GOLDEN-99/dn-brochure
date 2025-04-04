@@ -1,8 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { ControlContainer, FormGroup, FormGroupDirective, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormGroupDirective, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TMapForm } from '../../../../types';
 import { TBank } from '../../../../types/cn.type';
-import { CNF_TOKEN } from '../../../../lib';
 
 @Component({
   selector: 'app-transfer-form',
@@ -17,7 +16,6 @@ import { CNF_TOKEN } from '../../../../lib';
 export class TransferFormComponent implements OnInit, OnDestroy {
   parent = inject(FormGroupDirective)
   get parentCtrl() {
-    console.log(this.parent)
     return this.parent.form as any
   }
   private nnfb = inject(NonNullableFormBuilder)
@@ -27,9 +25,9 @@ export class TransferFormComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
     this.parentCtrl.registerControl('transferData', this.nnfb.group<TMapForm<TBank>>({
-      accountName: this.nnfb.control(''),
-      accountNumber: this.nnfb.control(''),
-      bank: this.nnfb.control("")
+      accountName: this.nnfb.control('', Validators.required),
+      accountNumber: this.nnfb.control('', Validators.required),
+      bank: this.nnfb.control("", Validators.required)
     }))
   }
   ngOnDestroy(): void {

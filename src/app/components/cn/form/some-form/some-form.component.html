@@ -1,1 +1,43 @@
-<p>some-form works!</p>
+<h1>รายการสินค้า</h1>
+<p>จำนวน {{ 5 }} รายการ</p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th style="width: 10%"></th>
+      <th style="width: 60%">รหัสและชื่อสินค้า</th>
+      <th>ราคา (บาท)</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of productItemList; track $index) {
+    <tr>
+      <td><input type="checkbox" /></td>
+      <td>{{ item.productName }}</td>
+      <td>{{ item.price | number : "1.2-2" }}</td>
+    </tr>
+    }
+  </tbody>
+</table>
+
+<div class="app-form-field">
+  <label for="other">สินค้าอื่นๆ</label>
+  <input type="text" id="other" name="other" />
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th style="width: 10%"></th>
+      <th>รหัสและชื่อสินค้า</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of productItemList; track $index) {
+    <tr>
+      <td><input type="checkbox" /></td>
+      <td>{{ item.productName }}</td>
+    </tr>
+    }
+  </tbody>
+</table>

@@ -1,7 +1,7 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ICnForm, TCnResult, TCnSpecialReason } from '../../types/cn.type';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { cnReasonRef, transferRef } from '../../lib/cn/cnRef';
 
 @Injectable({
@@ -9,33 +9,25 @@ import { cnReasonRef, transferRef } from '../../lib/cn/cnRef';
 })
 export class FormService {
 
-  constructor() {
-    this.baseForm.controls.transfer.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe((trans) => this.isTransfer.update(() => trans === 'โอนคืน'))
-
-    this.baseForm.controls.reason.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe(reason => this.possibleResult.update(() => this.provideResult(reason)))
-  }
+  constructor() { }
 
   private fb = inject(FormBuilder)
 
   baseForm = this.fb.group<ICnForm>({
-    wholeCode: this.fb.nonNullable.control(""),
-    wholeName: this.fb.nonNullable.control(""),
-    ws: this.fb.nonNullable.control(""),
-    transfer: this.fb.control('ไม่โอนคืน'),
-    reason: this.fb.control('คลังส่งขาด'),
-    result: this.fb.control('ลูกค้ารับ'),
+    wholeCode: this.fb.nonNullable.control("", Validators.required),
+    wholeName: this.fb.nonNullable.control("", Validators.required),
+    ws: this.fb.nonNullable.control("", Validators.required),
+    transfer: this.fb.control('ไม่โอนคืน', Validators.required),
+    reason: this.fb.control('คลังส่งขาด', Validators.required),
+    // result: this.fb.control('ลูกค้ารับ', Validators.required),
     note: this.fb.control(""),
-    cnType: this.fb.control(null)
+    // cnType: this.fb.control(null, Validators.required)
   })
 
   possibleBank = signal([...transferRef])
   possibleReason = signal([...cnReasonRef])
 
-  private provideResult = (reason: TCnSpecialReason | null): TCnResult[] => {
+  private provideResult = (reason: TCnSpecialReason | null | undefined): TCnResult[] => {
     switch (reason) {
       case 'คลังส่งเกิน': return ['ลูกค้ารับ', 'ลูกค้าไม่รับ']
       case 'คลังส่งขาด': return ['ลูกค้ารับ', 'ลูกค้าไม่รับ']
@@ -45,8 +37,14 @@ export class FormService {
     }
   }
 
-  possibleResult = signal<TCnResult[]>([])
+  private bankSignal = toSignal(this.baseForm.controls.transfer.valueChanges)
+  private reasonSignal = toSignal(this.baseForm.controls.reason.valueChanges)
+  private willNotShowResult(reason: unknown) {
+    if (typeof reason !== 'string') return false
+    return !['ลดผิด', 'โอนซ้ำ', 'โอนผิด'].includes(reason)
+  }
+  notShowResult = computed(() => this.willNotShowResult(this.reasonSignal()))
+  possibleResult = computed<TCnResult[]>(() => this.provideResult(this.reasonSignal()))
 
-  isTransfer = signal(false)
-
+  isTransfer = computed(() => this.bankSignal() === 'โอนคืน')
 }

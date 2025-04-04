@@ -57,49 +57,14 @@
       }
     </select>
   </div>
-  <div class="mb-3">
-    <label for="result">เลือกเพิ่มเติม</label>
-    <select
-      formControlName="result"
-      name="result"
-      id="result"
-      class="form-select"
-    >
-      <option disabled>กรุณาเลือก</option>
-      @for (opt of resultOpt(); track $index) {
-      <option [value]="opt">
-        {{ opt }}
-      </option>
-      }
-    </select>
-  </div>
+  @if (notShow()) {
+
+  <app-result-dropdown />
+
+  <app-cn-type-form />
+  }
   <div class="app-form-field">
     <label for="note">หมายเหตุ</label>
     <input type="text" name="note" id="note" formControlName="note" />
-  </div>
-  <div class="mb-3">
-    <label class="form-label">เลือก cn บางรายการ/ทั้งบิล</label>
-    <div class="form-check">
-      <input
-        class="form-check-input"
-        type="radio"
-        name="cnType"
-        id="cnSome"
-        formControlName="cnType"
-        value="some"
-      />
-      <label class="form-check-label" for="cnSome"> cn บางรายการ </label>
-    </div>
-    <div class="form-check">
-      <input
-        class="form-check-input"
-        type="radio"
-        name="cnType"
-        id="cnWhole"
-        value="whole"
-        formControlName="cnType"
-      />
-      <label class="form-check-label" for="cnWhole"> cn ทั้งบิล </label>
-    </div>
   </div>
 </form>

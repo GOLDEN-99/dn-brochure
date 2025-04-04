@@ -48,10 +48,10 @@ export interface ICnForm {
     wholeCode: FormControl
     wholeName: FormControl
     transfer: FormControl<TTransfer | null>
-    reason: FormControl<TCnSpecialReason | null>
-    result: FormControl<TCnResult | null>
+    transferData?: FormGroup<TMapForm<TBank>>
     ws: FormControl
     note: FormControl
-    transferData?: FormGroup<TMapForm<TBank>>
-    cnType: FormControl<TCnType | null>
+    reason: FormControl<TCnSpecialReason | null>
+    result?: FormControl<TCnResult | null>
+    cnType?: FormControl<TCnType | null>
 }

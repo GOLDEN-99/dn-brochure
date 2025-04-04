@@ -1,0 +1,27 @@
+<ng-container [formGroup]="parentCtrl">
+  <div class="mb-3">
+    <label class="form-label">เลือก cn บางรายการ/ทั้งบิล</label>
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="cnType"
+        id="cnSome"
+        formControlName="cnType"
+        value="some"
+      />
+      <label class="form-check-label" for="cnSome"> cn บางรายการ </label>
+    </div>
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="cnType"
+        id="cnWhole"
+        value="whole"
+        formControlName="cnType"
+      />
+      <label class="form-check-label" for="cnWhole"> cn ทั้งบิล </label>
+    </div>
+  </div>
+</ng-container>

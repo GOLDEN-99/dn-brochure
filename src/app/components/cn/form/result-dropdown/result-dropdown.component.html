@@ -1,0 +1,18 @@
+<ng-container [FormGroup]="">
+  <div class="mb-3">
+    <label for="result">เลือกเพิ่มเติม</label>
+    <select
+      formControlName="result"
+      name="result"
+      id="result"
+      class="form-select"
+    >
+      <option disabled>กรุณาเลือก</option>
+      @for (opt of resultOpt(); track $index) {
+      <option [value]="opt">
+        {{ opt }}
+      </option>
+      }
+    </select>
+  </div>
+</ng-container>
