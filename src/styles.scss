@@ -33,3 +33,13 @@ $font-family-base: $font-family-sans-serif;
     height: 297mm;
   }
 }
+
+.app-form-field {
+  @extend .mb-3;
+  label {
+    @extend .form-label;
+  }
+  input {
+    @extend .form-control;
+  }
+}
