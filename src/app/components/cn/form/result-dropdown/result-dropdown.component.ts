@@ -1,10 +1,10 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormService } from '../../../../service/form/form.service';
-import { FormGroupDirective } from '@angular/forms';
+import { FormGroupDirective, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-result-dropdown',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './result-dropdown.component.html',
   styleUrl: './result-dropdown.component.scss',
   viewProviders: [
