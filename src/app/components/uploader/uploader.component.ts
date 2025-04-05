@@ -1,8 +1,8 @@
-import { Component, inject, output, signal } from '@angular/core';
-import { TMaybe } from '../../types';
+import { Component, inject, signal } from '@angular/core';
 import { UploadImageService } from '../../service/cn-upload-image/upload-image.service';
 import { CnApiService } from '../../service/cn-api/cn-api.service';
 import { ToastService } from '../../service/toast/toast.service';
+import { LoadingService } from '../../service/loading/loading.service';
 
 @Component({
   selector: 'app-uploader',
@@ -12,7 +12,8 @@ import { ToastService } from '../../service/toast/toast.service';
 })
 export class UploaderComponent {
   private cnApi = inject(CnApiService)
-  toast = inject(ToastService)
+  private toast = inject(ToastService)
+  private loadingServ = inject(LoadingService)
   wholeNumb = this.cnApi.paramsSignal()?.wholeNumb
   private uploadServ = inject(UploadImageService)
   fileList = this.uploadServ.body
@@ -22,6 +23,7 @@ export class UploaderComponent {
       return
     }
     this.disableRemove.update(() => true)
+    this.loadingServ.startLoad()
     this.uploadServ.uploadSingle({ wholeNumb: this.wholeNumb, passWord: "", img }, index).subscribe({
       next: () => {
         this.toast.success("อัพโหลดสำเร็จ")
@@ -31,7 +33,10 @@ export class UploaderComponent {
         console.log(err)
         this.toast.danger("มีข้อผิดพลาด")
       },
-      complete: () => this.disableRemove.update(() => false)
+      complete: () => {
+        this.disableRemove.update(() => false)
+        this.loadingServ.endLoad()
+      }
     })
   }
 
@@ -43,6 +48,7 @@ export class UploaderComponent {
     }
     console.log("upload")
     this.disableRemove.update(() => true)
+    this.loadingServ.startLoad()
     this.uploadServ.upload({ wholeNumb: this.wholeNumb, passWord: "" }).subscribe({
       next: () => {
         this.toast.success("อัพโหลดสำเร็จ")
@@ -52,7 +58,10 @@ export class UploaderComponent {
         console.log(err)
         this.toast.danger("มีข้อผิดพลาด")
       },
-      complete: () => this.disableRemove.update(() => false)
+      complete: () => {
+        this.disableRemove.update(() => false)
+        this.loadingServ.endLoad()
+      }
     })
   }
 
@@ -83,6 +92,7 @@ export class UploaderComponent {
 
   disableRemove = signal(false)
   hasUpload = signal(false)
+
   removeImage(idx: number) {
     this.disableRemove.update(() => true)
     this.uploadServ.remove(idx)

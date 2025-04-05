@@ -36,21 +36,14 @@
   <!---->
   @if (lst.length !== 0) {
   <!--  -->
-  <div class="d-flex" style="gap: 16px; padding: 16px; flex-wrap: wrap">
+  <div class="preview-container">
     @for (item of lst; track $index) {
-    <div style="position: relative">
-      <img [src]="item.img" alt="receipt image" style="max-height: 160px" />
+    <div class="img-wrapper">
+      <img [src]="item.img" alt="receipt image" />
       @if (item.path === null) {
       <button
         [disabled]="disableRemove()"
         (click)="removeImage($index)"
-        style="
-          position: absolute;
-          padding: 4px;
-          box-sizing: border-box;
-          z-index: 1000;
-          translate: -8px -8px;
-        "
         class="btn btn-close rounded-circle"
       ></button>
       }
