@@ -1,33 +1,38 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { TMaybe } from '../../types';
-import { TCNQueryParams, TWholeItem } from '../../types/cn.type';
-import { catchError, Subject, switchMap, throwError } from 'rxjs';
+import { TCNQueryParams, TCreateReq, TWholeItem } from '../../types/cn.type';
+import { catchError, Subject, switchMap, tap, throwError } from 'rxjs';
+import { CnOrderService } from '../cn-order/cn-order.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CnApiService {
 
-  constructor() {
-    this.params$.pipe(switchMap(this.getWholeItem), catchError((err) => throwError(() => err))).subscribe({
-      next: (item) => this.wholeItemData.update(() => item)
-    })
-  }
+  constructor() { }
 
   private api = inject(ApiService)
-  private url = "https://api.drugnetcenter.com/ReturnRequest"
+  private orderServ = inject(CnOrderService)
+  private url = "https://sandbox.dn.drugnetcenter.com/ReturnRequest"
   wholeItemData = signal<TMaybe<TWholeItem>>(null)
 
   private params$ = new Subject<TCNQueryParams>()
 
-  private getWholeItem = ({ wholeCode, saleCode, wholeNumb }: TCNQueryParams) => this.api.get<TWholeItem>(`${this.url}/WholeCode`, {
-    params: {
-      SaleCode: saleCode, WholeCode: wholeCode, WholeNumb: wholeNumb
-    }
-  })
+  paramsSignal = signal<TMaybe<TCNQueryParams>>(null)
+
+  getWholeItem = ({ wholeCode, saleCode, wholeNumb }: TCNQueryParams) => {
+    this.paramsSignal.update(() => ({ wholeCode, wholeNumb, saleCode }))
+    return this.api.get<TWholeItem>(`${this.url}/GetWhole`, {
+      params: {
+        SaleCode: saleCode, WholeCode: wholeCode, WholeNumb: wholeNumb
+      }
+    }).pipe(tap(() => this.orderServ.fetch(wholeNumb)), tap(res => this.wholeItemData.update(() => res)))
+  }
 
   search(q: TCNQueryParams) {
     this.params$.next(q)
   }
+
+  submit = (req: TCreateReq) => this.api.post(`${this.url}/CreateWholeRequest`, req)
 }
