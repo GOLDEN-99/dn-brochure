@@ -9,6 +9,7 @@ import { ProchureService } from './service/prochure/prochure.service';
 import { MarketingService } from './service/marketing/marketing.service';
 import { CnComponent } from './pages/cn/cn.component';
 import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
+import { cnResolver } from './resolvers/cn/cn.resolver';
 
 export const routes: Routes = [
     {
@@ -30,18 +31,23 @@ export const routes: Routes = [
     {
         path: "cn/:saleCode/:wholeCode/:wholeNumb",
         component: CnLayoutComponent,
+        resolve: { wholeItem: cnResolver },
         children: [
             {
                 path: "",
                 component: CnComponent
             },
             {
-                path: "all",
+                path: "whole",
                 loadComponent: () => import('./pages/cn-all/cn-all.component').then(r => r.CnAllComponent)
             },
             {
                 path: "some",
                 loadComponent: () => import('./pages/cn-some/cn-some.component').then(r => r.CnSomeComponent)
+            },
+            {
+                path: "some/detail",
+                loadComponent: () => import('./pages/cn-some-detail/cn-some-detail.component').then(r => r.CnSomeDetailComponent)
             },
             {
                 path: "upload",
