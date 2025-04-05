@@ -1,4 +1,4 @@
-<div class="mb-3" style="display: flex; flex-direction: column; gap: 16px">
+<div class="mb-3 uploader">
   <div>
     <input
       #fileInput
@@ -10,7 +10,7 @@
     />
     <label for="fileInput" class="me-3">แนบรูปภาพ</label>
 
-    <button (click)="fileInput.click()" class="btn btn-outline-dark">
+    <button (click)="fileInput.click()" class="btn btn-outline-dark me-3">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
@@ -31,18 +31,37 @@
     </button>
 
     <!---->
-    @if (preview) {
-    <button (click)="clearSelection()" class="btn btn-warning">ยกเลิก</button>
-    }
-    <!---->
   </div>
-  @let lst = previewList(); @if (lst.length !== 0) {
+  @let lst = fileList();
+  <!---->
+  @if (lst.length !== 0) {
   <!--  -->
-  @for (item of lst; track $index) {
-  <img
-    [src]="item"
-    alt="receipt image"
-    style="max-width: 80%; align-self: center"
-  />
+  <div class="d-flex" style="gap: 16px; padding: 16px; flex-wrap: wrap">
+    @for (item of lst; track $index) {
+    <div style="position: relative">
+      <img [src]="item.img" alt="receipt image" style="max-height: 160px" />
+      @if (item.path === null) {
+      <button
+        [disabled]="disableRemove()"
+        (click)="removeImage($index)"
+        style="
+          position: absolute;
+          padding: 4px;
+          box-sizing: border-box;
+          z-index: 1000;
+          translate: -8px -8px;
+        "
+        class="btn btn-close rounded-circle"
+      ></button>
+      }
+    </div>
+    }
+  </div>
+  @if (!hasUpload()) {
+  <div>
+    <button class="btn btn-outline-primary w-100" (click)="uploadAll()">
+      อัพโหลดทั้งหมด
+    </button>
+  </div>
   } }
 </div>

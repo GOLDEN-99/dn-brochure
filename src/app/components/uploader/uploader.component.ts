@@ -1,5 +1,8 @@
-import { Component, output, signal } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { TMaybe } from '../../types';
+import { UploadImageService } from '../../service/cn-upload-image/upload-image.service';
+import { CnApiService } from '../../service/cn-api/cn-api.service';
+import { ToastService } from '../../service/toast/toast.service';
 
 @Component({
   selector: 'app-uploader',
@@ -8,20 +11,57 @@ import { TMaybe } from '../../types';
   styleUrl: './uploader.component.scss'
 })
 export class UploaderComponent {
-  preview: TMaybe<string> = null;
-  previewList = signal<string[]>([])
-  isUploading = false;
-  uploadProgress = 0;
-  selectedFile: TMaybe<File> = null;
-  outfile = output<TMaybe<File>>()
+  private cnApi = inject(CnApiService)
+  toast = inject(ToastService)
+  wholeNumb = this.cnApi.paramsSignal()?.wholeNumb
+  private uploadServ = inject(UploadImageService)
+  fileList = this.uploadServ.body
+  uploadSingle(img: string | string, index: number) {
+    if (!this.wholeNumb) {
+      this.toast.danger("เกิดข้อผิดพลาด ลองเข้าใหม่อีกครั้ง")
+      return
+    }
+    this.disableRemove.update(() => true)
+    this.uploadServ.uploadSingle({ wholeNumb: this.wholeNumb, passWord: "", img }, index).subscribe({
+      next: () => {
+        this.toast.success("อัพโหลดสำเร็จ")
+        this.hasUpload.update(() => true)
+      },
+      error: (err) => {
+        console.log(err)
+        this.toast.danger("มีข้อผิดพลาด")
+      },
+      complete: () => this.disableRemove.update(() => false)
+    })
+  }
+
+  uploadAll() {
+    console.log('click')
+    if (!this.wholeNumb) {
+      this.toast.danger("เกิดข้อผิดพลาด ลองเข้าใหม่อีกครั้ง")
+      return
+    }
+    console.log("upload")
+    this.disableRemove.update(() => true)
+    this.uploadServ.upload({ wholeNumb: this.wholeNumb, passWord: "" }).subscribe({
+      next: () => {
+        this.toast.success("อัพโหลดสำเร็จ")
+        this.hasUpload.update(() => true)
+      },
+      error: (err) => {
+        console.log(err)
+        this.toast.danger("มีข้อผิดพลาด")
+      },
+      complete: () => this.disableRemove.update(() => false)
+    })
+  }
+
   clearSelection() {
-    this.preview = null
-    this.selectedFile = null
-    this.uploadProgress = 0;
-    this.outfile.emit(null)
+    this.uploadServ.clear()
   }
 
   onSelectFile(e: Event) {
+    console.log(e)
     const input = e.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.handleFile(input.files[0]);
@@ -33,16 +73,19 @@ export class UploaderComponent {
       alert('Please select an image file');
       return;
     }
-
-    this.selectedFile = file
-    this.outfile.emit(file)
     const reader = new FileReader();
     reader.onload = (e) => {
       const file = e.target?.result as string
-      console.log(file)
-      this.preview = file
-      this.previewList.update((prev) => [...prev, file])
+      this.uploadServ.appendFile(file)
     };
     reader.readAsDataURL(file);
+  }
+
+  disableRemove = signal(false)
+  hasUpload = signal(false)
+  removeImage(idx: number) {
+    this.disableRemove.update(() => true)
+    this.uploadServ.remove(idx)
+    this.disableRemove.update(() => false)
   }
 }
