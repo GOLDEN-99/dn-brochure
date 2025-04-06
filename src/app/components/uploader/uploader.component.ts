@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
-import { UploadImageService } from '../../service/cn-upload-image/upload-image.service';
-import { CnApiService } from '../../service/cn-api/cn-api.service';
 import { ToastService } from '../../service/toast/toast.service';
 import { LoadingService } from '../../service/loading/loading.service';
+import { CnApiService } from '../../service/cn/cn-api/cn-api.service';
+import { UploadImageService } from '../../service/cn/cn-upload-image/upload-image.service';
 
 @Component({
   selector: 'app-uploader',
@@ -26,16 +26,19 @@ export class UploaderComponent {
     this.loadingServ.startLoad()
     this.uploadServ.uploadSingle({ wholeNumb: this.wholeNumb, passWord: "", img }, index).subscribe({
       next: () => {
-        this.toast.success("อัพโหลดสำเร็จ")
         this.hasUpload.update(() => true)
+        this.disableRemove.update(() => false)
+        this.loadingServ.endLoad()
+        this.toast.success("อัพโหลดสำเร็จ")
       },
       error: (err) => {
         console.log(err)
+        this.disableRemove.update(() => false)
+        this.loadingServ.endLoad()
         this.toast.danger("มีข้อผิดพลาด")
       },
       complete: () => {
-        this.disableRemove.update(() => false)
-        this.loadingServ.endLoad()
+
       }
     })
   }
@@ -51,16 +54,19 @@ export class UploaderComponent {
     this.loadingServ.startLoad()
     this.uploadServ.upload({ wholeNumb: this.wholeNumb, passWord: "" }).subscribe({
       next: () => {
-        this.toast.success("อัพโหลดสำเร็จ")
         this.hasUpload.update(() => true)
+        this.disableRemove.update(() => false)
+        this.loadingServ.endLoad()
+        this.toast.success("อัพโหลดสำเร็จ")
       },
       error: (err) => {
         console.log(err)
+        this.disableRemove.update(() => false)
+        this.loadingServ.endLoad()
         this.toast.danger("มีข้อผิดพลาด")
       },
       complete: () => {
-        this.disableRemove.update(() => false)
-        this.loadingServ.endLoad()
+
       }
     })
   }

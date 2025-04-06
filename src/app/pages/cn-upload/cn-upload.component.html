@@ -1,13 +1,16 @@
-<p>cn-upload works!</p>
 <h1 class="text-center">CN สินค้าทั้งบิล</h1>
 <div class="app-form-field">
   <label for="amount">จำนวนเงิน</label>
   <input type="number" name="amount" id="amount" [(value)]="amount" />
 </div>
-<app-uploader (outfile)="file = $event" />
+<app-uploader />
 <div class="btn-wrapper">
   <a routerLink=".." class="btn btn-outline-danger">ย้อนกลับ</a>
-  <button class="btn btn-primary" [disabled]="file === null" (click)="submit()">
+  <button
+    class="btn btn-primary"
+    (click)="submit()"
+    [disabled]="cannotSubmit()"
+  >
     ยืนยัน
   </button>
 </div>

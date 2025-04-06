@@ -1,0 +1,67 @@
+@let query = params();@let res = wholeRes();
+<!---->
+@if (query && res) {
+<div class="app-form-field">
+  <label for="wholeCode">รหัสร้านค้า</label>
+  <input
+    type="text"
+    id="wholeCode"
+    name="wholeCode"
+    [value]="query.wholeCode"
+    disabled
+  />
+</div>
+<div class="app-form-field">
+  <label for="wholeName">รหัสร้านค้า</label>
+  <input
+    type="text"
+    id="wholeName"
+    name="wholeName"
+    [value]="res.wholeName"
+    disabled
+  />
+</div>
+<div class="app-form-field">
+  <label for="ws">เลขที่ WS</label>
+  <input type="text" id="ws" name="ws" [value]="query.wholeNumb" disabled />
+</div>
+
+<div class="mb-3">
+  <label for="showBank">สถานะ</label>
+  <select
+    name="showBank"
+    id="showBank"
+    [(ngModel)]="showBank"
+    class="form-select"
+  >
+    @for (item of showBankRef; track $index) {
+    <option [ngValue]="item">{{ item }}</option>
+    }
+  </select>
+</div>
+@if (isShow()) {
+<div class="app-form-field">
+  <label for="name">ธนาคาร</label>
+  <input type="text" id="name" name="name" [value]="res.name" disabled />
+</div>
+<div class="app-form-field">
+  <label for="bankNumb">ธนาคาร</label>
+  <input
+    type="text"
+    id="bankNumb"
+    name="bankNumb"
+    [value]="res.bankNumb"
+    disabled
+  />
+</div>
+<div class="app-form-field">
+  <label for="bankAcName">ธนาคาร</label>
+  <input
+    type="text"
+    id="bankAcName"
+    name="bankAcName"
+    [value]="res.bankAcName"
+    disabled
+  />
+</div>
+} }
