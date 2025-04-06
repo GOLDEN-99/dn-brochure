@@ -2,9 +2,9 @@ import { inject } from '@angular/core';
 import { RedirectCommand, ResolveFn, Router } from '@angular/router';
 import { TMaybe } from '../../types';
 import { TWholeItem } from '../../types/cn.type';
-import { CnApiService } from '../../service/cn-api/cn-api.service';
 import { saleCodeHandler, wholeCodeHandler, wholeNumbHandler } from '../../lib/paramsHandler';
 import { ToastService } from '../../service/toast/toast.service';
+import { CnApiService } from '../../service/cn/cn-api/cn-api.service';
 
 export const cnResolver: ResolveFn<TMaybe<TWholeItem>> = (route, state) => {
   const router = inject(Router)

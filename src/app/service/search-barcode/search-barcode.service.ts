@@ -14,7 +14,11 @@ import { TAppGoodItem, TGoodItem } from '../../types/cn.type';
 export class SearchBarcodeService {
 
   constructor() {
-    this.search$.pipe(switchMap(this.fetch)).subscribe({
+    this.search$.pipe(
+      distinctUntilChanged(),
+      debounceTime(300),
+      switchMap(this.fetch)
+    ).subscribe({
       next: data => this.products.update(prev => data ? [data] : []),
       error: (err) => console.log(err)
     })
@@ -30,7 +34,7 @@ export class SearchBarcodeService {
     this.search.update(() => term)
   }
 
-  private search$ = toObservable(this.search).pipe(distinctUntilChanged(), debounceTime(300))
+  private search$ = toObservable(this.search)
 
   private api = inject(ApiService)
 
@@ -41,7 +45,7 @@ export class SearchBarcodeService {
     )
 
   private mapCheck = ({ lot, ...res }: TGoodItem): TAppGoodItem =>
-    ({ ...res, check: false, subTotal: 0, lot: lot.map(l => ({ ...l, check: false, })) })
+    ({ ...res, check: true, subTotal: 0, lot: lot.map(l => ({ ...l, check: false, goodAmou: 0 })) })
 
   products = signal<TAppGoodItem[]>([])
 

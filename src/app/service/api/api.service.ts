@@ -8,7 +8,6 @@ import { catchError, throwError } from 'rxjs';
 })
 export class ApiService {
 
-  constructor() { }
   private https = inject(HttpClient)
 
   get<T>(path: string, opt: TObj = {}) {

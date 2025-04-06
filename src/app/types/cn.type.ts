@@ -42,7 +42,7 @@ export type TBankForm = FormGroup<TMapForm<TBank>>
 
 export type TCnForm = TMapForm<TBaseForm> & { transferData?: TBankForm }
 
-export type TCnType = 'whole' | 'some'
+export type TCnType = TMaybe<'whole' | 'some'>
 
 export interface ICnForm {
     wholeCode: FormControl

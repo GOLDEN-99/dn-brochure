@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-cn-layout',
@@ -7,6 +7,9 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './cn-layout.component.html',
   styleUrl: './cn-layout.component.scss'
 })
-export class CnLayoutComponent {
-
+export class CnLayoutComponent implements OnInit {
+  private route = inject(ActivatedRoute)
+  ngOnInit(): void {
+    this.route.data.subscribe()
+  }
 }

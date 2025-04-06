@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BaseFormComponent } from './base-form.component';
+import { RemarkSelectComponent } from './remark-select.component';
 
-describe('BaseFormComponent', () => {
-  let component: BaseFormComponent;
-  let fixture: ComponentFixture<BaseFormComponent>;
+describe('RemarkSelectComponent', () => {
+  let component: RemarkSelectComponent;
+  let fixture: ComponentFixture<RemarkSelectComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BaseFormComponent]
+      imports: [RemarkSelectComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(BaseFormComponent);
+    fixture = TestBed.createComponent(RemarkSelectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

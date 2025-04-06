@@ -1,16 +1,18 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { ApiService } from '../api/api.service';
-import { TMaybe } from '../../types';
-import { TCNQueryParams, TCreateReq, TWholeItem } from '../../types/cn.type';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { catchError, Subject, switchMap, tap, throwError } from 'rxjs';
 import { CnOrderService } from '../cn-order/cn-order.service';
+import { ApiService } from '../../api/api.service';
+import { TMaybe } from '../../../types';
+import { TCNQueryParams, TCnType, TCreateReq, TReamrk, TWholeItem } from '../../../types/cn.type';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CnApiService {
 
-  constructor() { }
+  constructor() {
+
+  }
 
   private api = inject(ApiService)
   private orderServ = inject(CnOrderService)
@@ -35,4 +37,19 @@ export class CnApiService {
   }
 
   submit = (req: TCreateReq) => this.api.post(`${this.url}/CreateWholeRequest`, req)
+
+  remark = signal<string>("")
+
+  setRemark = (value: string) => this.remark.set(value)
+
+
+
 }
+
+type TEditableState = {
+  remark: string,
+  cnType: TCnType
+  remarkOpt: TReamrk
+}
+
+

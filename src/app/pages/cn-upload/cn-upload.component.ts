@@ -1,8 +1,6 @@
-import { Component, inject, model, signal } from '@angular/core';
+import { Component, computed, inject, model, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UploaderComponent } from "../../components/uploader/uploader.component";
-import { FormService } from '../../service/form/form.service';
-import { TMaybe } from '../../types';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -12,12 +10,12 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './cn-upload.component.scss'
 })
 export class CnUploadComponent {
-  private formServ = inject(FormService)
-  file: TMaybe<File> = null
 
   amount = model(0)
 
+  cannotSubmit = computed(() => this.amount() === 0)
+
   submit() {
-    console.log(this.file)
+
   }
 }
