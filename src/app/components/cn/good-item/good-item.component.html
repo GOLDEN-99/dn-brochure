@@ -1,0 +1,13 @@
+@let i = item();
+<div class="good-item border-bottom">
+  <div>รหัสสินค้า: {{ i.goodCode }}</div>
+  <div>บาร์โค้ด: {{ i.barCode }}</div>
+  <div>ชื่อสินค้า: {{ i.goodName }}</div>
+  <div>หน่วยสินค้า: {{ i.unitDesc }}</div>
+  <div class="good-lot">
+    <div>lot</div>
+    <div class="lot-list">
+      <ng-content />
+    </div>
+  </div>
+</div>
