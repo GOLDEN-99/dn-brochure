@@ -1,0 +1,30 @@
+@let products = productList();
+<div class="app-form-field">
+  <label for="other">สินค้าอื่นๆ</label>
+  <input
+    type="text"
+    id="other"
+    name="other"
+    [(ngModel)]="search"
+    placeholder="ค้นหาจากบาร์โค้ด"
+  />
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th style="width: 10%"></th>
+      <th>รหัสและชื่อสินค้า</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of products; track $index) {
+    <tr>
+      <td>
+        <input type="checkbox" (input)="addItem(item)" />
+      </td>
+      <td>{{ "(" + item.barCode + ") " + item.goodName }}</td>
+    </tr>
+    }
+  </tbody>
+</table>
