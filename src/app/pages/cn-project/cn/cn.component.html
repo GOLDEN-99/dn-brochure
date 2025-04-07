@@ -1,0 +1,15 @@
+<h1 class="text-center">แจ้ง CN สินค้า</h1>
+<app-whole-head />
+<form>
+  <app-remark-select />
+  <!---->
+  @if (showResult()) {
+  <app-result-select />
+  <app-cn-radio />
+  }
+  <div class="app-form-field">
+    <label for="note">หมายเหตุ</label>
+    <input type="text" name="note" id="note" [(ngModel)]="remark" />
+  </div>
+</form>
+<a [className]="btnClass()" role="button" [routerLink]="endPoint()">ถัดไป</a>

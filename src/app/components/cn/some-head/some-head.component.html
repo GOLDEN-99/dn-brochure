@@ -1,0 +1,47 @@
+<p class="text-center">จำนวน {{ cnt() }} รายการ</p>
+<table class="table">
+  <thead>
+    <tr>
+      <th style="width: 10%"></th>
+      <th style="width: 60%">รหัสและชื่อสินค้า</th>
+      <th>ราคา (บาท)</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of orderList(); track $index) {
+    <tr>
+      <td>
+        <div class="form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            [ngModel]="item.check"
+            (ngModelChange)="selectItem($index, $event)"
+            [id]="'select-item-' + item.barCode"
+          />
+        </div>
+      </td>
+      <td>{{ "(" + item.barCode + ") " + item.goodName }}</td>
+      <td>{{ item.subTotal | number : "1.2-2" }}</td>
+    </tr>
+    }
+    <!---->
+    @for (item of addedList(); track $index) {
+    <tr>
+      <td>
+        <div class="form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            [ngModel]="item.check"
+            (ngModelChange)="selectItemAdded($index, $event)"
+            [id]="'added-item-' + item.barCode + $index"
+          />
+        </div>
+      </td>
+      <td>{{ "(" + item.barCode + ") " + item.goodName }}</td>
+      <td>{{ item.subTotal | number : "1.2-2" }}</td>
+    </tr>
+    }
+  </tbody>
+</table>

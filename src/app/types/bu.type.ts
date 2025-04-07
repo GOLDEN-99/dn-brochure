@@ -32,8 +32,8 @@ export type TItem = {
 export type TNewCustomer = 'OC' | 'NC' | null
 
 export type TItemList = {
-    fromDate?: string | null
-    toDate?: string | null
+    fromDate: string
+    toDate: string
     wholeName: string
     wholeType: TWhole
     zone: TZone

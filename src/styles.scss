@@ -33,3 +33,31 @@ $font-family-base: $font-family-sans-serif;
     height: 297mm;
   }
 }
+
+.app-form-field {
+  @extend .mb-3;
+  label {
+    @extend .form-label;
+  }
+  input {
+    @extend .form-control;
+  }
+}
+
+.app-form-check {
+  @extend .mb-3;
+  @extend .form-check;
+  input {
+    @extend .form-check-input;
+  }
+  label {
+    @extend .form-check-label;
+  }
+}
+.btn-wrapper {
+  display: flex;
+  gap: 16px;
+  .btn {
+    flex: 1 1 auto;
+  }
+}
