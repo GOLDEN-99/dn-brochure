@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TAppGoodItem } from '../../../types/cn.type';
 import { CnOrderService } from '../../../service/cn/cn-order/cn-order.service';
-import { SearchBarcodeService } from '../../../service/search-barcode/search-barcode.service';
+import { SearchBarcodeService } from '../../../service/cn/search-barcode/search-barcode.service';
 
 @Component({
   selector: 'app-search-product',

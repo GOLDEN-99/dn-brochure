@@ -1,9 +1,9 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { ApiService } from '../api/api.service';
-import { TBorchureHead, TColor, TGroupItemList, TItemList, TMaybe, TPromotionType } from '../../types';
-import { environment } from '../../../environments/environment';
-import { IBrochureService, transformItemList } from '../../lib';
+import { TBorchureHead, TColor, TGroupItemList, TItemList, TMaybe, TPromotionType } from '../../../types';
 import { tap } from 'rxjs';
+import { IBrochureService, transformItemList } from '../../../lib';
+import { ApiService } from '../../api/api.service';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

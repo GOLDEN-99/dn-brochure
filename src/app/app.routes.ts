@@ -4,12 +4,12 @@ import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
 import { NotfoundComponent } from './pages/notfound/notfound.component';
 import { BROCHURE_TOKEN } from './lib';
-import { ProchureService } from './service/prochure/prochure.service';
-import { MarketingService } from './service/marketing/marketing.service';
 import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
 import { cnResolver } from './resolvers/cn/cn.resolver';
 import { BaseBrochureComponent } from './pages/brochure-project/base-brochure/base-brochure.component';
 import { CnComponent } from './pages/cn-project/cn/cn.component';
+import { ProchureService } from './service/brochure/prochure/prochure.service';
+import { MarketingService } from './service/brochure/marketing/marketing.service';
 
 export const routes: Routes = [
     {

@@ -1,8 +1,8 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { ApiService } from '../api/api.service';
-import { TBorchureHead, TColor, TGroupItemList, TItemList, TMarketingParams, TMaybe } from '../../types';
+import { ApiService } from '../../api/api.service';
+import { TBorchureHead, TColor, TGroupItemList, TItemList, TMarketingParams, TMaybe } from '../../../types';
 import { tap } from 'rxjs';
-import { IBrochureService, transformItemList } from '../../lib';
+import { IBrochureService, transformItemList } from '../../../lib';
 
 
 @Injectable({

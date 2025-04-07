@@ -1,11 +1,9 @@
-import { effect, inject, Injectable, model, signal } from '@angular/core';
-
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-
-import { catchError, debounceTime, distinctUntilChanged, EMPTY, filter, map, of, switchMap, tap } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { ApiService } from '../api/api.service';
-import { TAppGoodItem, TAppLot, TGoodItem } from '../../types/cn.type';
+import { inject, Injectable, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { catchError, debounceTime, distinctUntilChanged, map, of, switchMap } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { ApiService } from '../../api/api.service';
+import { TAppGoodItem, TAppLot } from '../../../types/cn.type';
 
 
 @Injectable({
@@ -22,8 +20,6 @@ export class SearchBarcodeService {
       next: data => this.products.update(prev => data ? [data] : []),
       error: (err) => console.log(err)
     })
-
-    const pro = effect(() => console.log(this.products()))
   }
 
   private url = `${environment.cnPath}/GetBarCode`
