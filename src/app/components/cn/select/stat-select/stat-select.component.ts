@@ -11,8 +11,7 @@ import { CnApiService } from '../../../../service/cn/cn-api/cn-api.service';
 export class StatSelectComponent {
 
   private cnApi = inject(CnApiService)
-  custStat = this.cnApi.custStat
-
+  custStat = this.cnApi.cusStat
 
   showBankRef = [{ id: '0', stat: 'ไม่โอนคืน' }, { id: '1', stat: 'โอนคืน' }]
 

@@ -35,8 +35,8 @@ export class CnApiService {
   submit = (req: TCreateReq) => this.api.post(`${this.url}/CreateWholeRequest`, req)
 
   remark = signal<string>("")
-  custStat = signal<TCustStat>({ id: '0', stat: 'ไม่โอนคืน' })
-  showBank = computed(() => this.custStat().id === '1')
+  cusStat = signal<TCustStat>({ id: '0', stat: 'ไม่โอนคืน' })
+  showBank = computed(() => this.cusStat().id === '1')
 
   setRemark = (value: string) => this.remark.set(value)
 
@@ -46,7 +46,7 @@ export class CnApiService {
     const whole = this.wholeItemData()
     if (!whole) throw new Error('no default data')
     const { bankAcName, bankNumb, bankCode } = whole
-    const cusStat = this.custStat().id
+    const cusStat = this.cusStat().id
     return {
       bankAcName,
       bankNumb,
