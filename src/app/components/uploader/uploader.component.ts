@@ -17,31 +17,6 @@ export class UploaderComponent {
   wholeNumb = this.cnApi.paramsSignal()?.wholeNumb
   private uploadServ = inject(UploadImageService)
   fileList = this.uploadServ.body
-  // uploadSingle(img: string | string, index: number) {
-  //   if (!this.wholeNumb) {
-  //     this.toast.danger("เกิดข้อผิดพลาด ลองเข้าใหม่อีกครั้ง")
-  //     return
-  //   }
-  //   this.disableRemove.update(() => true)
-  //   this.loadingServ.startLoad()
-  //   this.uploadServ.uploadSingle({ wholeNumb: this.wholeNumb, passWord: "", img }, index).subscribe({
-  //     next: () => {
-  //       this.hasUpload.update(() => true)
-  //       this.disableRemove.update(() => false)
-  //       this.loadingServ.endLoad()
-  //       this.toast.success("อัพโหลดสำเร็จ")
-  //     },
-  //     error: (err) => {
-  //       console.log(err)
-  //       this.disableRemove.update(() => false)
-  //       this.loadingServ.endLoad()
-  //       this.toast.danger("มีข้อผิดพลาด")
-  //     },
-  //     complete: () => {
-
-  //     }
-  //   })
-  // }
 
   uploadAll() {
     console.log('click')

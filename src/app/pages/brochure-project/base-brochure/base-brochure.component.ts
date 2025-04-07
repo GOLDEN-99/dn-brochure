@@ -1,11 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { BROCHURE_TOKEN, exporter } from '../../lib';
 import { ActivatedRoute } from '@angular/router';
-import { TItem } from '../../types';
-import { ToastService } from '../../service/toast/toast.service';
-import { ProchureComponent } from '../../components/prochure/prochure.component';
-import { PromotionPipe } from '../../pipe/promotion/promotion-pipe.pipe';
-import { NavigateBtnComponent } from "../../components/navigate-btn/navigate-btn.component";
+import { ProchureComponent } from '../../../components/prochure/prochure.component';
+import { PromotionPipe } from '../../../pipe/promotion/promotion-pipe.pipe';
+import { NavigateBtnComponent } from '../../../components/navigate-btn/navigate-btn.component';
+import { BROCHURE_TOKEN, exporter } from '../../../lib';
+import { TItem } from '../../../types';
+import { ToastService } from '../../../service/toast/toast.service';
+
 
 @Component({
   selector: 'app-base-brochure',

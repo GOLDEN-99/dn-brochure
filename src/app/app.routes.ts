@@ -1,15 +1,15 @@
 import { Routes } from '@angular/router';
-import { SearchPageComponent } from './pages/search-page/search-page.component';
+import { SearchPageComponent } from './pages/brochure-project/search-page/search-page.component';
 import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
 import { NotfoundComponent } from './pages/notfound/notfound.component';
-import { BaseBrochureComponent } from './pages/base-brochure/base-brochure.component';
 import { BROCHURE_TOKEN } from './lib';
 import { ProchureService } from './service/prochure/prochure.service';
 import { MarketingService } from './service/marketing/marketing.service';
-import { CnComponent } from './pages/cn/cn.component';
 import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
 import { cnResolver } from './resolvers/cn/cn.resolver';
+import { BaseBrochureComponent } from './pages/brochure-project/base-brochure/base-brochure.component';
+import { CnComponent } from './pages/cn-project/cn/cn.component';
 
 export const routes: Routes = [
     {
@@ -39,19 +39,19 @@ export const routes: Routes = [
             },
             {
                 path: "whole",
-                loadComponent: () => import('./pages/cn-all/cn-all.component').then(r => r.CnAllComponent)
+                loadComponent: () => import('./pages/cn-project/cn-all/cn-all.component').then(r => r.CnAllComponent)
             },
             {
                 path: "some",
-                loadComponent: () => import('./pages/cn-some/cn-some.component').then(r => r.CnSomeComponent)
+                loadComponent: () => import('./pages/cn-project/cn-some/cn-some.component').then(r => r.CnSomeComponent)
             },
             {
                 path: "some/detail",
-                loadComponent: () => import('./pages/cn-some-detail/cn-some-detail.component').then(r => r.CnSomeDetailComponent)
+                loadComponent: () => import('./pages/cn-project/cn-some-detail/cn-some-detail.component').then(r => r.CnSomeDetailComponent)
             },
             {
                 path: "upload",
-                loadComponent: () => import('./pages/cn-upload/cn-upload.component').then(r => r.CnUploadComponent)
+                loadComponent: () => import('./pages/cn-project/cn-upload/cn-upload.component').then(r => r.CnUploadComponent)
             },
         ]
     },

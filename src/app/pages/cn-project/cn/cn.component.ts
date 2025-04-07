@@ -1,12 +1,13 @@
-import { Component, computed, effect, inject, model } from '@angular/core';
+import { Component, computed, inject, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { WholeHeadComponent } from "../../components/cn/whole-head/whole-head.component";
-import { CnRemarkService } from '../../service/cn/cn-remark/cn-remark.service';
-import { CnApiService } from '../../service/cn/cn-api/cn-api.service';
-import { RemarkSelectComponent } from "../../components/cn/select/remark-select/remark-select.component";
-import { ResultSelectComponent } from "../../components/cn/select/result-select/result-select.component";
-import { CnRadioComponent } from "../../components/cn/radio/cn-radio/cn-radio.component";
+import { WholeHeadComponent } from '../../../components/cn/whole-head/whole-head.component';
+import { RemarkSelectComponent } from '../../../components/cn/select/remark-select/remark-select.component';
+import { ResultSelectComponent } from '../../../components/cn/select/result-select/result-select.component';
+import { CnRadioComponent } from '../../../components/cn/radio/cn-radio/cn-radio.component';
+import { CnRemarkService } from '../../../service/cn/cn-remark/cn-remark.service';
+import { CnApiService } from '../../../service/cn/cn-api/cn-api.service';
+
 
 @Component({
   selector: 'app-cn',

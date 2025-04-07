@@ -1,8 +1,9 @@
 import { Component, computed } from '@angular/core';
-import { UploaderComponent } from "../../components/uploader/uploader.component";
 import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
-import { BaseSubmitCn } from '../../lib/cn';
+import { BaseSubmitCn } from '../../../lib/cn';
+import { UploaderComponent } from '../../../components/uploader/uploader.component';
+
 
 @Component({
   selector: 'app-cn-all',

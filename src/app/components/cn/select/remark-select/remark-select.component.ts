@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { CnRemarkService } from '../../../../service/cn/cn-remark/cn-remark.service';
-import { CnApiService } from '../../../../service/cn/cn-api/cn-api.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({

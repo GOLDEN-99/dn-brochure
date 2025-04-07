@@ -1,4 +1,4 @@
-import { TColor, TGroupItemList, TItem, TZone } from "../types";
+import { TColor, TGroupItemList, TItem, TZone } from "../../types";
 
 export const transformItemList = (maxItem: number) => (acc: TGroupItemList, cur: TItem, idx: number): TGroupItemList => {
 
