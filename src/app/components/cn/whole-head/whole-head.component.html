@@ -25,8 +25,8 @@
   <label for="ws">เลขที่ WS</label>
   <input type="text" id="ws" name="ws" [value]="query.wholeNumb" disabled />
 </div>
-
-<div class="mb-3">
+<app-stat-select />
+<!-- <div class="mb-3">
   <label for="showBank">สถานะ</label>
   <select
     name="showBank"
@@ -38,7 +38,7 @@
     <option [ngValue]="item">{{ item }}</option>
     }
   </select>
-</div>
+</div> -->
 @if (isShow()) {
 <div class="app-form-field">
   <label for="name">ธนาคาร</label>
