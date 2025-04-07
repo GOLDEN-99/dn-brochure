@@ -3,6 +3,7 @@ import { catchError, from, mergeMap, tap, throwError, toArray } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../api/api.service';
 import { TMaybe } from '../../../types';
+import { TPrependImage } from '../../../types/cn.type';
 
 
 @Injectable({
@@ -19,11 +20,11 @@ export class UploadImageService {
 
   image = computed(() => this.body().flatMap(({ path }) => path !== null ? [path] : []))
 
-  uploadSingle = (req: TUpload, index: number) => this.api.post<string>(this.url, req)
+  uploadSingle = ({ wholeNumb, passWord, img }: TUpload, index: number) => this.api.post<{ link: string }>(this.url, { wholeNumb, passWord, img: img.split(",")[1] })
     .pipe(
-      tap((res) => this.body.update((prev) => prev.map(
+      tap(({ link }) => this.body.update((prev) => prev.map(
         (body, idx) => idx === index
-          ? ({ img: body.img, path: res })
+          ? ({ ...body, path: link })
           : body
       ))),
       catchError(err => throwError(() => err))
@@ -38,6 +39,8 @@ export class UploadImageService {
       )
   }
 
+  noFile = computed(() => this.body().length === 0)
+
   appendFile = (img: string) => this.body.update(prev => [...prev, { img, path: null }])
 
   clear = () => this.body.update(() => [])
@@ -45,6 +48,10 @@ export class UploadImageService {
   remove = (idx: number) => {
     this.body.update(prev => prev.filter((_, i) => i !== idx))
   }
+
+  prependReq = computed(
+    () => ({ image: this.image() }) satisfies TPrependImage
+  )
 }
 
 type TBody = {

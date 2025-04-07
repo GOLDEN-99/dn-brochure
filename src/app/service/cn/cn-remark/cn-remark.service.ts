@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { ApiService } from '../../api/api.service';
-import { TCnType, TReamrk } from '../../../types/cn.type';
+import { TCnType, TPrependRemark, TReamrk } from '../../../types/cn.type';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +47,13 @@ export class CnRemarkService {
   setRemarkOption = (value: TReamrk) => this.remarkOpt.set(value)
   setResult = (value: TResult) => this.result.set(value)
   setCnType = (value: TCnType) => this.cnType.set(value)
+
+  prependReq = computed(() => {
+    const { id } = this.result()
+    const probOption = id === '-1' ? null : id
+    const { id: motiveId, remark: motive } = this.remarkOpt()
+    return { motiveId, motive, probOption } satisfies TPrependRemark
+  })
 
   private handleRemark = (id: string): TResult[] => {
     switch (id) {

@@ -5,7 +5,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, debounceTime, distinctUntilChanged, EMPTY, filter, map, of, switchMap, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
-import { TAppGoodItem, TGoodItem } from '../../types/cn.type';
+import { TAppGoodItem, TAppLot, TGoodItem } from '../../types/cn.type';
 
 
 @Injectable({
@@ -38,15 +38,19 @@ export class SearchBarcodeService {
 
   private api = inject(ApiService)
 
-  private fetch = (term: string) => this.api.get<TGoodItem>(`${this.url}/${term}`)
+  private fetch = (term: string) => this.api.get<TSearchResult>(`${this.url}/${term}`)
     .pipe(
       map(this.mapCheck),
       catchError(err => { console.log(err); return of(null) })
     )
 
-  private mapCheck = ({ lot, ...res }: TGoodItem): TAppGoodItem =>
-    ({ ...res, check: true, subTotal: 0, lot: lot.map(l => ({ ...l, check: false, goodAmou: 0 })) })
+  private mapCheck = ({ lot, ...res }: TSearchResult): TAppGoodItem =>
+    ({ ...res, check: true, subTotal: 0, lot: lot.map(l => ({ ...l, check: false, goodAmou: 0, returnAmou: 0 })) })
 
   products = signal<TAppGoodItem[]>([])
 
 }
+
+type TSearchLot = Omit<TAppLot, 'goodAmou' | 'returnAmou'>
+
+type TSearchResult = { lot: TSearchLot[] } & Omit<TAppGoodItem, 'lot'>

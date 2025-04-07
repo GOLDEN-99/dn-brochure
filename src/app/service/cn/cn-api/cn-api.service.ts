@@ -3,16 +3,12 @@ import { catchError, Subject, switchMap, tap, throwError } from 'rxjs';
 import { CnOrderService } from '../cn-order/cn-order.service';
 import { ApiService } from '../../api/api.service';
 import { TMaybe } from '../../../types';
-import { TCNQueryParams, TCnType, TCreateReq, TReamrk, TWholeItem } from '../../../types/cn.type';
+import { TCNQueryParams, TCnType, TCreateReq, TPrepenCnApi, TReamrk, TWholeItem } from '../../../types/cn.type';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CnApiService {
-
-  constructor() {
-
-  }
 
   private api = inject(ApiService)
   private orderServ = inject(CnOrderService)
@@ -39,10 +35,27 @@ export class CnApiService {
   submit = (req: TCreateReq) => this.api.post(`${this.url}/CreateWholeRequest`, req)
 
   remark = signal<string>("")
+  custStat = signal<TCustStat>({ id: '0', stat: 'ไม่โอนคืน' })
+  showBank = computed(() => this.custStat().id === '1')
 
   setRemark = (value: string) => this.remark.set(value)
 
-
+  prependReq = computed(() => {
+    const query = this.paramsSignal()
+    if (!query) throw new Error('no default data')
+    const whole = this.wholeItemData()
+    if (!whole) throw new Error('no default data')
+    const { bankAcName, bankNumb, bankCode } = whole
+    const custStat = this.custStat().id
+    return {
+      bankAcName,
+      bankNumb,
+      bankcode: bankCode,
+      remark: this.remark(),
+      custStat,
+      ...query,
+    } satisfies TPrepenCnApi
+  })
 
 }
 
@@ -51,5 +64,7 @@ type TEditableState = {
   cnType: TCnType
   remarkOpt: TReamrk
 }
+
+type TCustStat = { id: string, stat: string }
 
 
