@@ -122,7 +122,7 @@ export type TGoodItemReq = {
 }
 
 export type TPrepenCnApi = {
-    custStat: string //'0' | '1'
+    cusStat: string //'0' | '1'
     remark: string // note ,
     bankcode: string // 0, === bankCode 
 } & TCNQueryParams & Pick<TBaseWhole, 'bankAcName' | 'bankNumb'>

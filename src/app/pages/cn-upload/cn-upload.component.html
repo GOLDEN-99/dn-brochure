@@ -8,8 +8,8 @@
   <a routerLink=".." class="btn btn-outline-danger">ย้อนกลับ</a>
   <button
     class="btn btn-primary"
-    (click)="submit()"
-    [disabled]="cannotSubmit()"
+    (click)="handleSubmit()"
+    [disabled]="disable()"
   >
     ยืนยัน
   </button>

@@ -10,7 +10,7 @@
     <app-lot-item
       [lotItem]="l"
       (check)="handleCheckItem(l)({ check: $event })"
-      (amount)="handleCheckItem(l)({ goodAmou: $event })"
+      (amount)="handleCheckItem(l)({ returnAmou: $event })"
     />
     }
   </app-good-item>
@@ -22,7 +22,7 @@
     <app-lot-item
       [lotItem]="l"
       (check)="handleCheckAdded(l)({ check: $event })"
-      (amount)="handleCheckAdded(l)({ goodAmou: $event })"
+      (amount)="handleCheckAdded(l)({ returnAmou: $event })"
     />
     }
   </app-good-item>
@@ -30,9 +30,17 @@
   <div class="mt-3 border-bottom">
     <app-uploader />
   </div>
-  <div class="mt-3 text-end">รวมเป็นเงิน {{ 123 | number : "1.2-2" }} บาท</div>
+  <div class="mt-3 text-end">
+    รวมเป็นเงิน {{ totalprice() | number : "1.2-2" }} บาท
+  </div>
 </div>
 <div class="btn-wrapper">
   <a routerLink=".." class="btn btn-danger">ย้อนกลับ</a>
-  <button class="btn btn-primary" (click)="onClick()">ยืนยัน</button>
+  <button
+    class="btn btn-primary"
+    [disabled]="disable()"
+    (click)="handleSubmit()"
+  >
+    ยืนยัน
+  </button>
 </div>

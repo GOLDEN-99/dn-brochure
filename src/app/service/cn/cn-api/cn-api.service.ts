@@ -46,13 +46,13 @@ export class CnApiService {
     const whole = this.wholeItemData()
     if (!whole) throw new Error('no default data')
     const { bankAcName, bankNumb, bankCode } = whole
-    const custStat = this.custStat().id
+    const cusStat = this.custStat().id
     return {
       bankAcName,
       bankNumb,
       bankcode: bankCode,
       remark: this.remark(),
-      custStat,
+      cusStat,
       ...query,
     } satisfies TPrepenCnApi
   })

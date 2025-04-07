@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { catchError, from, mergeMap, tap, throwError, toArray } from 'rxjs';
+import { catchError, EMPTY, from, mergeMap, tap, throwError, toArray } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../api/api.service';
 import { TMaybe } from '../../../types';
@@ -34,7 +34,11 @@ export class UploadImageService {
     const reqList = this.body()
     return from(reqList)
       .pipe(
-        mergeMap(({ img }, idx) => this.uploadSingle({ wholeNumb, passWord, img }, idx), 1),
+        mergeMap(({ img, path }, idx) =>
+          path === null
+            ? this.uploadSingle({ wholeNumb, passWord, img }, idx)
+            : EMPTY
+          , 1),
         toArray()
       )
   }
@@ -49,9 +53,6 @@ export class UploadImageService {
     this.body.update(prev => prev.filter((_, i) => i !== idx))
   }
 
-  prependReq = computed(
-    () => ({ image: this.image() }) satisfies TPrependImage
-  )
 }
 
 type TBody = {

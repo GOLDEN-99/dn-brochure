@@ -3,7 +3,11 @@
 <app-uploader />
 <div class="btn-wrapper">
   <a routerLink=".." class="btn btn-outline-danger">ย้อนกลับ</a>
-  <button class="btn btn-primary" [disabled]="disable()" (click)="submit()">
+  <button
+    class="btn btn-primary"
+    [disabled]="disable()"
+    (click)="handleSubmit()"
+  >
     ยืนยัน
   </button>
 </div>
