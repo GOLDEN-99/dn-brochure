@@ -17,31 +17,31 @@ export class UploaderComponent {
   wholeNumb = this.cnApi.paramsSignal()?.wholeNumb
   private uploadServ = inject(UploadImageService)
   fileList = this.uploadServ.body
-  uploadSingle(img: string | string, index: number) {
-    if (!this.wholeNumb) {
-      this.toast.danger("เกิดข้อผิดพลาด ลองเข้าใหม่อีกครั้ง")
-      return
-    }
-    this.disableRemove.update(() => true)
-    this.loadingServ.startLoad()
-    this.uploadServ.uploadSingle({ wholeNumb: this.wholeNumb, passWord: "", img }, index).subscribe({
-      next: () => {
-        this.hasUpload.update(() => true)
-        this.disableRemove.update(() => false)
-        this.loadingServ.endLoad()
-        this.toast.success("อัพโหลดสำเร็จ")
-      },
-      error: (err) => {
-        console.log(err)
-        this.disableRemove.update(() => false)
-        this.loadingServ.endLoad()
-        this.toast.danger("มีข้อผิดพลาด")
-      },
-      complete: () => {
+  // uploadSingle(img: string | string, index: number) {
+  //   if (!this.wholeNumb) {
+  //     this.toast.danger("เกิดข้อผิดพลาด ลองเข้าใหม่อีกครั้ง")
+  //     return
+  //   }
+  //   this.disableRemove.update(() => true)
+  //   this.loadingServ.startLoad()
+  //   this.uploadServ.uploadSingle({ wholeNumb: this.wholeNumb, passWord: "", img }, index).subscribe({
+  //     next: () => {
+  //       this.hasUpload.update(() => true)
+  //       this.disableRemove.update(() => false)
+  //       this.loadingServ.endLoad()
+  //       this.toast.success("อัพโหลดสำเร็จ")
+  //     },
+  //     error: (err) => {
+  //       console.log(err)
+  //       this.disableRemove.update(() => false)
+  //       this.loadingServ.endLoad()
+  //       this.toast.danger("มีข้อผิดพลาด")
+  //     },
+  //     complete: () => {
 
-      }
-    })
-  }
+  //     }
+  //   })
+  // }
 
   uploadAll() {
     console.log('click')
@@ -52,7 +52,7 @@ export class UploaderComponent {
     console.log("upload")
     this.disableRemove.update(() => true)
     this.loadingServ.startLoad()
-    this.uploadServ.upload({ wholeNumb: this.wholeNumb, passWord: "" }).subscribe({
+    this.uploadServ.upload({ wholeNumb: this.wholeNumb, passWord: "95e8e7908aaf8c86f470ec641afd1d42924c42c7df91b4cc447be363a35d842c" }).subscribe({
       next: () => {
         this.hasUpload.update(() => true)
         this.disableRemove.update(() => false)
