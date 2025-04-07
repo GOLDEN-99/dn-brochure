@@ -99,7 +99,8 @@ export type TGoodItem = {
     lot: TLotItem[]
 }
 
-export type TAppLot = { check: boolean } & TLotItem
+
+export type TAppLot = { check: boolean, returnAmou: number } & TLotItem
 
 export type TAppGoodItem = { check: boolean, lot: TAppLot[] } & Omit<TGoodItem, 'lot'>
 
@@ -112,7 +113,7 @@ export type TOrderRes = {
 
 export type TGoodItemReq = {
     goodcode: string // "string",
-    lotNumber: string
+    lotNumber: TMaybe<string>
     goodAmou: number
     unitcode: string
     unitprice: number
@@ -120,13 +121,25 @@ export type TGoodItemReq = {
     expiDate: string // "2025-04-04T08:09:04.257Z"
 }
 
-export type TCreateReq = {
-    cusStat: string
-    bankcode: string | number // 0, === bankCode
+export type TPrepenCnApi = {
+    custStat: string //'0' | '1'
+    remark: string // note ,
+    bankcode: string // 0, === bankCode 
+} & TCNQueryParams & Pick<TBaseWhole, 'bankAcName' | 'bankNumb'>
+
+export type TPrependRemark = {
+    probOption: TMaybe<string>
     motive: string // TReamrk.remark
     motiveId: string | number // TRemark.id
-    remark: string // note ,
-    totalprice: number
+}
+
+export type TPrependImage = {
     image: string[] // [url1, url2, ...]
+}
+
+export type TPrependOrder = {
+    totalprice: number
     goodList: TGoodItemReq[]
-} & TCNQueryParams & Pick<TBaseWhole, 'bankAcName' | 'bankNumb'>
+}
+
+export type TCreateReq = TPrepenCnApi & TPrependRemark & TPrependImage & TPrependOrder
