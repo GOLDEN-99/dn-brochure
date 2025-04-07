@@ -21,8 +21,9 @@ export class CnSomeDetailComponent extends BaseSubmitCn {
   override goodList = this.orderServ.selectedLotItem;
   override totalprice = this.orderServ.selectedSubtotal
   override disable = computed(() =>
-    this.image().length === 0
+    this.imageServ.noFile()
     || this.totalprice() === 0
-    || this.remarkServ.prependReq().motiveId === '0'
+    || this.remarkServ.invalidRemarkOpt()
+    || this.remarkServ.cnType() !== 'some'
   )
 }
