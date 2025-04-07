@@ -1,0 +1,28 @@
+.uploader {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .preview-container {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    flex-wrap: wrap;
+
+    .img-wrapper {
+      position: relative;
+
+      img {
+        max-height: 160px;
+      }
+
+      .btn.btn-close {
+        position: absolute;
+        padding: 4px;
+        box-sizing: border-box;
+        z-index: 1000;
+        translate: -8px -8px;
+      }
+    }
+  }
+}

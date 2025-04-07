@@ -1,8 +1,8 @@
 import { RedirectCommand, ResolveFn, Router } from '@angular/router';
 import { idPromotionHandler, isBkkHandler, isNewHandler, promoHandler, tokenHandler, wholeHandler } from '../../lib';
 import { inject } from '@angular/core';
-import { MarketingService } from '../../service/marketing/marketing.service';
 import { TItemList } from '../../types';
+import { MarketingService } from '../../service/brochure/marketing/marketing.service';
 
 export const marketingResolver: ResolveFn<TItemList> = (route, state) => {
   try {

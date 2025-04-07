@@ -1,0 +1,14 @@
+@let disable = cnt() === 0;
+<h1 class="text-center">รายการสินค้า</h1>
+<app-some-head />
+<app-search-product />
+<div class="btn-wrapper">
+  <a routerLink=".." class="btn btn-danger">ย้อนกลับ</a>
+  <a
+    [routerLink]="disable ? '.' : 'detail'"
+    role="button"
+    [attr.aria-disabled]="disable"
+    [className]="disable ? 'btn btn-primary disabled' : 'btn btn-primary'"
+    >ถัดไป</a
+  >
+</div>

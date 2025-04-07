@@ -43,3 +43,21 @@ $font-family-base: $font-family-sans-serif;
     @extend .form-control;
   }
 }
+
+.app-form-check {
+  @extend .mb-3;
+  @extend .form-check;
+  input {
+    @extend .form-check-input;
+  }
+  label {
+    @extend .form-check-label;
+  }
+}
+.btn-wrapper {
+  display: flex;
+  gap: 16px;
+  .btn {
+    flex: 1 1 auto;
+  }
+}

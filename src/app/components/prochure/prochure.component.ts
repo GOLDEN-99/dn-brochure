@@ -1,7 +1,6 @@
-import { Component, computed, effect, inject, input, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { Component, computed, input, ViewEncapsulation } from '@angular/core';
 import { ProchureCardComponent } from "../prochure-card/prochure-card.component";
-import { TBorchureHead, TCardProps, TColor, TGroupItemList, TItem, TSupplier, TWhole, TZone } from '../../types';
-import { ProchureService } from '../../service/prochure/prochure.service';
+import { TBorchureHead, TCardProps, TItem, TWhole, TZone } from '../../types';
 import { zoneToColor } from '../../lib';
 
 
@@ -109,5 +108,4 @@ export class ProchureComponent {
     const next = 7 * 60 * 60 * 1000
     return new Date(unix + next).toISOString()
   }
-
 }

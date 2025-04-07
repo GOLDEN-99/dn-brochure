@@ -3,10 +3,8 @@ import { ActivatedRouteSnapshot, RedirectCommand, ResolveFn, Router, RouterState
 import { marketingResolver } from './marketing.resolver';
 import { TItem, TItemList, TMarketingParams, TPrice, TPromotionType, TWhole } from '../../types';
 import { ToastService } from '../../service/toast/toast.service';
-import { ProchureService } from '../../service/prochure/prochure.service';
 import { Observable, of, throwError } from 'rxjs';
-import { promotionResolver } from '../promotion/promotion.resolver';
-import { MarketingService } from '../../service/marketing/marketing.service';
+import { MarketingService } from '../../service/brochure/marketing/marketing.service';
 
 describe('marketingResolver', () => {
   const executeResolver: ResolveFn<TItemList> = (...resolverParameters) =>
