@@ -29,16 +29,20 @@ export class CnComponent {
   remarkOption = this.remarkServ.remarkOpt
   setRemarkOpt = this.remarkServ.setRemarkOption
 
-
   showResult = this.remarkServ.showResult
-
-  selectedResult = model<string>("0")
 
   remark = this.cnApi.remark
 
   cnType = this.remarkServ.cnType
 
+  disable = computed(() => this.remarkServ.calDisable())
+
   endPoint = computed(() => this.cnType() ?? 'upload')
-  btnClass = computed(() => this.remarkServ.invalidRemarkOpt() ? 'btn btn-primary w-100 disabled' : 'btn btn-primary w-100')
+  btnClass = computed(
+    () =>
+      this.disable()
+        ? 'btn btn-primary w-100 disabled'
+        : 'btn btn-primary w-100'
+  )
 
 }

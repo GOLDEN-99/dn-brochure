@@ -10,6 +10,7 @@ import { BaseBrochureComponent } from './pages/brochure-project/base-brochure/ba
 import { CnComponent } from './pages/cn-project/cn/cn.component';
 import { ProchureService } from './service/brochure/prochure/prochure.service';
 import { MarketingService } from './service/brochure/marketing/marketing.service';
+import { cnGuard } from './guard/cn-guard.guard';
 
 export const routes: Routes = [
     {
@@ -39,19 +40,23 @@ export const routes: Routes = [
             },
             {
                 path: "whole",
-                loadComponent: () => import('./pages/cn-project/cn-all/cn-all.component').then(r => r.CnAllComponent)
+                loadComponent: () => import('./pages/cn-project/cn-all/cn-all.component').then(r => r.CnAllComponent),
+                canActivate: [cnGuard('whole')]
             },
             {
                 path: "some",
-                loadComponent: () => import('./pages/cn-project/cn-some/cn-some.component').then(r => r.CnSomeComponent)
+                loadComponent: () => import('./pages/cn-project/cn-some/cn-some.component').then(r => r.CnSomeComponent),
+                canActivate: [cnGuard('some')]
             },
             {
                 path: "some/detail",
-                loadComponent: () => import('./pages/cn-project/cn-some-detail/cn-some-detail.component').then(r => r.CnSomeDetailComponent)
+                loadComponent: () => import('./pages/cn-project/cn-some-detail/cn-some-detail.component').then(r => r.CnSomeDetailComponent),
+                canActivate: [cnGuard('some')]
             },
             {
                 path: "upload",
-                loadComponent: () => import('./pages/cn-project/cn-upload/cn-upload.component').then(r => r.CnUploadComponent)
+                loadComponent: () => import('./pages/cn-project/cn-upload/cn-upload.component').then(r => r.CnUploadComponent),
+                canActivate: [cnGuard(null)]
             },
         ]
     },

@@ -68,6 +68,12 @@ export class CnRemarkService {
     }
   }
   private default: TReamrk[] = [{ id: "0", remark: "กรุณาเลือก" }]
+
+  calDisable() {
+    if (this.invalidRemarkOpt()) return true
+    if (!this.showResult()) return false
+    return this.cnType() === null || this.result().id === '-1'
+  }
 }
 type TResult = {
   id: string,
