@@ -52,7 +52,7 @@ export class UploaderComponent {
     console.log("upload")
     this.disableRemove.update(() => true)
     this.loadingServ.startLoad()
-    this.uploadServ.upload({ wholeNumb: this.wholeNumb, passWord: "95e8e7908aaf8c86f470ec641afd1d42924c42c7df91b4cc447be363a35d842c" }).subscribe({
+    this.uploadServ.upload({ wholeNumb: this.wholeNumb }).subscribe({
       next: () => {
         this.hasUpload.update(() => true)
         this.disableRemove.update(() => false)

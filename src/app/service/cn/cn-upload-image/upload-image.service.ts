@@ -3,7 +3,6 @@ import { catchError, EMPTY, from, mergeMap, tap, throwError, toArray } from 'rxj
 import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../api/api.service';
 import { TMaybe } from '../../../types';
-import { TPrependImage } from '../../../types/cn.type';
 
 
 @Injectable({
@@ -20,7 +19,7 @@ export class UploadImageService {
 
   image = computed(() => this.body().flatMap(({ path }) => path !== null ? [path] : []))
 
-  uploadSingle = ({ wholeNumb, passWord, img }: TUpload, index: number) => this.api.post<{ link: string }>(this.url, { wholeNumb, passWord, img: img.split(",")[1] })
+  uploadSingle = ({ wholeNumb, img }: Omit<TUpload, 'passWord'>, index: number) => this.api.post<{ link: string }>(this.url, { wholeNumb, passWord: "95e8e7908aaf8c86f470ec641afd1d42924c42c7df91b4cc447be363a35d842c", img: img.split(",")[1] })
     .pipe(
       tap(({ link }) => this.body.update((prev) => prev.map(
         (body, idx) => idx === index
@@ -30,13 +29,13 @@ export class UploadImageService {
       catchError(err => throwError(() => err))
     )
 
-  upload = ({ wholeNumb, passWord }: Omit<TUpload, 'img'>) => {
+  upload = ({ wholeNumb }: Pick<TUpload, 'wholeNumb'>) => {
     const reqList = this.body()
     return from(reqList)
       .pipe(
         mergeMap(({ img, path }, idx) =>
           path === null
-            ? this.uploadSingle({ wholeNumb, passWord, img }, idx)
+            ? this.uploadSingle({ wholeNumb, img }, idx)
             : EMPTY
           , 1),
         toArray()
