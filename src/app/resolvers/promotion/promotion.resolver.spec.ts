@@ -5,7 +5,8 @@ import { promotionResolver } from './promotion.resolver';
 import { TItem, TItemList, TPrice, TPromotionType } from '../../types';
 import { Observable, of, throwError } from 'rxjs';
 import { ToastService } from '../../service/toast/toast.service';
-import { ProchureService } from '../../service/prochure/prochure.service';
+import { ProchureService } from '../../service/brochure/prochure/prochure.service';
+
 
 describe('promotionResolver', () => {
   const executeResolver: ResolveFn<TItemList> = (...resolverParameters) =>

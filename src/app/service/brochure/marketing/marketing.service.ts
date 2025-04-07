@@ -13,8 +13,8 @@ export class MarketingService implements IBrochureService {
   constructor() {
   }
 
-  private setState = ({ wholeName, wholeType, zone, promotionType, promotion, isNewCustomer }: TItemList) => {
-    this.head.update(() => ({ wholeName, wholeType, zone, promotionType, isNewCustomer }))
+  private setState = ({ wholeName, wholeType, zone, promotionType, promotion, isNewCustomer, fromDate, toDate }: TItemList) => {
+    this.head.update(() => ({ wholeName, wholeType, zone, promotionType, isNewCustomer, fromDate, toDate }))
     const size = promotionType === "Hot" ? 8 : 12
     this.content.update(() => promotion.reduce(transformItemList(size), [[]]))
   }
