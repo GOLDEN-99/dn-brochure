@@ -12,7 +12,7 @@ import { UploaderComponent } from '../../../components/uploader/uploader.compone
 })
 export class CnUploadComponent extends BaseSubmitCn {
 
-  override totalprice = signal(0)
+  override totalprice = this.orderServ.rawPrice
   override disable = computed(
     () =>
       this.totalprice() === 0
