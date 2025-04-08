@@ -5,8 +5,10 @@ import { UploadImageService } from "../../service/cn/cn-upload-image/upload-imag
 import { CnRemarkService } from "../../service/cn/cn-remark/cn-remark.service";
 import { ToastService } from "../../service/toast/toast.service";
 import { TGoodItemReq } from "../../types/cn.type";
+import { Router } from "@angular/router";
 
 export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
+    private router = inject(Router)
     protected cnApiServ = inject(CnApiService)
     protected orderServ = inject(CnOrderService)
     protected imageServ = inject(UploadImageService)
@@ -19,6 +21,7 @@ export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
     private handler = {
         next: () => {
             this.toast.success('สำเร็จ')
+            this.router.navigateByUrl('complete')
         },
         error: () => {
             this.toast.danger('เกิดข้อผิดพลาด')

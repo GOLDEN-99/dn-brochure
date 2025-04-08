@@ -19,18 +19,11 @@ export class LotItemComponent {
   amount = output<number>()
 
   onCheck(check: boolean) {
-    console.log(check)
     this.check.emit(check)
-    // const { lotNumber, goodCode, expiDate } = this.lotItem()
-    // const handleCheck = this.baseHandler(goodCode, { lotNumber, expiDate })
-    // handleCheck({ check })
   }
 
   onChange(goodAmou: number) {
     this.amount.emit(goodAmou)
-    // const { lotNumber, goodCode, expiDate } = this.lotItem()
-    // const handleChange = this.baseHandler(goodCode, { lotNumber, expiDate })
-    // handleChange({ goodAmou })
   }
 
 }

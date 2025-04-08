@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { catchError, map, Subject, switchMap, tap, throwError } from 'rxjs';
 import { ApiService } from '../../api/api.service';
-import { TAppGoodItem, TAppLot, TGoodItem, TGoodItemReq, TLotItem, TOrderRes, TPrependOrder } from '../../../types/cn.type';
+import { TAppGoodItem, TGoodItem, TOrderRes, TPrependOrder } from '../../../types/cn.type';
 import { TMaybe } from '../../../types';
 import { baseCheckLot } from './lib';
 
@@ -16,7 +16,6 @@ export class CnOrderService {
       error: (err) => { console.log(err); this.itemList.update(() => []) }
     })
   }
-
   private api = inject(ApiService)
   private url = "https://sandbox.dn.drugnetcenter.com/ReturnRequest"
   private getOrder = (wholeNumb: string) =>
@@ -49,7 +48,7 @@ export class CnOrderService {
   totalCnt = computed(() => this.totalSelected().length)
   selectedLotItem = computed(
     () => this.totalSelected().flatMap(
-      ({ unitCode, unitPrice, lot, goodCode }) =>
+      ({ unitCode, unitPrice, lot, goodCode, goodName }) =>
         lot.flatMap(
           ({ check, returnAmou, lotNumber, expiDate }) =>
             check
@@ -60,7 +59,8 @@ export class CnOrderService {
                 lotNumber,
                 goodAmou: returnAmou,
                 expiDate,
-                subtotal: unitPrice * returnAmou
+                subtotal: unitPrice * returnAmou,
+                goodName
               }]
               : []
         )
@@ -78,7 +78,7 @@ export class CnOrderService {
 
 
   wholeBillItem = computed(() =>
-    this.itemList().flatMap(({ unitCode, unitPrice, lot, goodCode, subTotal }) =>
+    this.itemList().flatMap(({ unitCode, unitPrice, lot, goodCode, subTotal, goodName }) =>
       lot.map(({ goodAmou, lotNumber, expiDate }) =>
       ({
         goodcode: goodCode,
@@ -87,7 +87,8 @@ export class CnOrderService {
         lotNumber,
         goodAmou,
         expiDate,
-        subtotal: subTotal
+        subtotal: subTotal,
+        goodName
       })
       )
     )
@@ -99,6 +100,7 @@ export class CnOrderService {
     return { totalprice, goodList } satisfies TPrependOrder
   })
 
+  rawPrice = signal(0)
 
   handleCheckLot = baseCheckLot(this.itemList)
   handleCheckLotAdded = baseCheckLot(this.addedItem)

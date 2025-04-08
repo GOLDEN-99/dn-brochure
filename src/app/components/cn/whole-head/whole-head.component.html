@@ -26,26 +26,13 @@
   <input type="text" id="ws" name="ws" [value]="query.wholeNumb" disabled />
 </div>
 <app-stat-select />
-<!-- <div class="mb-3">
-  <label for="showBank">สถานะ</label>
-  <select
-    name="showBank"
-    id="showBank"
-    [(ngModel)]="showBank"
-    class="form-select"
-  >
-    @for (item of showBankRef; track $index) {
-    <option [ngValue]="item">{{ item }}</option>
-    }
-  </select>
-</div> -->
 @if (isShow()) {
 <div class="app-form-field">
   <label for="name">ธนาคาร</label>
   <input type="text" id="name" name="name" [value]="res.name" disabled />
 </div>
 <div class="app-form-field">
-  <label for="bankNumb">ธนาคาร</label>
+  <label for="bankNumb">เลขที่บัญชี</label>
   <input
     type="text"
     id="bankNumb"
@@ -55,7 +42,7 @@
   />
 </div>
 <div class="app-form-field">
-  <label for="bankAcName">ธนาคาร</label>
+  <label for="bankAcName">ชื่อบัญชี</label>
   <input
     type="text"
     id="bankAcName"
