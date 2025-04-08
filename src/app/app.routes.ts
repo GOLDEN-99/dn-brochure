@@ -58,6 +58,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./pages/cn-project/cn-upload/cn-upload.component').then(r => r.CnUploadComponent),
                 canActivate: [cnGuard(null)]
             },
+            {
+                path: "complete",
+                loadComponent: () => import('./pages/cn-project/cn-complete/cn-complete.component').then(r => r.CnCompleteComponent)
+            }
         ]
     },
     {
