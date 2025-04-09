@@ -4,6 +4,7 @@ import { ApiService } from '../../api/api.service';
 import { TAppGoodItem, TGoodItem, TOrderRes, TPrependOrder } from '../../../types/cn.type';
 import { TMaybe } from '../../../types';
 import { baseCheckLot } from './lib';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class CnOrderService {
     })
   }
   private api = inject(ApiService)
-  private url = "https://sandbox.dn.drugnetcenter.com/ReturnRequest"
+  private url = environment.cnPath
   private getOrder = (wholeNumb: string) =>
     this.api.get<TOrderRes>(`${this.url}/GetOrder`, { params: { WholeNumb: wholeNumb } })
       .pipe(
