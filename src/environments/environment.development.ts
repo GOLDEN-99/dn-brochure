@@ -1,5 +1,5 @@
 export const environment = {
-    brochureEndpoint: "https://sandbox.dn.drugnetcenter.com/ItemService2/PaperPro",
+    brochureEndpoint: "https://api.drugnetcenter.com/ItemService2/PaperPro",
     imagePath: "https://file.drugnetcenter.com/drugpos/GoodPictures",
-    cnPath: "https://sandbox.dn.drugnetcenter.com/ReturnRequest",
+    cnPath: "https://api.drugnetcenter.com/ReturnRequest",
 };
