@@ -19,6 +19,8 @@ export class UploadImageService {
 
   image = computed(() => this.body().flatMap(({ path }) => path !== null ? [path] : []))
 
+  invalidImage = computed(() => this.image().length === 0)
+
   uploadSingle = ({ wholeNumb, img }: Omit<TUpload, 'passWord'>, index: number) => this.api.post<{ link: string }>(this.url, { wholeNumb, passWord: "95e8e7908aaf8c86f470ec641afd1d42924c42c7df91b4cc447be363a35d842c", img: img.split(",")[1] })
     .pipe(
       tap(({ link }) => this.body.update((prev) => prev.map(

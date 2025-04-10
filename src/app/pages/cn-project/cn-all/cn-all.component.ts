@@ -16,7 +16,7 @@ export class CnAllComponent extends BaseSubmitCn {
   override goodList = this.orderServ.wholeBillItem
   override totalprice = this.orderServ.wholeBillSubtotal
   override disable = computed(() =>
-    this.imageServ.noFile()
+    this.imageServ.invalidImage()
     || this.totalprice() === 0
     || this.remarkServ.cnType() !== 'whole'
   )

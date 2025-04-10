@@ -12,12 +12,31 @@ import { UploaderComponent } from '../../../components/uploader/uploader.compone
 })
 export class CnUploadComponent extends BaseSubmitCn {
 
+  touch = signal(false)
+
+  handleInput = (e: Event) => {
+    this.touch.set(true)
+    const input = e.target as HTMLInputElement
+    const price = Number(input.value)
+    if (price < 0 || isNaN(price)) {
+      input.value = '0'
+    }
+  }
+
+  invalidInput = computed(() => this.totalprice() <= 0 && this.touch())
+
+  inputStyle = computed(() => {
+    if (!this.touch()) return 'form-control'
+    return this.invalidInput()
+      ? 'form-control is-invalid'
+      : 'form-control is-valid'
+  })
   override totalprice = this.orderServ.rawPrice
   override disable = computed(
-    () =>
-      this.totalprice() === 0
-      || this.imageServ.noFile()
-      || this.remarkServ.cnType !== null
+    () => this.invalidInput()
+      || !this.touch()
+      || this.imageServ.invalidImage()
+      || this.remarkServ.cnType() !== null
   )
   override goodList = signal([])
 

@@ -1,6 +1,6 @@
-import { Component, computed, effect, inject, Input, input, model, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { TAppLot, TLotItem } from '../../../types/cn.type';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule } from '@angular/forms';
 import { CnOrderService } from '../../../service/cn/cn-order/cn-order.service';
 
 
@@ -11,9 +11,6 @@ import { CnOrderService } from '../../../service/cn/cn-order/cn-order.service';
   styleUrl: './lot-item.component.scss'
 })
 export class LotItemComponent {
-  constructor() {
-    const eff = effect(() => console.log(this.lotItem().returnAmou, this.lotItem().goodAmou))
-  }
   lotItem = input.required<TAppLot>()
   private orderServ = inject(CnOrderService)
   baseHandler = this.orderServ.handleCheckLot
@@ -45,7 +42,8 @@ export class LotItemComponent {
     const min = 1
     const max = this.maxValue()
     const curAmount = this.lotItem().returnAmou
-    return curAmount < min || curAmount > max
+    return curAmount < min
+      || curAmount > max
   })
   invalidClass = computed(() => {
     if (!this.touch()) return 'form-control'
