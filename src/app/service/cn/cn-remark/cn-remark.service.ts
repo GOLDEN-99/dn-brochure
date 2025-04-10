@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { ApiService } from '../../api/api.service';
 import { TCnType, TPrependRemark, TReamrk } from '../../../types/cn.type';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class CnRemarkService {
 
   private api = inject(ApiService)
 
-  private base = "https://sandbox.dn.drugnetcenter.com/ReturnRequest"
+  private base = environment.cnPath
 
   private remark$ = this.api.get<TReamrk[]>(`${this.base}/GetCNRemark`)
     .pipe(

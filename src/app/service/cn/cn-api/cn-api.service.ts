@@ -4,6 +4,7 @@ import { CnOrderService } from '../cn-order/cn-order.service';
 import { ApiService } from '../../api/api.service';
 import { TMaybe } from '../../../types';
 import { TCNQueryParams, TCnType, TCreateReq, TPrepenCnApi, TReamrk, TWholeItem } from '../../../types/cn.type';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class CnApiService {
 
   private api = inject(ApiService)
   private orderServ = inject(CnOrderService)
-  private url = "https://sandbox.dn.drugnetcenter.com/ReturnRequest"
+  private url = environment.cnPath
   wholeItemData = signal<TMaybe<TWholeItem>>(null)
 
   private params$ = new Subject<TCNQueryParams>()
