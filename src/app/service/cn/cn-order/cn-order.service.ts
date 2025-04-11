@@ -67,10 +67,7 @@ export class CnOrderService {
         )
     )
   )
-  selectedSubtotal = computed(() => this.totalSelected().reduce(
-    (sum, { lot, unitPrice }) =>
-      sum + lot.reduce((acc, { returnAmou }) => acc + (unitPrice * returnAmou), 0
-      ), 0))
+  selectedSubtotal = computed(() => this.selectedLotItem().reduce((acc, { subtotal }) => acc + subtotal, 0))
   prependSome = computed(() => {
     const totalprice = this.selectedSubtotal()
     const goodList = this.selectedLotItem()
@@ -94,7 +91,7 @@ export class CnOrderService {
       )
     )
   )
-  wholeBillSubtotal = computed(() => this.itemList().reduce((sum, { subTotal }) => sum + subTotal, 0))
+  wholeBillSubtotal = computed(() => this.wholeBillItem().reduce((acc, { subtotal }) => acc + subtotal, 0))
   prependWhole = computed(() => {
     const totalprice = this.wholeBillSubtotal()
     const goodList = this.wholeBillItem()
