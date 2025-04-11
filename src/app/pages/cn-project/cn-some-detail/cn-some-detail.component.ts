@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, effect } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BaseSubmitCn } from '../../../lib/cn';
 import { GoodItemComponent } from '../../../components/cn/good-item/good-item.component';
