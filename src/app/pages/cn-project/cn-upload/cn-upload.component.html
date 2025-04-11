@@ -6,8 +6,8 @@
     name="amount"
     id="amount"
     [className]="inputStyle()"
-    [(ngModel)]="totalprice"
-    (input)="handleInput($event)"
+    [ngModel]="totalprice()"
+    (ngModelChange)="handleChange($event)"
     min="0"
   />
 </div>

@@ -23,7 +23,7 @@ export class CnUploadComponent extends BaseSubmitCn {
     }
   }
 
-  invalidInput = computed(() => this.totalprice() <= 0 && this.touch())
+  invalidInput = computed(() => (this.totalprice() <= 0 || this.invalid()) && this.touch())
 
   inputStyle = computed(() => {
     if (!this.touch()) return 'form-control'
@@ -40,4 +40,15 @@ export class CnUploadComponent extends BaseSubmitCn {
   )
   override goodList = signal([])
 
+  invalid = signal(false)
+
+  handleChange(price: number) {
+    this.touch.set(true)
+    if (price <= 0) {
+      this.invalid.set(true)
+      return
+    }
+    this.orderServ.rawPrice.update(() => price)
+    this.invalid.set(false)
+  }
 }
