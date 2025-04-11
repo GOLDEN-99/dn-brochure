@@ -6,7 +6,7 @@ import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-cn-complete',
-  imports: [DecimalPipe],
+  imports: [],
   templateUrl: './cn-complete.component.html',
   styleUrl: './cn-complete.component.scss'
 })

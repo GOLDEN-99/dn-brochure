@@ -1,5 +1,5 @@
-@let params = query();@let res = response();
-<div>
+<!-- @let params = query();@let res = response(); -->
+<div style="display: flex; flex-direction: column; gap: 24px; margin-top: 40px">
   <div
     class="d-flex align-items-center justify-content-center"
     style="gap: 16px"
@@ -23,7 +23,11 @@
     </div>
     <h1 style="margin: 0; text-align: center">สำเร็จ</h1>
   </div>
-  <div class="content-wrapper">
+  <div class="d-flex justify-content-center" style="flex-direction: column">
+    <div style="font-size: 18px" class="text-center">ทำการ CN สำเร็จ</div>
+    <div style="font-size: 18px" class="text-center">กลับสู่แอป</div>
+  </div>
+  <!-- <div class="content-wrapper">
     @if (params && res) {
     <div class="field-item">
       <div>รหัสร้านค้า</div>
@@ -56,34 +60,34 @@
       <div>{{ res.bankAcName }}</div>
     </div>
     } }
-    <!---->
+    
     @let m = motive();
-    <!---->
+    
     @if (m.id !== '0') {
     <div class="field-item">
       <div>สาเหตุ</div>
       <div>{{ m.remark }}</div>
     </div>
     } @let p = prob();
-    <!---->
+    
     @if (p.id !== '-1') {
     <div class="field-item">
       <div>สาเหตุเพิ่มเติม</div>
       <div>{{ p.result }}</div>
     </div>
     }
-    <!---->
+    
     @if (cnType();as cnt) {
     <div class="field-item">
       <div>ประเภท</div>
       <div>{{ cnt === "whole" ? "ทั้งบิล" : "บางรายการ" }}</div>
     </div>
     }
-    <!---->
+    
     <div class="field-item">
       <div>ยอดรวม</div>
       <div>{{ total() | number : "1.2-2" }}</div>
     </div>
-  </div>
+  </div> -->
   <!-- <a href="line://open" class="btn btn-info w-100">กลับสู่แอป</a> -->
 </div>
