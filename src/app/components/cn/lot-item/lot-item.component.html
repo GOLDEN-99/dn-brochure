@@ -23,12 +23,14 @@
   <div class="col-auto">
     <input
       style="width: 180px"
-      class="form-control"
+      [className]="invalidClass()"
       type="number"
       [id]="'amount' + lot.goodCode + lot.expiDate + lot.lotNumber"
       name="amount"
       [ngModel]="lot.returnAmou"
       (ngModelChange)="onChange($event)"
+      min="1"
+      [max]="maxValue()"
     />
   </div>
 </div>

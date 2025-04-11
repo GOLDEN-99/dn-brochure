@@ -20,7 +20,7 @@ export class CnCompleteComponent {
   cnType = this.remarkServ.cnType
   isShow = this.cnApi.showBank
   motive = this.remarkServ.remarkOpt
-  prob = this.remarkServ.result
+  prob = this.remarkServ.prob
   showBankRef = [{ id: '0', stat: 'ไม่โอนคืน' }, { id: '1', stat: 'โอนคืน' }]
   private orderService = inject(CnOrderService)
   showList = computed(() =>

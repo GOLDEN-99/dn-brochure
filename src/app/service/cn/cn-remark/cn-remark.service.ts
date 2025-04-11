@@ -12,8 +12,9 @@ export class CnRemarkService {
 
   constructor() {
     const eff = effect(() => {
-      this.remarkOpt()
-      this.result.set({ id: '-1', result: 'กรุณาเลือก' })
+      const curRemark = this.remarkOpt()
+      if (curRemark.id === '0') return
+      this.prob.set({ id: '-1', result: 'กรุณาเลือก' })
       this.cnType.update(() => null)
     })
   }
@@ -36,21 +37,22 @@ export class CnRemarkService {
     return r ? [...this.default, ...r] : this.default
   })
 
-  resultOptionList = computed(() => this.handleRemark(this.remarkOpt().id))
-  showResult = computed(() => this.resultOptionList().length !== 0)
-
+  probOption = computed(() => this.handleRemark(this.remarkOpt().id))
+  showProbOption = computed(() => this.probOption().length !== 0)
+  showCn = computed(() => this.handleShowCn(this.remarkOpt().id))
   remarkOpt = signal<TReamrk>({ id: "0", remark: "กรุณาเลือก" })
   invalidRemarkOpt = computed(() => this.remarkOpt().id === '0')
-  result = signal<TResult>({ id: '-1', result: "กรุณาเลือก" })
+  prob = signal<TResult>({ id: '-1', result: "กรุณาเลือก" })
+  invalidProb = computed(() => this.prob().id === '-1')
   cnType = signal<TCnType>(null)
 
 
   setRemarkOption = (value: TReamrk) => this.remarkOpt.set(value)
-  setResult = (value: TResult) => this.result.set(value)
+  setProb = (value: TResult) => this.prob.set(value)
   setCnType = (value: TCnType) => this.cnType.set(value)
 
   prependReq = computed(() => {
-    const { id } = this.result()
+    const { id } = this.prob()
     const probOption = id === '-1' ? null : id
     const { id: motiveId, remark: motive } = this.remarkOpt()
     return { motiveId, motive, probOption } satisfies TPrependRemark
@@ -68,12 +70,25 @@ export class CnRemarkService {
       default: return []
     }
   }
+
+  private handleShowCn = (id: string) => {
+    switch (id) {
+      case '0': return false
+      case '19': return false
+      case '30': return false
+      case '31': return false
+      default: return true
+    }
+  }
   private default: TReamrk[] = [{ id: "0", remark: "กรุณาเลือก" }]
 
   calDisable() {
-    if (this.invalidRemarkOpt()) return true
-    if (!this.showResult()) return false
-    return this.cnType() === null || this.result().id === '-1'
+    const showProb = this.showProbOption()
+    const invalidProb = this.invalidProb()
+    const showCn = this.showCn()
+    const invalidRemark = this.invalidRemarkOpt()
+    const cnType = this.cnType()
+    return invalidRemark || (invalidProb && showProb) || (cnType === null && showCn)
   }
 }
 type TResult = {

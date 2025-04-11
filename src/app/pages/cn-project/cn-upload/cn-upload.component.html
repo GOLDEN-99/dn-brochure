@@ -1,7 +1,15 @@
 <h1 class="text-center">CN สินค้าทั้งบิล</h1>
 <div class="app-form-field">
   <label for="amount">จำนวนเงิน</label>
-  <input type="number" name="amount" id="amount" [(ngModel)]="totalprice" />
+  <input
+    type="number"
+    name="amount"
+    id="amount"
+    [className]="inputStyle()"
+    [ngModel]="totalprice()"
+    (ngModelChange)="handleChange($event)"
+    min="0"
+  />
 </div>
 <app-uploader />
 <div class="btn-wrapper">

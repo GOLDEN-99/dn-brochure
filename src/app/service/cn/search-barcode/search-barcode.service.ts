@@ -41,7 +41,25 @@ export class SearchBarcodeService {
     )
 
   private mapCheck = ({ lot, ...res }: TSearchResult): TAppGoodItem =>
-    ({ ...res, check: true, subTotal: 0, lot: lot.map(l => ({ ...l, check: false, goodAmou: 0, returnAmou: 0 })) })
+    ({ ...res, check: true, subTotal: 0, lot: this.makeDistinct(lot) })
+
+  private makeDistinct = (data: TSearchLot[]): TAppLot[] => {
+    const ref = new Map<string, boolean>()
+    return data.flatMap(d => {
+      const lot = d.lotNumber
+      if (!lot) {
+        const exp = d.expiDate
+        const hasValue = ref.has(exp)
+        if (hasValue) return []
+        ref.set(exp, true)
+        return [{ ...d, check: false, goodAmou: 0, returnAmou: 0 }]
+      }
+      const hasValue = ref.has(lot)
+      if (hasValue) return []
+      ref.set(lot, true)
+      return [{ ...d, check: false, goodAmou: 0, returnAmou: 0 }]
+    })
+  }
 
   products = signal<TAppGoodItem[]>([])
 

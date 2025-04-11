@@ -37,24 +37,16 @@
   @if (lst.length !== 0) {
   <!--  -->
   <div class="preview-container">
-    @for (item of lst; track $index) {
+    @for (link of lst; track $index) {
     <div class="img-wrapper">
-      <img [src]="item.img" alt="receipt image" />
-      @if (item.path === null) {
+      <img [src]="link" alt="receipt image" />
+
       <button
-        [disabled]="disableRemove()"
-        (click)="removeImage($index)"
+        (click)="removeImage(link)"
         class="btn btn-close rounded-circle"
       ></button>
-      }
     </div>
     }
   </div>
-  @if (!hasUpload()) {
-  <div>
-    <button class="btn btn-outline-primary w-100" (click)="uploadAll()">
-      อัพโหลดทั้งหมด
-    </button>
-  </div>
-  } }
+  }
 </div>
