@@ -12,7 +12,7 @@ export class ResultSelectComponent {
   private remarkServ = inject(CnRemarkService)
   remarkOption = this.remarkServ.remarkOpt
   setRemarkOpt = this.remarkServ.setRemarkOption
-  resultOption = this.remarkServ.resultOptionList
-  selectedResult = this.remarkServ.result
+  resultOption = this.remarkServ.probOption
+  selectedResult = this.remarkServ.prob
   compareResultFn = (opt1: any, opt2: any) => opt1 && opt2 ? opt1.id === opt2.id : opt1 === opt2;
 }

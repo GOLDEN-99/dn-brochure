@@ -21,6 +21,7 @@
     @for (l of item.lot; track $index) {
     <app-lot-item
       [lotItem]="l"
+      [hasMaximum]="false"
       (check)="handleCheckAdded(l)({ check: $event })"
       (amount)="handleCheckAdded(l)({ returnAmou: $event })"
     />

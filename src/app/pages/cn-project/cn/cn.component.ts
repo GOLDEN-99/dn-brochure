@@ -29,7 +29,9 @@ export class CnComponent {
   remarkOption = this.remarkServ.remarkOpt
   setRemarkOpt = this.remarkServ.setRemarkOption
 
-  showResult = this.remarkServ.showResult
+  showResult = this.remarkServ.showProbOption
+
+  showCn = this.remarkServ.showCn
 
   remark = this.cnApi.remark
 

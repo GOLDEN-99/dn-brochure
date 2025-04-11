@@ -15,41 +15,49 @@ export class UploadImageService {
   private url = `${environment.cnPath}/GenerateImg`
   private api = inject(ApiService)
 
-  body = signal<TBody[]>([])
+  // body = signal<TBody[]>([])
 
-  image = computed(() => this.body().flatMap(({ path }) => path !== null ? [path] : []))
+  image = signal<string[]>([])
 
-  uploadSingle = ({ wholeNumb, img }: Omit<TUpload, 'passWord'>, index: number) => this.api.post<{ link: string }>(this.url, { wholeNumb, passWord: "95e8e7908aaf8c86f470ec641afd1d42924c42c7df91b4cc447be363a35d842c", img: img.split(",")[1] })
+  invalidImage = computed(() => this.image().length === 0)
+
+  uploadFileV2 = ({ wholeNumb, img }: Omit<TUpload, 'passWord'>) => this.api.post<{ link: string }>(this.url, { wholeNumb, passWord: "95e8e7908aaf8c86f470ec641afd1d42924c42c7df91b4cc447be363a35d842c", img: img.split(",")[1] })
     .pipe(
-      tap(({ link }) => this.body.update((prev) => prev.map(
-        (body, idx) => idx === index
-          ? ({ ...body, path: link })
-          : body
-      ))),
+      tap(({ link }) => this.image.update(prev => [...prev, link])),
       catchError(err => throwError(() => err))
     )
 
-  upload = ({ wholeNumb }: Pick<TUpload, 'wholeNumb'>) => {
-    const reqList = this.body()
-    return from(reqList)
-      .pipe(
-        mergeMap(({ img, path }, idx) =>
-          path === null
-            ? this.uploadSingle({ wholeNumb, img }, idx)
-            : EMPTY
-          , 1),
-        toArray()
-      )
-  }
+  // uploadSingle = ({ wholeNumb, img }: Omit<TUpload, 'passWord'>, index: number) => this.api.post<{ link: string }>(this.url, { wholeNumb, passWord: "95e8e7908aaf8c86f470ec641afd1d42924c42c7df91b4cc447be363a35d842c", img: img.split(",")[1] })
+  //   .pipe(
+  //     tap(({ link }) => this.body.update((prev) => prev.map(
+  //       (body, idx) => idx === index
+  //         ? ({ ...body, path: link })
+  //         : body
+  //     ))),
+  //     catchError(err => throwError(() => err))
+  //   )
 
-  noFile = computed(() => this.body().length === 0)
+  // upload = ({ wholeNumb }: Pick<TUpload, 'wholeNumb'>) => {
+  //   const reqList = this.body()
+  //   return from(reqList)
+  //     .pipe(
+  //       mergeMap(({ img, path }, idx) =>
+  //         path === null
+  //           ? this.uploadSingle({ wholeNumb, img }, idx)
+  //           : EMPTY
+  //         , 1),
+  //       toArray()
+  //     )
+  // }
 
-  appendFile = (img: string) => this.body.update(prev => [...prev, { img, path: null }])
+  noFile = computed(() => this.image().length === 0)
 
-  clear = () => this.body.update(() => [])
+  // appendFile = (img: string) => this.body.update(prev => [...prev, { img, path: null }])
 
-  remove = (idx: number) => {
-    this.body.update(prev => prev.filter((_, i) => i !== idx))
+  clear = () => this.image.update(() => [])
+
+  remove = (link: string) => {
+    this.image.update(prev => prev.filter((l) => l !== link))
   }
 
 }
