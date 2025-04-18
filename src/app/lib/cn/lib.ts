@@ -20,8 +20,11 @@ export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
     private submit = this.cnApiServ.submit
     private handler = {
         next: () => {
+            const p = this.cnApiServ.paramsSignal()
+            if (!p) return
+            const { saleCode, wholeCode, wholeNumb } = p
             this.toast.success('สำเร็จ')
-            this.router.navigateByUrl('complete')
+            this.router.navigate(['cn', saleCode, wholeCode, wholeNumb, 'complete'])
         },
         error: () => {
             this.toast.danger('เกิดข้อผิดพลาด')
