@@ -33,10 +33,11 @@ export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
     handleSubmit() {
         const head = this.head()
         const goodList = this.goodList()
+        const nonNullableLotGoodList = goodList.map(({ lotNumber, ...res }) => ({ ...res, lotNumber: lotNumber ?? '' }))
         const totalprice = this.totalprice()
         const motive = this.motive()
         const image = this.image()
-        this.submit({ ...head, goodList, image, totalprice, ...motive })
+        this.submit({ ...head, goodList: nonNullableLotGoodList, image, totalprice, ...motive })
             .subscribe(this.handler)
     }
     abstract disable: Signal<boolean>;
