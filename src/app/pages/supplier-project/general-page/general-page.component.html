@@ -1,0 +1,71 @@
+<form [formGroup]="stepTwoForm">
+  <div class="app-form-field">
+    <label for="engName">ชื่อบริษัท (ภาษาอังกฤษ)</label>
+    <input type="text" id="engName" name="engName" />
+  </div>
+  <div class="app-form-field">
+    <label for="thaiName">ชื่อบริษัท (ภาษาไทย)</label>
+    <input type="text" id="thaiName" name="thaiName" />
+  </div>
+  <div class="app-form-field">
+    <label for="address">ที่อยู่</label>
+    <textarea name="address" id="address" rows="3"></textarea>
+  </div>
+  @let contactForm = stepTwoForm.controls.contact.controls;
+  <!---->
+  @for (c of contactForm; track $index) {
+  <div class="row align-items-center">
+    <div class="app-form-field col">
+      <label [attr.for]="$index + 'tel'">โทรศัพท์</label>
+      <input
+        type="tel"
+        name="tel"
+        [attr.id]="$index + 'tel'"
+        [formControl]="contactForm[$index].controls.tel"
+      />
+    </div>
+    <div class="app-form-field col">
+      <label [attr.for]="$index + 'name'">ชื่อ</label>
+      <input
+        type="text"
+        name="name"
+        [attr.id]="$index + 'name'"
+        [formControl]="contactForm[$index].controls.name"
+      />
+    </div>
+    <div class="col-2 d-flex justify-content-between">
+      @if(contactForm.length !== 1) {
+      <button class="btn btn-squre btn-danger" (click)="removeContact($index)">
+        -
+      </button>
+      }
+      <!---->
+      @if ($index === contactForm.length-1) {
+      <button class="btn btn-squre btn-success" (click)="addContact()">
+        +
+      </button>
+      }
+      <!---->
+    </div>
+  </div>
+  }
+  <div class="app-form-field">
+    <label for="teleGram">โทรสาร</label>
+    <input
+      type="text"
+      name="teleGram"
+      id="teleGram"
+      formControlName="teleGram"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="email">E-mail</label>
+    <input
+      type="email"
+      name="email"
+      id="email"
+      formControlName="email"
+      autocomplete="email"
+    />
+  </div>
+</form>

@@ -39,7 +39,8 @@ $font-family-base: $font-family-sans-serif;
   label {
     @extend .form-label;
   }
-  input {
+  input,
+  textarea {
     @extend .form-control;
   }
 }
