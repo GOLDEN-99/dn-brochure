@@ -10,8 +10,8 @@ import { RouterLink } from '@angular/router';
   styleUrl: './auth-page.component.scss'
 })
 export class AuthPageComponent extends BaseSupplierForm {
-  stepOneForm = this.formService.form
-  disable = () => this.stepOneForm.controls.auth.invalid || !this.stepOneForm.controls.auth.touched
+  stepOneForm = this.formService.form.controls.auth
+  disable = () => this.stepOneForm.invalid || !this.stepOneForm.touched
   passwordType = signal<'text' | 'password'>('password')
 
   togglePassword = () => this.passwordType.update(prev => prev === 'password' ? 'text' : 'password')

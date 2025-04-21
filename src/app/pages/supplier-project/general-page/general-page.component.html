@@ -1,15 +1,25 @@
 <form [formGroup]="stepTwoForm">
   <div class="app-form-field">
     <label for="engName">ชื่อบริษัท (ภาษาอังกฤษ)</label>
-    <input type="text" id="engName" name="engName" />
+    <input type="text" id="engName" name="engName" formControlName="engName" />
   </div>
   <div class="app-form-field">
     <label for="thaiName">ชื่อบริษัท (ภาษาไทย)</label>
-    <input type="text" id="thaiName" name="thaiName" />
+    <input
+      type="text"
+      id="thaiName"
+      name="thaiName"
+      formControlName="thaiName"
+    />
   </div>
   <div class="app-form-field">
     <label for="address">ที่อยู่</label>
-    <textarea name="address" id="address" rows="3"></textarea>
+    <textarea
+      name="address"
+      id="address"
+      rows="3"
+      formControlName="address"
+    ></textarea>
   </div>
   @let contactForm = stepTwoForm.controls.contact.controls;
   <!---->
@@ -69,3 +79,7 @@
     />
   </div>
 </form>
+<div class="d-flex" style="gap: 16px">
+  <a [className]="btnClass()" role="button" routerLink="../final">ถัดไป</a>
+  <a class="btn btn-danger w-100" role="button" routerLink="..">ย้อนกลับ</a>
+</div>

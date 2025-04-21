@@ -1,0 +1,103 @@
+<form [formGroup]="stepThree">
+  <div class="app-form-field">
+    <label for="supplier">กลุมผู้ขาย</label>
+    <input
+      type="text"
+      id="supplier"
+      name="supplier"
+      formControlName="supplier"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="remark">หมายเหตุ</label>
+    <textarea name="remark" id="remark" rows="3"></textarea>
+  </div>
+  <div class="app-form-field">
+    <label for="shipTo">Ship to</label>
+    <input type="text" id="shipTo" name="shipTo" formControlName="shipTo" />
+  </div>
+  <div class="mb-3" style="display: flex; gap: 16px">
+    <form
+      class="px-3 pt-3 col"
+      style="background-color: #8080801f"
+      formGroupName="payment"
+    >
+      <div class="app-form-field">
+        <label for="duration">กำหนดชำระ (ระบุจำนวนวัน)</label>
+        <input
+          type="number"
+          name="duration"
+          id="duration"
+          formControlName="duration"
+          placeholder="ระบุจำนวนวัน"
+        />
+      </div>
+      <div class="app-form-field">
+        <label for="saleDiscount">ส่วนลดการค้า %</label>
+        <input type="number" min="0" max="100" formControlName="saleDiscount" />
+      </div>
+      <div class="app-form-field">
+        <label for="cashDiscount">ส่วนลดเงินสด %</label>
+        <input
+          type="number"
+          id="cashDiscount"
+          name="cashDiscount"
+          formControlName="cashDiscount"
+        />
+      </div>
+      <div class="app-form-field">
+        <label for="dcDiscount">ส่วนลดdc %</label>
+        <input
+          type="number"
+          id="dcDiscount"
+          name="dcDiscount"
+          formControlName="dcDiscount"
+        />
+      </div>
+    </form>
+    <div class="px-3 pt-3 col" style="background-color: #8080801f">
+      <div
+        class="app-form-check"
+        style="display: flex; gap: 16px; align-items: center"
+      >
+        <input
+          type="checkbox"
+          id="vat-1"
+          [value]="1"
+          name="tax"
+          style="height: 24px; width: 24px"
+          formControlName="tax"
+        />
+        <label for="vat-1">จดทะเบียน VAT</label>
+      </div>
+      <div
+        class="app-form-check"
+        style="display: flex; gap: 16px; align-items: center"
+      >
+        <input
+          type="checkbox"
+          id="vat-2"
+          name="tax"
+          style="height: 24px; width: 24px"
+          [value]="2"
+          formControlName="tax"
+        />
+        <label for="vat-2">สินค้ารวม VAT</label>
+      </div>
+      <div
+        class="app-form-check"
+        style="display: flex; gap: 16px; align-items: center"
+      >
+        <input
+          type="checkbox"
+          id="vat-3"
+          name="tax"
+          [value]="3"
+          style="height: 24px; width: 24px"
+          formControlName="tax"
+        />
+        <label for="vat-3">ควบคุมราคาขายปลีก</label>
+      </div>
+    </div>
+  </div>
+</form>
