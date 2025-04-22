@@ -1,0 +1,13 @@
+button.nav-link {
+  color: black;
+  border: none;
+  margin: 0;
+  &.active {
+    background-color: #8080801f;
+  }
+}
+
+div.condi-form {
+  background-color: #8080801f;
+  padding: 16px;
+}

@@ -3,7 +3,7 @@ import { SearchPageComponent } from './pages/brochure-project/search-page/search
 import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
 import { NotfoundComponent } from './pages/notfound/notfound.component';
-import { BROCHURE_TOKEN } from './lib';
+import { BROCHURE_TOKEN, SUPPLIER_TOKEN } from './lib';
 import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
 import { cnResolver } from './resolvers/cn/cn.resolver';
 import { BaseBrochureComponent } from './pages/brochure-project/base-brochure/base-brochure.component';
@@ -13,6 +13,10 @@ import { MarketingService } from './service/brochure/marketing/marketing.service
 import { cnGuard } from './guard/cn-guard.guard';
 import { SupplierLayoutComponent } from './layout/supplier-layout/supplier-layout.component';
 import { AuthPageComponent } from './pages/supplier-project/auth-page/auth-page.component';
+import { SupplierDnService } from './service/supplier/supplier-dn/supplier-dn.service';
+import { SupplierHuService } from './service/supplier/supplier-hu/supplier-hu.service';
+import { SupplierReserveLayoutComponent } from './layout/supplier-reserve-layout/supplier-reserve-layout.component';
+import { SupplierReserveComponent } from './pages/supplier-project/supplier-reserve/supplier-reserve.component';
 
 export const routes: Routes = [
     {
@@ -42,32 +46,42 @@ export const routes: Routes = [
             },
             {
                 path: "whole",
-                loadComponent: () => import('./pages/cn-project/cn-all/cn-all.component').then(r => r.CnAllComponent),
+                loadComponent: () =>
+                    import('./pages/cn-project/cn-all/cn-all.component')
+                        .then(r => r.CnAllComponent),
                 canActivate: [cnGuard('whole')]
             },
             {
                 path: "some",
-                loadComponent: () => import('./pages/cn-project/cn-some/cn-some.component').then(r => r.CnSomeComponent),
+                loadComponent: () =>
+                    import('./pages/cn-project/cn-some/cn-some.component')
+                        .then(r => r.CnSomeComponent),
                 canActivate: [cnGuard('some')]
             },
             {
                 path: "some/detail",
-                loadComponent: () => import('./pages/cn-project/cn-some-detail/cn-some-detail.component').then(r => r.CnSomeDetailComponent),
+                loadComponent: () =>
+                    import('./pages/cn-project/cn-some-detail/cn-some-detail.component')
+                        .then(r => r.CnSomeDetailComponent),
                 canActivate: [cnGuard('some')]
             },
             {
                 path: "upload",
-                loadComponent: () => import('./pages/cn-project/cn-upload/cn-upload.component').then(r => r.CnUploadComponent),
+                loadComponent: () =>
+                    import('./pages/cn-project/cn-upload/cn-upload.component')
+                        .then(r => r.CnUploadComponent),
                 canActivate: [cnGuard(null)]
             },
             {
                 path: "complete",
-                loadComponent: () => import('./pages/cn-project/cn-complete/cn-complete.component').then(r => r.CnCompleteComponent)
+                loadComponent: () =>
+                    import('./pages/cn-project/cn-complete/cn-complete.component')
+                        .then(r => r.CnCompleteComponent)
             }
         ]
     },
     {
-        path: 'supplier',
+        path: 'supplier/form',
         component: SupplierLayoutComponent,
         children: [
             {
@@ -76,12 +90,62 @@ export const routes: Routes = [
             },
             {
                 path: 'general',
-                loadComponent: () => import('./pages/supplier-project/general-page/general-page.component').then(r => r.GeneralPageComponent)
+                loadComponent: () =>
+                    import('./pages/supplier-project/general-page/general-page.component')
+                        .then(r => r.GeneralPageComponent)
             },
             {
                 path: 'final',
-                loadComponent: () => import('./pages/supplier-project/step-three-page/step-three-page.component').then(r => r.StepThreePageComponent)
+                loadComponent: () =>
+                    import('./pages/supplier-project/step-three-page/step-three-page.component')
+                        .then(r => r.StepThreePageComponent)
+            },
+            {
+                path: 'condition',
+                loadComponent: () =>
+                    import('./pages/supplier-project/condition-page/condition-page.component')
+                        .then(r => r.ConditionPageComponent)
             }
+        ]
+    },
+    {
+        path: 'supplier/reserve',
+        component: SupplierReserveLayoutComponent,
+        children: [
+            {
+                path: "",
+                component: SupplierReserveComponent
+            },
+            {
+                path: "add/:end",
+                loadComponent: () => import('./pages/supplier-project/supplier-reserve-add/supplier-reserve-add.component')
+                    .then(r => r.SupplierReserveAddComponent)
+            },
+            {
+                path: 'login',
+                loadComponent: () => import('./pages/supplier-project/supplier-login/supplier-login.component')
+                    .then(r => r.SupplierLoginComponent)
+            }
+        ]
+    },
+    {
+        path: 'supplier/dn',
+        title: 'DN Inhouse',
+        loadComponent: () =>
+            import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
+                .then(r => r.SupplierInhouseComponent),
+        providers: [
+            { provide: SUPPLIER_TOKEN, useExisting: SupplierDnService }
+        ]
+    },
+    {
+        path: 'supplier/hu',
+        title: 'HU Inhouse',
+        loadComponent: () =>
+            import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
+                .then(r => r.SupplierInhouseComponent),
+        providers: [
+            { provide: SUPPLIER_TOKEN, useExisting: SupplierHuService }
         ]
     },
     {
