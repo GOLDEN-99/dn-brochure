@@ -11,12 +11,7 @@ import { RouterLink } from '@angular/router';
 })
 export class StepThreePageComponent extends BaseSupplierForm {
   stepThree = this.formService.form.controls.stepThree
-  constructor() {
-    super()
-    this.stepThree.valueChanges.subscribe(console.log)
-  }
   addEmpl = this.formService.addEmplList
   removeEmpl = this.formService.removeEmplList
 
-  disable = () => this.stepThree.invalid || !this.stepThree.touched
 }

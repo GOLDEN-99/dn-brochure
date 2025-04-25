@@ -79,6 +79,14 @@ export class SupplierFromService {
     })
   })
 
+  private returnForm: TReturnForm = this.fb.nonNullable.group({
+    before: this.fb.nonNullable.control(0),
+    after: this.fb.nonNullable.control(0),
+    whole: this.fb.nonNullable.control(false),
+    lot: this.fb.nonNullable.control(false),
+
+  })
+
   private condiForm: TCondiForm = this.fb.nonNullable.group({})
 
   addCondi = (key: 'sup' | 'branch') => () => {
@@ -171,10 +179,10 @@ export type TReturnDetail = {
 
 export type TReturnForm = FormGroup<TMapForm<TReturnDetail>>
 
-export type TCondiForm = FormGroup<TMapForm<{
+export type TCondiForm = FormGroup<{
   sup?: TReturnForm
   branch?: TReturnForm
-}>>
+}>
 
 export type TForm = FormGroup<{
   auth: TAuthForm

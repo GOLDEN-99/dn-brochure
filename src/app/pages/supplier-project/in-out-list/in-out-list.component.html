@@ -1,0 +1,34 @@
+<a routerLink="./add" class="btn btn-icon btn-success mb-3" role="button">
+  <i class="bi bi-plus"></i>
+  เพิ่ม
+</a>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>ชื่อ</th>
+      <th>เวลา</th>
+      <th>ผู้ดูแล</th>
+      <th>รายละเอียด</th>
+      <th>แก้ไข</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of mock; track $index) {
+    <tr>
+      <td>{{ item.name }}</td>
+      <td>{{ item.duration }}</td>
+      <td>{{ item.admin }}</td>
+      <td>
+        <a [routerLink]="'./' + $index" class="btn btn-primary" role="button"
+          >ดูเพิ่มเติม</a
+        >
+      </td>
+      <td>
+        <button class="btn btn-outline-dark">
+          <i class="bi bi-pencil-square"></i>
+        </button>
+      </td>
+    </tr>
+    }
+  </tbody>
+</table>
