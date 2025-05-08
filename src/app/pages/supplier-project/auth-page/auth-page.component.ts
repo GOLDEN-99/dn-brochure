@@ -16,8 +16,4 @@ export class AuthPageComponent extends BaseSupplierForm {
 
   togglePassword = () => this.passwordType.update(prev => prev === 'password' ? 'text' : 'password')
 
-  btnClass = () => this.disable()
-    ? 'btn btn-primary w-100 disabled'
-    : 'btn btn-primary w-100'
-
 }

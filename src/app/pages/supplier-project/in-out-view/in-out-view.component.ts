@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CalendarMonthlyComponent } from "../../../components/calendar/calendar-monthly/calendar-monthly.component";
+import { CalendarMonthlyComponent } from "../../../components/supplier/calendar-monthly/calendar-monthly.component";
 
 @Component({
   selector: 'app-in-out-view',

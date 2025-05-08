@@ -86,6 +86,11 @@ export const routes: Routes = [
         ]
     },
     {
+        path: 'supplier/form/product',
+        loadComponent: () => import('./pages/supplier-project/supplier-product-page/supplier-product-page.component')
+            .then(r => r.SupplierProductPageComponent)
+    },
+    {
         path: 'supplier/form',
         component: SupplierLayoutComponent,
         children: [
@@ -110,10 +115,6 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./pages/supplier-project/condition-page/condition-page.component')
                         .then(r => r.ConditionPageComponent)
-            }, {
-                path: 'product',
-                loadComponent: () => import('./pages/supplier-project/supplier-product-page/supplier-product-page.component')
-                    .then(r => r.SupplierProductPageComponent)
             }
         ]
     },
