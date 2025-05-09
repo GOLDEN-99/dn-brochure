@@ -9,45 +9,94 @@
     padding: 16px;
   "
 >
-  <div class="row">
-    <div class="col">
-      <div class="app-form-field">
-        <label for="name">ชื่อประตู</label>
-        <input type="text" name="name" id="name" [disabled]="inactive" />
+  <form [formGroup]="headForm">
+    <div class="row">
+      <div class="col">
+        <div class="app-form-field">
+          <label for="name">ชื่อประตู</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            [disabled]="inactive"
+            formControlName="name"
+          />
+        </div>
+      </div>
+      <div class="col">
+        <div class="app-form-field">
+          <label for="duration">ระยะเวลา (ต่อรอบ)</label>
+          <input
+            type="number"
+            step="5"
+            min="0"
+            id="duration"
+            name="duration"
+            formControlName="duration"
+            [disabled]="inactive"
+          />
+        </div>
       </div>
     </div>
-    <div class="col">
-      <div class="app-form-field">
-        <label for="duration">ระยะเวลา (ต่อรอบ)</label>
-        <input
-          type="number"
-          step="5"
-          id="duration"
-          name="duration"
-          [(ngModel)]="durationStep"
-          [disabled]="inactive"
-        />
+    <div class="app-form-field">
+      <label for="remark">หมายเหตุ</label>
+      <textarea
+        name="remark"
+        id="remark"
+        [disabled]="inactive"
+        formControlName="remark"
+      ></textarea>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="app-form-field">
+          <label for="admin">ชื่อผู้ดูแล</label>
+          <input
+            type="text"
+            name="admin"
+            id="admin"
+            [disabled]="inactive"
+            formControlName="admin"
+          />
+        </div>
+      </div>
+      <div class="col">
+        <div class="app-form-field">
+          <label for="email">E mail ผู้ดูแล</label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            [disabled]="inactive"
+            formControlName="adminEmail"
+          />
+        </div>
+      </div>
+      <div>
+        <label class="mb-2">เลือกจำนวนการจอง</label>
+        <div>
+          <div class="app-form-check">
+            <input
+              type="radio"
+              id="single-reserve"
+              [value]="false"
+              formControlName="isMultiple"
+            />
+            <label for="single-reserve">จองได้ 1 ช่วงเวลา</label>
+          </div>
+          <div class="app-form-check">
+            <input
+              type="radio"
+              id="multiple-reserve"
+              [value]="true"
+              formControlName="isMultiple"
+            />
+            <label for="multiple-reserve">จองหลายช่วงเวลา</label>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="app-form-field">
-    <label for="remark">หมายเหตุ</label>
-    <textarea name="remark" id="remark" [disabled]="inactive"></textarea>
-  </div>
-  <div class="row">
-    <div class="col">
-      <div class="app-form-field">
-        <label for="admin">ชื่อผูดูแล</label>
-        <input type="text" name="admin" id="admin" [disabled]="inactive" />
-      </div>
-    </div>
-    <div class="col">
-      <div class="app-form-field">
-        <label for="email">E mail ผู้ดูแล</label>
-        <input type="email" name="email" id="email" [disabled]="inactive" />
-      </div>
-    </div>
-  </div>
+  </form>
   <form
     [formGroup]="form"
     style="

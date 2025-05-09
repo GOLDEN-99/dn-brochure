@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormGroup, FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TMapForm } from '../../../../types';
 import { NgbTimepicker, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -10,9 +10,25 @@ import { RouterLink } from '@angular/router';
   templateUrl: './add-schedule-form.component.html',
   styleUrl: './add-schedule-form.component.scss'
 })
-export class AddScheduleFormComponent {
+export class AddScheduleFormComponent implements OnInit {
+
+  ngOnInit(): void {
+    this.headForm.controls.duration.valueChanges.subscribe((d) => this.durationStep.update(() => d))
+  }
+
   durationStep = signal<number>(0)
   private nnfb = inject(NonNullableFormBuilder)
+
+  headForm = this.nnfb.group({
+    name: this.nnfb.control("", [Validators.required]),
+    duration: this.nnfb.control(0, [Validators.required, Validators.min(1)]),
+    remark: this.nnfb.control(""),
+    admin: this.nnfb.control("", [Validators.required]),
+    adminEmail: this.nnfb.control("", [Validators.required, Validators.email]),
+    isMultiple: this.nnfb.control(false)
+  })
+
+
   form: TMainForm = this.nnfb.group({
     sun: this.nnfb.array<TDurationSubForm>([]),
     mon: this.nnfb.array<TDurationSubForm>([]),
