@@ -11,6 +11,8 @@ import { CnComponent } from './pages/cn-project/cn/cn.component';
 import { ProchureService } from './service/brochure/prochure/prochure.service';
 import { MarketingService } from './service/brochure/marketing/marketing.service';
 import { cnGuard } from './guard/cn-guard.guard';
+import { SupplierLayoutComponent } from './layout/supplier-layout/supplier-layout.component';
+import { AuthPageComponent } from './pages/supplier-project/auth-page/auth-page.component';
 
 export const routes: Routes = [
     {
@@ -61,6 +63,20 @@ export const routes: Routes = [
             {
                 path: "complete",
                 loadComponent: () => import('./pages/cn-project/cn-complete/cn-complete.component').then(r => r.CnCompleteComponent)
+            }
+        ]
+    },
+    {
+        path: 'supplier',
+        component: SupplierLayoutComponent,
+        children: [
+            {
+                path: '',
+                component: AuthPageComponent
+            },
+            {
+                path: 'general',
+                loadComponent: () => import('./pages/supplier-project/general-page/general-page.component').then(r => r.GeneralPageComponent)
             }
         ]
     },
