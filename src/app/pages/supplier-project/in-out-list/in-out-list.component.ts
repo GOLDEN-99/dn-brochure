@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-in-out-list',
@@ -8,6 +8,8 @@ import { RouterLink } from '@angular/router';
   styleUrl: './in-out-list.component.scss'
 })
 export class InOutListComponent {
+  private route = inject(ActivatedRoute)
+  private router = inject(Router)
   mock = [
     {
       name: 'Express(admin)', duration: '20 นาที', admin: 'example1@test.com',
@@ -22,4 +24,8 @@ export class InOutListComponent {
       name: 'ประตู3', duration: '30 นาที', admin: 'example4@test.com',
     },
   ]
+
+  goTo(idx: number) {
+    this.router.navigate([idx], { relativeTo: this.route })
+  }
 }

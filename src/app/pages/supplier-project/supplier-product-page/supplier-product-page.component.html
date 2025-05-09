@@ -1,117 +1,118 @@
-<p>supplier-product-page works!</p>
-<div class="mb-3" style="display: flex; gap: 16px">
-  <button class="btn btn-outline-success">
-    <i class="bi bi-plus"></i>
-    เพิ่มสินค้าจำหน่าย
-  </button>
-  <button class="btn btn-outline-warning">
-    <i class="bi bi-card-list"></i>
-    กำหนดเงื่อนไขการคืนตามค่าเริ่มต้น
-  </button>
-  <button class="btn btn-outline-danger">
-    <i class="bi bi-trash"></i>
-    ลบรายการสินค้ายกเลิก
-  </button>
-  <button class="btn btn-info">
-    <i class="bi bi-floppy"></i>
-    บันทึก
-  </button>
-</div>
-<table class="table" style="z-index: 10">
-  <thead>
-    <tr>
-      <th>ราการสินค้า</th>
-      <th>รหัส</th>
-      <th>ship to</th>
-      <th>ระงับ ship to</th>
-      <th>ซับรับคืน</th>
-      <th>ซับรับคืนก่อน Exp(ด)</th>
-      <th>ซับรับคืนหลัง Exp(ด)</th>
-      <th>เต็มกล่อง</th>
-      <th>ล็อตเดียวกัน</th>
-      <th>คลังรับคืน</th>
-      <th>คลังรับคืนก่อน Exp(ด)</th>
-      <th>คลังรับคืนหลัง Exp(ด)</th>
-      <th>เต็มกล่อง</th>
-      <th>ล็อตเดียวกัน</th>
-    </tr>
-  </thead>
-  <tbody>
-    @let products = mock();
-    <!---->
-    @for (p of products; track $index) {
-    <tr>
-      <td>{{ p.name }}</td>
-      <td>{{ p.code }}</td>
-      <td>
-        <input
-          class="form-check"
-          type="checkbox"
-          [ngModel]="p.shipTo"
-          (ngModelChange)="updateField('shipTo', $index)"
-        />
-      </td>
-      <td>
-        <input
-          class="form-check"
-          type="checkbox"
-          [ngModel]="p.cancelShipTo"
-          (ngModelChange)="updateField('cancelShipTo', $index)"
-        />
-      </td>
-      <td>
-        <input
-          class="form-check"
-          type="checkbox"
-          [ngModel]="p.supReturn"
-          (ngModelChange)="updateField('supReturn', $index)"
-        />
-      </td>
-      <td></td>
-      <td></td>
-      <td>
-        <input
-          class="form-check"
-          type="checkbox"
-          [ngModel]="p.supLot"
-          (ngModelChange)="updateField('supLot', $index)"
-        />
-      </td>
-      <td>
-        <input
-          class="form-check"
-          type="checkbox"
-          [ngModel]="p.supBox"
-          (ngModelChange)="updateField('supBox', $index)"
-        />
-      </td>
-      <td>
-        <input
-          class="form-check"
-          type="checkbox"
-          [ngModel]="p.branchReturn"
-          (ngModelChange)="updateField('branchReturn', $index)"
-        />
-      </td>
-      <td></td>
-      <td></td>
-      <td>
-        <input
-          class="form-check"
-          type="checkbox"
-          [ngModel]="p.branchLot"
-          (ngModelChange)="updateField('branchLot', $index)"
-        />
-      </td>
-      <td>
-        <input
-          class="form-check"
-          type="checkbox"
-          [ngModel]="p.branchBox"
-          (ngModelChange)="updateField('branchBox', $index)"
-        />
-      </td>
-    </tr>
-    }
-  </tbody>
-</table>
+<section class="m-3">
+  <div class="mb-3" style="display: flex; gap: 16px">
+    <button class="btn btn-outline-success">
+      <i class="bi bi-plus"></i>
+      เพิ่มสินค้าจำหน่าย
+    </button>
+    <button class="btn btn-outline-warning">
+      <i class="bi bi-card-list"></i>
+      กำหนดเงื่อนไขการคืนตามค่าเริ่มต้น
+    </button>
+    <button class="btn btn-outline-danger">
+      <i class="bi bi-trash"></i>
+      ลบรายการสินค้ายกเลิก
+    </button>
+    <button class="btn btn-info">
+      <i class="bi bi-floppy"></i>
+      บันทึก
+    </button>
+  </div>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>ราการสินค้า</th>
+        <th>รหัส</th>
+        <th>ship to</th>
+        <th>ระงับ ship to</th>
+        <th>ซับรับคืน</th>
+        <th>ซับรับคืนก่อน Exp(ด)</th>
+        <th>ซับรับคืนหลัง Exp(ด)</th>
+        <th>เต็มกล่อง</th>
+        <th>ล็อตเดียวกัน</th>
+        <th>คลังรับคืน</th>
+        <th>คลังรับคืนก่อน Exp(ด)</th>
+        <th>คลังรับคืนหลัง Exp(ด)</th>
+        <th>เต็มกล่อง</th>
+        <th>ล็อตเดียวกัน</th>
+      </tr>
+    </thead>
+    <tbody>
+      @let products = mock();
+      <!---->
+      @for (p of products; track $index) {
+      <tr>
+        <td>{{ p.name }}</td>
+        <td>{{ p.code }}</td>
+        <td class="table-danger">
+          <input
+            class="form-check"
+            type="checkbox"
+            [ngModel]="p.shipTo"
+            (ngModelChange)="updateField('shipTo', $index)"
+          />
+        </td>
+        <td class="table-danger">
+          <input
+            class="form-check"
+            type="checkbox"
+            [ngModel]="p.cancelShipTo"
+            (ngModelChange)="updateField('cancelShipTo', $index)"
+          />
+        </td>
+        <td class="table-success">
+          <input
+            class="form-check"
+            type="checkbox"
+            [ngModel]="p.supReturn"
+            (ngModelChange)="updateField('supReturn', $index)"
+          />
+        </td>
+        <td class="table-success"></td>
+        <td class="table-success"></td>
+        <td class="table-success">
+          <input
+            class="form-check"
+            type="checkbox"
+            [ngModel]="p.supLot"
+            (ngModelChange)="updateField('supLot', $index)"
+          />
+        </td>
+        <td class="table-success">
+          <input
+            class="form-check"
+            type="checkbox"
+            [ngModel]="p.supBox"
+            (ngModelChange)="updateField('supBox', $index)"
+          />
+        </td>
+        <td class="table-info">
+          <input
+            class="form-check"
+            type="checkbox"
+            [ngModel]="p.branchReturn"
+            (ngModelChange)="updateField('branchReturn', $index)"
+          />
+        </td>
+        <td class="table-info"></td>
+        <td class="table-info"></td>
+        <td class="table-info">
+          <input
+            class="form-check"
+            type="checkbox"
+            [ngModel]="p.branchLot"
+            (ngModelChange)="updateField('branchLot', $index)"
+          />
+        </td>
+        <td class="table-info">
+          <input
+            class="form-check"
+            type="checkbox"
+            [ngModel]="p.branchBox"
+            (ngModelChange)="updateField('branchBox', $index)"
+          />
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</section>
