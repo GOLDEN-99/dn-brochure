@@ -8,6 +8,25 @@
       formControlName="supplier"
     />
   </div>
+  <div class="row align-items-end">
+    <div class="app-form-field col-2">
+      <label for="compCode">สังกัดบริษัท</label>
+      <input type="text" name="compCode" id="compCode" disabled />
+    </div>
+    <div class="app-form-field col-4">
+      <label for="comp"> </label>
+      <input type="text" name="comp" id="comp" (click)="searchBtn.click()" />
+    </div>
+    <div class="col mb-3">
+      <button
+        class="btn btn-outline"
+        #searchBtn
+        (click)="openModal(searchModal)"
+      >
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </div>
   <div class="app-form-field">
     <label for="remark">หมายเหตุ</label>
     <textarea
@@ -21,7 +40,7 @@
   @let emplListForm = stepThree.controls.emplList.controls;
   <!---->
   @for (item of emplListForm; track $index) {
-  <div class="row align-items-center">
+  <div class="row align-items-end">
     <div class="col app-form-field">
       <label [attr.for]="'empl-name' + $index">ชื่อพนักงาน</label>
       <input
@@ -40,15 +59,17 @@
         [formControl]="item.controls.emplEmail"
       />
     </div>
-    <div class="col-2 d-flex justify-content-between">
+    <div class="col-2 d-flex justify-content-between mb-3">
       @if(emplListForm.length !== 1) {
       <button class="btn btn-squre btn-danger" (click)="removeEmpl($index)">
-        -
+        <i class="bi bi-dash"></i>
       </button>
       }
       <!---->
       @if ($index === emplListForm.length-1) {
-      <button class="btn btn-squre btn-success" (click)="addEmpl()">+</button>
+      <button class="btn btn-squre btn-success" (click)="addEmpl()">
+        <i class="bi bi-plus"></i>
+      </button>
       }
       <!---->
     </div>
@@ -151,3 +172,18 @@
     </form>
   </div>
 </form>
+<ng-template #searchModal let-modal>
+  <app-modal-layout
+    title="ค้นหาซัพพลายเออร์"
+    (crossClick)="modal.dismiss('Cross click')"
+  >
+    <div modalBody>
+      <app-search-supplier />
+    </div>
+    <div modalFooter>
+      <button class="btn btn-secondary" (click)="modal.close('Close modal')">
+        Close
+      </button>
+    </div>
+  </app-modal-layout>
+</ng-template>

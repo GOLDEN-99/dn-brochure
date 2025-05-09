@@ -24,7 +24,7 @@
   @let contactForm = stepTwoForm.controls.contact.controls;
   <!---->
   @for (c of contactForm; track $index) {
-  <div class="row align-items-center">
+  <div class="row align-items-end">
     <div class="app-form-field col">
       <label [attr.for]="$index + 'tel'">โทรศัพท์</label>
       <input
@@ -43,16 +43,16 @@
         [formControl]="c.controls.name"
       />
     </div>
-    <div class="col-2 d-flex justify-content-between">
+    <div class="col-2 d-flex justify-content-between mb-3">
       @if(contactForm.length !== 1) {
       <button class="btn btn-squre btn-danger" (click)="removeContact($index)">
-        -
+        <i class="bi bi-dash"></i>
       </button>
       }
       <!---->
       @if ($index === contactForm.length-1) {
       <button class="btn btn-squre btn-success" (click)="addContact()">
-        +
+        <i class="bi bi-plus"></i>
       </button>
       }
       <!---->

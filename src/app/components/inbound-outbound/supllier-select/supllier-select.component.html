@@ -1,0 +1,14 @@
+<div class="mb-3">
+  <label for="supplier-select">เลือกซัพ</label>
+  <select
+    name="supplier-select"
+    id="supplier-select"
+    [(ngModel)]="selectedOption"
+    class="form-select"
+    [compareWith]="compareFunc()"
+  >
+    @for (item of optionsList(); track $index) {
+    <option [ngValue]="item">{{ item.label }}</option>
+    }
+  </select>
+</div>
