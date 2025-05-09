@@ -1,0 +1,90 @@
+<h1 class="text-center">{{ pageLabel() }}</h1>
+<ul class="option-list">
+  @for (item of option(); track $index) {
+  <li
+    class="otption-item rounded border p-3"
+    tabindex="0"
+    (click)="radio.click()"
+  >
+    <div class="form-check">
+      <input
+        #radio
+        class="form-check-input"
+        type="radio"
+        name="gate"
+        [attr.id]="item.id + '-radio'"
+        [value]="item.id"
+        [(ngModel)]="activeOption"
+      />
+      <label class="form-check-label" [attr.for]="item.id + '-radio'">
+        {{ item.label }}
+      </label>
+    </div>
+    <span>{{ item.description }}</span>
+    <div style="display: flex; align-items: center">
+      <div class="me-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-alarm"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M8.5 5.5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9z"
+          />
+          <path
+            d="M6.5 0a.5.5 0 0 0 0 1H7v1.07a7.001 7.001 0 0 0-3.273 12.474l-.602.602a.5.5 0 0 0 .707.708l.746-.746A6.97 6.97 0 0 0 8 16a6.97 6.97 0 0 0 3.422-.892l.746.746a.5.5 0 0 0 .707-.708l-.601-.602A7.001 7.001 0 0 0 9 2.07V1h.5a.5.5 0 0 0 0-1zm1.038 3.018a6 6 0 0 1 .924 0 6 6 0 1 1-.924 0M0 3.5c0 .753.333 1.429.86 1.887A8.04 8.04 0 0 1 4.387 1.86 2.5 2.5 0 0 0 0 3.5M13.5 1c-.753 0-1.429.333-1.887.86a8.04 8.04 0 0 1 3.527 3.527A2.5 2.5 0 0 0 13.5 1"
+          />
+        </svg>
+      </div>
+      <div>{{ item.duration }} นาที</div>
+    </div>
+  </li>
+  }
+</ul>
+<div class="calander-warpper mb-3">
+  <ngb-datepicker class="custom-dp" [(ngModel)]="model" />
+  <div
+    style="
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      row-gap: 8px;
+      column-gap: 8px;
+      width: 344px;
+      margin: 0 auto;
+    "
+  >
+    @for (time of timeSlot; track $index) {
+    <button
+      [className]="btnClass(time)"
+      (click)="setActive(time)"
+      [disabled]="activeSlot() === time"
+    >
+      {{ btnSuffix(time) }}
+    </button>
+    }
+  </div>
+</div>
+<form class="reserve-form p-3 rounded">
+  <div class="app-form-field">
+    <label for="name">ชื่อบริษัท</label>
+    <input type="text" name="name" id="name" disabled />
+  </div>
+  <div class="app-form-field">
+    <label for="email">E-mail</label>
+    <input type="email" name="email" id="email" disabled />
+  </div>
+  <div class="app-form-field">
+    <label for="tel">โทรศัพท์</label>
+    <input type="tel" name="tel" id="tel" disabled />
+  </div>
+  <div>เลขที่ใบสั่งซื้อ (PO)</div>
+  <div class="app-form-field">
+    <label for="remark">หมายเหตุ</label>
+    <textarea name="remark" id="remark" rows="3"></textarea>
+  </div>
+  <button class="btn btn-success w-100">จอง</button>
+</form>

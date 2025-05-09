@@ -45,6 +45,19 @@ $font-family-base: $font-family-sans-serif;
   }
 }
 
+.app-form-field-inline {
+  @extend .row, .g-3, .align-items-center, .mb-3;
+  > div {
+    @extend .col-auto;
+    > label {
+      @extend .col-form-label;
+    }
+    > input {
+      @extend .form-control;
+    }
+  }
+}
+
 .app-form-check {
   @extend .mb-3;
   @extend .form-check;
