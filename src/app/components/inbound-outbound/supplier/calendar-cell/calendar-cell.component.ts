@@ -1,5 +1,5 @@
 import { Component, computed, input, output, signal } from '@angular/core';
-import { TDate } from '../../../lib';
+import { TDate } from '../../../../lib';
 
 @Component({
   selector: 'app-calendar-cell',

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { AddScheduleFormComponent } from "../../../components/supplier/form/add-schedule-form/add-schedule-form.component";
+import { AddScheduleFormComponent } from '../../../components/inbound-outbound/supplier/form/add-schedule-form/add-schedule-form.component';
+
 
 @Component({
   selector: 'app-in-out-edit',

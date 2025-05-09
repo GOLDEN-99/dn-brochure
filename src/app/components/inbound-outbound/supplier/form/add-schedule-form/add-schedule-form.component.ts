@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormGroup, FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TMapForm } from '../../../../types';
 import { NgbTimepicker, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { RouterLink } from '@angular/router';
+import { TMapForm } from '../../../../../types';
 
 @Component({
   selector: 'app-add-schedule-form',

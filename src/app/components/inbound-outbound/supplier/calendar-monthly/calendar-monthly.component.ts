@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal, TemplateRef } from '@angular/core';
-import { genCalendar, TDate } from '../../../lib';
+import { genCalendar, TDate } from '../../../../lib';
 import { CalendarCellComponent } from "../calendar-cell/calendar-cell.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
