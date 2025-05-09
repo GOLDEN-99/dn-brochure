@@ -36,16 +36,10 @@ export class SupplierFromService {
     })], Validators.minLength(1)),
     email: this.nnfb.control("", Validators.required),
     teleGram: this.nnfb.control("", Validators.required),
-    supplier: this.nnfb.control("", Validators.required),
-    comp: this.nnfb.group<TMapForm<TComp>>({
-      compId: this.nnfb.control(0, [Validators.required, Validators.min(1)]),
-      compName: this.nnfb.control("", Validators.required)
-    }),
-    shipTo: this.nnfb.control("", Validators.required),
-    remark: this.nnfb.control("", Validators.required),
+
   })
 
-  addEmplList = () => this.form.controls.emplList.controls.push(
+  addEmplList = () => this.form.controls.stepThree.controls.emplList.controls.push(
     this.nnfb.group({
       emplName: this.nnfb.control("", Validators.required),
       emplEmail: this.nnfb.control("", Validators.required)
@@ -59,17 +53,26 @@ export class SupplierFromService {
 
   private paymentForm: TPaymentForm = this.nnfb.group({
     duration: this.nnfb.control(0, [Validators.required, Validators.min(0)]),
-    saleDiscont: this.nnfb.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
+    saleDiscount: this.nnfb.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
     cashDiscount: this.nnfb.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
     dcDiscount: this.nnfb.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
   })
 
-  private tariffForm: TTariffForm = this.nnfb.group({
+
+  private stepThreeForm: TStep3Form = this.nnfb.group({
+    supplier: this.nnfb.control("", Validators.required),
+    comp: this.nnfb.group<TMapForm<TComp>>({
+      compId: this.nnfb.control(0, [Validators.required, Validators.min(1)]),
+      compName: this.nnfb.control("", Validators.required)
+    }),
+    shipTo: this.nnfb.control("", Validators.required),
+    remark: this.nnfb.control("", Validators.required),
+    emplList: this.emplListForm,
     payment: this.paymentForm,
     tax: this.nnfb.control<TTax[]>([], Validators.minLength(1))
   })
 
-  form: TForm = this.nnfb.group({ auth: this.authForm, general: this.generalForm, emplList: this.emplListForm, tariff: this.tariffForm })
+  form: TForm = this.nnfb.group({ auth: this.authForm, general: this.generalForm, stepThree: this.stepThreeForm })
 }
 
 type TAuthForm = FormGroup<{
@@ -92,11 +95,7 @@ type TGeneralForm = FormGroup<{
   address: FormControl<string>
   contact: FormArray<TContacListForm>
   teleGram: FormControl<string>
-  supplier: FormControl<string>
   email: FormControl<string>
-  comp: TCompForm
-  remark: FormControl<string>
-  shipTo: FormControl<string>
 }>
 
 type TEmpl = {
@@ -109,7 +108,7 @@ type TEmplListForm = FormArray<TEmplItemForm>
 
 type TSupplierPayment = {
   duration: number
-  saleDiscont: number
+  saleDiscount: number
   cashDiscount: number
   dcDiscount: number
 }
@@ -120,14 +119,18 @@ type TTax = 1 | 2 | 3
 
 type TTaxForm = FormControl<TTax[]>
 
-type TTariffForm = FormGroup<{
-  payment: TPaymentForm,
+type TStep3Form = FormGroup<{
+  supplier: FormControl<string>
+  comp: TCompForm
+  remark: FormControl<string>
+  shipTo: FormControl<string>
+  emplList: TEmplListForm
+  payment: TPaymentForm
   tax: TTaxForm
 }>
 
 type TForm = FormGroup<{
   auth: TAuthForm
   general: TGeneralForm
-  emplList: TEmplListForm
-  tariff: TTariffForm
+  stepThree: TStep3Form
 }>

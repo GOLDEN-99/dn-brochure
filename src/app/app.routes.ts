@@ -77,6 +77,10 @@ export const routes: Routes = [
             {
                 path: 'general',
                 loadComponent: () => import('./pages/supplier-project/general-page/general-page.component').then(r => r.GeneralPageComponent)
+            },
+            {
+                path: 'final',
+                loadComponent: () => import('./pages/supplier-project/step-three-page/step-three-page.component').then(r => r.StepThreePageComponent)
             }
         ]
     },
