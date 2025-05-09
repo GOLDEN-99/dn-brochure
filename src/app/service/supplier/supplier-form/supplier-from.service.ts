@@ -46,6 +46,8 @@ export class SupplierFromService {
     })
   )
 
+  removeEmplList = (idx: number) => this.form.controls.stepThree.controls.emplList.removeAt(idx)
+
   private emplListForm: TEmplListForm = this.nnfb.array([this.nnfb.group({
     emplName: this.nnfb.control("", Validators.required),
     emplEmail: this.nnfb.control("", Validators.required)
@@ -69,7 +71,11 @@ export class SupplierFromService {
     remark: this.nnfb.control("", Validators.required),
     emplList: this.emplListForm,
     payment: this.paymentForm,
-    tax: this.nnfb.control<TTax[]>([], Validators.minLength(1))
+    tax: this.nnfb.group({
+      tax1: this.nnfb.control(false),
+      tax2: this.nnfb.control(false),
+      tax3: this.nnfb.control(false)
+    })
   })
 
   form: TForm = this.nnfb.group({ auth: this.authForm, general: this.generalForm, stepThree: this.stepThreeForm })
@@ -117,7 +123,11 @@ type TPaymentForm = FormGroup<TMapForm<TSupplierPayment>>
 
 type TTax = 1 | 2 | 3
 
-type TTaxForm = FormControl<TTax[]>
+type TTaxForm = FormGroup<TMapForm<{
+  tax1: boolean
+  tax2: boolean
+  tax3: boolean
+}>>
 
 type TStep3Form = FormGroup<{
   supplier: FormControl<string>

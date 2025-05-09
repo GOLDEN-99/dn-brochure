@@ -31,7 +31,7 @@
         type="tel"
         name="tel"
         [attr.id]="$index + 'tel'"
-        [formControl]="contactForm[$index].controls.tel"
+        [formControl]="c.controls.tel"
       />
     </div>
     <div class="app-form-field col">
@@ -40,7 +40,7 @@
         type="text"
         name="name"
         [attr.id]="$index + 'name'"
-        [formControl]="contactForm[$index].controls.name"
+        [formControl]="c.controls.name"
       />
     </div>
     <div class="col-2 d-flex justify-content-between">

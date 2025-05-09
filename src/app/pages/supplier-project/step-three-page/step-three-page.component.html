@@ -1,6 +1,6 @@
 <form [formGroup]="stepThree">
   <div class="app-form-field">
-    <label for="supplier">กลุมผู้ขาย</label>
+    <label for="supplier">กลุ่มผู้ขาย</label>
     <input
       type="text"
       id="supplier"
@@ -10,8 +10,50 @@
   </div>
   <div class="app-form-field">
     <label for="remark">หมายเหตุ</label>
-    <textarea name="remark" id="remark" rows="3"></textarea>
+    <textarea
+      name="remark"
+      id="remark"
+      rows="3"
+      formControlName="remark"
+    ></textarea>
   </div>
+
+  @let emplListForm = stepThree.controls.emplList.controls;
+  <!---->
+  @for (item of emplListForm; track $index) {
+  <div class="row align-items-center">
+    <div class="col app-form-field">
+      <label [attr.for]="'empl-name' + $index">ชื่อพนักงาน</label>
+      <input
+        type="text"
+        name="empl-name"
+        [attr.id]="'empl-name' + $index"
+        [formControl]="item.controls.emplName"
+      />
+    </div>
+    <div class="col app-form-field">
+      <label [attr.for]="'empl-email' + $index">E-mail</label>
+      <input
+        type="email"
+        name="empl-email"
+        [attr.id]="'empl-email' + $index"
+        [formControl]="item.controls.emplEmail"
+      />
+    </div>
+    <div class="col-2 d-flex justify-content-between">
+      @if(emplListForm.length !== 1) {
+      <button class="btn btn-squre btn-danger" (click)="removeEmpl($index)">
+        -
+      </button>
+      }
+      <!---->
+      @if ($index === emplListForm.length-1) {
+      <button class="btn btn-squre btn-success" (click)="addEmpl()">+</button>
+      }
+      <!---->
+    </div>
+  </div>
+  }
   <div class="app-form-field">
     <label for="shipTo">Ship to</label>
     <input type="text" id="shipTo" name="shipTo" formControlName="shipTo" />
@@ -34,7 +76,14 @@
       </div>
       <div class="app-form-field">
         <label for="saleDiscount">ส่วนลดการค้า %</label>
-        <input type="number" min="0" max="100" formControlName="saleDiscount" />
+        <input
+          type="number"
+          min="0"
+          max="100"
+          id="saleDiscount"
+          name="saleDiscount"
+          formControlName="saleDiscount"
+        />
       </div>
       <div class="app-form-field">
         <label for="cashDiscount">ส่วนลดเงินสด %</label>
@@ -55,20 +104,23 @@
         />
       </div>
     </form>
-    <div class="px-3 pt-3 col" style="background-color: #8080801f">
+    <form
+      class="px-3 pt-3 col"
+      style="background-color: #8080801f"
+      formGroupName="tax"
+    >
       <div
         class="app-form-check"
         style="display: flex; gap: 16px; align-items: center"
       >
         <input
           type="checkbox"
-          id="vat-1"
-          [value]="1"
-          name="tax"
+          id="vat1"
+          name="tax1"
           style="height: 24px; width: 24px"
-          formControlName="tax"
+          formControlName="tax1"
         />
-        <label for="vat-1">จดทะเบียน VAT</label>
+        <label for="vat1">จดทะเบียน VAT</label>
       </div>
       <div
         class="app-form-check"
@@ -76,13 +128,12 @@
       >
         <input
           type="checkbox"
-          id="vat-2"
-          name="tax"
+          id="vat2"
+          name="tax2"
           style="height: 24px; width: 24px"
-          [value]="2"
-          formControlName="tax"
+          formControlName="tax2"
         />
-        <label for="vat-2">สินค้ารวม VAT</label>
+        <label for="vat2">สินค้ารวม VAT</label>
       </div>
       <div
         class="app-form-check"
@@ -90,14 +141,19 @@
       >
         <input
           type="checkbox"
-          id="vat-3"
-          name="tax"
-          [value]="3"
+          id="vat3"
+          name="tax3"
           style="height: 24px; width: 24px"
-          formControlName="tax"
+          formControlName="tax3"
         />
-        <label for="vat-3">ควบคุมราคาขายปลีก</label>
+        <label for="vat3">ควบคุมราคาขายปลีก</label>
       </div>
-    </div>
+    </form>
   </div>
 </form>
+<div class="d-flex" style="gap: 16px">
+  <button class="btn btn-primary w-100" [disabled]="disable()">ถัดไป</button>
+  <a class="btn btn-danger w-100" role="button" routerLink="../general"
+    >ย้อนกลับ</a
+  >
+</div>
