@@ -7,7 +7,7 @@ import { TReturnForm } from '../../../service/supplier/supplier-form/supplier-fr
 
 @Component({
   selector: 'app-condition-page',
-  imports: [NgbNavModule, RouterLink, ReactiveFormsModule],
+  imports: [NgbNavModule, RouterLink, ReactiveFormsModule, RouterLink],
   templateUrl: './condition-page.component.html',
   styleUrl: './condition-page.component.scss'
 })

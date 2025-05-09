@@ -17,6 +17,11 @@ import { SupplierDnService } from './service/supplier/supplier-dn/supplier-dn.se
 import { SupplierHuService } from './service/supplier/supplier-hu/supplier-hu.service';
 import { SupplierReserveLayoutComponent } from './layout/supplier-reserve-layout/supplier-reserve-layout.component';
 import { SupplierReserveComponent } from './pages/supplier-project/supplier-reserve/supplier-reserve.component';
+import { InOutLayoutComponent } from './layout/in-out-layout/in-out-layout.component';
+import { InOutViewComponent } from './pages/supplier-project/in-out-view/in-out-view.component';
+import { InOutEditComponent } from './pages/supplier-project/in-out-edit/in-out-edit.component';
+import { InOutListComponent } from './pages/supplier-project/in-out-list/in-out-list.component';
+import { RegisterPageComponent } from './pages/supplier-project/register-page/register-page.component';
 
 export const routes: Routes = [
     {
@@ -86,7 +91,7 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                component: AuthPageComponent
+                component: RegisterPageComponent
             },
             {
                 path: 'general',
@@ -105,6 +110,10 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./pages/supplier-project/condition-page/condition-page.component')
                         .then(r => r.ConditionPageComponent)
+            }, {
+                path: 'product',
+                loadComponent: () => import('./pages/supplier-project/supplier-product-page/supplier-product-page.component')
+                    .then(r => r.SupplierProductPageComponent)
             }
         ]
     },
@@ -125,6 +134,28 @@ export const routes: Routes = [
                 path: 'login',
                 loadComponent: () => import('./pages/supplier-project/supplier-login/supplier-login.component')
                     .then(r => r.SupplierLoginComponent)
+            }
+        ]
+    },
+    {
+        path: 'supplier/in-out',
+        component: InOutLayoutComponent,
+        children: [
+            {
+                path: '',
+                component: InOutViewComponent
+            },
+            {
+                path: 'list',
+                component: InOutListComponent
+            },
+            {
+                path: 'list/:id',
+                component: InOutEditComponent
+            },
+            {
+                path: 'list/:id/edit',
+                component: InOutEditComponent
             }
         ]
     },
