@@ -1,130 +1,61 @@
-import { formatDate, registerLocaleData } from '@angular/common';
-import { Component, computed, inject, Injectable, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgbCalendar, NgbCalendarBuddhist, NgbDate, NgbDatepickerI18n, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import localeThai from '@angular/common/locales/th';
+import { NgbCalendar, NgbDate, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { IBOBRESERVE_TOKEN } from '../../../service/ibob/ibobToken';
-import { LoginService } from '../../../service/ibob/reserve/login.service';
-import { TDate } from '../../../lib';
-
-
-@Injectable()
-export class NgbDatepickerI18nBuddhist extends NgbDatepickerI18n {
-  private _locale = 'th';
-  private _weekdaysShort: readonly string[];
-  private _monthsShort: readonly string[];
-  private _monthsFull: readonly string[];
-
-  constructor() {
-    super();
-
-    registerLocaleData(localeThai);
-
-    const weekdaysStartingOnSunday = [...Array(7).keys()].map((day) =>
-      Intl.DateTimeFormat(this._locale, { weekday: 'narrow' }).format(new Date(Date.UTC(2021, 5, day - 1))),
-    );
-    this._weekdaysShort = weekdaysStartingOnSunday.map((day, index) => weekdaysStartingOnSunday[(index + 1) % 7]);
-
-    this._monthsShort = [...Array(12).keys()].map((month) =>
-      Intl.DateTimeFormat(this._locale, { month: 'short' }).format(new Date(2000, month)),
-    );
-    this._monthsFull = [...Array(12).keys()].map((month) =>
-      Intl.DateTimeFormat(this._locale, { month: 'long' }).format(new Date(2000, month)),
-    );
-  }
-
-  getMonthShortName(month: number): string {
-    return this._monthsShort[month - 1] || '';
-  }
-
-  getMonthFullName(month: number): string {
-    return this._monthsFull[month - 1] || '';
-  }
-
-  getWeekdayLabel(weekday: number) {
-    return this._weekdaysShort[weekday - 1] || '';
-  }
-
-  getDayAriaLabel(date: NgbDateStruct): string {
-    const jsDate = new Date(date.year, date.month - 1, date.day);
-    return formatDate(jsDate, 'fullDate', this._locale);
-  }
-
-  // getYearNumerals(year: number): string {
-  //   return String(year);
-  // }
-}
-
+import { IbobAddService } from '../../../service/ibob/reserve/ibob-add.service';
+import { TMaybe } from '../../../types';
+import { TDoor } from '../../../types/ibob-supplier.type';
+import { Router, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-supplier-reserve-add',
-  imports: [FormsModule, NgbDatepickerModule],
+  imports: [FormsModule, NgbDatepickerModule, RouterLink],
   providers: [
-    { provide: NgbCalendar, useClass: NgbCalendarBuddhist },
-    { provide: NgbDatepickerI18n, useClass: NgbDatepickerI18nBuddhist },
-    { provide: IBOBRESERVE_TOKEN, useExisting: LoginService }
+    { provide: IBOBRESERVE_TOKEN, useExisting: IbobAddService }
   ],
   templateUrl: './supplier-reserve-add.component.html',
   styleUrl: './supplier-reserve-add.component.scss'
 })
 export class SupplierReserveAddComponent {
   end = input<string>()
-  pageLabel = computed(() => {
-    const path = this.end()
-    switch (path) {
-      case 'kk': return 'คลังกิ่งแก้ว'
-      case 'bs': return 'คลังบุญทรัพย์ทวี'
-      default: return 'ไม่พบคลัง'
-    }
-  })
+  pageLabel = computed(() => this.serv.getCurrentWarehouse(this.end() ?? ''))
+  private router = inject(Router)
 
   today = inject(NgbCalendar).getToday();
-  activeDate = signal(this.today)
+  activeDate = signal<TMaybe<NgbDate>>(null)
+  activeSlot = signal<string[]>([])
+  isMultiple = signal<TMaybe<string>>(null)
 
-  option = signal([
-    {
-      id: '1',
-      label: 'Express(Admin)',
-      description: '',
-      duration: 20
-    },
-    {
-      id: '2',
-      label: 'ประตู 1',
-      description: '',
-      duration: 30
-    },
-    {
-      id: '3',
-      label: 'ประตู 2',
-      description: '',
-      duration: 30
-    },
-    {
-      id: '4',
-      label: 'ประตู 3',
-      description: '',
-      duration: 30
-    },
-  ])
-
-  timeSlot = ['08.30', '09.00', '09.30', '10.00', '10.30', '11.00', '11.30', '13.00']
-
-  activeSlot = signal('08.30')
+  updateActiveSlot = (value: string) => {
+    const isActive = this.activeSlot().some(a => a === value)
+    if (isActive) {
+      this.activeSlot.update(prev => prev.filter(p => p !== value))
+      return
+    }
+    const mode = this.isMultiple()
+    switch (mode) {
+      case "0":
+        this.activeSlot.set([value])
+        break
+      case "1":
+        this.activeSlot.update((prev) => [...prev, value])
+        break
+      default: throw new Error('unsupport mode')
+    }
+  }
 
   private serv = inject(IBOBRESERVE_TOKEN)
 
-  setActive = (cur: string) => this.activeSlot.set(cur)
+  btnClass = (cur: string) => this.activeSlot().some(a => a === cur) ? 'btn btn-success' : 'btn btn-outline-secondary'
 
-  btnClass = (cur: string) => cur === this.activeSlot() ? 'btn btn-success' : 'btn btn-outline-secondary'
+  activeDoor = signal<TMaybe<string>>(null)
 
-  btnSuffix = (cur: string) => cur + (cur === '11.00' ? ' (เต็ม)' : '')
-
-  activeOption = signal('1')
-
-  onChangeGate(gate: string) {
-    this.activeOption.set(gate)
-    this.serv.changeGate(gate)
+  onChangeGate({ doorId, multiple }: TDoor) {
+    this.activeDoor.set(doorId)
+    this.serv.changeGate(doorId)
+    this.isMultiple.set(multiple)
+    this.activeSlot.set([])
   }
 
   onChangeDate(date: NgbDate) {
@@ -132,4 +63,33 @@ export class SupplierReserveAddComponent {
     this.serv.changeDate(date)
   }
 
+  comp = this.serv.currentComp
+  doorList = this.serv.doorList
+  possibleSlot = this.serv.possibleSlot
+  poList = this.serv.orderList
+  checkPo = this.serv.checkOrder
+  changeBox = this.serv.changeOrderAmount
+  totalBox = computed(
+    () => this.poList()
+      .reduce((acc, cur) => cur.check ? acc + cur.box : acc, 0)
+  )
+  note = signal('')
+  handleSubmit = () => {
+    const date = this.activeDate()
+    if (!date) throw new Error('no current date')
+    const reservationDate = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
+    const doorId = this.activeDoor()
+    const note = this.note()
+    if (!doorId) throw new Error('no current door')
+    const partialAppliedReservation = (reservationTime: string) => this.serv.createReservation({ reservationDate, reservationTime, doorId, note })
+    const timeSlot = this.activeSlot()
+    const cmdList = timeSlot.map(partialAppliedReservation)
+    forkJoin(cmdList).subscribe({
+      next: res => {
+        res.forEach(console.log)
+        this.router.navigateByUrl('supplier/reserve')
+      },
+      error: (err) => { console.error(err); }
+    })
+  }
 }

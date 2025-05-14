@@ -1,21 +1,35 @@
 import { InjectionToken, Signal } from "@angular/core"
 import { Observable } from "rxjs"
-import { TLoginReq, TLoginRes } from "../../types/ibob-supplier.type"
+import { TAppOrder, TComp, TCreateReservationReq, TDoor, TDoorMap, TEditableResavation, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot, TWarehouse } from "../../types/ibob-supplier.type"
 import { TDate } from "../../lib"
+import { TMaybe } from "../../types"
 
 export interface IIbObLogin {
     login: (req: TLoginReq) => Observable<TLoginRes>
 }
 
 export interface IIbObComp {
-    compList: Signal<any>
+    warehouseList: Signal<TWarehouse[]>
 }
 
-export interface IIbObReserve {
+interface IIbObFormState {
+    currentComp: Signal<TMaybe<TModifiedComp>>
+    orderList: Signal<TAppOrder[]>
+    checkOrder: (orderId: string) => void
+    changeOrderAmount: (orderId: string) => (box: number) => void
+}
+
+export interface IIbObReserve extends IIbObFormState {
+    //display data
+    doorList: Signal<TDoor[]>
+    getCurrentWarehouse: (warehouseId: string) => string
+    //api call method
     changeGate: (gate: string) => void
     changeDate: (date: TDate) => void
-    possibleSlot: Signal<string[]>
-    createReserve: (...arg: any[]) => any
+    // result
+    possibleSlot: Signal<TTimeSlot[]>
+    // mutation
+    createReservation: (req: TEditableResavation) => Observable<any>
 }
 
 export const LOGINABLE_TOKEN = new InjectionToken<IIbObLogin>('ibob_login')

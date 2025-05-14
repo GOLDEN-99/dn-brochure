@@ -3,13 +3,13 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { ToastService } from '../../../service/toast/toast.service';
 import { LOGINABLE_TOKEN } from '../../../service/ibob/ibobToken';
-import { LoginService } from '../../../service/ibob/reserve/login.service';
+import { IbobAddService } from '../../../service/ibob/reserve/ibob-add.service';
 
 @Component({
   selector: 'app-supplier-login',
   imports: [ReactiveFormsModule],
   providers: [
-    { provide: LOGINABLE_TOKEN, useExisting: LoginService }
+    { provide: LOGINABLE_TOKEN, useExisting: IbobAddService }
   ],
   templateUrl: './supplier-login.component.html',
   styleUrl: './supplier-login.component.scss'
@@ -34,11 +34,10 @@ export class SupplierLoginComponent {
   handleLogin = () => {
     const formData = this.loginForm.getRawValue()
     this.loginService.login(formData).subscribe({
-      next: () => {
-        this.router.navigate([""])
+      next: ({ comp: { compCode } }) => {
+        this.router.navigateByUrl(`/supplier/reserve/${compCode}`)
       },
       error: (err) => {
-        console.log(err);
         this.toast.danger('ล็อคอินผิดพลาด')
         this.loginForm.patchValue({ user: '', password: '' })
       }

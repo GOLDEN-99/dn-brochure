@@ -12,6 +12,13 @@ export type TComp = {
     compEmail: string
 }
 
+export type TModifiedComp = { shipto: string } & TComp
+
+export type TWarehouse = {
+    id: string
+    name: string
+}
+
 export type TDoor = {
     doorId: string
     warehouseId: string
@@ -30,6 +37,11 @@ export type TOrder = {
     orderDate: string
 }
 
+export type TAppOrder = {
+    box: number
+    check: boolean
+} & TOrder
+
 export type TLoginRes = {
     comp: TComp
     door: TDoor[]
@@ -43,7 +55,7 @@ export type TCompListRes = {}
 
 export type TIbObOrder = { orderNumb: string, box: number }
 
-export type TCreateReserveReq = {
+export type TCreateReservationReq = {
     doorId: string
     reservationDate: string // iso
     reservationTime: string // '18:00'?
@@ -56,6 +68,20 @@ export type TCreateReserveReq = {
     note: string
     compCode: string
     order: TIbObOrder[]
+    shipto: string
 }
 
+export type TEditableResavation = Pick<TCreateReservationReq, 'doorId' | 'reservationDate' | 'reservationTime' | 'note'>
+
 export type TCreateReserveRes = {}
+
+export type TTimeSlot = {
+    time: string
+    isReserved: boolean
+}
+
+export type TGetIbObRes = {
+    date: string
+    doorId: string
+    slots: TTimeSlot[]
+}

@@ -1,19 +1,14 @@
 <h1 class="text-center">รายการการจอง</h1>
 <div style="display: flex; gap: 16px; margin-bottom: 16px">
+  @for (warehouse of warehouseList(); track $index) {
   <a
-    routerLink="add/kk"
-    class="btn btn-warning"
+    [routerLink]="'add/' + warehouse.id"
+    class="btn btn-outline-success"
     style="flex: 1 1 auto"
     role="button"
-    >จองคลังกิ่งแก้ว</a
+    >{{ warehouse.name }}</a
   >
-  <a
-    routerLink="add/bs"
-    class="btn btn-primary"
-    style="flex: 1 1 auto"
-    role="button"
-    >จองคลังบุญทรัพย์</a
-  >
+  }
 </div>
 <table class="table table-bordered table-striped">
   <thead>

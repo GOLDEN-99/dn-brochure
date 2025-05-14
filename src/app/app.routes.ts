@@ -22,6 +22,7 @@ import { InOutViewComponent } from './pages/supplier-project/in-out-view/in-out-
 import { InOutEditComponent } from './pages/supplier-project/in-out-edit/in-out-edit.component';
 import { InOutListComponent } from './pages/supplier-project/in-out-list/in-out-list.component';
 import { RegisterPageComponent } from './pages/supplier-project/register-page/register-page.component';
+import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolver';
 
 export const routes: Routes = [
     {
@@ -128,6 +129,7 @@ export const routes: Routes = [
             },
             {
                 path: "add/:end",
+                resolve: [getByWarehouseResolver],
                 loadComponent: () => import('./pages/supplier-project/supplier-reserve-add/supplier-reserve-add.component')
                     .then(r => r.SupplierReserveAddComponent)
             },
