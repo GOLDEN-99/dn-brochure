@@ -7,6 +7,7 @@ import { IIbObComp, IIbObLogin, IIbObReserve } from '../ibobToken';
 import { TComp, TDoor, TDoorMap, TLoginReq, TLoginRes } from '../../../types/ibob-supplier.type';
 import { TDate } from '../../../lib';
 import { TMaybe } from '../../../types';
+import { LocalService } from '../../local/local.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class LoginService implements IIbObLogin, IIbObComp, IIbObReserve {
 
   private api = inject(ApiService)
   private baseurl = environment.ibob
+  private storage = inject(LocalService)
 
   currentComp = signal<TMaybe<TComp>>(null)
   currentDoorMap = signal<TDoorMap>({})
@@ -37,10 +39,11 @@ export class LoginService implements IIbObLogin, IIbObComp, IIbObReserve {
   }
 
 
-  private loginHandler = ({ comp, door }: TLoginRes) => {
+  private loginHandler = ({ comp, door, token }: TLoginRes) => {
     this.currentComp.set(comp)
     const doorMap = door.reduce(this.mapDoorHandler, {})
     this.currentDoorMap.set(doorMap)
+    this.storage.saveToken(token)
   }
 
   login(req: TLoginReq) {
