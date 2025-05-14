@@ -27,6 +27,7 @@
       </button>
     </div>
   </div>
+  ======= >>>>>>> 36f50eb3028a379f259e37524bf8b79ffb80ccb5
   <div class="app-form-field">
     <label for="remark">หมายเหตุ</label>
     <textarea
@@ -59,6 +60,7 @@
         [formControl]="item.controls.emplEmail"
       />
     </div>
+
     <div class="col-2 d-flex justify-content-between mb-3">
       @if(emplListForm.length !== 1) {
       <button class="btn btn-squre btn-danger" (click)="removeEmpl($index)">
@@ -71,7 +73,6 @@
         <i class="bi bi-plus"></i>
       </button>
       }
-      <!---->
     </div>
   </div>
   }
@@ -172,6 +173,7 @@
     </form>
   </div>
 </form>
+
 <ng-template #searchModal let-modal>
   <app-modal-layout
     title="ค้นหาซัพพลายเออร์"

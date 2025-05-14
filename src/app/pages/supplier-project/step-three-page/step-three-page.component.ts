@@ -20,5 +20,4 @@ export class StepThreePageComponent extends BaseSupplierForm {
   openModal(modal: TemplateRef<any>) {
     this.modalService.open(modal)
   }
-
 }

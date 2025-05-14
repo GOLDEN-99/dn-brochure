@@ -75,3 +75,4 @@ export const getWeekRange = ({ year, month, day }: TDate) => {
     saturdayDate.setDate(date.getDate() + (6 - dayOfWeek));
     return { start: convertDateToStuct(sundayDate), end: convertDateToStuct(saturdayDate) }
 }
+

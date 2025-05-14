@@ -24,6 +24,7 @@
   @let contactForm = stepTwoForm.controls.contact.controls;
   <!---->
   @for (c of contactForm; track $index) {
+
   <div class="row align-items-end">
     <div class="app-form-field col">
       <label [attr.for]="$index + 'tel'">โทรศัพท์</label>
