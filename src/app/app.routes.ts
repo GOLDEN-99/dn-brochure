@@ -146,7 +146,7 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                component: InOutViewComponent
+                component: InOutViewComponent,
             },
             {
                 path: 'list',

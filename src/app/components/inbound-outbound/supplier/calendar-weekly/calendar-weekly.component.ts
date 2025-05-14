@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CalendarCellComponent } from '../calendar-cell/calendar-cell.component';
 import { getWeekRange, TDate } from '../../../../lib';
-import { NgbCalendar, NgbDate, NgbDatepicker, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDatepicker, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-calendar-weekly',
@@ -21,36 +21,55 @@ export class CalendarWeeklyComponent implements OnInit {
   ]
 
   ngOnInit(): void {
-    const todayDate = this.calendar.getToday()
-
+    this.selectedDate.set(this.calendar.getToday())
   }
-
+  formatter = inject(NgbDateParserFormatter);
   calendar = inject(NgbCalendar);
   hoveredDate: NgbDate | null = null;
-  fromDate: NgbDate = this.calendar.getToday();
-  toDate: NgbDate | null = this.calendar.getNext(this.fromDate, 'd', 10);
+
+  selectedDate = signal<NgbDate | null>(null)
+  dateRange = computed(() => {
+    const date = this.selectedDate()
+    if (!date) return { start: null, end: null }
+    return getWeekRange(date)
+  })
 
   onDateSelection(date: NgbDate) {
+    this.selectedDate.set(date)
     const wk = getWeekRange(date)
     console.log(wk)
   }
 
   isHovered(date: NgbDate) {
+    const { start, end } = this.dateRange()
     return (
-      this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate)
+      start && !end && this.hoveredDate && date.after(start) && date.before(this.hoveredDate)
     );
   }
 
   isInside(date: NgbDate) {
-    return this.toDate && date.after(this.fromDate) && date.before(this.toDate);
+    const { start, end } = this.dateRange()
+    return end && date.after(start) && date.before(end);
   }
 
   isRange(date: NgbDate) {
+    const { start, end } = this.dateRange()
     return (
-      date.equals(this.fromDate) ||
-      (this.toDate && date.equals(this.toDate)) ||
+      date.equals(start) ||
+      (end && date.equals(end)) ||
       this.isInside(date) ||
       this.isHovered(date)
     );
+  }
+
+  isOtherMonth(date: NgbDate) {
+    const ref = this.selectedDate()
+    const month = ref?.month
+    return date.month !== month
+  }
+
+  thaiDate(date: NgbDateStruct | null) {
+    if (!date) return "กรุณาเลือกวันที่"
+    return `${date.day}/${date.month}/${date.year}`
   }
 }

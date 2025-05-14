@@ -35,7 +35,7 @@ export class SupplierLoginComponent {
     const formData = this.loginForm.getRawValue()
     this.loginService.login(formData).subscribe({
       next: ({ comp: { compCode } }) => {
-        this.router.navigateByUrl(`/supplier/reserve/${compCode}`)
+        this.router.navigateByUrl('/supplier/reserve')
       },
       error: (err) => {
         this.toast.danger('ล็อคอินผิดพลาด')
