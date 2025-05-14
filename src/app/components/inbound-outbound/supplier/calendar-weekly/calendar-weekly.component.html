@@ -1,1 +1,53 @@
-<p>calendar-weekly works!</p>
+<div class="input-group mb-3">
+  <div class="input-group">
+    <input
+      name="datepicker"
+      class="form-control"
+      ngbDatepicker
+      #datepicker="ngbDatepicker"
+      [autoClose]="'outside'"
+      (dateSelect)="onDateSelection($event)"
+      [dayTemplate]="t"
+      outsideDays="hidden"
+      [startDate]="fromDate!"
+      tabindex="-1"
+    />
+    <ng-template #t let-date let-focused="focused">
+      <span
+        class="custom-day"
+        [class.focused]="focused"
+        [class.range]="isRange(date)"
+        [class.faded]="isHovered(date) || isInside(date)"
+        (mouseenter)="hoveredDate = date"
+        (mouseleave)="hoveredDate = null"
+      >
+        {{ date.day }}
+      </span>
+    </ng-template>
+  </div>
+</div>
+
+<div class="calendar">
+  <div class="calendar-row">
+    <div class="calendar-th" role="columnheader">เวลา</div>
+    <div class="calendar-th" role="columnheader">อาทิตย์</div>
+    <div class="calendar-th" role="columnheader">จันทร์</div>
+    <div class="calendar-th" role="columnheader">อังคาร</div>
+    <div class="calendar-th" role="columnheader">พุธ</div>
+    <div class="calendar-th" role="columnheader">พฤหัส</div>
+    <div class="calendar-th" role="columnheader">ศุกร์</div>
+    <div class="calendar-th" role="columnheader">เสาร์</div>
+  </div>
+
+  <div class="calendar-row">
+    <button class="calendar-cell">
+      {{ "a" }}
+      <div class="cell-content">
+        <div class="cell-label">8:00</div>
+      </div>
+    </button>
+    @for (d of week; let i = $index; track i) {
+    <app-calendar-cell [date]="d" [month]="d.month" />
+    }
+  </div>
+</div>

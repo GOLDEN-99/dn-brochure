@@ -14,7 +14,8 @@
         name="gate"
         [attr.id]="item.id + '-radio'"
         [value]="item.id"
-        [(ngModel)]="activeOption"
+        [ngModel]="activeOption()"
+        (ngModelChange)="onChangeGate($event)"
       />
       <label class="form-check-label" [attr.for]="item.id + '-radio'">
         {{ item.label }}
@@ -29,7 +30,11 @@
   }
 </ul>
 <div class="calander-warpper mb-3">
-  <ngb-datepicker class="custom-dp" [(ngModel)]="model" />
+  <ngb-datepicker
+    class="custom-dp"
+    [ngModel]="activeDate()"
+    (ngModelChange)="onChangeDate($event)"
+  />
   <div
     style="
       display: grid;

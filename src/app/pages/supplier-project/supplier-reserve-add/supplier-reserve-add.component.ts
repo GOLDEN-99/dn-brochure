@@ -1,8 +1,11 @@
 import { formatDate, registerLocaleData } from '@angular/common';
 import { Component, computed, inject, Injectable, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgbCalendar, NgbCalendarBuddhist, NgbDatepickerI18n, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCalendar, NgbCalendarBuddhist, NgbDate, NgbDatepickerI18n, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import localeThai from '@angular/common/locales/th';
+import { IBOBRESERVE_TOKEN } from '../../../service/ibob/ibobToken';
+import { LoginService } from '../../../service/ibob/reserve/login.service';
+import { TDate } from '../../../lib';
 
 @Injectable()
 export class NgbDatepickerI18nBuddhist extends NgbDatepickerI18n {
@@ -58,6 +61,7 @@ export class NgbDatepickerI18nBuddhist extends NgbDatepickerI18n {
   providers: [
     { provide: NgbCalendar, useClass: NgbCalendarBuddhist },
     { provide: NgbDatepickerI18n, useClass: NgbDatepickerI18nBuddhist },
+    { provide: IBOBRESERVE_TOKEN, useExisting: LoginService }
   ],
   templateUrl: './supplier-reserve-add.component.html',
   styleUrl: './supplier-reserve-add.component.scss'
@@ -75,29 +79,29 @@ export class SupplierReserveAddComponent {
 
   today = inject(NgbCalendar).getToday();
 
-  model: NgbDateStruct = this.today
+  activeDate = signal(this.today)
 
   option = signal([
     {
-      id: 1,
+      id: '1',
       label: 'Express(Admin)',
       description: '',
       duration: 20
     },
     {
-      id: 2,
+      id: '2',
       label: 'ประตู 1',
       description: '',
       duration: 30
     },
     {
-      id: 3,
+      id: '3',
       label: 'ประตู 2',
       description: '',
       duration: 30
     },
     {
-      id: 4,
+      id: '4',
       label: 'ประตู 3',
       description: '',
       duration: 30
@@ -108,11 +112,23 @@ export class SupplierReserveAddComponent {
 
   activeSlot = signal('08.30')
 
+  private serv = inject(IBOBRESERVE_TOKEN)
+
   setActive = (cur: string) => this.activeSlot.set(cur)
 
   btnClass = (cur: string) => cur === this.activeSlot() ? 'btn btn-success' : 'btn btn-outline-secondary'
 
   btnSuffix = (cur: string) => cur + (cur === '11.00' ? ' (เต็ม)' : '')
 
-  activeOption = signal(1)
+  activeOption = signal('1')
+
+  onChangeGate(gate: string) {
+    this.activeOption.set(gate)
+    this.serv.changeGate(gate)
+  }
+
+  onChangeDate(date: NgbDate) {
+    this.activeDate.set(date)
+    this.serv.changeDate(date)
+  }
 }

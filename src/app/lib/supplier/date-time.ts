@@ -57,3 +57,21 @@ const genNextMo = (fdom: TDate, dow: number, result: TDate[]) => {
     const next = { year, month, day: day + 1 }
     return genNextMo(next, dow + 1, [...result, { year, month: month + 1, day }])
 }
+
+const convertDateToStuct = (jsDate: Date) => ({
+    day: jsDate.getDate(),
+    month: jsDate.getMonth() + 1,
+    year: jsDate.getFullYear()
+})
+
+export const getWeekRange = ({ year, month, day }: TDate) => {
+    const date = new Date(year, month - 1, day);
+    const dayOfWeek = date.getDay();
+
+    const sundayDate = new Date(date);
+    sundayDate.setDate(date.getDate() - dayOfWeek);
+
+    const saturdayDate = new Date(date);
+    saturdayDate.setDate(date.getDate() + (6 - dayOfWeek));
+    return { start: convertDateToStuct(sundayDate), end: convertDateToStuct(saturdayDate) }
+}

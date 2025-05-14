@@ -1,9 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { IBOBCOMPLIST_TOKEN } from '../../../service/ibob/ibobToken';
+import { LoginService } from '../../../service/ibob/reserve/login.service';
 
 @Component({
   selector: 'app-supplier-reserve',
   imports: [RouterLink],
+  providers: [
+    {
+      provide: IBOBCOMPLIST_TOKEN,
+      useExisting: LoginService
+    }
+  ],
   templateUrl: './supplier-reserve.component.html',
   styleUrl: './supplier-reserve.component.scss'
 })
@@ -17,4 +25,7 @@ export class SupplierReserveComponent {
       address: 'อาคารสำนักงานใหญ่ เลขที่ 26/56-57 ซอย, 62/2 King Kaeo Rd, Racha Thewa, Bang Phli District, Samut Prakan 10540'
     }
   ]
+
+  private serv = inject(IBOBCOMPLIST_TOKEN)
+  compList = this.serv.compList
 }
