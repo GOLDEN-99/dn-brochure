@@ -1,24 +1,23 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { CalendarCellComponent } from '../calendar-cell/calendar-cell.component';
-import { getWeekRange, TDate } from '../../../../lib';
+import { getWeekRange } from '../../../../lib';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDatepicker, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { CalendarService } from '../../../../service/ibob/calendar.service';
+import { DoorService } from '../../../../service/ibob/door.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-calendar-weekly',
-  imports: [CalendarCellComponent, NgbDatepickerModule],
+  imports: [CalendarCellComponent, NgbDatepickerModule, FormsModule],
   templateUrl: './calendar-weekly.component.html',
   styleUrl: './calendar-weekly.component.scss'
 })
 export class CalendarWeeklyComponent implements OnInit {
-  week: TDate[] = [
-    { day: 4, month: 5, year: 2025 },
-    { day: 5, month: 5, year: 2025 },
-    { day: 6, month: 5, year: 2025 },
-    { day: 7, month: 5, year: 2025 },
-    { day: 8, month: 5, year: 2025 },
-    { day: 9, month: 5, year: 2025 },
-    { day: 10, month: 5, year: 2025 }
-  ]
+
+  constructor() {
+    const weekEff = effect(() => this.calServ.setWeek(this.dateRange()))
+    const doorEff = effect(() => this.calServ.setDoor(this.doorList()))
+  }
 
   ngOnInit(): void {
     this.selectedDate.set(this.calendar.getToday())
@@ -37,7 +36,7 @@ export class CalendarWeeklyComponent implements OnInit {
   onDateSelection(date: NgbDate) {
     this.selectedDate.set(date)
     const wk = getWeekRange(date)
-    console.log(wk)
+
   }
 
   isHovered(date: NgbDate) {
@@ -72,4 +71,19 @@ export class CalendarWeeklyComponent implements OnInit {
     if (!date) return "กรุณาเลือกวันที่"
     return `${date.day}/${date.month}/${date.year}`
   }
+
+  private calServ = inject(CalendarService)
+  private doorServ = inject(DoorService)
+
+  week = this.calServ.weeklyReservation
+
+  doorList = this.doorServ.doorList
+
+  toggleDoor = this.doorServ.toggleDoor
+
+  formateMonth = (iso: string) => Number(iso.split('-')[1])
+
+  displayList = this.calServ.displayWeekly
+
+  header = this.calServ.header
 }

@@ -11,11 +11,11 @@
     </tr>
   </thead>
   <tbody>
-    @for (item of mock; track $index) {
-    <tr tabindex="0" (click)="goTo($index)">
+    @for (item of doorList(); track $index) {
+    <tr tabindex="0" (click)="goTo(item.doorId)">
       <td>{{ item.name }}</td>
-      <td>{{ item.duration }}</td>
-      <td>{{ item.admin }}</td>
+      <td>{{ item.timeUse }}</td>
+      <td>{{ item.note }}</td>
     </tr>
     }
   </tbody>

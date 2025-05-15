@@ -9,11 +9,17 @@ import { TDate } from '../../../../lib';
 })
 export class CalendarCellComponent {
 
-  date = input.required<TDate>()
+  isoDate = input.required<string>()
+
+  date = computed(() => Number(this.isoDate().split('-')[2]))
+
+  currentMonth = computed(() => Number(this.isoDate().split('-')[1]))
 
   month = input.required<number>()
 
   color = input<number>(0)
+
+  withOutDate = input(false)
 
   indicatorClass = computed(() => {
     const color = this.color()
@@ -35,11 +41,11 @@ export class CalendarCellComponent {
     }
   })
 
-  onClick = output<TDate>()
+  onClick = output<string>()
 
-  handleClick = () => this.onClick.emit(this.date())
+  handleClick = () => this.onClick.emit(this.isoDate())
 
-  inActive = computed(() => this.date().month !== this.month())
+  inActive = computed(() => this.currentMonth() !== this.month())
 
   inActiveClass = computed(() => this.inActive() ? 'calendar-cell inactive' : 'calendar-cell')
 }

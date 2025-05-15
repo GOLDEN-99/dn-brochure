@@ -21,7 +21,6 @@ interface IIbObFormState {
 
 export interface IIbObReserve extends IIbObFormState {
     //display data
-    doorList: Signal<TDoor[]>
     getCurrentWarehouse: (warehouseId: string) => string
     //api call method
     changeGate: (gate: string) => void

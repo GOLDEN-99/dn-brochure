@@ -103,22 +103,5 @@ export class IbobAddService implements IIbObLogin, IIbObComp, IIbObReserve {
       tap(console.log)
     )
   possibleSlot = toSignal(this.posibleSlot$, { initialValue: [] })
-
-  private warehouseId$ = new Subject<string>()
-  private getDoorByWarehouse = (warehouseId: string) =>
-    this.api
-      .get<TDoor[]>(`${this.baseurl}/GetDoor`, { params: { warehouseId } })
-      .pipe(catchError((err) => {
-        console.log(err)
-        return of([] as TDoor[])
-      }))
-  private door$ = this.warehouseId$
-    .pipe(switchMap(this.getDoorByWarehouse), catchError((err) => {
-      console.log(err);
-      return of([] as TDoor[])
-    }))
-
-  doorList = toSignal(this.door$, { initialValue: [] as TDoor[] })
-  setWarehouseId = (id: string) => this.warehouseId$.next(id)
 }
 

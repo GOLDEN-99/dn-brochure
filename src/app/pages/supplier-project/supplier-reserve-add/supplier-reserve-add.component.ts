@@ -7,6 +7,7 @@ import { TMaybe } from '../../../types';
 import { TDoor } from '../../../types/ibob-supplier.type';
 import { Router, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { DoorService } from '../../../service/ibob/door.service';
 
 @Component({
   selector: 'app-supplier-reserve-add',
@@ -18,9 +19,11 @@ import { forkJoin } from 'rxjs';
   styleUrl: './supplier-reserve-add.component.scss'
 })
 export class SupplierReserveAddComponent {
-  end = input<string>()
-  pageLabel = computed(() => this.serv.getCurrentWarehouse(this.end() ?? ''))
+  warehouse = input<string>()
+  pageLabel = computed(() => this.serv.getCurrentWarehouse(this.warehouse() ?? ''))
   private router = inject(Router)
+
+  private doorService = inject(DoorService)
 
   today = inject(NgbCalendar).getToday();
   activeDate = signal<TMaybe<NgbDate>>(null)
@@ -64,7 +67,7 @@ export class SupplierReserveAddComponent {
   }
 
   comp = this.serv.currentComp
-  doorList = this.serv.doorList
+  doorList = this.doorService.doorList
   possibleSlot = this.serv.possibleSlot
   poList = this.serv.orderList
   checkPo = this.serv.checkOrder

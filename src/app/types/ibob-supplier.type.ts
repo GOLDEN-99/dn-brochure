@@ -28,6 +28,10 @@ export type TDoor = {
     multiple: string
 }
 
+export type TAppDoor = {
+    check: boolean
+} & TDoor
+
 export type TDoorMap = {
     [key in string]?: TDoor[];
 }
@@ -85,3 +89,25 @@ export type TGetIbObRes = {
     doorId: string
     slots: TTimeSlot[]
 }
+
+export type TWeeklyReq = {
+    startDate: string //iso
+    endDate: string //iso
+    doors: string[]
+}
+
+export type TSlotReady = {
+    time: string
+    status: number
+}
+
+export type TWeeklyRes = {
+    date: string //iso
+    times: TSlotReady[]
+}
+
+export type TAppWeeklyItem = {
+    date: string
+} & TSlotReady
+
+export type TAppWeeklyList = TAppWeeklyItem[][]

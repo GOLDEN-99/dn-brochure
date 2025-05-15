@@ -1,8 +1,9 @@
-<section>
-  <div style="display: flex; gap: 16px; margin-bottom: 16px">
+<section class="form-wrapper">
+  <div style="display: flex; gap: 16px">
     @for (warehouse of warehouseList(); track $index) {
     <a
       [routerLink]="warehouse.id"
+      routerLinkActive="active"
       class="btn btn-outline-success"
       style="flex: 1 1 auto"
       role="button"

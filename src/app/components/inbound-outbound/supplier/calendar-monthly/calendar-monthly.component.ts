@@ -37,4 +37,6 @@ export class CalendarMonthlyComponent {
   openMonthly1 = (date: TDate, content: TemplateRef<any>) => {
 
   }
+
+  formatIso = ({ year, month, day }: TDate) => `${year}-${month}-${day}`
 }

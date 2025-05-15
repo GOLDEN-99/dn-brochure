@@ -25,7 +25,11 @@
   @for (week of cal; let i = $index; track i) {
   <div class="calendar-row">
     @for (d of week; let j = $index; track j) {
-    <app-calendar-cell [date]="d" [month]="month()" [color]="(i + j) % 3" />
+    <app-calendar-cell
+      [isoDate]="formatIso(d)"
+      [month]="month()"
+      [color]="(i + j) % 3"
+    />
     }
   </div>
   }

@@ -1,3 +1,15 @@
+<!---->
+@for (door of doorList(); track $index) {
+<div class="app-form-check">
+  <input
+    type="checkbox"
+    [ngModel]="door.check"
+    (ngModelChange)="toggleDoor(door.doorId)"
+  />
+  <label for="">{{ door.name }}</label>
+</div>
+}
+<!---->
 @let range = dateRange();
 <form class="row row-cols-sm-auto mb-3">
   <div class="col-12">
@@ -71,7 +83,7 @@
 
 <div class="calendar">
   <div class="calendar-row">
-    <div class="calendar-th" role="columnheader">เวลา</div>
+    <div class="calendar-th" role="columnheader"></div>
     <div class="calendar-th" role="columnheader">อาทิตย์</div>
     <div class="calendar-th" role="columnheader">จันทร์</div>
     <div class="calendar-th" role="columnheader">อังคาร</div>
@@ -80,16 +92,42 @@
     <div class="calendar-th" role="columnheader">ศุกร์</div>
     <div class="calendar-th" role="columnheader">เสาร์</div>
   </div>
+  <div class="calendar-row" style="background-color: #eeeeee; height: 24px">
+    <div class="calendar-th" role="columnheader">เวลา</div>
+    @for (h of header(); track $index) {
+    <div class="calendar-th" role="columnheader">{{ h }}</div>
+    }
+  </div>
 
-  <div class="calendar-row">
+  <!-- <div class="calendar-row">
     <button class="calendar-cell">
       {{ "a" }}
       <div class="cell-content">
         <div class="cell-label">8:00</div>
       </div>
     </button>
-    @for (d of week; let i = $index; track i) {
-    <app-calendar-cell [date]="d" [month]="d.month" />
+    @for (d of week(); let i = $index; track i) {
+    <app-calendar-cell [isoDate]="d.date" [month]="formateMonth(d.date)" />
+    }
+  </div> -->
+  @for (slot of displayList(); track $index) {
+
+  <div
+    class="calendar-row"
+    style="height: 38px; border-bottom: 1px solid #eeeeee"
+  >
+    <button class="calendar-cell" style="flex: 1 1 58px">
+      <div class="cell-content">
+        <div class="cell-label">{{ slot[0].time }}</div>
+      </div>
+    </button>
+    @for (s of slot; let j = $index;track j) {
+    <app-calendar-cell
+      [isoDate]="s.date"
+      [month]="formateMonth(s.date)"
+      [withOutDate]="true"
+    />
     }
   </div>
+  }
 </div>

@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { IBOBCOMPLIST_TOKEN } from '../../service/ibob/ibobToken';
 import { IbobAddService } from '../../service/ibob/reserve/ibob-add.service';
 
 @Component({
   selector: 'app-in-out-nav',
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   providers: [
     { provide: IBOBCOMPLIST_TOKEN, useExisting: IbobAddService }
   ],

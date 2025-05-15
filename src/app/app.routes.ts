@@ -12,7 +12,6 @@ import { ProchureService } from './service/brochure/prochure/prochure.service';
 import { MarketingService } from './service/brochure/marketing/marketing.service';
 import { cnGuard } from './guard/cn-guard.guard';
 import { SupplierLayoutComponent } from './layout/supplier-layout/supplier-layout.component';
-import { AuthPageComponent } from './pages/supplier-project/auth-page/auth-page.component';
 import { SupplierDnService } from './service/supplier/supplier-dn/supplier-dn.service';
 import { SupplierHuService } from './service/supplier/supplier-hu/supplier-hu.service';
 import { SupplierReserveLayoutComponent } from './layout/supplier-reserve-layout/supplier-reserve-layout.component';
@@ -23,6 +22,7 @@ import { InOutEditComponent } from './pages/supplier-project/in-out-edit/in-out-
 import { InOutListComponent } from './pages/supplier-project/in-out-list/in-out-list.component';
 import { RegisterPageComponent } from './pages/supplier-project/register-page/register-page.component';
 import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolver';
+import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
 
 export const routes: Routes = [
     {
@@ -128,7 +128,7 @@ export const routes: Routes = [
                 component: SupplierReserveComponent
             },
             {
-                path: "add/:end",
+                path: "add/:warehouse",
                 resolve: [getByWarehouseResolver],
                 loadComponent: () => import('./pages/supplier-project/supplier-reserve-add/supplier-reserve-add.component')
                     .then(r => r.SupplierReserveAddComponent)
@@ -142,15 +142,22 @@ export const routes: Routes = [
     },
     {
         path: 'supplier/in-out',
-        component: InOutLayoutComponent,
+        component: InOutNavComponent,
         children: [
             {
-                path: '',
-                component: InOutViewComponent,
-            },
-            {
-                path: 'list',
-                component: InOutListComponent
+                path: ':warehouse',
+                resolve: [getByWarehouseResolver],
+                component: InOutLayoutComponent,
+                children: [
+                    {
+                        path: '',
+                        component: InOutViewComponent
+                    },
+                    {
+                        path: 'list',
+                        component: InOutListComponent
+                    },
+                ]
             },
             {
                 path: 'list/:id',
