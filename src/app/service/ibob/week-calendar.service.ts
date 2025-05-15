@@ -1,15 +1,15 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { ApiService } from '../api/api.service';
-import { TAppDoor, TAppWeeklyList, TSlotReady, TWeeklyReq, TWeeklyRes } from '../../types/ibob-supplier.type';
+import { TAppDoor, TAppWeeklyList, TWeeklyReq, TWeeklyRes } from '../../types/ibob-supplier.type';
 import { environment } from '../../../environments/environment';
-import { catchError, combineLatest, concat, filter, Subject, switchMap, tap, throwError } from 'rxjs';
+import { catchError, combineLatest, Subject, switchMap, tap, throwError } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TDate } from '../../lib';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CalendarService {
+export class WeekCalendarService {
 
   constructor() { }
 

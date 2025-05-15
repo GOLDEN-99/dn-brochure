@@ -1,8 +1,8 @@
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { CalendarCellComponent } from '../calendar-cell/calendar-cell.component';
 import { getWeekRange } from '../../../../lib';
-import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDatepicker, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { CalendarService } from '../../../../service/ibob/calendar.service';
+import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { WeekCalendarService } from '../../../../service/ibob/week-calendar.service';
 import { DoorService } from '../../../../service/ibob/door.service';
 import { FormsModule } from '@angular/forms';
 
@@ -72,7 +72,7 @@ export class CalendarWeeklyComponent implements OnInit {
     return `${date.day}/${date.month}/${date.year}`
   }
 
-  private calServ = inject(CalendarService)
+  private calServ = inject(WeekCalendarService)
   private doorServ = inject(DoorService)
 
   week = this.calServ.weeklyReservation

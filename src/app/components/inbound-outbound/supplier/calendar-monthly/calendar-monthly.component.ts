@@ -1,42 +1,46 @@
-import { Component, computed, inject, signal, TemplateRef } from '@angular/core';
+import { Component, computed, effect, inject, signal, TemplateRef } from '@angular/core';
 import { genCalendar, TDate } from '../../../../lib';
 import { CalendarCellComponent } from "../calendar-cell/calendar-cell.component";
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCalendar, NgbDate, NgbDatepicker, NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
+import { DoorService } from '../../../../service/ibob/door.service';
+import { single } from 'rxjs';
+import { MonthlyCalendarService } from '../../../../service/ibob/monthly-calendar.service';
 
 @Component({
   selector: 'app-calendar-monthly',
-  imports: [CalendarCellComponent],
+  imports: [CalendarCellComponent, NgbDatepickerModule, FormsModule],
   templateUrl: './calendar-monthly.component.html',
   styleUrl: './calendar-monthly.component.scss'
 })
 export class CalendarMonthlyComponent {
-  month = signal(4)
-  year = signal(2025)
-  calendar = computed(() => genCalendar({ month: this.month(), year: this.year() }))
-
-  toNextMonth = () => {
-    const cm = this.month()
-    const cy = this.year()
-    const nextMo = cm === 12 ? 1 : cm + 1
-    const nextYe = cm === 12 ? cy + 1 : cy
-    this.month.set(nextMo)
-    this.year.set(nextYe)
+  constructor() {
+    const doorEff = effect(() => this.monthServ.setDoor(this.doorList()))
+    const dateEff = effect(() => this.monthServ.setMonth(this.formated()))
   }
+  private monthServ = inject(MonthlyCalendarService)
+  calendar = this.monthServ.fullCalendar
 
-  toPrevMonth = () => {
-    const cm = this.month()
-    const cy = this.year()
-    const prevMo = cm === 1 ? 12 : cm - 1
-    const prevYe = cm === 1 ? cy - 1 : cy
-    this.month.set(prevMo)
-    this.year.set(prevYe)
-  }
-  month1Header = signal("")
-  month1List = signal([])
   private modalService = inject(NgbModal);
   openMonthly1 = (date: TDate, content: TemplateRef<any>) => {
 
   }
 
-  formatIso = ({ year, month, day }: TDate) => `${year}-${month}-${day}`
+  private doorServ = inject(DoorService)
+  doorList = this.doorServ.doorList
+  toggleDoor = this.doorServ.toggleDoor
+
+  private defaultDate = new Date().toISOString().split('T')[0].substring(0, 7)
+
+  temp = signal(this.defaultDate)
+
+  formated = computed(() => {
+    const str = this.temp()
+    const [year, month] = str.split('-').flatMap((x) => {
+      const castNumb = Number(x)
+      return isNaN(castNumb) ? [] : [castNumb]
+    })
+    return { year, month }
+  })
+
 }

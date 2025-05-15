@@ -111,3 +111,26 @@ export type TAppWeeklyItem = {
 } & TSlotReady
 
 export type TAppWeeklyList = TAppWeeklyItem[][]
+
+export type TDailyReq = {
+    date: string
+    warehouseId: string
+}
+
+export type TDailyItem = { door: string, status: number, times: TSlotReady[] }
+
+export type TDailyRes = {
+    date: string
+    doors: TDailyItem[]
+}
+
+export type TMonthlyReq = {
+    month: number
+    year: number
+    door: string[]
+}
+
+export type TMonthlyRes = {
+    date: string
+    status: number
+}

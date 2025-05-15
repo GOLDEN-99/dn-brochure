@@ -5,8 +5,9 @@
     type="checkbox"
     [ngModel]="door.check"
     (ngModelChange)="toggleDoor(door.doorId)"
+    [attr.id]="door.doorId + '-door-weekly'"
   />
-  <label for="">{{ door.name }}</label>
+  <label [attr.for]="door.doorId + '-door-weekly'">{{ door.name }}</label>
 </div>
 }
 <!---->
@@ -50,11 +51,6 @@
         name="dpFromDate"
         [value]="thaiDate(range.start)"
       />
-      <!-- <button
-        class="btn btn-outline-secondary bi bi-calendar3"
-        (click)="datepicker.toggle()"
-        type="button"
-      ></button> -->
     </div>
   </div>
   <div class="col-12">
@@ -67,11 +63,6 @@
         name="dpToDate"
         [value]="thaiDate(range.end)"
       />
-      <!-- <button
-        class="btn btn-outline-secondary bi bi-calendar3"
-        (click)="datepicker.toggle()"
-        type="button"
-      ></button> -->
     </div>
   </div>
   <button
@@ -84,13 +75,13 @@
 <div class="calendar">
   <div class="calendar-row">
     <div class="calendar-th" role="columnheader"></div>
-    <div class="calendar-th" role="columnheader">อาทิตย์</div>
     <div class="calendar-th" role="columnheader">จันทร์</div>
     <div class="calendar-th" role="columnheader">อังคาร</div>
     <div class="calendar-th" role="columnheader">พุธ</div>
     <div class="calendar-th" role="columnheader">พฤหัส</div>
     <div class="calendar-th" role="columnheader">ศุกร์</div>
     <div class="calendar-th" role="columnheader">เสาร์</div>
+    <div class="calendar-th" role="columnheader">อาทิตย์</div>
   </div>
   <div class="calendar-row" style="background-color: #eeeeee; height: 24px">
     <div class="calendar-th" role="columnheader">เวลา</div>
@@ -99,17 +90,6 @@
     }
   </div>
 
-  <!-- <div class="calendar-row">
-    <button class="calendar-cell">
-      {{ "a" }}
-      <div class="cell-content">
-        <div class="cell-label">8:00</div>
-      </div>
-    </button>
-    @for (d of week(); let i = $index; track i) {
-    <app-calendar-cell [isoDate]="d.date" [month]="formateMonth(d.date)" />
-    }
-  </div> -->
   @for (slot of displayList(); track $index) {
 
   <div
@@ -126,6 +106,7 @@
       [isoDate]="s.date"
       [month]="formateMonth(s.date)"
       [withOutDate]="true"
+      [color]="s.status"
     />
     }
   </div>

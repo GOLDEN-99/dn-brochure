@@ -2,12 +2,14 @@ import { inject } from '@angular/core';
 import { ResolveFn, Router } from '@angular/router';
 import { ToastService } from '../../service/toast/toast.service';
 import { DoorService } from '../../service/ibob/door.service';
+import { DailyCalendarService } from '../../service/ibob/daily-calendar.service';
 
 export const getByWarehouseResolver: ResolveFn<boolean> = (route, state) => {
   const router = inject(Router)
   const toast = inject(ToastService)
   try {
     const serv = inject(DoorService)
+    const dailyServ = inject(DailyCalendarService)
     const warehouseId = route.paramMap.get('warehouse')
     if (!warehouseId) {
       toast.danger('cannot get warehouse id from resolver')
@@ -21,6 +23,7 @@ export const getByWarehouseResolver: ResolveFn<boolean> = (route, state) => {
       return false
     }
     serv.setWarehouseId(warehouseId)
+    dailyServ.setWarehouse(warehouseId)
     return true
   } catch (err) {
     console.log(err)

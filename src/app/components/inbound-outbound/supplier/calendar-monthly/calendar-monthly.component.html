@@ -1,34 +1,54 @@
+@for (door of doorList(); track $index) {
+<div class="app-form-check">
+  <input
+    type="checkbox"
+    [ngModel]="door.check"
+    (ngModelChange)="toggleDoor(door.doorId)"
+    [attr.id]="door.doorId + '-door-daily'"
+  />
+  <label [attr.for]="door.doorId + '-door-daily'">{{ door.name }}</label>
+</div>
+}
+<!---->
+<div class="row row-cols-sm-auto mb-3">
+  <div class="col-12">
+    <div class="input-group">
+      <input class="form-control" type="month" [(ngModel)]="temp" />
+    </div>
+  </div>
+</div>
+<!---->
 @let cal = calendar();
 <div class="calendar-header">
-  <button class="btn" (click)="toPrevMonth()">
+  <!-- <button class="btn" (click)="toPrevMonth()">
     <i class="bi bi-chevron-left"> </i>
-  </button>
-  <div class="calendar-header-label">label</div>
+  </button> -->
+  <!-- <div class="calendar-header-label"></div>
   <div class="calendar-header-month">
-    <div>{{ month() }}</div>
-    <div>{{ year() }}</div>
-  </div>
-  <button class="btn" (click)="toNextMonth()">
+    <div>{{ formated().month }}</div>
+    <div>{{ formated().year }}</div>
+  </div> -->
+  <!-- <button class="btn" (click)="toNextMonth()">
     <i class="bi bi-chevron-right"></i>
-  </button>
+  </button> -->
 </div>
 <div class="calendar">
   <div class="calendar-row">
-    <div class="calendar-th" role="columnheader">อาทิตย์</div>
     <div class="calendar-th" role="columnheader">จันทร์</div>
     <div class="calendar-th" role="columnheader">อังคาร</div>
     <div class="calendar-th" role="columnheader">พุธ</div>
     <div class="calendar-th" role="columnheader">พฤหัส</div>
     <div class="calendar-th" role="columnheader">ศุกร์</div>
     <div class="calendar-th" role="columnheader">เสาร์</div>
+    <div class="calendar-th" role="columnheader">อาทิตย์</div>
   </div>
   @for (week of cal; let i = $index; track i) {
   <div class="calendar-row">
     @for (d of week; let j = $index; track j) {
     <app-calendar-cell
-      [isoDate]="formatIso(d)"
-      [month]="month()"
-      [color]="(i + j) % 3"
+      [isoDate]="d.date"
+      [month]="formated().month"
+      [color]="d.status"
     />
     }
   </div>
@@ -37,7 +57,7 @@
 
 <ng-template #monthly1 let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">{{ month1Header() }}</h4>
+    <!-- <h4 class="modal-title" id="modal-basic-title">{{ month1Header() }}</h4> -->
     <button
       type="button"
       class="btn-close"
@@ -46,13 +66,13 @@
     ></button>
   </div>
   <div class="modal-body">
-    @for (item of month1List(); track $index) {
+    <!-- @for (item of month1List(); track $index) {
     <div>
       <div class="indicator bg-color-green"></div>
       <div>ประตู 1</div>
       btn
     </div>
-    }
+    } -->
   </div>
   <div class="modal-footer">
     <button

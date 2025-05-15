@@ -1,1 +1,76 @@
-<p>calendar-daily works!</p>
+<!---->
+@for (door of doorList(); track $index) {
+<div class="app-form-check">
+  <input
+    type="checkbox"
+    [ngModel]="door.check"
+    (ngModelChange)="toggleDoor(door.doorId)"
+    [attr.id]="door.doorId + '-door-daily'"
+  />
+  <label [attr.for]="door.doorId + '-door-daily'">{{ door.name }}</label>
+</div>
+}
+
+<form class="row row-cols-sm-auto mb-3">
+  <div class="col-12">
+    <div class="dp-hidden position-absolute">
+      <div class="input-group">
+        <input
+          name="datepicker"
+          class="form-control"
+          ngbDatepicker
+          #datepicker="ngbDatepicker"
+          [autoClose]="'outside'"
+          [(ngModel)]="currentDate"
+          tabindex="-1"
+        />
+      </div>
+    </div>
+    <div class="input-group">
+      <input
+        class="form-control"
+        placeholder="yyyy-mm-dd"
+        name="dp"
+        [value]="thaiDate(currentDate())"
+        ngbDatepicker
+        disabled
+      />
+      <button
+        class="btn btn-outline-secondary bi bi-calendar3"
+        (click)="datepicker.toggle()"
+        type="button"
+      ></button>
+    </div>
+  </div>
+</form>
+
+<div class="calendar">
+  <div class="calendar-row" style="background-color: #eeeeee; height: 24px">
+    <div class="calendar-th" role="columnheader">เวลา</div>
+    @for (h of header(); track $index) {
+    <div class="calendar-th" role="columnheader">{{ h }}</div>
+    }
+  </div>
+
+  @for (slot of displayList(); track $index) {
+
+  <div
+    class="calendar-row"
+    style="height: 38px; border-bottom: 1px solid #eeeeee"
+  >
+    <button class="calendar-cell" style="flex: 1 1 58px">
+      <div class="cell-content">
+        <div class="cell-label">{{ slot.time }}</div>
+      </div>
+    </button>
+    @for (h of header(); let j = $index;track j) {
+    <app-calendar-cell
+      [isoDate]="'1999-01-01'"
+      [month]="1"
+      [withOutDate]="true"
+      [color]="getStatus(slot)(h)"
+    />
+    }
+  </div>
+  }
+</div>

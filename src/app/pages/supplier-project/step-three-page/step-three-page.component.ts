@@ -8,7 +8,7 @@ import { SearchSupplierComponent } from "../../../components/inbound-outbound/se
 
 @Component({
   selector: 'app-step-three-page',
-  imports: [ReactiveFormsModule, RouterLink, ModalLayoutComponent, SearchSupplierComponent],
+  imports: [ReactiveFormsModule, ModalLayoutComponent, SearchSupplierComponent],
   templateUrl: './step-three-page.component.html',
   styleUrl: './step-three-page.component.scss'
 })
