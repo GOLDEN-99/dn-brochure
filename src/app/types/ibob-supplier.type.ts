@@ -124,6 +124,25 @@ export type TDailyRes = {
     doors: TDailyItem[]
 }
 
+export type TDailyStatItem = Pick<TDailyItem, 'door' | 'status'>
+
+export type TDailyStatRes = {
+    warehouseId: string
+    date: string
+    doors: TDailyItem[]
+}
+
+export type TAllDayDetailReq = {
+    door: string //doorId
+} & TDailyReq
+
+export type TAllDayDetailRes = {
+    reservationDate: string
+    reservationTime: string
+    companyName: string | null
+    compCode: string | null
+}
+
 export type TMonthlyReq = {
     month: number
     year: number

@@ -1,10 +1,12 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
-import { combineLatest, map, Subject, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Subject, switchMap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { TAppDoor, TDailyReq, TDailyRes } from '../../types/ibob-supplier.type';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { TAllDayDetailReq, TAllDayDetailRes, TAppDoor, TDailyReq, TDailyRes, TDailyStatRes } from '../../types/ibob-supplier.type';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TDate } from '../../lib';
+import { NgbCalendar, NgbDate } from '@ng-bootstrap/ng-bootstrap';
+import { TMaybe } from '../../types';
 
 @Injectable({
   providedIn: 'root'
@@ -15,15 +17,22 @@ export class DailyCalendarService {
 
   private api = inject(ApiService)
 
-  private date$ = new Subject<string>()
+  calendar = inject(NgbCalendar);
+  currentDate = signal<NgbDate>(this.calendar.getToday())
+  private isoDate = computed(() => {
+    const date = this.currentDate()
+    return `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
+  })
+
+  private date$ = toObservable(this.isoDate)
 
   private warehosue$ = new Subject<string>()
 
   setWarehouse = (id: string) => this.warehosue$.next(id)
 
   setDate = ({ year, month, day }: TDate) => {
-    const iso = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    this.date$.next(iso)
+    const newDate = new NgbDate(year, month, day)
+    this.currentDate.set(newDate)
   }
 
   private params = combineLatest({
@@ -72,6 +81,38 @@ export class DailyCalendarService {
     console.table(result)
     return result
   })
+
+  private getDoorStatus = (params: TDailyReq) =>
+    this.api.get<TDailyStatRes>(`${this.url}/GetDoorStatusByDateAndWarehouse`, { params })
+      .pipe(map(({ doors }) => doors))
+
+  private doorStat$ = this.params.pipe(switchMap(this.getDoorStatus))
+
+  allDoorStat = toSignal(this.doorStat$, { initialValue: [] })
+
+  doorId = signal<TMaybe<string>>(null)
+  doorName = signal<TMaybe<string>>(null)
+
+  setDoorId = (id: string, name: string) => { this.doorId.set(id); this.doorName.set(name) }
+
+  private doorId$ = toObservable(this.doorId).pipe(filter((id) => id !== null))
+
+  private detailDoorParams = combineLatest({
+    date: this.date$,
+    warehouseId: this.warehosue$,
+    door: this.doorId$
+  })
+
+  private getDetailDoorList = (params: TAllDayDetailReq) => this.api.get<TAllDayDetailRes[]>(`${this.url}/GetAllDay`, { params })
+  // .pipe(map((result) => {
+  //   const resavartionMap = new Map<string, { companyName: string, companyCode: string }>()
+  //   result.forEach(({ reservationTime, companyCode, companyName }) => { resavartionMap.set(reservationTime.substring(0, 5), { companyCode, companyName }) })
+  //   return resavartionMap
+  // }))
+
+  private reservationMap$ = this.detailDoorParams.pipe(switchMap(this.getDetailDoorList))
+
+  reseavationList = toSignal(this.reservationMap$, { initialValue: [] })
 }
 
 interface ITemp { time: string }

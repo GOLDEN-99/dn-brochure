@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { catchError, map, of, Subject, switchMap } from 'rxjs';
 import { ApiService } from '../api/api.service';
@@ -35,6 +35,8 @@ export class DoorService {
   )
 
   doorList = signal<TAppDoor[]>([])
+
+  selectedDoor = computed(() => this.doorList().filter(({ check }) => check))
 
   toggleDoor = (doorId: string) => this.doorList.update(
     prev => prev.map(

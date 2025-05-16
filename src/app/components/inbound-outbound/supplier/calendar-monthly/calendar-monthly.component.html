@@ -49,15 +49,16 @@
       [isoDate]="d.date"
       [month]="formated().month"
       [color]="d.status"
+      (onClick)="openPrimaryModal($event)"
     />
     }
   </div>
   }
 </div>
 
-<ng-template #monthly1 let-modal>
+<ng-template #primaryModal let-modal>
   <div class="modal-header">
-    <!-- <h4 class="modal-title" id="modal-basic-title">{{ month1Header() }}</h4> -->
+    <h4 class="modal-title" id="modal-basic-title">primary modal</h4>
     <button
       type="button"
       class="btn-close"
@@ -66,26 +67,32 @@
     ></button>
   </div>
   <div class="modal-body">
-    <!-- @for (item of month1List(); track $index) {
-    <div>
-      <div class="indicator bg-color-green"></div>
-      <div>ประตู 1</div>
-      btn
+    @for (door of doorStat(); track $index) {
+    <div style="display: flex; align-items: center; gap: 16px">
+      <div [className]="indicatoreClass(door.status)"></div>
+
+      <div>{{ door.name }}</div>
+      <button
+        class="btn btn-link"
+        (click)="openSecondaryModal(door.name, door.doorId)"
+      >
+        ดูรายละเอียด
+      </button>
     </div>
-    } -->
+    }
   </div>
   <div class="modal-footer">
     <button
       type="button"
       class="btn btn-outline-secondary"
-      (click)="modal.close('Save click')"
+      (click)="modal.close('close click')"
     >
-      Save
+      close
     </button>
   </div>
 </ng-template>
 
-<ng-template #monthly2 let-modal>
+<ng-template #secondaryModal let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
     <button
@@ -96,25 +103,41 @@
     ></button>
   </div>
   <div class="modal-body">
-    <form>
-      <div class="mb-3">
-        <label for="dateOfBirth">Date of birth</label>
-        <div class="input-group">
-          <button
-            class="btn btn-outline-secondary bi bi-calendar3"
-            type="button"
-          ></button>
-        </div>
+    <div
+      style="
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        column-gap: 16px;
+        row-gap: 16px;
+      "
+    >
+      @for (slot of displayTimeSlot(); track $index) {
+      <div
+        [className]="slotClass(slot.compCode)"
+        style="
+          border-radius: 4px;
+          padding: 4px 16px;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <span>
+          {{ slot.reservationTime.substring(0, 5) }}
+        </span>
+        <span style="font-size: 12px">
+          {{ slot.companyName ?? "" }}
+        </span>
       </div>
-    </form>
+      }
+    </div>
   </div>
   <div class="modal-footer">
     <button
       type="button"
       class="btn btn-outline-secondary"
-      (click)="modal.close('Save click')"
+      (click)="modal.close('close click')"
     >
-      Save
+      close
     </button>
   </div>
 </ng-template>

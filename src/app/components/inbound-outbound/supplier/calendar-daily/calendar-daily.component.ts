@@ -15,20 +15,19 @@ export class CalendarDailyComponent {
 
   constructor() {
     const doorEff = effect(() => this.dailyServ.setDoor(this.doorList()))
-    const dateEff = effect(() => this.dailyServ.setDate(this.currentDate()))
+
   }
 
   onSelectDate(date: NgbDate) {
     console.log(date)
   }
   formatter = inject(NgbDateParserFormatter);
-  calendar = inject(NgbCalendar);
-  currentDate = signal<NgbDate>(this.calendar.getToday())
 
   private doorServ = inject(DoorService)
   private dailyServ = inject(DailyCalendarService)
   doorList = this.doorServ.doorList
   toggleDoor = this.doorServ.toggleDoor
+  currentDate = this.dailyServ.currentDate
 
   header = this.dailyServ.refArr
   displayList = this.dailyServ.displayDoors

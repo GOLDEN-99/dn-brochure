@@ -23,6 +23,7 @@ import { InOutListComponent } from './pages/supplier-project/in-out-list/in-out-
 import { RegisterPageComponent } from './pages/supplier-project/register-page/register-page.component';
 import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolver';
 import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
+import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 
 export const routes: Routes = [
     {
@@ -157,6 +158,10 @@ export const routes: Routes = [
                         path: 'list',
                         component: InOutListComponent
                     },
+                    {
+                        path: 'query',
+                        component: InOutQueryComponent
+                    }
                 ]
             },
             {
