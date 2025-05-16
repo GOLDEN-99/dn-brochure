@@ -1,0 +1,36 @@
+@if (isAdmin()) {
+<div style="display: flex; justify-content: end">
+  <a href="" class="btn btn-danger mb-3">เพิ่มการจอง</a>
+</div>
+}
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>วันที่</th>
+      <th>เวลา</th>
+      <th>ประตู</th>
+      <th>ชื่อซัพ</th>
+      <th>เลข po</th>
+      <th>จำนวนลัง</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2025-01-01</th>
+      <th>12:00</th>
+      <th>door 1</th>
+      <th>sup 1</th>
+      <th>po 1 2 3</th>
+      <th>7</th>
+      <th>
+        <div style="display: flex; justify-content: space-between">
+          <a href="" class="btn btn-link">รายละเอียด</a>
+          @if (isAdmin()) {
+          <a href="" class="btn btn-danger">แก้ไข</a>
+          }
+        </div>
+      </th>
+    </tr>
+  </tbody>
+</table>

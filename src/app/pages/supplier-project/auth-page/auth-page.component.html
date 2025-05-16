@@ -1,0 +1,42 @@
+<div class="app-form-field">
+  <label for="supplierCode">รหัสซัพ</label>
+  <input type="text" name="supplierCode" id="supplierCode" disabled />
+</div>
+<form
+  [formGroup]="stepOneForm"
+  class="p-4 mb-3"
+  style="background-color: #e0e0e0"
+>
+  <div class="app-form-field">
+    <label for="username">Username</label>
+    <input
+      type="text"
+      name="username"
+      id="username"
+      formControlName="username"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="password">Password</label>
+    <div class="input-group">
+      <input
+        [type]="passwordType()"
+        name="password"
+        id="password"
+        formControlName="password"
+      />
+      <span
+        class="input-group-text"
+        id="basic-addon1"
+        tabindex="0"
+        (click)="togglePassword()"
+      >
+        @if(passwordType() === 'text'){
+        <i class="bi bi-eye-slash"></i>
+        }@else{
+        <i class="bi bi-eye"></i>
+        }
+      </span>
+    </div>
+  </div>
+</form>

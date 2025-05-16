@@ -1,0 +1,16 @@
+<section class="form-wrapper">
+  <div style="display: flex; gap: 16px">
+    @for (warehouse of warehouseList(); track $index) {
+    <a
+      [routerLink]="warehouse.id"
+      routerLinkActive="active"
+      class="btn btn-outline-success"
+      style="flex: 1 1 auto"
+      role="button"
+      >{{ warehouse.name }}</a
+    >
+    }
+  </div>
+  <router-outlet />
+</section>
+<div style="text-align: center; margin: 0; opacity: 0.2">version 1.0</div>

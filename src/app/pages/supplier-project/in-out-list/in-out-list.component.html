@@ -1,0 +1,22 @@
+<a routerLink="./add" class="btn btn-icon btn-success mb-3" role="button">
+  <i class="bi bi-plus"></i>
+  เพิ่ม
+</a>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>ชื่อ</th>
+      <th>เวลา</th>
+      <th>ผู้ดูแล</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of doorList(); track $index) {
+    <tr tabindex="0" (click)="goTo(item.doorId)">
+      <td>{{ item.name }}</td>
+      <td>{{ item.timeUse }}</td>
+      <td>{{ item.note }}</td>
+    </tr>
+    }
+  </tbody>
+</table>

@@ -1,0 +1,31 @@
+<div>
+  <app-supllier-select [(selectedOption)]="sup" />
+  <div class="app-form-field">
+    <label for="term">ค้นหา</label>
+    <input type="text" name="term" id="term" [(ngModel)]="term" />
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <td>ชื่อบริษัท(อังกฤษ)</td>
+        <td>ชื่อบริษัท(ไทย)</td>
+        <td>รหัส</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of items(); track $index) {
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>
+          <button class="btn btn-success" (click)="selectedSuplier.emit(item)">
+            เลือก
+          </button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

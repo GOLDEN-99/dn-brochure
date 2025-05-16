@@ -1,0 +1,95 @@
+.calendar {
+  display: flex;
+  flex-direction: column;
+  .calendar-row {
+    display: flex;
+    padding: 0 16px;
+    &:first-child {
+      background-color: #eeeeee;
+    }
+    &:not(:first-child) {
+      height: 80px;
+      background-color: #fff;
+    }
+
+    .calendar-th {
+      flex: 1 1 10%;
+    }
+  }
+}
+
+.calendar-cell {
+  flex: 1 1 auto;
+  font-weight: 200;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+  background-color: transparent;
+}
+
+.cell-content {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.calendar-cell:disabled {
+  color: #eeeeee;
+  .cell-content {
+    display: none;
+  }
+}
+
+.cell-label {
+  font-weight: 400;
+  font-size: 8px;
+  color: black;
+}
+
+.indicator {
+  width: 16px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.bg-color-green {
+  background-color: #4caf50;
+}
+
+.bg-color-yellow {
+  background-color: #ff9800;
+}
+
+.bg-color-red {
+  background-color: #f60303;
+}
+
+.dp-hidden {
+  width: 0;
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+.custom-day {
+  text-align: center;
+  padding: 0.185rem 0.25rem;
+  display: inline-block;
+  height: 2rem;
+  width: 2rem;
+}
+.custom-day.focused {
+  background-color: #e6e6e6;
+}
+.custom-day.range,
+.custom-day:hover {
+  background-color: rgb(2, 117, 216);
+  color: white;
+}
+.custom-day.faded {
+  background-color: rgba(2, 117, 216, 0.5);
+}
+
+.custom-day.outside:not(.faded):not(.range) {
+  opacity: 0.5;
+}

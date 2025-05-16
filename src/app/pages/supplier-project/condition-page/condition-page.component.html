@@ -1,0 +1,211 @@
+<a class="btn btn-success mb-3" routerLink="../product">ราการจำหน่ายสินค้า</a>
+
+<ul
+  ngbNav
+  #nav="ngbNav"
+  [(activeId)]="active"
+  [destroyOnHide]="false"
+  class="nav-tabs"
+  style="border: none"
+>
+  <li [ngbNavItem]="1">
+    <button ngbNavLink>เงื่อนไขการคืนซัพฯ</button>
+    <ng-template ngbNavContent>
+      <div class="condi-form">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="return-sub"
+            id="return-sup-check-return"
+            [checked]="form.contains('sup')"
+            (change)="addSup()"
+          />
+          <label class="form-check-label" for="return-sup-check-return">
+            รับคืน
+          </label>
+        </div>
+        <!---->
+        @if (supForm;as sup) {
+        <form [formGroup]="sup" style="padding: 0 24px">
+          <div class="app-form-field-inline">
+            <div>
+              <label for="return-sup-before">ก่อนหมดอายุ</label>
+            </div>
+            <div>
+              <input
+                type="number"
+                name="return-sup-before"
+                id="return-sup-before"
+                formControlName="before"
+                [min]="0"
+              />
+            </div>
+            <div>
+              <span>เดือน</span>
+            </div>
+          </div>
+          <div class="app-form-field-inline">
+            <div>
+              <label for="return-sup-after">หลังหมดอายุ</label>
+            </div>
+            <div>
+              <input
+                type="number"
+                name="return-sup-after"
+                id="return-sup-after"
+                formControlName="after"
+                [min]="0"
+              />
+            </div>
+            <div>
+              <span>เดือน</span>
+            </div>
+          </div>
+          <div
+            class="app-form-check"
+            style="display: flex; gap: 16px; align-items: center"
+          >
+            <input
+              type="checkbox"
+              id="return-sub-whole"
+              name="return-sub-whole"
+              formControlName="whole"
+            />
+            <label for="return-sub-whole">จดทะเบียน VAT</label>
+          </div>
+          <div
+            class="app-form-check"
+            style="display: flex; gap: 16px; align-items: center"
+          >
+            <input
+              type="checkbox"
+              id="return-sub-lot"
+              name="return-sub-lot"
+              formControlName="lot"
+            />
+            <label for="return-sub-lot">สินค้ารวม VAT</label>
+          </div>
+        </form>
+        }
+        <!---->
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="return-sub"
+            id="return-sup-check-not-return"
+            [checked]="!form.contains('sup')"
+            (change)="removeSup()"
+          />
+          <label class="form-check-label" for="return-sup-check-not-return">
+            ไม่รับคืน
+          </label>
+        </div>
+      </div>
+    </ng-template>
+  </li>
+  <li [ngbNavItem]="2">
+    <button ngbNavLink>เงื่อนไขสาขาส่งคืน</button>
+    <ng-template ngbNavContent>
+      <div class="condi-form">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="return-branch"
+            id="return-branch-check-return"
+            [checked]="form.contains('branch')"
+            (change)="addBranch()"
+          />
+          <label class="form-check-label" for="return-branch-check-return">
+            รับคืน
+          </label>
+        </div>
+        <!---->
+        @if (branchForm;as branch) {
+        <form [formGroup]="branch" style="padding: 0 24px">
+          <div class="app-form-field-inline">
+            <div>
+              <label for="return-branch-before">ก่อนหมดอายุ</label>
+            </div>
+            <div>
+              <input
+                type="number"
+                name="return-branch-before"
+                id="return-branch-before"
+                formControlName="before"
+                [min]="0"
+              />
+            </div>
+            <div>
+              <span>เดือน</span>
+            </div>
+          </div>
+          <div class="app-form-field-inline">
+            <div>
+              <label for="return-branch-after">หลังหมดอายุ</label>
+            </div>
+            <div>
+              <input
+                type="number"
+                name="return-branch-after"
+                id="return-branch-after"
+                formControlName="after"
+                [min]="0"
+              />
+            </div>
+            <div>
+              <span>เดือน</span>
+            </div>
+          </div>
+          <div
+            class="app-form-check"
+            style="display: flex; gap: 16px; align-items: center"
+          >
+            <input
+              type="checkbox"
+              id="return-branch-whole"
+              name="return-branch-whole"
+              formControlName="whole"
+            />
+            <label for="return-branch-whole">จดทะเบียน VAT</label>
+          </div>
+          <div
+            class="app-form-check"
+            style="display: flex; gap: 16px; align-items: center"
+          >
+            <input
+              type="checkbox"
+              id="return-branch-lot"
+              name="return-branch-lot"
+              formControlName="lot"
+            />
+            <label for="return-branch-lot">สินค้ารวม VAT</label>
+          </div>
+        </form>
+        }
+        <!---->
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="return-branch"
+            id="return-branch-check-not-return"
+            [checked]="!form.contains('branch')"
+            (change)="removeBranch()"
+          />
+          <label class="form-check-label" for="return-branch-check-not-return">
+            ไม่รับคืน
+          </label>
+        </div>
+      </div>
+    </ng-template>
+  </li>
+</ul>
+
+<div [ngbNavOutlet]="nav" class="mb-3"></div>
+<div class="d-flex" style="gap: 16px">
+  <button class="btn btn-primary w-100">ถัดไป</button>
+  <a class="btn btn-danger w-100" role="button" routerLink="../">ย้อนกลับ</a>
+</div>

@@ -1,0 +1,10 @@
+@let d = date();
+<button class="calendar-cell" [disabled]="inActive()" (click)="handleClick()">
+  @if (!withOutDate()) {
+  {{ d }}
+  }
+  <div class="cell-content">
+    <div [className]="indicatorClass()"></div>
+    <div class="cell-label">{{ indicatorLabel() }}</div>
+  </div>
+</button>
