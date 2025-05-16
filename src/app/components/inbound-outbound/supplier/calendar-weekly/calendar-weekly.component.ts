@@ -1,10 +1,11 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal, viewChild } from '@angular/core';
 import { CalendarCellComponent } from '../calendar-cell/calendar-cell.component';
 import { getWeekRange } from '../../../../lib';
-import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDatepickerModule, NgbDateStruct, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { WeekCalendarService } from '../../../../service/ibob/week-calendar.service';
 import { DoorService } from '../../../../service/ibob/door.service';
 import { FormsModule } from '@angular/forms';
+import { DailyCalendarService } from '../../../../service/ibob/daily-calendar.service';
 
 @Component({
   selector: 'app-calendar-weekly',
@@ -12,32 +13,22 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './calendar-weekly.component.html',
   styleUrl: './calendar-weekly.component.scss'
 })
-export class CalendarWeeklyComponent implements OnInit {
+export class CalendarWeeklyComponent {
 
   constructor() {
-    const weekEff = effect(() => this.calServ.setWeek(this.dateRange()))
     const doorEff = effect(() => this.calServ.setDoor(this.doorList()))
+    const eff = effect(() => this.dailyServ.setDoor(this.doorList()))
   }
 
-  ngOnInit(): void {
-    this.selectedDate.set(this.calendar.getToday())
-  }
+  private calServ = inject(WeekCalendarService)
+  private doorServ = inject(DoorService)
+  private modalServ = inject(NgbModal)
   formatter = inject(NgbDateParserFormatter);
-  calendar = inject(NgbCalendar);
   hoveredDate: NgbDate | null = null;
 
-  selectedDate = signal<NgbDate | null>(null)
-  dateRange = computed(() => {
-    const date = this.selectedDate()
-    if (!date) return { start: null, end: null }
-    return getWeekRange(date)
-  })
+  selectedDate = this.calServ.selectedDate
+  dateRange = this.calServ.dateRange
 
-  onDateSelection(date: NgbDate) {
-    this.selectedDate.set(date)
-    const wk = getWeekRange(date)
-
-  }
 
   isHovered(date: NgbDate) {
     const { start, end } = this.dateRange()
@@ -72,8 +63,7 @@ export class CalendarWeeklyComponent implements OnInit {
     return `${date.day}/${date.month}/${date.year}`
   }
 
-  private calServ = inject(WeekCalendarService)
-  private doorServ = inject(DoorService)
+
 
   week = this.calServ.weeklyReservation
 
@@ -86,4 +76,52 @@ export class CalendarWeeklyComponent implements OnInit {
   displayList = this.calServ.displayWeekly
 
   header = this.calServ.header
+
+  private dailyServ = inject(DailyCalendarService)
+  selectTime = signal<string | null>(null)
+  private primary = viewChild('primaryWeekModal')
+  openPrimaryModal = (isoDate: string, time: string) => {
+    this.selectTime.set(time)
+    const [year, month, day] = isoDate.split('-').map(Number)
+    this.dailyServ.setDate({ year, month, day })
+    this.modalServ.open(this.primary(), {})
+  }
+  selectedDoor = this.doorServ.selectedDoor
+  doorStat = computed(() => this.selectedDoor().map(({ doorId, name }) => {
+    const statusList = this.dailyServ.allDoorStat()
+    const stat = statusList.find((s) => s.door === name)
+    return { doorId, name, status: stat ? stat.status : -1 }
+  }))
+  indicatoreClass = (status: number) => {
+    switch (status) {
+      case 0: return 'indicator bg-color-green'
+      case 1: return 'indicator bg-color-yellow'
+      case 2: return 'indicator bg-color-red'
+      default: return ''
+    }
+  }
+  private secondary = viewChild('secondaryWeekModal')
+  openSecondaryModal = (doorName: string) => {
+    const targetDoor = this.doorList().find(({ doorId, name, check }) => name === doorName && check)
+    if (!targetDoor) return
+    this.dailyServ.setDoorId(targetDoor.doorId, targetDoor.name)
+    this.modalServ.open(this.secondary(), {})
+  }
+  doorContent = computed(() => this.dailyServ.filterDoor().filter(({ time }) => time === this.selectTime()))
+  slotContent = computed(
+    () => this.dailyServ.reseavationList()
+      .flatMap(({ reservationTime, compCode, ...res }) =>
+        reservationTime.substring(0, 2) === (this.selectTime() ?? '').substring(0, 2) && compCode !== null
+          ? [{ ...res, compCode, reservationTime: reservationTime.substring(0, 5) }]
+          : []
+      ))
+
+  slotClass = (compCode: string | null) => compCode === null ? 'bg-color-green' : 'bg-color-red'
+
+  secondaryDoor = this.dailyServ.doorName
+  currentDate = this.dailyServ.currentDate
+  currentThaiDate = computed(() => {
+    const { year, month, day } = this.currentDate()
+    return `${day}/${month}/${year}`
+  })
 }

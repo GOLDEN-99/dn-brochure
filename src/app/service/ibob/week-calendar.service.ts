@@ -1,25 +1,46 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { TAppDoor, TAppWeeklyList, TWeeklyReq, TWeeklyRes } from '../../types/ibob-supplier.type';
 import { environment } from '../../../environments/environment';
-import { catchError, combineLatest, Subject, switchMap, tap, throwError } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { TDate } from '../../lib';
+import { catchError, combineLatest, filter, Subject, switchMap, tap, throwError } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { getWeekRange, TDate } from '../../lib';
+import { NgbCalendar, NgbDate } from '@ng-bootstrap/ng-bootstrap';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WeekCalendarService {
 
-  constructor() { }
+  constructor() {
+
+  }
 
   private api = inject(ApiService)
 
   private url = environment.ibob
 
-  private startDate$ = new Subject<string>()
+  calendar = inject(NgbCalendar);
+  selectedDate = signal<NgbDate>(this.calendar.getToday())
+  dateRange = computed(() => {
+    const date = this.selectedDate()
+    return getWeekRange(date)
+  })
 
-  private endDate$ = new Subject<string>()
+  private isoStart = computed(() => {
+    const { start } = this.dateRange()
+    return this.dateToIso(start)
+  })
+
+  private isoEnd = computed(() => {
+    const { end } = this.dateRange()
+    return this.dateToIso(end)
+  })
+
+
+  private startDate$ = toObservable(this.isoStart)
+
+  private endDate$ = toObservable(this.isoEnd)
 
   private doors$ = new Subject<string[]>()
 
@@ -62,21 +83,12 @@ export class WeekCalendarService {
     return formatted
   }
 
-  setWeek = ({ start, end }: TRawDate) => {
-    console.log('set range')
-    if (start) {
-      this.startDate$.next(this.dateToIso(start))
-    }
-    if (end) {
-      this.endDate$.next(this.dateToIso(end))
-    }
-  }
-
   setDoor = (doors: TAppDoor[]) => {
     console.log('set door')
     const selectedDoor = doors.flatMap(({ check, doorId }) => check ? [doorId] : [])
     this.doors$.next(selectedDoor)
   }
+
 
 }
 

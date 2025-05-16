@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { combineLatest, filter, map, Subject, switchMap } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -13,7 +13,9 @@ import { TMaybe } from '../../types';
 })
 export class DailyCalendarService {
 
-  constructor() { }
+  constructor() {
+    const eff = effect(() => console.log(this.filterDoor()))
+  }
 
   private api = inject(ApiService)
 
@@ -31,6 +33,7 @@ export class DailyCalendarService {
   setWarehouse = (id: string) => this.warehosue$.next(id)
 
   setDate = ({ year, month, day }: TDate) => {
+    console.log(year, month, day)
     const newDate = new NgbDate(year, month, day)
     this.currentDate.set(newDate)
   }
@@ -63,7 +66,7 @@ export class DailyCalendarService {
     this.refArr.set(selectedDoor)
   }
 
-  private filterDoor = computed(
+  filterDoor = computed(
     () => this.resevation()
       .flatMap(({ door, times }) => this.refArr().includes(door)
         ? times.map(t => ({ ...t, door }))
@@ -104,11 +107,6 @@ export class DailyCalendarService {
   })
 
   private getDetailDoorList = (params: TAllDayDetailReq) => this.api.get<TAllDayDetailRes[]>(`${this.url}/GetAllDay`, { params })
-  // .pipe(map((result) => {
-  //   const resavartionMap = new Map<string, { companyName: string, companyCode: string }>()
-  //   result.forEach(({ reservationTime, companyCode, companyName }) => { resavartionMap.set(reservationTime.substring(0, 5), { companyCode, companyName }) })
-  //   return resavartionMap
-  // }))
 
   private reservationMap$ = this.detailDoorParams.pipe(switchMap(this.getDetailDoorList))
 

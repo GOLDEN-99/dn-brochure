@@ -83,4 +83,11 @@ export class CalendarMonthlyComponent {
       default: return ''
     }
   }
+
+  currentDate = this.dailyServ.currentDate
+  currentThaiDate = computed(() => {
+    const { year, month, day } = this.currentDate()
+    return `${day}/${month}/${year}`
+  })
+  targetDoor = this.dailyServ.doorName
 }
