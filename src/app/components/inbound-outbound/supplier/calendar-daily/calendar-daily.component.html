@@ -69,8 +69,65 @@
       [month]="1"
       [withOutDate]="true"
       [color]="getStatus(slot)(h)"
+      (onClick)="openModal(h, slot.time)"
     />
     }
   </div>
   }
 </div>
+
+<ng-template #dailyModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      {{ currentThaiDate() }} {{ selectTime() }} {{ targetDoor() }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div
+      style="
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        column-gap: 16px;
+        row-gap: 16px;
+      "
+    >
+      @let content = slotContent();
+      <!---->
+      @if (content.length === 0) {
+      <div>ไม่มีการจอง</div>
+      } @for (slot of content; track $index) {
+      <div
+        [className]="slotClass(slot.compCode)"
+        style="
+          border-radius: 4px;
+          padding: 4px 16px;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <span>
+          {{ slot.reservationTime.substring(0, 5) }}
+        </span>
+        <span style="font-size: 12px">
+          {{ slot.companyName ?? "" }}
+        </span>
+      </div>
+      }
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="modal.close('close click')"
+    >
+      close
+    </button>
+  </div>
+</ng-template>

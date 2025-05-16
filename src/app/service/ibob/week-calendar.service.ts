@@ -53,7 +53,6 @@ export class WeekCalendarService {
   }).pipe();
 
   private result$ = this.params$.pipe(
-    tap(console.log),
     switchMap(this.getWeekly),
     catchError(err => throwError(() => err))
   );
@@ -84,7 +83,6 @@ export class WeekCalendarService {
   }
 
   setDoor = (doors: TAppDoor[]) => {
-    console.log('set door')
     const selectedDoor = doors.flatMap(({ check, doorId }) => check ? [doorId] : [])
     this.doors$.next(selectedDoor)
   }

@@ -12,11 +12,6 @@ import { TMaybe } from '../../types';
   providedIn: 'root'
 })
 export class DailyCalendarService {
-
-  constructor() {
-    const eff = effect(() => console.log(this.filterDoor()))
-  }
-
   private api = inject(ApiService)
 
   calendar = inject(NgbCalendar);
@@ -78,11 +73,9 @@ export class DailyCalendarService {
     if (raw.length === 0) return []
     const timeRef = this.timeRef()
     const formatted = timeRef.map(t => raw.filter(r => r.time === t))
-    const result = formatted.map(
+    return formatted.map(
       (lst) => lst.reduce<ITemp>((acc, { door, time, status }) => ({ ...acc, time, [door]: { time, status } }), { time: '00:00' })
     )
-    console.table(result)
-    return result
   })
 
   private getDoorStatus = (params: TDailyReq) =>
