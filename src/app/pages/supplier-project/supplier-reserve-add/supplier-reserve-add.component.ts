@@ -8,6 +8,7 @@ import { TDoor } from '../../../types/ibob-supplier.type';
 import { Router, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { DoorService } from '../../../service/ibob/door.service';
+import { WarehouseService } from '../../../service/ibob/warehouse.service';
 
 @Component({
   selector: 'app-supplier-reserve-add',
@@ -20,7 +21,8 @@ import { DoorService } from '../../../service/ibob/door.service';
 })
 export class SupplierReserveAddComponent {
   warehouse = input<string>()
-  pageLabel = computed(() => this.serv.getCurrentWarehouse(this.warehouse() ?? ''))
+  private warehouseServ = inject(WarehouseService)
+  pageLabel = this.warehouseServ.currentWarehouseName
   private router = inject(Router)
 
   private doorService = inject(DoorService)

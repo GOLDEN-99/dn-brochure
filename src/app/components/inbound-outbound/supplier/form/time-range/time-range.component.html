@@ -1,0 +1,33 @@
+<div class="row">
+  <div class="col">
+    <label for="start" style="display: none">เริ่ม</label>
+    <select
+      class="form-select"
+      name="start"
+      id="start"
+      [(ngModel)]="selectedStart"
+      [compareWith]="compareRemarkFn"
+    >
+      @for (s of possibleSlot(); track $index) {
+      <option [ngValue]="s">{{ formatTime(s) }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="col">
+    <label for="end" style="display: none">จบ</label>
+    <select
+      class="form-select"
+      name="end"
+      id="end"
+      [(ngModel)]="selectEnd"
+      [compareWith]="compareRemarkFn"
+    >
+      @for (e of possibleEnd(); track $index) {
+      <option [ngValue]="e">{{ formatTime(e) }}</option>
+      }
+    </select>
+  </div>
+</div>
+
+<ng-container [formGroup]="form()"></ng-container>

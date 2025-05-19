@@ -26,6 +26,7 @@ export type TDoor = {
     note: string
     timeUse: number
     multiple: string
+    intendant: string | null
 }
 
 export type TAppDoor = {
@@ -153,3 +154,23 @@ export type TMonthlyRes = {
     date: string
     status: number
 }
+
+export type TCreateDoorInfo = {
+    mail: string
+    whname: string
+    doorname: string
+} & Pick<TDoor, 'warehouseId' | 'note' | 'timeUse' | 'intendant' | 'multiple'>
+
+export type TCreateTimeSlot = {
+    dayId: number
+    dayName: string
+    startTime: string
+    endTime: string
+    isAvailable: true
+}
+
+export type TCreateDoorReq = {
+    door: TCreateDoorInfo
+    time: TCreateTimeSlot[]
+}
+export type TCreateDoorRes = {}

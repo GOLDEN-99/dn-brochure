@@ -8,6 +8,7 @@
       <th>ชื่อ</th>
       <th>เวลา</th>
       <th>ผู้ดูแล</th>
+      <th style="width: 200px"></th>
     </tr>
   </thead>
   <tbody>
@@ -15,7 +16,17 @@
     <tr tabindex="0" (click)="goTo(item.doorId)">
       <td>{{ item.name }}</td>
       <td>{{ item.timeUse }}</td>
-      <td>{{ item.note }}</td>
+      <td>{{ item.intendant }}</td>
+      <td>
+        <div style="display: flex; gap: 16px">
+          <a [routerLink]="'./' + item.doorId" class="btn btn-info"
+            >รายละเอียด</a
+          >
+          <a [routerLink]="'./' + item.doorId + '/edit'" class="btn btn-warning"
+            ><i class="bi bi-pen"></i
+          ></a>
+        </div>
+      </td>
     </tr>
     }
   </tbody>

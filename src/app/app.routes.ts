@@ -24,6 +24,7 @@ import { RegisterPageComponent } from './pages/supplier-project/register-page/re
 import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolver';
 import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
+import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-add.component';
 
 export const routes: Routes = [
     {
@@ -159,18 +160,22 @@ export const routes: Routes = [
                         component: InOutListComponent
                     },
                     {
+                        path: 'list/add',
+                        component: InOutAddComponent
+                    },
+                    {
+                        path: 'list/:slot',
+                        component: InOutEditComponent
+                    },
+                    {
+                        path: 'list/:slot/edit',
+                        component: InOutEditComponent
+                    },
+                    {
                         path: 'query',
                         component: InOutQueryComponent
                     }
                 ]
-            },
-            {
-                path: 'list/:id',
-                component: InOutEditComponent
-            },
-            {
-                path: 'list/:id/edit',
-                component: InOutEditComponent
             }
         ]
     },
