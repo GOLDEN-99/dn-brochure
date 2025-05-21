@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TReturnForm } from '../../../service/supplier/supplier-form/supplier-from.service';
+import { TReturnForm } from '../../../service/supplier/supplier-from.service';
 
 @Component({
   selector: 'app-condition-page',
