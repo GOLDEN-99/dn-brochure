@@ -161,7 +161,7 @@ export type TCreateDoorInfo = {
     doorname: string
 } & Pick<TDoor, 'warehouseId' | 'note' | 'timeUse' | 'intendant' | 'multiple'>
 
-export type TCreateTimeSlot = {
+export type TAvalTimeSlot = {
     dayId: number
     dayName: string
     startTime: string
@@ -169,8 +169,32 @@ export type TCreateTimeSlot = {
     isAvailable: true
 }
 
+export type TUnavalTimeSlot = {
+    dayId: number
+    dayName: string
+    isAvailable: false
+}
+
+export type TCreateTimeSlot = {
+    dayId: number
+    dayName: string
+    startTime: string | null
+    endTime: string | null
+    isAvailable: boolean
+}
+
 export type TCreateDoorReq = {
     door: TCreateDoorInfo
     time: TCreateTimeSlot[]
 }
 export type TCreateDoorRes = {}
+
+export type TDoorInfo = { doorId: string } & TCreateDoorInfo
+
+export type TTimeSlotInfo = { id: string, doorId: string } & TCreateTimeSlot
+
+export type TDoorDetail = {
+    door: TDoorInfo
+    time: TTimeSlotInfo[]
+}
+

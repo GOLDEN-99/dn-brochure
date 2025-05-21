@@ -25,6 +25,8 @@ import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolv
 import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-add.component';
+import { InOutDetailComponent } from './pages/supplier-project/in-out-detail/in-out-detail.component';
+import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.resolver';
 
 export const routes: Routes = [
     {
@@ -164,12 +166,14 @@ export const routes: Routes = [
                         component: InOutAddComponent
                     },
                     {
-                        path: 'list/:slot',
-                        component: InOutEditComponent
+                        path: 'list/:doorId',
+                        component: InOutDetailComponent,
+                        resolve: [fetchDoorDetailResolver]
                     },
                     {
-                        path: 'list/:slot/edit',
-                        component: InOutEditComponent
+                        path: 'list/:doorId/edit',
+                        component: InOutEditComponent,
+                        resolve: [fetchDoorDetailResolver]
                     },
                     {
                         path: 'query',

@@ -1,13 +1,13 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { ApiService } from '../../api/api.service';
-import { environment } from '../../../../environments/environment';
+import { ApiService } from '../api/api.service';
+import { environment } from '../../../environments/environment';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, combineLatest, filter, map, of, Subject, switchMap, tap } from 'rxjs';
-import { IIbObComp, IIbObLogin, IIbObReserve } from '../ibobToken';
-import { TAppOrder, TComp, TCreateReservationReq, TDoor, TEditableResavation, TGetIbObRes, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot, TWarehouse } from '../../../types/ibob-supplier.type';
-import { TDate } from '../../../lib';
-import { TMaybe } from '../../../types';
-import { LocalService } from '../../local/local.service';
+import { catchError, combineLatest, map, of, Subject, switchMap, tap } from 'rxjs';
+import { IIbObLogin, IIbObReserve } from './ibobToken';
+import { TAppOrder, TCreateReservationReq, TEditableResavation, TGetIbObRes, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot } from '../../types/ibob-supplier.type';
+import { TDate } from '../../lib';
+import { TMaybe } from '../../types';
+import { LocalService } from '../local/local.service';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +45,7 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
   private loginHandler = ({ comp, door, shipto, token, order }: TLoginRes) => {
     this.currentComp.set({ ...comp, shipto })
     this.storage.saveToken(token)
-    this.orderList.update(() => order.map(or => ({ ...or, check: false, box: 0 })))
+    this.orderList.update(() => order.map(order => ({ ...order, check: false, box: 0 })))
   }
 
   login(req: TLoginReq) {
