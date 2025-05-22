@@ -41,20 +41,6 @@
   display: grid;
   grid-template-rows: repeat(4, 1fr);
 
-  &.item-6 {
-    grid-template-columns: repeat(2, 1fr);
-
-    :ng-deep {
-      &:nth-child(odd) {
-        justify-self: end;
-      }
-
-      &:nth-child(even) {
-        justify-self: start;
-      }
-    }
-  }
-
   &.item-9 {
     grid-template-columns: repeat(3, 1fr);
 
@@ -125,29 +111,29 @@
 
 .date {
   position: absolute;
-  right: 25px;
-  bottom: 5px;
+  right: 0;
+  bottom: 0;
   font-size: 8px;
+  margin: 4px;
+  background-color: #fff;
+  padding: 1px 4px;
+  border-radius: 16px;
+  text-align: center;
 
   @media (min-width: 370px) {
     font-size: 9px;
+    min-width: 160px;
   }
 
   @media (min-width: 400px) {
-    right: 30px;
-    bottom: 12px;
   }
 
   @media (min-width: 475px) {
     font-size: 10px;
-    right: 50px;
-    bottom: 12px;
   }
 
   @media (min-width: 570px) {
     font-size: 12px;
-    right: 50px;
-    bottom: 15px;
   }
 
   @media (min-width: 768px) {
@@ -156,49 +142,65 @@
 
   @media (min-width: 992px) {
     font-size: 20px;
-    right: 100px;
-    bottom: 20px;
+    padding: 4px 16px;
+    margin: 16px;
   }
   @media (min-width: 1200px) {
     font-size: 24px;
   }
   @media (min-width: 1400px) {
     font-size: 28px;
-    bottom: 25px;
   }
 }
 
 .date-static {
-  width: 33%;
   position: absolute;
   z-index: 1;
+
+  right: 0;
+  bottom: 0;
+  margin: 4px;
+  background-color: #fff;
+  padding: 1px 4px;
+  border-radius: 16px;
+  text-align: center;
+
   font-size: 16px;
-  right: 60px;
-  bottom: 20px;
+  padding: 4px 16px;
+  margin: 16px;
 
   @media (min-width: 1024px) {
     font-size: 32px;
-    right: 100px;
-    bottom: 40px;
+    right: 0;
+    bottom: 0;
+    border-radius: 32px;
+    margin: 32px;
+    padding: 8px 32px;
   }
 }
 
 .customer-label.static {
-  font-size: 17px;
+  font-size: 16px;
   position: absolute;
   right: 0;
-  translate: -80% 50%;
+  top: 0;
+  margin: 4px 8px;
   @media (min-width: 1024px) {
-    font-size: 34px;
+    font-size: 32px;
+    margin: 8px 16px;
   }
 }
 
 .customer-label:not(.static) {
-  font-size: 9px;
   position: absolute;
   right: 0;
-  translate: -75% 35%;
+  top: 0;
+
+  font-size: 6px;
+  padding: 4px;
+
   @media (min-width: 370px) {
+    font-size: 8px;
   }
   @media (min-width: 475px) {
     font-size: 11px;
@@ -211,13 +213,14 @@
   }
   @media (min-width: 992px) {
     font-size: 22px;
+    padding: 8px;
   }
   // @media (min-width: 1024px) {
   //   font-size: 22px;
   // }
   @media (min-width: 1200px) {
-    font-size: 26px;
-    translate: -80% 50%;
+    font-size: 20px;
+    padding: 16px;
   }
 }
 

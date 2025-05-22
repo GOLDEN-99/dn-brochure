@@ -2,9 +2,11 @@
 
 <div [className]="static ? 'static prochure' : 'prochure'">
   <div style="position: relative">
+    @if (head().promotionType !== 'Hot') {
     <span [className]="static ? 'customer-label static' : 'customer-label'">
       {{ isNewCustomer() }}
     </span>
+    }
     <img
       [src]="headerUrl()"
       alt="prochure header"
