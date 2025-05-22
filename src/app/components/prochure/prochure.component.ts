@@ -51,7 +51,7 @@ export class ProchureComponent {
 
   headerUrl = computed(() => {
     const { wholeType, promotionType, zone } = this.head()
-    return `/image/${promotionType}/${zone}/${wholeType}.png`
+    return `/image/${promotionType}/${zone}/${wholeType}.jpg`
   })
 
   footerUrl = computed(() => {
