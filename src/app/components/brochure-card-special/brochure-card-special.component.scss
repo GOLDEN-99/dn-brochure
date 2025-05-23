@@ -57,22 +57,22 @@
     grid-row-start: 2;
     grid-row-end: -1;
     flex-direction: column;
+    justify-content: center;
 
-    .tier .tier-price {
-      display: flex;
-      justify-content: space-between;
+    &.static-gap {
+      gap: 16px;
+    }
 
-      &.static-px-small {
-        font-size: 16px;
-      }
+    &.res-gap {
+      gap: 4px;
 
-      @media (min-width: 1400px) {
-        font-size: 16px;
+      @media (min-width: 768px) {
+        gap: 8px;
       }
     }
 
     .price {
-      flex: 1 1 auto;
+      aspect-ratio: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -248,39 +248,11 @@
   }
 }
 
-.tier-label {
-  font-weight: 400;
-  text-transform: capitalize;
-  &.static {
-    font-size: 16px;
-  }
-  &.res {
-    @media (min-width: 475px) {
-      font-size: 10px;
-    }
-    @media (min-width: 570px) {
-    }
-    @media (min-width: 768px) {
-      font-size: 12px;
-    }
-    @media (min-width: 992px) {
-      font-size: 14px;
-    }
-    @media (min-width: 1200px) {
-      font-size: 16px;
-    }
-    @media (min-width: 1400px) {
-      font-size: 18px;
-    }
-  }
-}
-
 .static-price-text {
   font-size: 18px;
 
   &.text-center {
     font-weight: 700;
-
     font-size: 36px;
   }
 }
@@ -375,4 +347,59 @@ img {
 .background-gold {
   background: #9d5b1f;
   color: #fff;
+}
+
+.alert-qouta {
+  background-color: var(--color-red);
+  color: #fff;
+  text-align: center;
+  font-style: italic;
+  &.static {
+    font-size: 14px;
+  }
+
+  &.res {
+    font-size: 6px;
+
+    @media (min-width: 570px) {
+    }
+    @media (min-width: 768px) {
+      font-size: 8px;
+    }
+    @media (min-width: 992px) {
+      font-size: 10px;
+    }
+    @media (min-width: 1200px) {
+      font-size: 12px;
+    }
+    @media (min-width: 1400px) {
+      font-size: 14px;
+    }
+  }
+}
+
+.qouta-text {
+  text-align: center;
+  font-style: italic;
+  &.static {
+    font-size: 16px;
+  }
+  &.res {
+    font-size: 6px;
+
+    @media (min-width: 570px) {
+    }
+    @media (min-width: 768px) {
+      font-size: 8px;
+    }
+    @media (min-width: 992px) {
+      font-size: 10px;
+    }
+    @media (min-width: 1200px) {
+      font-size: 12px;
+    }
+    @media (min-width: 1400px) {
+      font-size: 14px;
+    }
+  }
 }
