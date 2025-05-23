@@ -22,11 +22,16 @@ export type TPrice = {
     priceStandard: number
 }
 
+export type TSpecialItem = {
+    quotaAmou: number | null,
+    quotaAmouTxt: string | null
+}
+
 export type TItem = {
     goodCode: string
     goodName: string
     barCode: string
-    price: TPrice
+    price: TPrice & TSpecialItem
 }
 
 export type TNewCustomer = 'OC' | 'NC' | null

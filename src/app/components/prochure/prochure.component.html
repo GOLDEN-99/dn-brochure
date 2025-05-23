@@ -18,9 +18,16 @@
   </div>
   <div [className]="template()">
     @for (card of cardlist; track $index) {
-
+    <!---->
+    @if (card.price.quotaAmou) {
+    <app-brochure-card-special
+      [props]="card"
+      [isStatic]="static"
+      [color]="color()"
+    />
+    }@else {
     <app-prochure-card [props]="card" [color]="color()" [isStatic]="static" />
-    }
+    } }
   </div>
 
   <img

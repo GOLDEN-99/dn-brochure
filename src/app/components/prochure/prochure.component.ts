@@ -1,17 +1,21 @@
-import { Component, computed, input, ViewEncapsulation } from '@angular/core';
+import { Component, computed, effect, input, ViewEncapsulation } from '@angular/core';
 import { ProchureCardComponent } from "../prochure-card/prochure-card.component";
 import { TBorchureHead, TCardProps, TItem, TWhole, TZone } from '../../types';
 import { zoneToColor } from '../../lib';
+import { BrochureCardSpecialComponent } from "../brochure-card-special/brochure-card-special.component";
 
 
 @Component({
   selector: 'app-prochure',
-  imports: [ProchureCardComponent],
+  imports: [ProchureCardComponent, BrochureCardSpecialComponent],
   templateUrl: './prochure.component.html',
   styleUrl: './prochure.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class ProchureComponent {
+  constructor() {
+    const eff = effect(() => console.log(this.itemList()))
+  }
   //props
   itemList = input.required<TItem[]>()
   size = input.required<8 | 12>()
@@ -27,9 +31,8 @@ export class ProchureComponent {
     const head = this.head()
     const toDate = head?.toDate
     const fromDate = head?.fromDate
-    console.log(fromDate, toDate)
     if (!fromDate || !toDate) {
-      console.log('fallback')
+
       return this.getDefaultDate()
     }
     return `${this.formateDate(this.addHour(fromDate))} - ${this.formateDate(this.addHour(toDate))}`

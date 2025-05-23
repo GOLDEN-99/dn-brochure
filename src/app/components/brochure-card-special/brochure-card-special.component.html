@@ -20,67 +20,7 @@
       [className]="static ? 'img-static' : 'img-res'"
     />
   </div>
-  <div class="card-body">
-    <div class="tier">
-      <div
-        [className]="
-          static
-            ? 'tier-label static background-standard static-px-small'
-            : 'tier-label res background-standard res-px-small'
-        "
-      >
-        standard
-      </div>
-      <div
-        [className]="
-          static ? 'tier-price static-px-small' : 'tier-price res-px-small'
-        "
-      >
-        <div>ราคา</div>
-        <div>{{ priceTier.priceStandard | number : "1.2-2" }}</div>
-        <div>บาท</div>
-      </div>
-    </div>
-    <div class="tier">
-      <div
-        [className]="
-          static
-            ? 'tier-label static background-silver static-px-small'
-            : 'tier-label res background-silver res-px-small'
-        "
-      >
-        silver
-      </div>
-      <div
-        [className]="
-          static ? 'tier-price static-px-small' : 'tier-price res-px-small'
-        "
-      >
-        <div>ราคา</div>
-        <div>{{ priceTier.priceSilver | number : "1.2-2" }}</div>
-        <div>บาท</div>
-      </div>
-    </div>
-    <div class="tier">
-      <div
-        [className]="
-          static
-            ? 'tier-label static background-gold static-px-small'
-            : 'tier-label res background-gold res-px-small'
-        "
-      >
-        gold
-      </div>
-      <div
-        [className]="
-          static ? 'tier-price static-px-small' : 'tier-price res-px-small'
-        "
-      >
-        <div>ราคา</div>
-        <div>{{ priceTier.priceGold | number : "1.2-2" }}</div>
-        <div>บาท</div>
-      </div>
-    </div>
+  <div [className]="static ? 'card-body static-gap' : 'card-body res-gap'">
     <div
       [className]="
         static
@@ -107,6 +47,12 @@
       >
         บาท
       </div>
+    </div>
+    <div [className]="static ? 'alert-qouta static' : 'alert-qouta res'">
+      จำกัดการซื้อต่อร้าน
+    </div>
+    <div [className]="static ? 'qouta-text static' : 'qouta-text res'">
+      {{ priceTier.quotaAmouTxt }}
     </div>
   </div>
 </div>
