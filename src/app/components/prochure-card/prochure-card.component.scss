@@ -13,53 +13,31 @@
   }
 
   &.static {
-    max-width: 55mm;
-    font-size: 8px;
-
-    @media (min-width: 1024px) {
-      max-width: 110mm;
-      font-size: 16px;
-      border-radius: 16px;
-    }
+    max-width: 110mm;
+    font-size: 16px;
+    border-radius: 16px;
   }
 
   .card-header {
     display: flex;
     flex-direction: column;
+    grid-row-start: 1;
+    grid-row-end: 2;
     grid-column-start: 1;
-    grid-column-end: 3;
+    grid-column-end: -1;
 
     .text-header {
       color: #fff;
 
       &.static-round-large.static-p-large {
-        font-size: 9px;
-        @media (min-width: 1024px) {
-          font-size: 18px;
-        }
+        font-size: 24px;
       }
     }
 
     .subtext.static {
-      font-size: 7px;
-      margin-bottom: 4px;
-
-      @media (min-width: 1024px) {
-        font-size: 14px;
-        margin-bottom: 8px;
-      }
+      font-size: 14px;
+      margin-bottom: 8px;
     }
-  }
-  .card-flag {
-    display: flex;
-    grid-column-start: 3;
-    grid-row-start: 1;
-    border: none;
-    background: linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0) 50%,
-      rgba(236, 26, 35, 1) 50%
-    );
   }
 
   .card-image {
@@ -67,7 +45,7 @@
     grid-column-start: 1;
     grid-column-end: 3;
     grid-row-start: 2;
-    grid-row-end: 4;
+    grid-row-end: -1;
     overflow: hidden;
     justify-content: center;
     align-items: center;
@@ -75,9 +53,9 @@
   .card-body {
     display: flex;
     grid-column-start: 3;
-    grid-column-end: 4;
+    grid-column-end: -1;
     grid-row-start: 2;
-    grid-row-end: 4;
+    grid-row-end: -1;
     flex-direction: column;
 
     .tier .tier-price {
@@ -85,11 +63,7 @@
       justify-content: space-between;
 
       &.static-px-small {
-        font-size: 6px;
-
-        @media (min-width: 1024px) {
-          font-size: 12px;
-        }
+        font-size: 16px;
       }
 
       @media (min-width: 1400px) {
@@ -275,13 +249,10 @@
 }
 
 .tier-label {
-  font-weight: 700;
+  font-weight: 400;
   text-transform: capitalize;
   &.static {
-    font-size: 8px;
-    @media (min-width: 1024px) {
-      font-size: 16px;
-    }
+    font-size: 16px;
   }
   &.res {
     @media (min-width: 475px) {
@@ -305,42 +276,25 @@
 }
 
 .static-price-text {
-  font-size: 9px;
+  font-size: 18px;
 
   &.text-center {
     font-weight: 700;
-    font-size: 18px;
-    @media (min-width: 1024px) {
-      font-size: 36px;
-    }
-  }
 
-  @media (min-width: 1024px) {
-    font-size: 18px;
+    font-size: 36px;
   }
 }
 
 .static-round {
-  border-radius: 8px;
-  @media (min-width: 1024px) {
-    border-radius: 16px;
-  }
+  border-radius: 16px;
 }
 
 .static-p {
-  padding: 8px;
-
-  @media (min-width: 1024px) {
-    padding: 16px;
-  }
+  padding: 16px;
 }
 
 .static-text {
-  font-size: 12px;
-
-  @media (min-width: 1024px) {
-    font-size: 24px;
-  }
+  font-size: 24px;
 }
 
 .static-grid-gap {
@@ -354,38 +308,21 @@
 }
 
 .static-round-large {
-  border-radius: 4px;
-
-  @media (min-width: 1024px) {
-    border-radius: 8px;
-  }
+  border-radius: 8px;
 }
 
 .static-p-large {
-  padding: 8px;
-
-  @media (min-width: 1024px) {
-    padding: 16px;
-  }
+  padding: 16px;
 }
 
 .static-px-small {
-  padding: 0 4px;
-
-  @media (min-width: 1024px) {
-    padding: 0 8px;
-  }
+  padding: 0 8px;
 }
 
 img {
   &.img-static {
-    max-width: 130px;
-    max-height: 130px;
-
-    @media (min-width: 992px) {
-      max-width: 260px;
-      max-height: 260px;
-    }
+    max-width: 260px;
+    max-height: 260px;
   }
 
   &.img-res {
@@ -426,37 +363,16 @@ img {
 }
 
 .background-standard {
-  background: rgb(133, 27, 237);
-  background: linear-gradient(
-    90deg,
-    rgba(133, 27, 237, 1) 0%,
-    rgba(245, 242, 255, 1) 35%,
-    rgba(223, 210, 255, 1) 42%,
-    rgba(133, 27, 237, 1) 67%,
-    rgba(153, 75, 255, 1) 81%
-  );
+  background: #f54040;
+  color: #fff;
 }
 
 .background-silver {
-  background: rgb(136, 136, 136);
-  background: linear-gradient(
-    90deg,
-    rgba(136, 136, 136, 1) 17%,
-    rgba(153, 153, 153, 1) 41%,
-    rgba(223, 223, 223, 1) 58%,
-    rgba(247, 247, 247, 1) 69%,
-    rgba(165, 165, 165, 1) 86%
-  );
+  background: #58595b;
+  color: #fff;
 }
 
 .background-gold {
-  background: rgb(189, 129, 36);
-  background: linear-gradient(
-    90deg,
-    rgba(189, 129, 36, 1) 7%,
-    rgba(251, 248, 235, 1) 35%,
-    rgba(238, 216, 154, 1) 42%,
-    rgba(140, 77, 28, 1) 66%,
-    rgba(189, 129, 36, 1) 81%
-  );
+  background: #9d5b1f;
+  color: #fff;
 }

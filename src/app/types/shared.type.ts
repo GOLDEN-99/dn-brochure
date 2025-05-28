@@ -13,3 +13,12 @@ export type TDropdownProps<T = string> = { value: T, label: string }
 export type TMapForm<T extends Record<string, unknown>> = {
     [K in keyof T]: FormControl<T[K]>
 }
+
+export type TSupplierItem = {
+    username: string
+    password: string
+    supName: string
+    email: string
+    address: string
+    tel: string
+}

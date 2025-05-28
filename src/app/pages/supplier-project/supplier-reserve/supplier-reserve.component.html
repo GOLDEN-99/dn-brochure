@@ -1,0 +1,38 @@
+<h1 class="text-center">รายการการจอง</h1>
+<div style="display: flex; gap: 16px; margin-bottom: 16px">
+  @for (warehouse of warehouseList(); track $index) {
+  <a
+    [routerLink]="'add/' + warehouse.id"
+    class="btn btn-outline-success"
+    style="flex: 1 1 auto"
+    role="button"
+    >{{ warehouse.name }}</a
+  >
+  }
+</div>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th scope="col" style="min-width: 100px">วันที่</th>
+      <th scope="col" style="min-width: 100px">เวลา</th>
+      <th scope="col">เลข PO</th>
+      <th scope="col" style="width: 140px">จำนวนลัง (รวม)</th>
+      <th scope="col">ที่อยู่จัดส่ง</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (d of data; track $index) {
+    <tr>
+      <td scope="row">{{ d.date }}</td>
+      <td>{{ d.time }}</td>
+      <td>
+        @for (p of d.list; track $index) {
+        <div>{{ p }}</div>
+        }
+      </td>
+      <td>{{ d.total }}</td>
+      <td>{{ d.address }}</td>
+    </tr>
+    }
+  </tbody>
+</table>

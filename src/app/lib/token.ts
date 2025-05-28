@@ -1,6 +1,5 @@
 import { InjectionToken, Signal } from "@angular/core"
-import { TBorchureHead, TColor, TDropdownProps, TGroupItemList, TMaybe } from "../types"
-import { FormGroup } from "@angular/forms"
+import { TBorchureHead, TColor, TDropdownProps, TGroupItemList, TMaybe, TSupplierItem } from "../types"
 
 
 export interface IBrochureService {
@@ -10,7 +9,13 @@ export interface IBrochureService {
     totalPage: Signal<number[]>
     color: Signal<TColor>
 }
+export interface ISupplierList {
+    data: Signal<TSupplierItem[]>
+    pageLabel: Signal<'DN' | 'HU'>
+}
 
 export const BROCHURE_TOKEN = new InjectionToken<IBrochureService>('brochure')
 
 export const DROPDOWN_TOKEN = new InjectionToken<TDropdownProps<number>[]>('dropdown_props')
+
+export const SUPPLIER_TOKEN = new InjectionToken<ISupplierList>('supplier_token')

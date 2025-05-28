@@ -1,0 +1,145 @@
+@for (door of doorList(); track $index) {
+<div class="app-form-check">
+  <input
+    type="checkbox"
+    [ngModel]="door.check"
+    (ngModelChange)="toggleDoor(door.doorId)"
+    [attr.id]="door.doorId + '-door-daily'"
+  />
+  <label [attr.for]="door.doorId + '-door-daily'">{{ door.name }}</label>
+</div>
+}
+<!---->
+<div class="row row-cols-sm-auto mb-3">
+  <div class="col-12">
+    <div class="input-group">
+      <input class="form-control" type="month" [(ngModel)]="temp" />
+    </div>
+  </div>
+</div>
+<!---->
+@let cal = calendar();
+<div class="calendar-header">
+  <!-- <button class="btn" (click)="toPrevMonth()">
+    <i class="bi bi-chevron-left"> </i>
+  </button> -->
+  <!-- <div class="calendar-header-label"></div>
+  <div class="calendar-header-month">
+    <div>{{ formated().month }}</div>
+    <div>{{ formated().year }}</div>
+  </div> -->
+  <!-- <button class="btn" (click)="toNextMonth()">
+    <i class="bi bi-chevron-right"></i>
+  </button> -->
+</div>
+<div class="calendar">
+  <div class="calendar-row">
+    <div class="calendar-th" role="columnheader">จันทร์</div>
+    <div class="calendar-th" role="columnheader">อังคาร</div>
+    <div class="calendar-th" role="columnheader">พุธ</div>
+    <div class="calendar-th" role="columnheader">พฤหัส</div>
+    <div class="calendar-th" role="columnheader">ศุกร์</div>
+    <div class="calendar-th" role="columnheader">เสาร์</div>
+    <div class="calendar-th" role="columnheader">อาทิตย์</div>
+  </div>
+  @for (week of cal; let i = $index; track i) {
+  <div class="calendar-row">
+    @for (d of week; let j = $index; track j) {
+    <app-calendar-cell
+      [isoDate]="d.date"
+      [month]="formated().month"
+      [color]="d.status"
+      (onClick)="openPrimaryModal($event)"
+    />
+    }
+  </div>
+  }
+</div>
+
+<ng-template #primaryModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ currentThaiDate() }}</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    @for (door of doorStat(); track $index) {
+    <div style="display: flex; align-items: center; gap: 16px">
+      <div [className]="indicatoreClass(door.status)"></div>
+
+      <div>{{ door.name }}</div>
+      <button
+        class="btn btn-link"
+        (click)="openSecondaryModal(door.name, door.doorId)"
+      >
+        ดูรายละเอียด
+      </button>
+    </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="modal.close('close click')"
+    >
+      close
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #secondaryModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      {{ currentThaiDate() }} {{ targetDoor() }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div
+      style="
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        column-gap: 16px;
+        row-gap: 16px;
+      "
+    >
+      @for (slot of displayTimeSlot(); track $index) {
+      <div
+        [className]="slotClass(slot.compCode)"
+        style="
+          border-radius: 4px;
+          padding: 4px 16px;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <span>
+          {{ slot.reservationTime.substring(0, 5) }}
+        </span>
+        <span style="font-size: 12px">
+          {{ slot.companyName ?? "" }}
+        </span>
+      </div>
+      }
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="modal.close('close click')"
+    >
+      close
+    </button>
+  </div>
+</ng-template>

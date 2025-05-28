@@ -1,0 +1,58 @@
+@let data = props(); @let priceTier = data.price;@let static = isStatic();
+<!---->
+<div
+  [className]="
+    static
+      ? 'prochure-card static border static-round static-grid-gap static-text static-p'
+      : 'prochure-card res border res-round res-grid-gap res-text res-p'
+  "
+>
+  <div class="card-header">
+    <div [className]="static ? 'subtext static' : 'res-mb-small'">
+      ( {{ data.barCode }} )
+    </div>
+    <div [className]="nameStyle()">{{ data.goodName }}</div>
+  </div>
+
+  <div class="card-image">
+    <img
+      [attr.src]="imageUrl()"
+      [className]="static ? 'img-static' : 'img-res'"
+    />
+  </div>
+  <div [className]="static ? 'card-body static-gap' : 'card-body res-gap'">
+    <div
+      [className]="
+        static
+          ? 'price static-px-small static-round-large'
+          : 'price res-px-small res-round-large'
+      "
+    >
+      <div [className]="static ? 'static-price-text' : 'res-price-text'">
+        ราคา
+      </div>
+      <div
+        [className]="
+          static
+            ? 'static-price-text text-center'
+            : 'res-price-text text-center'
+        "
+      >
+        {{ priceTier.price | number : "1.2-2" }}
+      </div>
+      <div
+        [className]="
+          static ? 'static-price-text text-end' : 'res-price-text text-end'
+        "
+      >
+        บาท
+      </div>
+    </div>
+    <div [className]="static ? 'alert-qouta static' : 'alert-qouta res'">
+      จำกัดการซื้อต่อร้าน
+    </div>
+    <div [className]="static ? 'qouta-text static' : 'qouta-text res'">
+      {{ priceTier.quotaAmouTxt }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ title() }}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="crossClick.emit()"
+  ></button>
+</div>
+<div class="modal-body">
+  <ng-content select="[modalBody]" />
+</div>
+<div class="modal-footer">
+  <ng-content select="[modalFooter]" />
+</div>

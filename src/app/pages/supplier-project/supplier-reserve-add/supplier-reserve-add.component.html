@@ -1,0 +1,139 @@
+<h1 class="text-center">{{ pageLabel() }}</h1>
+<ul class="option-list">
+  @for (door of doorList(); track $index) {
+  <li
+    class="otption-item rounded border p-3"
+    tabindex="0"
+    (click)="radio.click()"
+  >
+    <div class="form-check">
+      <input
+        #radio
+        class="form-check-input"
+        type="radio"
+        name="gate"
+        [attr.id]="door.doorId + '-radio'"
+        [value]="door.doorId"
+        [ngModel]="activeDoor()"
+        (ngModelChange)="onChangeGate(door)"
+      />
+      <label class="form-check-label" [attr.for]="door.doorId + '-radio'">
+        {{ door.name }}
+      </label>
+    </div>
+    <span>{{ door.note }}</span>
+    <div style="display: flex; align-items: center">
+      <i class="bi bi-alarm me-2"> </i>
+      <div>{{ door.timeUse }} นาที</div>
+    </div>
+  </li>
+  }
+</ul>
+<div class="calander-warpper mb-3">
+  <ngb-datepicker
+    class="custom-dp"
+    [ngModel]="activeDate()"
+    (ngModelChange)="onChangeDate($event)"
+  />
+  <div
+    style="
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      row-gap: 8px;
+      column-gap: 8px;
+      width: 344px;
+      margin: 0 auto;
+    "
+  >
+    @for (slot of possibleSlot(); track $index) {
+    <button
+      [className]="btnClass(slot.time)"
+      (click)="updateActiveSlot(slot.time)"
+      [disabled]="slot.isReserved"
+    >
+      {{ slot.time + (slot.isReserved ? " (เต็ม)" : "") }}
+    </button>
+    }
+  </div>
+</div>
+<!---->
+@let total = totalBox();
+<form class="reserve-form p-3 rounded">
+  @let c = comp ();
+  <!---->
+  @if (c) {
+  <div class="app-form-field">
+    <label for="name">ชื่อบริษัท</label>
+    <input type="text" name="name" id="name" disabled [value]="c.compName" />
+  </div>
+  <div class="app-form-field">
+    <label for="email">E-mail</label>
+    <input
+      type="email"
+      name="email"
+      id="email"
+      disabled
+      [value]="c.compEmail"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="tel">โทรศัพท์</label>
+    <input type="tel" name="tel" id="tel" [value]="c.compPhone" disabled />
+  </div>
+  }
+  <div>เลขที่ใบสั่งซื้อ (PO)</div>
+  <div class="ps-3">
+    @for (order of poList(); track $index) {
+    <div>
+      <div class="form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          [name]="order.orderNumb + '-check'"
+          [attr.id]="order.orderNumb + '-check'"
+          [ngModel]="order.check"
+          (ngModelChange)="checkPo(order.orderNumb)"
+        />
+        <label [attr.for]="order.orderNumb + '-check'">{{
+          order.orderNumb
+        }}</label>
+      </div>
+      <!---->
+      @if(order.check){
+      <div class="mb-3 ps-4">
+        <label class="form-label" [attr.for]="order.orderNumb + '-box'"
+          >ระบุจำนวนลัง</label
+        >
+        <input
+          class="form-control"
+          type="number"
+          [name]="order.orderNumb + '-box'"
+          [attr.id]="order.orderNumb + '-box'"
+          min="1"
+          [ngModel]="order.box"
+          (ngModelChange)="changeBox(order.orderNumb)($event)"
+        />
+      </div>
+      }
+    </div>
+    }
+    <!---->
+    @if (total !== 0) {
+    <div>รวม {{ total }} ลัง</div>
+    }
+  </div>
+  <div class="app-form-field">
+    <label for="remark">หมายเหตุ</label>
+    <textarea name="remark" id="remark" rows="3" [(ngModel)]="note"></textarea>
+  </div>
+  <button
+    class="btn btn-success w-100 mb-3"
+    [disabled]="total === 0"
+    (click)="handleSubmit()"
+  >
+    จอง
+  </button>
+  <a routerLink="/supplier/reserve" role="button" class="btn btn-danger w-100"
+    >กลับ</a
+  >
+</form>

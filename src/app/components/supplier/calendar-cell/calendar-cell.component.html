@@ -1,0 +1,8 @@
+@let d = date();
+<button class="calendar-cell" [disabled]="inActive()" (click)="handleClick()">
+  {{ d.day }}
+  <div class="cell-content">
+    <div [className]="indicatorClass()"></div>
+    <div class="cell-label">{{ indicatorLabel() }}</div>
+  </div>
+</button>

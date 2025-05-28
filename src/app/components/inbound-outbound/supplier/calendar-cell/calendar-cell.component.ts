@@ -1,0 +1,51 @@
+import { Component, computed, input, output, signal } from '@angular/core';
+import { TDate } from '../../../../lib';
+
+@Component({
+  selector: 'app-calendar-cell',
+  imports: [],
+  templateUrl: './calendar-cell.component.html',
+  styleUrl: './calendar-cell.component.scss'
+})
+export class CalendarCellComponent {
+
+  isoDate = input.required<string>()
+
+  date = computed(() => Number(this.isoDate().split('-')[2]))
+
+  currentMonth = computed(() => Number(this.isoDate().split('-')[1]))
+
+  month = input.required<number>()
+
+  color = input<number>(0)
+
+  withOutDate = input(false)
+
+  indicatorClass = computed(() => {
+    const color = this.color()
+    switch (color) {
+      case 0: return 'indicator bg-color-green'
+      case 1: return 'indicator bg-color-yellow'
+      case 2: return 'indicator bg-color-red'
+      default: return 'indicator bg-color-red'
+    }
+  })
+
+  indicatorLabel = computed(() => {
+    const color = this.color()
+    switch (color) {
+      case 0: return 'ไม่มีการจอง'
+      case 1: return 'จองบางส่วน'
+      case 2: return 'จองเต็ม'
+      default: return 'มีข้อผิดพลาด'
+    }
+  })
+
+  onClick = output<string>()
+
+  handleClick = () => this.onClick.emit(this.isoDate())
+
+  inActive = computed(() => this.currentMonth() !== this.month())
+
+  inActiveClass = computed(() => this.inActive() ? 'calendar-cell inactive' : 'calendar-cell')
+}
