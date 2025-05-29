@@ -47,7 +47,7 @@ export const export2Img = async (html: HTMLElement, filename: string) => {
 
     await html2canvas(html, {
         useCORS: true,
-        scale: 2,
+        scale: .25,
     }).then(canvas => {
         const img = canvas.toDataURL('image/jpeg', 1)
         const link = document.createElement('a');

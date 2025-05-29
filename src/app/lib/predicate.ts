@@ -1,4 +1,4 @@
-import { TPromotionType, TWhole } from "../types"
+import { TPromotionType, TWhole, TZone } from "../types"
 
 export const predicateEmpty = <T = unknown>(value: T): value is NonNullable<T> => {
     if (typeof value === 'undefined') return false
@@ -26,4 +26,9 @@ export const predicateNumber = (value: unknown): value is `${number}` => {
     const prased = Number(value)
     if (isNaN(prased)) return false
     return true
+}
+
+export const predicateZone = (value: unknown): value is TZone => {
+    const strValue = String(value)
+    return strValue === 'BKK' || strValue === 'UPC'
 }

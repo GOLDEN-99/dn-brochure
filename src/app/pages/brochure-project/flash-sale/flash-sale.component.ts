@@ -1,24 +1,20 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { export2Img, exporter, transformItemList } from '../../../lib';
+import { export2Img } from '../../../lib';
 import { FlashSaleService } from '../../../service/brochure/flash-sale/flash-sale.service';
 import { FsBrochureComponent } from '../../../components/brochure-component/fs-brochure/fs-brochure.component';
-import { NavigateBtnComponent } from "../../../components/navigate-btn/navigate-btn.component";
 import { ToastService } from '../../../service/toast/toast.service';
 
 @Component({
   selector: 'app-flash-sale',
-  imports: [FsBrochureComponent, NavigateBtnComponent],
+  imports: [FsBrochureComponent],
   templateUrl: './flash-sale.component.html',
   styleUrl: './flash-sale.component.scss'
 })
 export class FlashSaleComponent {
-  ref = [1, 2, 3, 4, 5]
-
-  formattedRef = this.ref.reduce<number[][]>(transformItemList(3), [])
 
   private flashSaleServ = inject(FlashSaleService)
 
-  genRow = (len: number) => len === 3 ? 'flash-sale-row row-3' : 'flash-sale-row row-2'
+  // genRow = (len: number) => len === 3 ? 'flash-sale-row row-3' : 'flash-sale-row row-2'
 
   listItem = this.flashSaleServ.list
 
@@ -46,7 +42,7 @@ export class FlashSaleComponent {
   private toastService = inject(ToastService)
 
   async onExport() {
-    const b = document.querySelector('.flash-sale-bg.flash-sale-page.main-gap.main-pad.static')
+    const b = document.querySelector('.flash-sale-bg.flash-sale-page.main-gap.static')
     try {
       this.inprogress.update(() => true)
       if (!b) throw new Error('no target file')

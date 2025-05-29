@@ -27,7 +27,7 @@ export class FsBrochureComponent {
   dayActive = computed(() => this.head().dayActive)
 
 
-  mainClass = computed(() => this.isStatic() ? 'flash-sale-bg flash-sale-page main-gap main-pad static' : 'flash-sale-bg flash-sale-page container main-gap main-pad')
+  mainClass = computed(() => this.isStatic() ? 'flash-sale-bg flash-sale-page main-gap static' : 'flash-sale-bg flash-sale-page container main-gap')
 
   headClass = computed(() => this.isStatic() ? 'head-space static' : 'head-space')
 
@@ -38,4 +38,6 @@ export class FsBrochureComponent {
   fsLayoutClass = computed(() => this.isStatic() ? 'flash-sale-layout main-gap static' : 'flash-sale-layout main-gap')
 
   fsHeadClass = computed(() => this.isStatic() ? 'flash-sale-head static' : 'flash-sale-head')
+
+  bgUrl = computed(() => this.head().linkimg)
 }

@@ -1,4 +1,7 @@
-<div [className]="mainClass()">
+<div [className]="mainClass()" style="padding: 0">
+  @if (bgUrl()) {
+  <img [src]="bgUrl()" alt="background image" class="bg-image" />
+  }
   <div [className]="fsHeadClass()">
     <div [className]="plainTextClass()">{{ dayActive() }}</div>
     <div [className]="headClass()">

@@ -1,5 +1,41 @@
 .flash-sale-bg {
-  background-color: var(--brand-purple-primary);
+  position: relative;
+  &:not(.static) {
+    background-color: var(--brand-purple-primary);
+    img.bg-image {
+      display: none;
+    }
+
+    @media (min-width: 1200px) {
+      background-color: transparent;
+
+      img.bg-image {
+        display: block;
+        position: absolute;
+        aspect-ratio: 1;
+        width: 1140px;
+        z-index: -1;
+      }
+    }
+
+    @media (min-width: 1400px) {
+      img.bg-image {
+        width: 1320px;
+      }
+    }
+  }
+
+  &.static {
+    position: relative;
+    img.bg-image {
+      top: 0;
+      left: 0;
+      position: absolute;
+      z-index: -1;
+      width: 4160px;
+      height: 4160px;
+    }
+  }
 }
 
 .flash-sale-page {
@@ -15,6 +51,7 @@
 
   &.static {
     width: 4160px;
+    height: 4160px;
     position: fixed;
     translate: 100% 100%;
   }

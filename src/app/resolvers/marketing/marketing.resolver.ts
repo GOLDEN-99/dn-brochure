@@ -6,7 +6,6 @@ import { MarketingService } from '../../service/brochure/marketing/marketing.ser
 
 export const marketingResolver: ResolveFn<TItemList> = (route, state) => {
   try {
-
     const promoType = promoHandler(route)
     const isBkk = isBkkHandler(route)
     const isNewCustomer = isNewHandler(route)

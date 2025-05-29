@@ -25,11 +25,13 @@ import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolv
 import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
+import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
 export const routes: Routes = [
     {
-        path: 'flash-sale',
-        component: FlashSaleComponent
+        path: 'flash-sale/:zone/:idPromotion',
+        component: FlashSaleComponent,
+        resolve: { fs: flashSaleResolver }
     },
     {
         path: "prochure/:wholeCode/:promoType",

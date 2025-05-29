@@ -20,13 +20,18 @@ export class FlashSaleService implements OnDestroy {
   private idPromotion$ = new Subject<number>()
   private zone$ = new Subject<TZone>()
 
+  search = ({ idPromotion, zone }: { idPromotion: string | number, zone: TZone }) => {
+    this.idPromotion$.next(Number(idPromotion))
+    this.zone$.next(zone)
+  }
+
   private predicateNull = (p: { idPromotion: number | null, zone: TZone | null }): p is TFlashParams => {
     return p.idPromotion !== null && p.zone !== null
   }
 
   private params$ = combineLatest({
-    idPromotion: this.idPromotion$.pipe(startWith(0)),
-    zone: this.zone$.pipe(startWith("BKK" as TZone))
+    idPromotion: this.idPromotion$,
+    zone: this.zone$
   }).pipe(
     filter(this.predicateNull)
   )
