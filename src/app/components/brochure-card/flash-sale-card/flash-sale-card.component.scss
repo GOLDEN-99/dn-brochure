@@ -1,0 +1,53 @@
+:host {
+  width: 33%;
+  display: flex;
+}
+
+.flash-sale-card {
+  flex: 1 1 auto;
+  aspect-ratio: 1;
+  background-color: rgba($color: #cdcdcd, $alpha: 0.2);
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 0.5rem;
+  border-radius: 1rem;
+
+  .header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    // background-image: url("/image/FS/head.png");
+    // object-fit: contain;
+
+    img {
+      max-width: 300px;
+    }
+    .header-text {
+      position: absolute;
+      padding: 0.5rem;
+    }
+  }
+
+  .content {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    .content-section {
+      width: 50%;
+    }
+  }
+
+  .goodcode {
+    border-bottom: solid #fff 1px;
+    background-color: #fff200;
+    font-size: 8px;
+    padding: 4px 4px 0 4px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .text-whit {
+    color: #fff;
+  }
+}

@@ -1,5 +1,5 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { TBorchureHead, TColor, TGroupItemList, TItemList, TMaybe, TPromotionType } from '../../../types';
+import { TBorchureHead, TColor, TGroupItemList, TItem, TItemList, TMaybe, TPromotionType } from '../../../types';
 import { tap } from 'rxjs';
 import { IBrochureService, transformItemList } from '../../../lib';
 import { ApiService } from '../../api/api.service';
@@ -26,7 +26,7 @@ export class ProchureService implements IBrochureService {
   private setState = ({ wholeName, wholeType, zone, promotionType, promotion, isNewCustomer, fromDate, toDate }: TItemList) => {
     this.head.update(() => ({ wholeName, wholeType, zone, promotionType, isNewCustomer, fromDate, toDate }))
     const size = 12
-    this.content.update(() => promotion.reduce(transformItemList(size), [[]]))
+    this.content.update(() => promotion.reduce<TItem[][]>(transformItemList(size), [[]]))
   }
 
   getProchureList(wholeCode: string, promoType: TPromotionType) {

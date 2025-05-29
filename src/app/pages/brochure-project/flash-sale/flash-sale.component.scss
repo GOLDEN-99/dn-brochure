@@ -1,0 +1,33 @@
+.flash-sale-bg {
+  padding: 2rem;
+  background-color: var(--brand-purple-primary);
+  width: 100vw;
+  overflow: auto;
+}
+
+.flash-card-size {
+  aspect-ratio: 1;
+
+  .static {
+    width: 2480px;
+  }
+}
+
+.flash-sale-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  justify-content: space-around;
+}
+
+.flash-sale-row {
+  display: flex;
+  gap: 32px;
+  &.row-3 {
+    justify-content: space-between;
+  }
+
+  &.row-2 {
+    justify-content: center;
+  }
+}

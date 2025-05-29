@@ -1,6 +1,6 @@
 import { TColor, TGroupItemList, TItem, TZone } from "../../types";
 
-export const transformItemList = (maxItem: number) => (acc: TGroupItemList, cur: TItem, idx: number): TGroupItemList => {
+export const transformItemList = (maxItem: number) => <T>(acc: Array<Array<T>>, cur: T, idx: number): Array<Array<T>> => {
 
     const len = acc.length
     if (len === 1 && idx === 0) {

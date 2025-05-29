@@ -1,15 +1,15 @@
-import { Component, computed, effect, input } from '@angular/core';
-import { TColor, TCardProps } from '../../types';
-import { environment } from '../../../environments/environment';
+import { Component, computed, input } from '@angular/core';
+import { TCardProps, TColor } from '../../../types';
+import { environment } from '../../../../environments/environment';
 import { DecimalPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-prochure-card',
+  selector: 'app-brochure-card-special',
   imports: [DecimalPipe],
-  templateUrl: './prochure-card.component.html',
-  styleUrl: './prochure-card.component.scss'
+  templateUrl: './brochure-card-special.component.html',
+  styleUrl: './brochure-card-special.component.scss'
 })
-export class ProchureCardComponent {
+export class BrochureCardSpecialComponent {
   color = input.required<TColor>()
   isStatic = input(false)
   nameStyle = computed(() => {

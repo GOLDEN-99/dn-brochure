@@ -1,0 +1,29 @@
+<!---->
+
+<section class="flash-sale-bg flash-card-size static" style="padding: 64px">
+  <div>
+    <div style="display: flex; flex-direction: column; margin-left: auto">
+      <img src="/image/FS/title.png" alt="" style="max-width: 840px" />
+      <div>
+        <img
+          [attr.src]="'/image/FS/number/' + 1 + '.png'"
+          alt=""
+          style="transform: rotate(-3deg)"
+        />
+        <img src="/image/FS/day.png" alt="" style="max-width: 630px" />
+      </div>
+    </div>
+  </div>
+  <span style="font-size: 80px; transform: rotate(-3deg); box-shadow: 16px"
+    >ช้อปเลย</span
+  >
+  <div class="flash-sale-layout">
+    @for (item of formattedRef; track $index) {
+    <div [className]="genRow(item.length)">
+      @for (i of item; track $index) {
+      <app-flash-sale-card />
+      }
+    </div>
+    }
+  </div>
+</section>

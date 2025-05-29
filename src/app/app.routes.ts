@@ -24,8 +24,13 @@ import { RegisterPageComponent } from './pages/supplier-project/register-page/re
 import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolver';
 import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
+import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
 
 export const routes: Routes = [
+    {
+        path: 'flash-sale',
+        component: FlashSaleComponent
+    },
     {
         path: "prochure/:wholeCode/:promoType",
         component: BaseBrochureComponent,
