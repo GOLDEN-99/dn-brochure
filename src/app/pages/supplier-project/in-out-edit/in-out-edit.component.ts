@@ -1,26 +1,17 @@
-<<<<<<< HEAD
 import { Component, effect, inject, OnInit } from '@angular/core';
 import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbTimepicker } from '@ng-bootstrap/ng-bootstrap';
 import { DoorFormService } from '../../../service/ibob/door-form.service';
 import { DoorMutationService } from '../../../service/ibob/door-mutation.service';
 import { RouterLink } from '@angular/router';
-=======
-import { Component, inject, OnInit } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { NgbTimepicker } from '@ng-bootstrap/ng-bootstrap';
-import { DoorFormService } from '../../../service/ibob/door-form.service';
-import { DoorMutationService } from '../../../service/ibob/door-mutation.service';
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
+
 
 
 @Component({
   selector: 'app-in-out-edit',
-<<<<<<< HEAD
+
   imports: [NgbTimepicker, ReactiveFormsModule, FormsModule, RouterLink],
-=======
-  imports: [NgbTimepicker, ReactiveFormsModule],
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
+
   templateUrl: './in-out-edit.component.html',
   styleUrl: './in-out-edit.component.scss'
 })
@@ -36,28 +27,7 @@ export class InOutEditComponent implements OnInit {
   private doorFormServ = inject(DoorFormService)
   private doorMutServ = inject(DoorMutationService)
 
-  durationStep = this.doorFormServ.durationStep
-  headForm = this.doorFormServ.headForm
-  slotForm = this.doorFormServ.slotForm
-  dayKey = this.doorFormServ.keys
-  getDayOfWeek = this.doorFormServ.getThaiDay
-  addForm = this.doorFormServ.addForm
-  removeForm = this.doorFormServ.removeForm
-  getDisable = this.doorFormServ.getDisableState
 
-
-
-  submitForm = () => {
-    const head = this.doorFormServ.getFormHead()
-    const time = this.doorFormServ.getTimeList()
-    this.doorMutServ.updateDoor({
-      door: head,
-      time
-    }).subscribe({
-      next: () => { console.log('update ok') },
-      error: (err) => { console.error(err) }
-    })
-  }
 
   constructor() {
     const patchValueEff = effect(() => {
@@ -87,9 +57,6 @@ export class InOutEditComponent implements OnInit {
   }
 
   private nnfb = inject(NonNullableFormBuilder)
-
-  private doorFormServ = inject(DoorFormService)
-  private doorMutServ = inject(DoorMutationService)
   doorHead = this.doorMutServ.doorHead
   durationStep = this.doorFormServ.durationStep
   headForm = this.doorFormServ.headForm

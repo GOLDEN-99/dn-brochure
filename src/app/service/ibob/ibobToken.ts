@@ -20,12 +20,6 @@ interface IIbObFormState {
 }
 
 export interface IIbObReserve extends IIbObFormState {
-<<<<<<< HEAD
-=======
-    // //display data
-    // getCurrentWarehouse: (warehouseId: string) => string
-    //api call method
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
     changeGate: (gate: string) => void
     changeDate: (date: TDate) => void
     possibleSlot: Signal<TTimeSlot[]>

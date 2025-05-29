@@ -1,17 +1,9 @@
-<<<<<<< HEAD
 import { inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
 import { TCompDetailRes, TCompProduct, TDNComp, TGeneratedCompCode, THUComp } from '../../types/ibob-supplier.type';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, catchError, combineLatest, map, Subject, switchMap, tap, throwError } from 'rxjs';
-=======
-import { inject, Injectable } from '@angular/core';
-import { ApiService } from '../api/api.service';
-import { environment } from '../../../environments/environment';
-import { TGeneratedCompCode } from '../../types/ibob-supplier.type';
-import { toSignal } from '@angular/core/rxjs-interop';
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +20,6 @@ export class SupplierApiService {
   generatedCode = toSignal(this.generatedCode$, { initialValue: null })
 
   createSupplier = (req: TCreateSupplierReq) => this.api.post(`${this.url}/CreateCompInfo`, req, {})
-<<<<<<< HEAD
 
   private fetch$ = new BehaviorSubject('1')
 
@@ -79,8 +70,7 @@ export class SupplierApiService {
 
   private huComp = signal<THUComp | null>(null)
   private huProduct = signal<TCompProduct[]>([])
-=======
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
+
 }
 
 export type TCreateSupplierReq = {}

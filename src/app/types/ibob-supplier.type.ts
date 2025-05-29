@@ -191,11 +191,8 @@ export type TCreateDoorRes = {}
 
 export type TDoorInfo = { doorId: string } & TCreateDoorInfo
 
-<<<<<<< HEAD
 export type TTimeSlotInfo = { id: number, doorId: number } & TCreateTimeSlot
-=======
-export type TTimeSlotInfo = { id: string, doorId: string } & TCreateTimeSlot
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
+
 
 export type TDoorDetail = {
     door: TDoorInfo
@@ -207,7 +204,6 @@ export type TGeneratedCompCode = {
     dnCompCode: string
 }
 
-<<<<<<< HEAD
 export type TCondiSup = {
     supReturn: string
     supFullBox: string
@@ -295,7 +291,3 @@ export type TCompDetailRes = {
     dn: TDNComp | null
     item: TCompProduct[]
 }
-
-
-=======
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4

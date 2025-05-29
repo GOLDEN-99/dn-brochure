@@ -12,16 +12,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class DoorFormService {
 
   constructor() {
-
-<<<<<<< HEAD
     this.headForm.controls.timeUse.valueChanges
       .pipe(
         filter(d => d >= 0),
         takeUntilDestroyed()
       ).subscribe((d) => this.durationStep.update(() => d))
-=======
-    this.headForm.controls.timeUse.valueChanges.pipe(filter(d => d >= 0), takeUntilDestroyed()).subscribe((d) => this.durationStep.update(() => d))
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
   }
 
   private nnfb = inject(NonNullableFormBuilder)
@@ -37,10 +32,6 @@ export class DoorFormService {
     multiple: this.nnfb.control(false)
   })
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
   slotForm: TMainForm = this.nnfb.group({
     mon: this.nnfb.array<TDurationSubForm>([]),
     tue: this.nnfb.array<TDurationSubForm>([]),
@@ -51,7 +42,7 @@ export class DoorFormService {
     sun: this.nnfb.array<TDurationSubForm>([]),
   })
 
-<<<<<<< HEAD
+
   slotEditForm: TEditMainForm = this.nnfb.group({
     mon: this.nnfb.array<TEditDurationSubForm>([]),
     tue: this.nnfb.array<TEditDurationSubForm>([]),
@@ -64,13 +55,7 @@ export class DoorFormService {
 
   keys = Object.keys(this.slotForm.controls) as TFormKey[]
 
-=======
-  disable = signal(false)
 
-  keys = Object.keys(this.slotForm.controls) as TFormKey[]
-
-
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
   addForm = (ctrlName: TFormKey) => {
     const ref = this.slotForm.controls[ctrlName]
     const a = ref.getRawValue()
@@ -79,7 +64,7 @@ export class DoorFormService {
       const { form, to } = a[lenA - 1]
       const nextForm = to
       const { hour, minute } = to
-<<<<<<< HEAD
+
       const validNextFormHour = hour !== 12 ? hour : 13
       const validNextForm = { hour: validNextFormHour, minute, second: 0 }
       const nextHour = nextForm.hour < 12 ? 12 : 17
@@ -87,39 +72,19 @@ export class DoorFormService {
       this.slotForm.controls[ctrlName]
         .push(this.nnfb.group({
           form: this.nnfb.control<NgbTimeStruct>(validNextForm, [Validators.required]),
-=======
-      const nextMin = minute + this.durationStep()
-      const validMin = nextMin >= 60 ? nextMin - 60 : nextMin
-      const nextHour = nextMin >= 60 ? hour + 1 : hour
-      const nextTo = { hour: nextHour, minute: validMin, second: 0 }
-      this.slotForm.controls[ctrlName]
-        .push(this.nnfb.group({
-          form: this.nnfb.control<NgbTimeStruct>(nextForm, [Validators.required]),
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
+
           to: this.nnfb.control<NgbTimeStruct>(nextTo, [Validators.required]),
         }))
       return
     }
     const startTime = {
       hour: 8,
-<<<<<<< HEAD
       minute: 30,
       second: 0
     }
     const endTime = {
       hour: 12,
       minute: 0,
-=======
-      minute: 0,
-      second: 0
-    }
-    const nextMinute = startTime.minute + this.durationStep()
-    const validMin = nextMinute >= 60 ? nextMinute - 60 : nextMinute
-    const nextHour = nextMinute >= 60 ? startTime.hour + 1 : startTime.hour
-    const endTime = {
-      hour: nextHour,
-      minute: validMin,
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
       second: 0
     }
     this.slotForm.controls[ctrlName]
@@ -129,7 +94,6 @@ export class DoorFormService {
       }))
   }
 
-<<<<<<< HEAD
   addEditForm = (ctrlName: TFormKey, doorId: number) => {
     const ref = this.slotEditForm.controls[ctrlName]
     const a = ref.getRawValue()
@@ -171,9 +135,6 @@ export class DoorFormService {
   }
 
   getDisableState = (ctrl: TDurationSubForm | TEditDurationSubForm) => {
-=======
-  getDisableState = (ctrl: TDurationSubForm) => {
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
     const form = ctrl.controls.form.getRawValue()
     const to = ctrl.controls.to.getRawValue()
     return (form.hour === to.hour && form.minute >= to.minute) || form.hour > to.hour || form.hour < 8 || to.hour >= 17
@@ -181,11 +142,8 @@ export class DoorFormService {
 
   removeForm = (key: TFormKey, j: number) => this.slotForm.controls[key].removeAt(j)
 
-<<<<<<< HEAD
   removeEditForm = (key: TFormKey, j: number) => this.slotEditForm.controls[key].removeAt(j)
 
-=======
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
   getThaiDay = (k: TFormKey) => {
     switch (k) {
       case 'sun': return 'วันอาทิตย์'
@@ -198,11 +156,8 @@ export class DoorFormService {
     }
   }
 
-<<<<<<< HEAD
+
   genIndex = (k: TFormKey) => {
-=======
-  private genIndex = (k: TFormKey) => {
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
     switch (k) {
       case 'sun': return 7
       case 'mon': return 1
@@ -216,7 +171,6 @@ export class DoorFormService {
 
   private formatTime = (t: NgbTimeStruct) => {
     const { hour, minute } = t
-<<<<<<< HEAD
     return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`
   }
 
@@ -224,14 +178,6 @@ export class DoorFormService {
     startTime: this.formatTime(form),
     endTime: this.formatTime(to),
     ...res,
-=======
-    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-  }
-
-  private prepareArray = (d: TDayDetail) => ({ form, to }: TDuration): TCreateTimeSlot => ({
-    startTime: this.formatTime(form),
-    endTime: this.formatTime(to),
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
     ...d,
     isAvailable: true
   })
@@ -269,7 +215,6 @@ export class DoorFormService {
 
     return formattedList
   }
-<<<<<<< HEAD
 
   getTimeListEdit = () => {
     const rawList = this.slotEditForm.getRawValue()
@@ -293,8 +238,7 @@ export class DoorFormService {
 
     return formattedList
   }
-=======
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
+
 }
 
 
@@ -314,7 +258,6 @@ export type TFormKey = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 
 export type TMainForm = FormGroup<{
   [key in TFormKey]: FormArray<TDurationSubForm>
-<<<<<<< HEAD
 }>
 
 export type TEditableDuration = { doorId: number, id: number } & TDuration
@@ -323,6 +266,4 @@ export type TEditDurationSubForm = FormGroup<TMapForm<TEditableDuration>>
 
 export type TEditMainForm = FormGroup<{
   [key in TFormKey]: FormArray<TEditDurationSubForm>
-=======
->>>>>>> 7b473f5093996e06fd3458a742f1a4cedbd08bb4
 }>
