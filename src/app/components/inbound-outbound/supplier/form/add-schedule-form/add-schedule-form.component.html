@@ -1,5 +1,3 @@
-@let inactive = disable();
-<!---->
 <h2>เพิ่มประตู</h2>
 <div
   style="
@@ -84,7 +82,7 @@
     </div>
   </form>
   <form
-    [formGroup]="form"
+    [formGroup]="slotForm"
     style="
       display: flex;
       flex-direction: column;
@@ -94,13 +92,13 @@
       margin-bottom: 16px;
     "
   >
-    @for (k of keys; let i = $index;track i) {
+    @for (k of dayKey; let i = $index;track i) {
     <form [formArrayName]="k">
-      @let cur = form.controls[k];
+      @let cur = slotForm.controls[k];
       <!---->
       @if (cur.length === 0) {
       <div class="row">
-        <div class="col-auto" style="width: 120px">{{ getThaiDay(k) }}</div>
+        <div class="col-auto" style="width: 120px">{{ getDayOfWeek(k) }}</div>
         <div class="col">
           <input
             type="text"
@@ -125,9 +123,9 @@
       <!---->
       <div class="row">
         @for (d of cur.controls;let j = $index; track j) {
-        <div class="row align-items-center">
+        <div class="row align-items-center mb-3">
           <div class="col-auto" style="flex: 0 0 120px">
-            {{ j === 0 ? getThaiDay(k) : "" }}
+            {{ j === 0 ? getDayOfWeek(k) : "" }}
           </div>
           <div class="col">
             <ngb-timepicker
@@ -157,7 +155,7 @@
             @if (j === cur.length-1) {
             <button
               class="btn btn-success"
-              [disabled]="getDisableState(d)"
+              [disabled]="getDisable(d)"
               (click)="addForm(k)"
             >
               <i class="bi bi-plus"></i>
@@ -167,13 +165,14 @@
         </div>
         }
       </div>
-      @for (d of cur.controls;let j = $index; track j) {
+      }
+      <!-- @for (d of cur.controls;let j = $index; track j) {
       <div class="row align-items-center">
         <div class="col-auto" style="flex: 0 0 120px">
           {{ j === 0 ? getThaiDay(k) : "" }}
         </div>
         <div class="col">
-          <!-- <app-time-range [form]="d.controls" [step]="durationStep()" /> -->
+          <app-time-range [form]="d.controls" [step]="durationStep()" />
         </div>
         <div
           class="col-auto"
@@ -193,7 +192,7 @@
           }
         </div>
       </div>
-      } }
+      }  -->
     </form>
     }
   </form>
@@ -214,7 +213,7 @@
     </button>
   </div>
 </div>
-<div
+<!-- <div
   style="
     display: flex;
     flex-direction: column;
@@ -225,4 +224,4 @@
   "
 >
   <app-time-range [step]="durationStep()" />
-</div>
+</div> -->

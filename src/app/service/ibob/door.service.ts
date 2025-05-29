@@ -1,8 +1,8 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { catchError, map, of, Subject, switchMap } from 'rxjs';
+import { catchError, map, of, switchMap } from 'rxjs';
 import { ApiService } from '../api/api.service';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TAppDoor, TDoor } from '../../types/ibob-supplier.type';
 import { WarehouseService } from './warehouse.service';
 
@@ -27,8 +27,6 @@ export class DoorService {
 
   private api = inject(ApiService)
 
-  private warehouse$ = new Subject<string>()
-
   private fetchDoor = (warehouseId: string) => this.api.get<TDoor[]>(`${this.url}/GetDoor`, { params: { warehouseId } })
 
   private door$ = this.warehouseServ.warehouseId$.pipe(
@@ -47,5 +45,9 @@ export class DoorService {
     )
   )
 
-  setWarehouseId = (id: string) => this.warehouse$.next(id)
+  whname = this.warehouseServ.currentWarehouseName
+
+
 }
+
+

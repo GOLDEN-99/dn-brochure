@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IBOBCOMPLIST_TOKEN } from '../../../service/ibob/ibobToken';
-import { IbobAddService } from '../../../service/ibob/reserve/ibob-add.service';
+import { IbobAddService } from '../../../service/ibob/ibob-add.service';
 @Component({
   selector: 'app-supplier-reserve',
   imports: [RouterLink],
