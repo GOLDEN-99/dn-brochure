@@ -1,4 +1,13 @@
-<h2>แก้ไขประตู</h2>
+@let doorId = doorHead()?.doorId ?? 0 ;
+<div class="row">
+  <h2 class="col">แก้ไข</h2>
+  <div class="col-auto">
+    <a routerLink="../" class="btn btn-squre btn-info">
+      <i class="bi bi-eye"></i>
+    </a>
+  </div>
+</div>
+
 <div
   style="
     display: flex;
@@ -113,7 +122,7 @@
           <button
             class="btn btn-success"
             [disabled]="durationStep() <= 0"
-            (click)="addForm(k)"
+            (click)="addForm(k, doorId)"
           >
             <i class="bi bi-plus"></i>
           </button>
@@ -138,7 +147,6 @@
             <ngb-timepicker
               [spinners]="false"
               [formControl]="d.controls.to"
-              [minuteStep]="durationStep()"
             ></ngb-timepicker>
           </div>
           <div
@@ -156,7 +164,7 @@
             <button
               class="btn btn-success"
               [disabled]="getDisable(d)"
-              (click)="addForm(k)"
+              (click)="addForm(k, doorId)"
             >
               <i class="bi bi-plus"></i>
             </button>

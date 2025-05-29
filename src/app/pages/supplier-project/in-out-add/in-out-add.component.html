@@ -53,7 +53,7 @@
       <div class="col">
         <div class="app-form-field">
           <label for="mail">E mail ผู้ดูแล</label>
-          <input type="mail" name="mail" id="mail" formControlName="mail" />
+          <input type="email" name="mail" id="mail" formControlName="mail" />
         </div>
       </div>
       <div>
@@ -138,7 +138,6 @@
             <ngb-timepicker
               [spinners]="false"
               [formControl]="d.controls.to"
-              [minuteStep]="durationStep()"
             ></ngb-timepicker>
           </div>
           <div
@@ -178,6 +177,7 @@
       >ย้อนกลับ</a
     >
     <button
+      [disabled]="headForm.invalid"
       class="btn btn-success"
       (click)="submitForm()"
       style="flex: 1 1 auto"
