@@ -1,0 +1,30 @@
+@let headData = head();
+<!---->
+@if (!headData) {
+<section>
+  <h1>ไม่พบข้อมูล</h1>
+</section>
+}@else{
+<section class="container" style="overflow: hidden; padding: 0">
+  <app-fs-brochure [head]="headData" [items]="listItem()" [isStatic]="false" />
+
+  <div class="d-flex align-items-center my-3 justify-content-between action">
+    <button class="btn btn-primary" style="flex: 1 1 auto" (click)="onExport()">
+      export
+    </button>
+  </div>
+</section>
+<app-fs-brochure [head]="headData" [items]="listItem()" [isStatic]="true" />
+}
+<!---->
+@if (inprogress()) {
+<div class="loading">
+  <div
+    class="spinner-border text-success"
+    role="status"
+    style="width: 10rem; height: 10rem"
+  >
+    <span class="sr-only"></span>
+  </div>
+</div>
+}

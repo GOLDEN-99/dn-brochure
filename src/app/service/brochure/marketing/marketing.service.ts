@@ -1,8 +1,9 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../../api/api.service';
-import { TBorchureHead, TColor, TGroupItemList, TItemList, TMarketingParams, TMaybe } from '../../../types';
+import { TBorchureHead, TColor, TGroupItemList, TItem, TItemList, TMarketingParams, TMaybe } from '../../../types';
 import { tap } from 'rxjs';
 import { IBrochureService, transformItemList } from '../../../lib';
+import { environment } from '../../../../environments/environment';
 
 
 @Injectable({
@@ -10,14 +11,11 @@ import { IBrochureService, transformItemList } from '../../../lib';
 })
 export class MarketingService implements IBrochureService {
 
-  constructor() {
-    const eff = effect(() => console.log(this.content()[0]))
-  }
 
   private setState = ({ wholeName, wholeType, zone, promotionType, promotion, isNewCustomer, fromDate, toDate }: TItemList) => {
     this.head.update(() => ({ wholeName, wholeType, zone, promotionType, isNewCustomer, fromDate, toDate }))
     const size = 12
-    this.content.update(() => promotion.reduce(transformItemList(size), [[]]))
+    this.content.update(() => promotion.reduce<TItem[][]>(transformItemList(size), [[]]))
   }
 
 
@@ -30,10 +28,10 @@ export class MarketingService implements IBrochureService {
 
   private api = inject(ApiService);
 
-  private url = "https://api.drugnetcenter.com/ItemService2/PaperPro/v2"
+  private url = environment.brochureEndpoint
 
   getBrochureList({ promoType, wholeType, isNewCustomer, isBkk, token, idPromotion }: TMarketingParams) {
-    return this.api.get<TItemList>(this.url, {
+    return this.api.get<TItemList>(`${this.url}/PaperPro/V2`, {
       headers: {
         Authorization: `Bearer ${token}`
       },
