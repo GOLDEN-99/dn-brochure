@@ -1,29 +1,40 @@
+@let headData = head();
 <!---->
-
-<section class="flash-sale-bg flash-card-size static" style="padding: 64px">
+@if (!headData) {
+<section>
+  <h1>ไม่พบข้อมูล</h1>
+</section>
+}@else{
+<section class="flash-sale-bg flash-sale-page static" style="padding: 64px">
   <div>
     <div style="display: flex; flex-direction: column; margin-left: auto">
       <img src="/image/FS/title.png" alt="" style="max-width: 840px" />
       <div>
-        <img
-          [attr.src]="'/image/FS/number/' + 1 + '.png'"
-          alt=""
-          style="transform: rotate(-3deg)"
-        />
-        <img src="/image/FS/day.png" alt="" style="max-width: 630px" />
+        <span>
+          <img
+            [attr.src]="'/image/FS/number/' + dayImg() + '.png'"
+            alt=""
+            style="transform: rotate(-3deg)"
+          />
+        </span>
+        <span style="position: relative">
+          <div style="position: absolute">{{ headData.dayActive }}</div>
+          <img src="/image/FS/day.png" alt="" style="max-width: 630px" />
+        </span>
       </div>
     </div>
   </div>
-  <span style="font-size: 80px; transform: rotate(-3deg); box-shadow: 16px"
+  <!-- <span style="font-size: 80px; transform: rotate(-3deg); box-shadow: 16px"
     >ช้อปเลย</span
-  >
+  > -->
   <div class="flash-sale-layout">
-    @for (item of formattedRef; track $index) {
+    @for (item of listItem(); track $index) {
     <div [className]="genRow(item.length)">
       @for (i of item; track $index) {
-      <app-flash-sale-card />
+      <app-flash-sale-card [cardProp]="i" />
       }
     </div>
     }
   </div>
 </section>
+}

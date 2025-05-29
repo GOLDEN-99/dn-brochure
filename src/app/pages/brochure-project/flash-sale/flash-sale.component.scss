@@ -5,24 +5,25 @@
   overflow: auto;
 }
 
-.flash-card-size {
+.flash-sale-page {
+  box-sizing: border-box;
   aspect-ratio: 1;
 
-  .static {
-    width: 2480px;
+  &.static {
+    width: 3720px;
   }
 }
 
 .flash-sale-layout {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 4rem;
   justify-content: space-around;
 }
 
 .flash-sale-row {
   display: flex;
-  gap: 32px;
+  gap: 4rem;
   &.row-3 {
     justify-content: space-between;
   }

@@ -63,3 +63,25 @@ export type TMarketingParams = {
     idPromotion: string
 }
 export type TBorchureHead = Omit<TItemList, 'promotion'>
+
+export type TFlashSaleHead = {
+    id: number,
+    name: string,
+    fromDate: string,
+    toDate: string,
+    day: number,
+    dayActive: string,
+    linkimg: string | null
+}
+
+export type TFlashSaleItem = {
+    goodCode: string,
+    barCode: string,
+    goodName: string,
+    flashPrice: number
+}
+
+export type TFlashSaleReq = {
+    head: TFlashSaleHead
+    list: TFlashSaleItem[]
+}

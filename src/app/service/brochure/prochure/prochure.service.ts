@@ -10,10 +10,6 @@ import { environment } from '../../../../environments/environment';
 })
 export class ProchureService implements IBrochureService {
 
-  constructor() {
-    const eff = effect(() => console.log(this.content()[0]))
-  }
-
   head = signal<TMaybe<TBorchureHead>>(null)
   content = signal<TGroupItemList>([[]])
   maxItem = signal<12>(12)
@@ -30,6 +26,6 @@ export class ProchureService implements IBrochureService {
   }
 
   getProchureList(wholeCode: string, promoType: TPromotionType) {
-    return this.api.get<TItemList>(`${this.url}/${wholeCode}/${promoType}`).pipe(tap(this.setState))
+    return this.api.get<TItemList>(`${this.url}/PaperPro/${wholeCode}/${promoType}`).pipe(tap(this.setState))
   }
 }
