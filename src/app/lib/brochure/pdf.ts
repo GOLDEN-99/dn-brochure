@@ -1,5 +1,5 @@
-import html2PDF from 'jspdf-html2canvas';
 import html2pdf from 'jspdf-html2canvas'
+import html2canvas from 'html2canvas';
 
 export const exporter = async (html: HTMLElement[], filename: string) => {
     const timpstampe = new Date().getTime();
@@ -38,4 +38,21 @@ const imageLoader = async (ele: HTMLElement) => {
         }
     }));
     await Promise.all(imagePromises.filter(promise => promise !== null));
+}
+
+export const export2Img = async (html: HTMLElement, filename: string) => {
+    const timpstampe = new Date().getTime();
+
+    await imageLoader(html)
+
+    await html2canvas(html, {
+        useCORS: true,
+        scale: .25,
+    }).then(canvas => {
+        const img = canvas.toDataURL('image/jpeg', 1)
+        const link = document.createElement('a');
+        link.download = `${filename}-${timpstampe}.jpg`;
+        link.href = img;
+        link.click();
+    })
 }

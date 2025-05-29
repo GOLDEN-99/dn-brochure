@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ProchureComponent } from '../../../components/prochure/prochure.component';
+import { ProchureComponent } from '../../../components/brochure-component/prochure/prochure.component';
 import { PromotionPipe } from '../../../pipe/promotion/promotion-pipe.pipe';
 import { NavigateBtnComponent } from '../../../components/navigate-btn/navigate-btn.component';
 import { BROCHURE_TOKEN, exporter } from '../../../lib';
