@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { TFlashSaleItem } from '../../../types';
 
 @Component({
@@ -12,5 +12,18 @@ export class FlashSaleCardComponent {
 
   imgUrl = computed(() => `https://file.drugnetcenter.com/drugpos/GoodPictures/${this.cardProp().goodCode}.jpg`)
 
-  textClass = computed(() => this.cardProp().goodName.length > 30 ? 'header-text text-white long' : 'header-text text-white')
+  textClass = computed(() => {
+    const stat = this.isStatic()
+    if (stat) {
+      return this.cardProp().goodName.length > 30 ? 'header-text text-white long static' : 'header-text text-white static'
+    }
+    return this.cardProp().goodName.length > 30 ? 'header-text text-white long' : 'header-text text-white'
+  }
+  )
+
+  isStatic = input<boolean>(true)
+
+  headerClass = computed(() => this.isStatic() ? 'header static' : 'header')
+
+  contentClass = computed(() => this.isStatic() ? 'content static' : 'content')
 }

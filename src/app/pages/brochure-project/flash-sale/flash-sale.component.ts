@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FlashSaleCardComponent } from "../../../components/brochure-card/flash-sale-card/flash-sale-card.component";
 import { transformItemList } from '../../../lib';
 import { FlashSaleService } from '../../../service/brochure/flash-sale/flash-sale.service';
@@ -24,7 +24,13 @@ export class FlashSaleComponent {
 
   dayImg = computed(() => {
     const day = this.head()?.day
-    if (!day) return 1
-    return day < 10 ? day : 1
+    if (!day) return 5
+    return day < 10 ? day : 5
   })
+
+  isStatic = signal<boolean>(true)
+
+  mainClass = computed(() => this.isStatic() ? 'flash-sale-bg flash-sale-page main-gap main-pad static' : 'flash-sale-bg flash-sale-page container main-gap main-pad')
+
+  fsLayoutClass = computed(() => this.isStatic() ? 'flash-sale-layout main-gap static' : 'flash-sale-layout main-gap')
 }

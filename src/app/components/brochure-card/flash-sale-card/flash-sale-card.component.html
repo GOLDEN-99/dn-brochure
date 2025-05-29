@@ -1,10 +1,10 @@
 @let prop = cardProp();
 
-<div class="header">
+<div [className]="headerClass()">
   <img src="/image/FS/head.png" alt="head" />
   <div [className]="textClass()">{{ prop.goodName }}</div>
 </div>
-<div class="content">
+<div [className]="contentClass()">
   <div class="content-section" style="display: flex; justify-content: center">
     <div>
       <div style="display: flex">
