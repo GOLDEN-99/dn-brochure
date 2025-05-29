@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { SUPPLIER_TOKEN } from '../../../lib';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SUPPLIER_TOKEN } from '../../../service/supplier/supplier.token';
 
 @Component({
   selector: 'app-supplier-inhouse',

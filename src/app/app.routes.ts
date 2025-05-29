@@ -3,7 +3,7 @@ import { SearchPageComponent } from './pages/brochure-project/search-page/search
 import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
 import { NotfoundComponent } from './pages/notfound/notfound.component';
-import { BROCHURE_TOKEN, SUPPLIER_TOKEN } from './lib';
+import { BROCHURE_TOKEN } from './lib';
 import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
 import { cnResolver } from './resolvers/cn/cn.resolver';
 import { BaseBrochureComponent } from './pages/brochure-project/base-brochure/base-brochure.component';
@@ -12,8 +12,8 @@ import { ProchureService } from './service/brochure/prochure/prochure.service';
 import { MarketingService } from './service/brochure/marketing/marketing.service';
 import { cnGuard } from './guard/cn-guard.guard';
 import { SupplierLayoutComponent } from './layout/supplier-layout/supplier-layout.component';
-import { SupplierDnService } from './service/supplier/supplier-dn/supplier-dn.service';
-import { SupplierHuService } from './service/supplier/supplier-hu/supplier-hu.service';
+import { SupplierDnService } from './service/supplier/supplier-dn.service';
+import { SupplierHuService } from './service/supplier/supplier-hu.service';
 import { SupplierReserveLayoutComponent } from './layout/supplier-reserve-layout/supplier-reserve-layout.component';
 import { SupplierReserveComponent } from './pages/supplier-project/supplier-reserve/supplier-reserve.component';
 import { InOutLayoutComponent } from './layout/in-out-layout/in-out-layout.component';
@@ -29,6 +29,7 @@ import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-add.component';
 import { InOutDetailComponent } from './pages/supplier-project/in-out-detail/in-out-detail.component';
 import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.resolver';
+import { SUPPLIER_TOKEN } from './service/supplier/supplier.token';
 
 
 export const routes: Routes = [

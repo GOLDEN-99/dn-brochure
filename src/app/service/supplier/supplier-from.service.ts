@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { TMapForm } from '../../../types';
+import { TMapForm } from '../../types';
 
 @Injectable({
   providedIn: 'root'

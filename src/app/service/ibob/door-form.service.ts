@@ -64,10 +64,23 @@ export class DoorFormService {
         }))
       return
     }
+    const startTime = {
+      hour: 8,
+      minute: 0,
+      second: 0
+    }
+    const nextMinute = startTime.minute + this.durationStep()
+    const validMin = nextMinute >= 60 ? nextMinute - 60 : nextMinute
+    const nextHour = nextMinute >= 60 ? startTime.hour + 1 : startTime.hour
+    const endTime = {
+      hour: nextHour,
+      minute: validMin,
+      second: 0
+    }
     this.slotForm.controls[ctrlName]
       .push(this.nnfb.group({
-        form: this.nnfb.control<NgbTimeStruct>({ hour: 8, minute: 0, second: 0 }, [Validators.required]),
-        to: this.nnfb.control<NgbTimeStruct>({ hour: 8, minute: this.durationStep(), second: 0 }, [Validators.required]),
+        form: this.nnfb.control<NgbTimeStruct>(startTime, [Validators.required]),
+        to: this.nnfb.control<NgbTimeStruct>(endTime, [Validators.required]),
       }))
   }
 
@@ -105,7 +118,7 @@ export class DoorFormService {
 
   private formatTime = (t: NgbTimeStruct) => {
     const { hour, minute } = t
-    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`
+    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
   }
 
   private prepareArray = (d: TDayDetail) => ({ form, to }: TDuration): TCreateTimeSlot => ({

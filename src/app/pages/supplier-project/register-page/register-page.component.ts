@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { SupplierFromService } from '../../../service/supplier/supplier-form/supplier-from.service';
+import { SupplierFromService } from '../../../service/supplier/supplier-from.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StepThreePageComponent } from "../step-three-page/step-three-page.component";
 import { GeneralPageComponent } from "../general-page/general-page.component";
