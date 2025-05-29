@@ -18,7 +18,7 @@ export class FlashSaleComponent {
 
   genRow = (len: number) => len === 3 ? 'flash-sale-row row-3' : 'flash-sale-row row-2'
 
-  listItem = this.flashSaleServ.formattedList
+  listItem = this.flashSaleServ.list
 
   head = this.flashSaleServ.head
 

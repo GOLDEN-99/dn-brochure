@@ -5,11 +5,49 @@
   <h1>ไม่พบข้อมูล</h1>
 </section>
 }@else{
-<section class="flash-sale-bg flash-sale-page static" style="padding: 64px">
-  <div>
-    <div style="display: flex; flex-direction: column; margin-left: auto">
-      <img src="/image/FS/title.png" alt="" style="max-width: 840px" />
-      <div>
+<section class="flash-sale-bg flash-sale-page">
+  <div class="flash-sale-head">
+    <span style="display: flex; flex-direction: column; margin-left: auto">
+      <img src="/image/FS/title.png" alt="" style="width: 100%" />
+      <span>
+        <span>
+          <img
+            [attr.src]="'/image/FS/number/' + dayImg() + '.png'"
+            alt=""
+            style="transform: rotate(-3deg); width: 33%"
+          />
+        </span>
+        <span style="position: relative; width: 66%">
+          <span
+            style="
+              position: absolute;
+              font-size: 64px;
+              top: 0;
+              right: 0;
+              width: 100%;
+              transform: rotate(-7deg);
+              translate: 30% -60%;
+            "
+            class="text-white"
+          >
+            {{ headData.dayActive }}
+          </span>
+          <img src="/image/FS/day.png" alt="" style="width: 66%" />
+        </span>
+      </span>
+    </span>
+  </div>
+  <!-- <span
+    style="
+      display: flex;
+      justify-content: end;
+      margin-bottom: 64px;
+      height: 30%;
+    "
+  >
+    <span style="display: flex; flex-direction: column; margin-left: auto">
+      <img src="/image/FS/title.png" alt="" style="max-width: 800px" />
+      <span>
         <span>
           <img
             [attr.src]="'/image/FS/number/' + dayImg() + '.png'"
@@ -18,22 +56,40 @@
           />
         </span>
         <span style="position: relative">
-          <div style="position: absolute">{{ headData.dayActive }}</div>
-          <img src="/image/FS/day.png" alt="" style="max-width: 630px" />
+          <span
+            style="
+              position: absolute;
+              font-size: 48px;
+              top: 0;
+              right: 0;
+              width: 100%;
+              transform: rotate(-7deg);
+              translate: 30% -50%;
+            "
+            class="text-white"
+          >
+            {{ headData.dayActive }}
+          </span>
+          <img src="/image/FS/day.png" alt="" style="max-width: 1080px" />
         </span>
-      </div>
-    </div>
-  </div>
+      </span>
+    </span>
+  </span> -->
   <!-- <span style="font-size: 80px; transform: rotate(-3deg); box-shadow: 16px"
     >ช้อปเลย</span
   > -->
-  <div class="flash-sale-layout">
+  <!-- <div class="flash-sale-layout">
     @for (item of listItem(); track $index) {
     <div [className]="genRow(item.length)">
       @for (i of item; track $index) {
       <app-flash-sale-card [cardProp]="i" />
       }
     </div>
+    }
+  </div> -->
+  <div class="flash-sale-layout">
+    @for (item of listItem(); track $index) {
+    <app-flash-sale-card [cardProp]="item" />
     }
   </div>
 </section>

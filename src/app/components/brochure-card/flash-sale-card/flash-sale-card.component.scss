@@ -1,48 +1,80 @@
-.flash-sale-card {
+:host {
   box-sizing: border-box;
   aspect-ratio: 1;
-  background-color: rgba($color: #cdcdcd, $alpha: 0.2);
+  background-color: #fff;
+
+  min-width: 350px;
 
   display: flex;
   flex-direction: column;
 
-  padding: 4rem 2rem;
-  border-radius: 4rem;
+  padding: 1rem;
+  border-radius: 1rem;
 
-  .header {
-    display: flex;
-    justify-content: center;
-    position: relative;
-    .header-text {
-      max-width: 900px;
-      position: absolute;
+  &.static {
+    padding: 4rem 2rem;
+    border-radius: 4rem;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  img {
+    max-width: 300px;
+  }
+  .header-text {
+    position: absolute;
+    text-align: center;
+
+    &.static {
       top: 20%;
+      max-width: 900px;
       font-size: 64px;
-      text-align: center;
 
       &.long {
         top: 0;
       }
     }
   }
+}
 
-  .content {
-    display: flex;
-    justify-content: center;
-    .content-section {
-      flex: 1 1 50%;
-    }
+.content {
+  display: flex;
+  justify-content: center;
+  .content-section {
+    flex: 1 1 50%;
   }
+  img {
+    max-width: 150px;
+  }
+}
 
-  .goodcode {
-    border-bottom: solid #fff 1px;
-    background-color: #fff200;
+.price-text {
+  height: 50%;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  translate: 0 100%;
+  &.static {
+    font-size: 48px;
+  }
+}
+
+.goodcode {
+  border-bottom: solid #fff 1px;
+  background-color: #fff200;
+  padding: 4px 4px 0 4px;
+  border-radius: 8px 8px 0 0;
+
+  &.static {
     font-size: 24px;
     padding: 8px 8px 0 8px;
     border-radius: 24px 24px 0 0;
   }
+}
 
-  .text-white {
-    color: #fff;
-  }
+.text-white {
+  color: #fff;
 }

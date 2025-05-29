@@ -1,38 +1,21 @@
 @let prop = cardProp();
-<div class="flash-sale-card">
-  <div class="header">
-    <img src="/image/FS/head.png" alt="head" />
-    <div [className]="textClass()">{{ prop.goodName }}</div>
+
+<div class="header">
+  <img src="/image/FS/head.png" alt="head" />
+  <div [className]="textClass()">{{ prop.goodName }}</div>
+</div>
+<div class="content">
+  <div class="content-section" style="display: flex; justify-content: center">
+    <div>
+      <div style="display: flex">
+        <div class="goodcode">{{ prop.barCode }}</div>
+        <div style="flex: 1 1 auto"></div>
+      </div>
+      <img [src]="imgUrl()" alt="product image" />
+    </div>
   </div>
-  <div class="content">
-    <div class="content-section" style="display: flex; justify-content: center">
-      <div>
-        <div style="display: flex">
-          <div class="goodcode">{{ prop.barCode }}</div>
-          <div style="flex: 1 1 auto"></div>
-        </div>
-        <img
-          [src]="imgUrl()"
-          alt="product image"
-          style="max-width: 500px; min-width: 400px"
-        />
-      </div>
-    </div>
-    <div class="content-section" style="position: relative; align-items: end">
-      <div
-        style="
-          height: 50%;
-          position: absolute;
-          width: 100%;
-          text-align: center;
-          translate: 0 100%;
-          font-size: 48px;
-        "
-        class="text-white"
-      >
-        {{ prop.flashPrice }} บาท
-      </div>
-      <img src="/image/FS/price.png" alt="price" style="max-width: 500px" />
-    </div>
+  <div class="content-section" style="position: relative; align-items: end">
+    <div class="text-white price-text">{{ prop.flashPrice }}.-</div>
+    <img src="/image/FS/price.png" alt="price" style="width: 100%" />
   </div>
 </div>
