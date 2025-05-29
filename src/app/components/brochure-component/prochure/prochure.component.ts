@@ -1,8 +1,8 @@
 import { Component, computed, effect, input, ViewEncapsulation } from '@angular/core';
-import { TBorchureHead, TCardProps, TItem, TWhole, TZone } from '../../types';
-import { zoneToColor } from '../../lib';
-import { ProchureCardComponent } from '../brochure-card/prochure-card/prochure-card.component';
-import { BrochureCardSpecialComponent } from '../brochure-card/brochure-card-special/brochure-card-special.component';
+import { TBorchureHead, TCardProps, TItem, TWhole, TZone } from '../../../types';
+import { zoneToColor } from '../../../lib';
+import { ProchureCardComponent } from '../../brochure-card/prochure-card/prochure-card.component';
+import { BrochureCardSpecialComponent } from '../../brochure-card/brochure-card-special/brochure-card-special.component';
 
 
 

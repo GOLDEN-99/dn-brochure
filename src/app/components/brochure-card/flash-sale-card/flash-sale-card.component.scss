@@ -56,12 +56,13 @@
   .content-section {
     flex: 1 1 50%;
   }
-  img {
+  img:not(.static) {
     max-width: 150px;
   }
 
   &.static img {
-    max-width: 800px;
+    min-width: 400px;
+    max-width: 500px;
   }
 }
 
@@ -73,6 +74,7 @@
   translate: 0 100%;
   &.static {
     font-size: 48px;
+    translate: -5% 100%;
   }
 }
 

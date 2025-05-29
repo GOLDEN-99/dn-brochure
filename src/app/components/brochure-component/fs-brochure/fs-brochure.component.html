@@ -1,0 +1,15 @@
+<div [className]="mainClass()">
+  <div [className]="fsHeadClass()">
+    <div [className]="plainTextClass()">{{ dayActive() }}</div>
+    <div [className]="headClass()">
+      <div [className]="dayTextClass()">{{ dayActive() }}</div>
+      <img [src]="'/image/FS/number/' + dayImg() + '.png'" alt="" />
+    </div>
+  </div>
+
+  <div [className]="fsLayoutClass()">
+    @for (item of items(); track $index) {
+    <app-flash-sale-card [cardProp]="item" [isStatic]="isStatic()" />
+    }
+  </div>
+</div>

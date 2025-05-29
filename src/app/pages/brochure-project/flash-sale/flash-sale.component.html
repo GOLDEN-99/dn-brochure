@@ -5,19 +5,11 @@
   <h1>ไม่พบข้อมูล</h1>
 </section>
 }@else{
-<section [className]="mainClass()">
-  <div class="flash-sale-head">
-    <div class="plain-day-text text-white">{{ headData.dayActive }}</div>
-    <div class="header-space">
-      <div class="day-text text-white">{{ headData.dayActive }}</div>
-      <img [src]="'/image/FS/number/' + dayImg() + '.png'" alt="" />
-    </div>
-  </div>
-
-  <div [className]="fsLayoutClass()">
-    @for (item of listItem(); track $index) {
-    <app-flash-sale-card [cardProp]="item" />
-    }
+<section class="container" style="overflow: hidden; padding: 0">
+  <app-fs-brochure [head]="headData" [items]="listItem()" [isStatic]="false" />
+  <div class="mt-3">
+    <app-navigate-btn (export)="onExport()" />
   </div>
 </section>
+<app-fs-brochure [head]="headData" [items]="listItem()" [isStatic]="true" />
 }

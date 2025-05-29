@@ -26,4 +26,8 @@ export class FlashSaleCardComponent {
   headerClass = computed(() => this.isStatic() ? 'header static' : 'header')
 
   contentClass = computed(() => this.isStatic() ? 'content static' : 'content')
+
+  priceTextClass = computed(() => this.isStatic() ? 'price-text static text-white' : 'price-text text-white')
+
+  goodCodeClass = computed(() => this.isStatic() ? 'goodcode static' : 'goodcode')
 }
