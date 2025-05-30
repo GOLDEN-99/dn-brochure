@@ -12,7 +12,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class DoorFormService {
 
   constructor() {
-
     this.headForm.controls.timeUse.valueChanges
       .pipe(
         filter(d => d >= 0),
