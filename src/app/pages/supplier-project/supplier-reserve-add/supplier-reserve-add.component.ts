@@ -2,7 +2,7 @@ import { Component, computed, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar, NgbDate, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { IBOBRESERVE_TOKEN } from '../../../service/ibob/ibobToken';
-import { IbobAddService } from '../../../service/ibob/reserve/ibob-add.service';
+import { IbobAddService } from '../../../service/ibob/ibob-add.service';
 import { TMaybe } from '../../../types';
 import { TDoor } from '../../../types/ibob-supplier.type';
 import { Router, RouterLink } from '@angular/router';

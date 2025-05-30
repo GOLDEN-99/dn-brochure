@@ -27,6 +27,8 @@ import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-ou
 import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-add.component';
+import { InOutDetailComponent } from './pages/supplier-project/in-out-detail/in-out-detail.component';
+import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.resolver';
 
 
 export const routes: Routes = [
@@ -172,12 +174,14 @@ export const routes: Routes = [
                         component: InOutAddComponent
                     },
                     {
-                        path: 'list/:slot',
-                        component: InOutEditComponent
+                        path: 'list/:doorId',
+                        component: InOutDetailComponent,
+                        resolve: [fetchDoorDetailResolver]
                     },
                     {
-                        path: 'list/:slot/edit',
-                        component: InOutEditComponent
+                        path: 'list/:doorId/edit',
+                        component: InOutEditComponent,
+                        resolve: [fetchDoorDetailResolver]
                     },
                     {
                         path: 'query',
