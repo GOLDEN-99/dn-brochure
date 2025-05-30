@@ -5,7 +5,7 @@ import { inject, signal } from "@angular/core"
 import { filter } from "rxjs"
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop"
 import { TCreateTimeSlot } from "../../types/ibob-supplier.type"
-import { TCreateDoorReq, TEditDoorReq } from "./door-mutation.service"
+import { TCreateDoorReq, TEditDoorReq, TEditTimeSlot } from "./door-mutation.service"
 
 export abstract class BaseDoorForm<T extends TEditableDuration | TDuration> {
     constructor() {
@@ -101,31 +101,11 @@ export abstract class BaseDoorForm<T extends TEditableDuration | TDuration> {
         return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`
     }
 
-    abstract prepareArray: (d: TFormKey) => (ele: T) => [TPrepareArr<T>]
-
     abstract addForm(ctrlName: TFormKey): void
 
     abstract patchForm(ctrlName: TFormKey): (value: T) => void
 
-    getTimeList = () => {
-        const formattedList = this.keys.flatMap(
-            (d) => {
-                const partialFn = this.prepareArray(d)
-                const temp = this.slotForm.controls[d].getRawValue()
-                return temp.map(e => partialFn(e))
-            })
-
-        return formattedList
-    }
-
-    get request(): TGetReq<T> {
-        const head = this.headForm.getRawValue()
-        const time = this.getTimeList()
-        return {
-            door: { ...head, multiple: head.multiple ? '1' : '0' },
-            time
-        }
-    }
+    abstract get request(): T extends TEditableDuration ? TEditDoorReq : TCreateDoorReq
 
 }
 
@@ -158,10 +138,3 @@ export type TEditMainForm = FormGroup<{
 export type TSlotForm<T extends TDuration | TEditableDuration> = FormGroup<{
     [key in TFormKey]: FormArray<FormGroup<TMapForm<T>>>
 }>
-
-type TGetReq<T extends TDuration | TEditableDuration> = T extends TDuration ? TCreateDoorReq : TEditDoorReq
-
-type TPrepareArr<T extends TDuration | TEditableDuration> = T extends TEditableDuration ? {
-    doorId: number
-    id: number
-} & TCreateTimeSlot : TCreateTimeSlot

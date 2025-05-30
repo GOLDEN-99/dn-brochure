@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseDoorForm, TEditableDuration, TEditDurationSubForm, TFormKey, TSlotForm } from './baseDoorForm';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Validators } from '@angular/forms';
+import { TEditTimeSlot } from './door-mutation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +19,10 @@ export class DoorFormEditService extends BaseDoorForm<TEditableDuration> {
     sun: this.nnfb.array<TEditDurationSubForm>([]),
   })
 
-  currentDoorId: number | null = null
+  currentDoorId: number = 0
 
-  private curriedAddForm = (doorId: number | null) => (ctrlName: TFormKey) => {
-    if (!doorId) return
+  override addForm: (ctrlName: TFormKey) => void = (ctrlName: TFormKey) => {
+    if (this.currentDoorId === 0) return
     const ref = this.slotForm.controls[ctrlName]
     const a = ref.getRawValue()
     const lenA = a.length
@@ -36,7 +37,7 @@ export class DoorFormEditService extends BaseDoorForm<TEditableDuration> {
       this.slotForm.controls[ctrlName]
         .push(this.nnfb.group({
           id: this.nnfb.control(0),
-          doorId: this.nnfb.control(doorId),
+          doorId: this.nnfb.control(this.currentDoorId),
           form: this.nnfb.control<NgbTimeStruct>(validNextForm, [Validators.required]),
           to: this.nnfb.control<NgbTimeStruct>(nextTo, [Validators.required]),
         }))
@@ -55,13 +56,11 @@ export class DoorFormEditService extends BaseDoorForm<TEditableDuration> {
     this.slotForm.controls[ctrlName]
       .push(this.nnfb.group({
         id: this.nnfb.control(0),
-        doorId: this.nnfb.control(doorId),
+        doorId: this.nnfb.control(this.currentDoorId),
         form: this.nnfb.control<NgbTimeStruct>(startTime, [Validators.required]),
         to: this.nnfb.control<NgbTimeStruct>(endTime, [Validators.required]),
       }))
   }
-
-  override addForm: (ctrlName: TFormKey) => void = this.curriedAddForm(this.currentDoorId)
 
   override patchForm = (ctrlName: TFormKey) => ({ id, doorId, to, form }: TEditableDuration) => {
     const entry: TEditDurationSubForm = this.nnfb.group({
@@ -71,6 +70,25 @@ export class DoorFormEditService extends BaseDoorForm<TEditableDuration> {
       form: this.nnfb.control(form)
     })
     this.slotForm.controls[ctrlName].push(entry)
+  }
+
+
+  override get request() {
+    const rawHead = this.headForm.getRawValue()
+    const time = this.keys.flatMap<TEditTimeSlot>(
+      (k) => {
+        const value = this.slotForm.controls[k].getRawValue()
+        const timeUse = rawHead.timeUse
+        const dayId = this.genIndex(k)
+        const dayName = this.getThaiDay(k)
+        if (value.length === 0) return []
+        return value.map(({ form, to, doorId, id }) => ({ id, doorId, dayId, dayName, startTime: this.formatTime(form), endTime: this.formatTime(to), isAvailable: true, timeUse }))
+      }
+    )
+    return {
+      door: { ...rawHead, doorId: String(this.currentDoorId), multiple: rawHead.multiple ? '1' : '0' },
+      time
+    }
   }
 
 }
