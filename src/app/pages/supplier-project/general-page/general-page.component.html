@@ -1,24 +1,29 @@
 <form [formGroup]="stepTwoForm">
   <div class="app-form-field">
-    <label for="engName">ชื่อบริษัท (ภาษาอังกฤษ)</label>
-    <input type="text" id="engName" name="engName" formControlName="engName" />
-  </div>
-  <div class="app-form-field">
-    <label for="thaiName">ชื่อบริษัท (ภาษาไทย)</label>
+    <label for="compName2">ชื่อบริษัท (ภาษาอังกฤษ)</label>
     <input
       type="text"
-      id="thaiName"
-      name="thaiName"
-      formControlName="thaiName"
+      id="compName2"
+      name="compName2"
+      formControlName="compName2"
     />
   </div>
   <div class="app-form-field">
-    <label for="address">ที่อยู่</label>
+    <label for="compName">ชื่อบริษัท (ภาษาไทย)</label>
+    <input
+      type="text"
+      id="compName"
+      name="compName"
+      formControlName="compName"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="compAddr">ที่อยู่</label>
     <textarea
-      name="address"
-      id="address"
+      name="compAddr"
+      id="compAddr"
       rows="3"
-      formControlName="address"
+      formControlName="compAddr"
     ></textarea>
   </div>
   @let contactForm = stepTwoForm.controls.contact.controls;
@@ -27,12 +32,12 @@
 
   <div class="row align-items-end">
     <div class="app-form-field col">
-      <label [attr.for]="$index + 'tel'">โทรศัพท์</label>
+      <label [attr.for]="$index + 'compPhone'">โทรศัพท์</label>
       <input
         type="tel"
-        name="tel"
-        [attr.id]="$index + 'tel'"
-        [formControl]="c.controls.tel"
+        name="compPhone"
+        [attr.id]="$index + 'compPhone'"
+        [formControl]="c.controls.compPhone"
       />
     </div>
     <div class="app-form-field col">
@@ -61,22 +66,17 @@
   </div>
   }
   <div class="app-form-field">
-    <label for="teleGram">โทรสาร</label>
-    <input
-      type="text"
-      name="teleGram"
-      id="teleGram"
-      formControlName="teleGram"
-    />
+    <label for="compFax">โทรสาร</label>
+    <input type="text" name="compFax" id="compFax" formControlName="compFax" />
   </div>
   <div class="app-form-field">
-    <label for="email">E-mail</label>
+    <label for="compEmail">E-mail</label>
     <input
       type="email"
-      name="email"
-      id="email"
-      formControlName="email"
-      autocomplete="email"
+      name="compEmail"
+      id="compEmail"
+      formControlName="compEmail"
+      autocomplete="compEmail"
     />
   </div>
 </form>

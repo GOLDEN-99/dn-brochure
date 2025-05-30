@@ -203,3 +203,20 @@ export type TGeneratedCompCode = {
     dnCompCode: string
 }
 
+export type TCondiSup = {
+    supReturn: string
+    supFullBox: string
+    supSameLot: string
+    supMonthBeforeExp: number
+    supMonthAfterExp: number
+}
+
+export type TCondiBranch = {
+    stkReturn: string
+    stkFullBox: string
+    stkSameLot: string
+    stkMonthBeforeExp: number
+    stkMonthAfterExp: number
+}
+
+export type TcondiReq = TCondiSup & TCondiBranch

@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { TMapForm } from '../../types';
+import { TCondiBranch, TcondiReq, TCondiSup } from '../../types/ibob-supplier.type';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +14,12 @@ export class SupplierFromService {
 
   private authForm = this.fb.nonNullable.group({
     username: this.fb.nonNullable.control('', Validators.required),
-    password: this.fb.nonNullable.control("", Validators.required)
+    userpass: this.fb.nonNullable.control("", Validators.required)
   })
 
   addGeneralContacForm = () => this.form.controls.general.controls.contact.push(
     this.fb.nonNullable.group({
-      tel: this.fb.nonNullable.control('', Validators.required),
+      compPhone: this.fb.nonNullable.control('', Validators.required),
       name: this.fb.nonNullable.control("", Validators.required)
     })
   )
@@ -28,15 +29,15 @@ export class SupplierFromService {
 
 
   private generalForm: TGeneralForm = this.fb.nonNullable.group({
-    thaiName: this.fb.nonNullable.control('', Validators.required),
-    engName: this.fb.nonNullable.control("", Validators.required),
-    address: this.fb.nonNullable.control("", Validators.required),
+    compName: this.fb.nonNullable.control('', Validators.required),
+    compName2: this.fb.nonNullable.control("", Validators.required),
+    compAddr: this.fb.nonNullable.control("", Validators.required),
     contact: this.fb.nonNullable.array<TContacListForm>([this.fb.nonNullable.group({
-      tel: this.fb.nonNullable.control('', Validators.required),
+      compPhone: this.fb.nonNullable.control('', Validators.required),
       name: this.fb.nonNullable.control("", Validators.required)
     })], Validators.minLength(1)),
-    email: this.fb.nonNullable.control("", Validators.required),
-    teleGram: this.fb.nonNullable.control("", Validators.required),
+    compEmail: this.fb.nonNullable.control("", Validators.required),
+    compFax: this.fb.nonNullable.control("", Validators.required),
 
   })
 
@@ -65,11 +66,11 @@ export class SupplierFromService {
   private stepThreeForm: TStep3Form = this.fb.nonNullable.group({
     supplier: this.fb.nonNullable.control("", Validators.required),
     comp: this.fb.nonNullable.group<TMapForm<TComp>>({
-      compId: this.fb.nonNullable.control(0, [Validators.required, Validators.min(1)]),
+      compGroupCode: this.fb.nonNullable.control("", [Validators.required]),
       compName: this.fb.nonNullable.control("", Validators.required)
     }),
     shipTo: this.fb.nonNullable.control("", Validators.required),
-    remark: this.fb.nonNullable.control("", Validators.required),
+    orderRemark: this.fb.nonNullable.control("", Validators.required),
     emplList: this.emplListForm,
     payment: this.paymentForm,
     tax: this.fb.nonNullable.group({
@@ -84,7 +85,6 @@ export class SupplierFromService {
     after: this.fb.nonNullable.control(0),
     whole: this.fb.nonNullable.control(false),
     lot: this.fb.nonNullable.control(false),
-
   })
 
   private condiForm: TCondiForm = this.fb.nonNullable.group({})
@@ -110,29 +110,96 @@ export class SupplierFromService {
     stepThree: this.stepThreeForm,
     condi: this.condiForm
   })
+
+  getCondiSup = (): TCondiSup => {
+    const defaultValue = {
+      return: '0',
+      fullBox: '0',
+      sameLot: '0',
+      monthBeforExp: 0,
+      monthAfterExp: 0
+    }
+    const sup = this.form.controls.condi.get('sup') as TReturnForm | undefined
+
+    if (!sup) {
+      return {
+        supReturn: defaultValue.return,
+        supFullBox: defaultValue.fullBox,
+        supSameLot: defaultValue.sameLot,
+        supMonthBeforeExp: defaultValue.monthBeforExp,
+        supMonthAfterExp: defaultValue.monthAfterExp
+      }
+    }
+    const { before, after, whole, lot } = sup.getRawValue()
+    return {
+      supReturn: '1',
+      supFullBox: whole ? '1' : '0',
+      supSameLot: lot ? '1' : '0',
+      supMonthBeforeExp: before,
+      supMonthAfterExp: after
+    }
+  }
+
+  getCondiBranch = (): TCondiBranch => {
+    const defaultValue = {
+      return: '0',
+      fullBox: '0',
+      sameLot: '0',
+      monthBeforExp: 0,
+      monthAfterExp: 0
+    }
+    const sup = this.form.controls.condi.get('branch') as TReturnForm | undefined
+
+    if (!sup) {
+      return {
+        stkReturn: defaultValue.return,
+        stkFullBox: defaultValue.fullBox,
+        stkSameLot: defaultValue.sameLot,
+        stkMonthBeforeExp: defaultValue.monthBeforExp,
+        stkMonthAfterExp: defaultValue.monthAfterExp
+      }
+    }
+    const { before, after, whole, lot } = sup.getRawValue()
+    return {
+      stkReturn: '1',
+      stkFullBox: whole ? '1' : '0',
+      stkSameLot: lot ? '1' : '0',
+      stkMonthBeforeExp: before,
+      stkMonthAfterExp: after
+    }
+  }
+
+  getCondi = (): TcondiReq => {
+    const sup = this.getCondiSup()
+    const stk = this.getCondiBranch()
+    return {
+      ...sup,
+      ...stk,
+    }
+  }
 }
 
 type TAuthForm = FormGroup<{
   username: FormControl<string>
-  password: FormControl<string>
+  userpass: FormControl<string>
 }>
 
 type TContacListForm = FormGroup<{
-  tel: FormControl<string>
+  compPhone: FormControl<string>
   name: FormControl<string>
 }>
 
-type TComp = { compId: number, compName: string }
+type TComp = { compGroupCode: string, compName: string }
 
 type TCompForm = FormGroup<TMapForm<TComp>>
 
 type TGeneralForm = FormGroup<{
-  thaiName: FormControl<string>
-  engName: FormControl<string>
-  address: FormControl<string>
+  compName: FormControl<string>
+  compName2: FormControl<string>
+  compAddr: FormControl<string>
   contact: FormArray<TContacListForm>
-  teleGram: FormControl<string>
-  email: FormControl<string>
+  compFax: FormControl<string>
+  compEmail: FormControl<string>
 }>
 
 type TEmpl = {
@@ -163,7 +230,7 @@ type TTaxForm = FormGroup<TMapForm<{
 type TStep3Form = FormGroup<{
   supplier: FormControl<string>
   comp: TCompForm
-  remark: FormControl<string>
+  orderRemark: FormControl<string>
   shipTo: FormControl<string>
   emplList: TEmplListForm
   payment: TPaymentForm
