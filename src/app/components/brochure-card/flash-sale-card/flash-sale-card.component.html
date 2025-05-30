@@ -15,7 +15,9 @@
     </div>
   </div>
   <div class="content-section" style="position: relative; align-items: end">
-    <div [className]="priceTextClass()">{{ prop.flashPrice }}.-</div>
+    <div [className]="priceTextClass()">
+      {{ prop.flashPrice | number : "1.2-2" }}.-
+    </div>
     <img src="/image/FS/price.png" alt="price" style="width: 100%" />
   </div>
 </div>
