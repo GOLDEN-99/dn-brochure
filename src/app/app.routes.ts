@@ -24,7 +24,7 @@ import { RegisterPageComponent } from './pages/supplier-project/register-page/re
 import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolver';
 import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
-import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
+import { FlashSaleCardComponent } from './components/brochure-card/flash-sale-card/flash-sale-card.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-add.component';
 import { InOutDetailComponent } from './pages/supplier-project/in-out-detail/in-out-detail.component';
@@ -34,7 +34,7 @@ import { SUPPLIER_TOKEN } from './service/supplier/supplier.token';
 export const routes: Routes = [
     {
         path: 'flash-sale/:zone/:idPromotion',
-        component: FlashSaleComponent,
+        component: FlashSaleCardComponent,
         resolve: { fs: flashSaleResolver }
     },
     {

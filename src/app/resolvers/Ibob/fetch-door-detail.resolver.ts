@@ -27,7 +27,6 @@ export const fetchDoorDetailResolver: ResolveFn<boolean> = (route, state) => {
       router.navigateByUrl('/supplier/in-out')
       return false
     }
-    console.log('set door')
     doorMutServ.setDoor(doorId)
     return true
   } catch (err) {
