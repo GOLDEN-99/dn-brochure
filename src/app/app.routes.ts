@@ -31,7 +31,6 @@ import { InOutDetailComponent } from './pages/supplier-project/in-out-detail/in-
 import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.resolver';
 import { SUPPLIER_TOKEN } from './service/supplier/supplier.token';
 
-
 export const routes: Routes = [
     {
         path: 'flash-sale/:zone/:idPromotion',
