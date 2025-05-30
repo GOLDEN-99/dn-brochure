@@ -9,15 +9,15 @@
     />
   </div>
   <div class="row align-items-end">
-    <div class="app-form-field col-2">
+    <div class="app-form-field col-4 col-md-2">
       <label for="compCode">สังกัดบริษัท</label>
       <input type="text" name="compCode" id="compCode" disabled />
     </div>
-    <div class="app-form-field col-4">
+    <div class="app-form-field col-6 col-md-4">
       <label for="comp"> </label>
       <input type="text" name="comp" id="comp" (click)="searchBtn.click()" />
     </div>
-    <div class="col mb-3">
+    <div class="col-2 col-md mb-3">
       <button
         class="btn btn-outline"
         #searchBtn
@@ -37,8 +37,7 @@
     ></textarea>
   </div>
 
-  @let emplListForm = stepThree.controls.emplList.controls;
-  <!---->
+  <!-- @let emplListForm = stepThree.controls.emplList.controls;
   @for (item of emplListForm; track $index) {
   <div class="row align-items-end">
     <div class="col app-form-field">
@@ -66,7 +65,6 @@
         <i class="bi bi-dash"></i>
       </button>
       }
-      <!---->
       @if ($index === emplListForm.length-1) {
       <button class="btn btn-squre btn-success" (click)="addEmpl()">
         <i class="bi bi-plus"></i>
@@ -74,7 +72,7 @@
       }
     </div>
   </div>
-  }
+  } -->
   <div class="app-form-field">
     <label for="shipTo">Ship to</label>
     <input type="text" id="shipTo" name="shipTo" formControlName="shipTo" />

@@ -13,7 +13,11 @@ export class DoorFormService {
 
   constructor() {
 
-    this.headForm.controls.timeUse.valueChanges.pipe(filter(d => d >= 0), takeUntilDestroyed()).subscribe((d) => this.durationStep.update(() => d))
+    this.headForm.controls.timeUse.valueChanges
+      .pipe(
+        filter(d => d >= 0),
+        takeUntilDestroyed()
+      ).subscribe((d) => this.durationStep.update(() => d))
   }
 
   private nnfb = inject(NonNullableFormBuilder)
@@ -29,7 +33,6 @@ export class DoorFormService {
     multiple: this.nnfb.control(false)
   })
 
-
   slotForm: TMainForm = this.nnfb.group({
     mon: this.nnfb.array<TDurationSubForm>([]),
     tue: this.nnfb.array<TDurationSubForm>([]),
@@ -40,10 +43,17 @@ export class DoorFormService {
     sun: this.nnfb.array<TDurationSubForm>([]),
   })
 
-  disable = signal(false)
+  slotEditForm: TEditMainForm = this.nnfb.group({
+    mon: this.nnfb.array<TEditDurationSubForm>([]),
+    tue: this.nnfb.array<TEditDurationSubForm>([]),
+    wed: this.nnfb.array<TEditDurationSubForm>([]),
+    thu: this.nnfb.array<TEditDurationSubForm>([]),
+    fri: this.nnfb.array<TEditDurationSubForm>([]),
+    sat: this.nnfb.array<TEditDurationSubForm>([]),
+    sun: this.nnfb.array<TEditDurationSubForm>([]),
+  })
 
   keys = Object.keys(this.slotForm.controls) as TFormKey[]
-
 
   addForm = (ctrlName: TFormKey) => {
     const ref = this.slotForm.controls[ctrlName]
@@ -53,28 +63,25 @@ export class DoorFormService {
       const { form, to } = a[lenA - 1]
       const nextForm = to
       const { hour, minute } = to
-      const nextMin = minute + this.durationStep()
-      const validMin = nextMin >= 60 ? nextMin - 60 : nextMin
-      const nextHour = nextMin >= 60 ? hour + 1 : hour
-      const nextTo = { hour: nextHour, minute: validMin, second: 0 }
+      const validNextFormHour = hour !== 12 ? hour : 13
+      const validNextForm = { hour: validNextFormHour, minute, second: 0 }
+      const nextHour = nextForm.hour < 12 ? 12 : 17
+      const nextTo = { hour: nextHour, minute: nextHour !== 17 ? 0 : 30, second: 0 }
       this.slotForm.controls[ctrlName]
         .push(this.nnfb.group({
-          form: this.nnfb.control<NgbTimeStruct>(nextForm, [Validators.required]),
+          form: this.nnfb.control<NgbTimeStruct>(validNextForm, [Validators.required]),
           to: this.nnfb.control<NgbTimeStruct>(nextTo, [Validators.required]),
         }))
       return
     }
     const startTime = {
       hour: 8,
-      minute: 0,
+      minute: 30,
       second: 0
     }
-    const nextMinute = startTime.minute + this.durationStep()
-    const validMin = nextMinute >= 60 ? nextMinute - 60 : nextMinute
-    const nextHour = nextMinute >= 60 ? startTime.hour + 1 : startTime.hour
     const endTime = {
-      hour: nextHour,
-      minute: validMin,
+      hour: 12,
+      minute: 0,
       second: 0
     }
     this.slotForm.controls[ctrlName]
@@ -84,13 +91,55 @@ export class DoorFormService {
       }))
   }
 
-  getDisableState = (ctrl: TDurationSubForm) => {
+  addEditForm = (ctrlName: TFormKey, doorId: number) => {
+    const ref = this.slotEditForm.controls[ctrlName]
+    const a = ref.getRawValue()
+    const lenA = a.length
+    if (lenA !== 0) {
+      const { form, to } = a[lenA - 1]
+      const nextForm = to
+      const { hour, minute } = to
+      const validNextFormHour = hour !== 12 ? hour : 13
+      const validNextForm = { hour: validNextFormHour, minute, second: 0 }
+      const nextHour = nextForm.hour < 12 ? 12 : 17
+      const nextTo = { hour: nextHour, minute: nextHour !== 17 ? 0 : 30, second: 0 }
+      this.slotEditForm.controls[ctrlName]
+        .push(this.nnfb.group({
+          id: this.nnfb.control(-1),
+          doorId: this.nnfb.control(doorId),
+          form: this.nnfb.control<NgbTimeStruct>(validNextForm, [Validators.required]),
+          to: this.nnfb.control<NgbTimeStruct>(nextTo, [Validators.required]),
+        }))
+      return
+    }
+    const startTime = {
+      hour: 8,
+      minute: 30,
+      second: 0
+    }
+    const endTime = {
+      hour: 12,
+      minute: 0,
+      second: 0
+    }
+    this.slotEditForm.controls[ctrlName]
+      .push(this.nnfb.group({
+        id: this.nnfb.control(-1),
+        doorId: this.nnfb.control(doorId),
+        form: this.nnfb.control<NgbTimeStruct>(startTime, [Validators.required]),
+        to: this.nnfb.control<NgbTimeStruct>(endTime, [Validators.required]),
+      }))
+  }
+
+  getDisableState = (ctrl: TDurationSubForm | TEditDurationSubForm) => {
     const form = ctrl.controls.form.getRawValue()
     const to = ctrl.controls.to.getRawValue()
     return (form.hour === to.hour && form.minute >= to.minute) || form.hour > to.hour || form.hour < 8 || to.hour >= 17
   }
 
   removeForm = (key: TFormKey, j: number) => this.slotForm.controls[key].removeAt(j)
+
+  removeEditForm = (key: TFormKey, j: number) => this.slotEditForm.controls[key].removeAt(j)
 
   getThaiDay = (k: TFormKey) => {
     switch (k) {
@@ -104,7 +153,7 @@ export class DoorFormService {
     }
   }
 
-  private genIndex = (k: TFormKey) => {
+  genIndex = (k: TFormKey) => {
     switch (k) {
       case 'sun': return 7
       case 'mon': return 1
@@ -118,12 +167,13 @@ export class DoorFormService {
 
   private formatTime = (t: NgbTimeStruct) => {
     const { hour, minute } = t
-    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`
   }
 
-  private prepareArray = (d: TDayDetail) => ({ form, to }: TDuration): TCreateTimeSlot => ({
+  private prepareArray = (d: TDayDetail) => ({ form, to, ...res }: TDuration): TCreateTimeSlot => ({
     startTime: this.formatTime(form),
     endTime: this.formatTime(to),
+    ...res,
     ...d,
     isAvailable: true
   })
@@ -161,6 +211,29 @@ export class DoorFormService {
 
     return formattedList
   }
+
+  getTimeListEdit = () => {
+    const rawList = this.slotEditForm.getRawValue()
+    const keyList = Object.keys(rawList) as TFormKey[]
+
+    const formattedList = keyList.flatMap(
+      (d) => {
+        const partialFn = this.preparedArrWithDay(d)
+        const temp = rawList[d]
+        return temp.length === 0
+          ? [{
+            id: -1,
+            startTime: null,
+            endTime: null,
+            dayId: this.genIndex(d),
+            dayName: this.getThaiDay(d),
+            isAvailable: false
+          }]
+          : temp.map(partialFn)
+      })
+
+    return formattedList
+  }
 }
 
 
@@ -180,4 +253,12 @@ export type TFormKey = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 
 export type TMainForm = FormGroup<{
   [key in TFormKey]: FormArray<TDurationSubForm>
+}>
+
+export type TEditableDuration = { doorId: number, id: number } & TDuration
+
+export type TEditDurationSubForm = FormGroup<TMapForm<TEditableDuration>>
+
+export type TEditMainForm = FormGroup<{
+  [key in TFormKey]: FormArray<TEditDurationSubForm>
 }>

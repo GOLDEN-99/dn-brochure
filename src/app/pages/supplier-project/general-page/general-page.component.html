@@ -1,21 +1,23 @@
 <form [formGroup]="stepTwoForm">
-  <div class="app-form-field">
-    <label for="compName2">ชื่อบริษัท (ภาษาอังกฤษ)</label>
-    <input
-      type="text"
-      id="compName2"
-      name="compName2"
-      formControlName="compName2"
-    />
-  </div>
-  <div class="app-form-field">
-    <label for="compName">ชื่อบริษัท (ภาษาไทย)</label>
-    <input
-      type="text"
-      id="compName"
-      name="compName"
-      formControlName="compName"
-    />
+  <div class="row">
+    <div class="app-form-field col-md">
+      <label for="compName">ชื่อบริษัท (ภาษาอังกฤษ)</label>
+      <input
+        type="text"
+        id="compName"
+        name="compName"
+        formControlName="compName"
+      />
+    </div>
+    <div class="app-form-field col-md">
+      <label for="compName2">ชื่อบริษัท (ภาษาไทย)</label>
+      <input
+        type="text"
+        id="compName2"
+        name="compName2"
+        formControlName="compName2"
+      />
+    </div>
   </div>
   <div class="app-form-field">
     <label for="compAddr">ที่อยู่</label>
@@ -29,24 +31,32 @@
   @let contactForm = stepTwoForm.controls.contact.controls;
   <!---->
   @for (c of contactForm; track $index) {
-
-  <div class="row align-items-end">
-    <div class="app-form-field col">
-      <label [attr.for]="$index + 'compPhone'">โทรศัพท์</label>
-      <input
-        type="tel"
-        name="compPhone"
-        [attr.id]="$index + 'compPhone'"
-        [formControl]="c.controls.compPhone"
-      />
-    </div>
-    <div class="app-form-field col">
-      <label [attr.for]="$index + 'name'">ชื่อ</label>
+  <div class="row align-items-end px-3 px-sm-0">
+    <div class="app-form-field col-sm">
+      <label [attr.for]="$index + 'emplName'">ชื่อ</label>
       <input
         type="text"
-        name="name"
-        [attr.id]="$index + 'name'"
-        [formControl]="c.controls.name"
+        name="emplName"
+        [attr.id]="$index + 'emplName'"
+        [formControl]="c.controls.emplName"
+      />
+    </div>
+    <div class="app-form-field col-sm">
+      <label [attr.for]="$index + 'emplPhone'">โทรศัพท์</label>
+      <input
+        type="tel"
+        name="emplPhone"
+        [attr.id]="$index + 'emplPhone'"
+        [formControl]="c.controls.emplPhone"
+      />
+    </div>
+    <div class="app-form-field col-sm">
+      <label [attr.for]="$index + 'emplEmail'">Email</label>
+      <input
+        type="email"
+        name="emplEmail"
+        [attr.id]="$index + 'emplEmail'"
+        [formControl]="c.controls.emplEmail"
       />
     </div>
     <div class="col-2 d-flex justify-content-between mb-3">
@@ -65,18 +75,25 @@
     </div>
   </div>
   }
-  <div class="app-form-field">
-    <label for="compFax">โทรสาร</label>
-    <input type="text" name="compFax" id="compFax" formControlName="compFax" />
-  </div>
-  <div class="app-form-field">
-    <label for="compEmail">E-mail</label>
-    <input
-      type="email"
-      name="compEmail"
-      id="compEmail"
-      formControlName="compEmail"
-      autocomplete="compEmail"
-    />
+  <div class="row">
+    <div class="app-form-field col-md">
+      <label for="compFax">โทรสาร</label>
+      <input
+        type="text"
+        name="compFax"
+        id="compFax"
+        formControlName="compFax"
+      />
+    </div>
+    <div class="app-form-field col-md">
+      <label for="compEmail">E-mail</label>
+      <input
+        type="email"
+        name="compEmail"
+        id="compEmail"
+        formControlName="compEmail"
+        autocomplete="compEmail"
+      />
+    </div>
   </div>
 </form>

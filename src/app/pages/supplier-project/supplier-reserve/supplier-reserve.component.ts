@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IBOBCOMPLIST_TOKEN } from '../../../service/ibob/ibobToken';
 import { IbobAddService } from '../../../service/ibob/ibob-add.service';
+import { WarehouseService } from '../../../service/ibob/warehouse.service';
 @Component({
   selector: 'app-supplier-reserve',
   imports: [RouterLink],
@@ -25,5 +26,6 @@ export class SupplierReserveComponent {
     }
   ]
   private serv = inject(IBOBCOMPLIST_TOKEN)
-  warehouseList = this.serv.warehouseList
+  private whServ = inject(WarehouseService)
+  warehouseList = this.whServ.warehouseList
 }
