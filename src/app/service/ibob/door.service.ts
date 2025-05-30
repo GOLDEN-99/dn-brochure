@@ -55,7 +55,6 @@ export class DoorService {
 
   refetch = () => this.fetch$.next('fetch')
 
-
 }
 
 

@@ -3,10 +3,10 @@ import { WarehouseService } from './warehouse.service';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
 import { TCreateDoorInfo, TCreateTimeSlot, TDoorDetail, TTimeSlotInfo } from '../../types/ibob-supplier.type';
-import { catchError, filter, of, Subject, switchMap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, filter, map, of, shareReplay, switchMap, throwError } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
-import { TDuration } from './door-form.service';
+import { TDuration } from './baseDoorForm';
 
 @Injectable({
   providedIn: 'root'
@@ -21,22 +21,25 @@ export class DoorMutationService {
 
   private api = inject(ApiService)
 
-  private doorId$ = new Subject<string>()
+  private doorId$ = new BehaviorSubject<string | null>(null)
 
-  doorId = toSignal(this.doorId$)
+  private predicateNull = <T>(value: T | null): value is T => value !== null
+
+  private nonNullDoor$ = this.doorId$.pipe(filter(this.predicateNull))
+
+  doorId = toSignal(this.nonNullDoor$, { initialValue: null })
 
   setDoor(id: string) {
     this.doorId$.next(id)
   }
 
   private fetchDoorDetail = (DoorId: string) => {
-    console.log(DoorId)
     return this.api.get<TDoorDetail>(`${this.url}/GetDoorDetail`, { params: { DoorId } })
       .pipe(catchError(err => throwError(() => err)))
   }
 
   private doorDetail$ = this.doorId$.pipe(
-    filter(id => !!id),
+    filter(this.predicateNull),
     switchMap(this.fetchDoorDetail)
     , catchError((err) => {
       console.error(err)
@@ -44,16 +47,25 @@ export class DoorMutationService {
     })
   )
 
-  doorDetail = toSignal(this.doorDetail$, { initialValue: null })
+  sharedDoor$ = this.doorDetail$.pipe(shareReplay(1))
 
-  doorHead = computed(() => {
-    const door = this.doorDetail()?.door
+  doorHead$ = this.sharedDoor$.pipe(map(d => {
+    const door = d?.door
     if (!door) return null
     const { doorId, doorname, mail, note, intendant, timeUse, multiple } = door
     return {
       doorname, timeUse, note, mail, multiple: multiple === '1', intendant: intendant ?? '', doorId: Number(doorId)
     }
-  })
+  }))
+
+  doorHead = toSignal(this.doorHead$, { initialValue: null })
+
+  time$ = this.sharedDoor$.pipe(map(d => d?.time ?? []))
+
+  private rawTimeList = toSignal(this.time$, { initialValue: [] })
+
+  private doorDetail = toSignal(this.doorDetail$, { initialValue: null })
+
 
   private convertToTimeStruct = (time: string): NgbTimeStruct => {
     const [hr, min, _] = time.split(':')
@@ -64,8 +76,23 @@ export class DoorMutationService {
     }
   }
 
+  createTimeMap = (times: TTimeSlotInfo[]) => {
+    const timeMap = new Map<number, Array<TTimeSlotTemp>>()
+    times.forEach(({ startTime, endTime, dayId, doorId, id }) => {
+      const value = timeMap.get(dayId)
+      if (!startTime || !endTime) return
+      if (!value) {
+        timeMap.set(dayId, [{ form: this.convertToTimeStruct(startTime), to: this.convertToTimeStruct(endTime), doorId, id }])
+        return
+      }
+      const newValue = [...value, { form: this.convertToTimeStruct(startTime), to: this.convertToTimeStruct(endTime), doorId, id }]
+      timeMap.set(dayId, newValue)
+    })
+    return timeMap
+  }
+
   timeMap = computed(() => {
-    const time = this.doorDetail()?.time ?? []
+    const time = this.rawTimeList()
     const timeMap = new Map<number, Array<TTimeSlotTemp>>()
     time.forEach(({ startTime, endTime, dayId, doorId, id }) => {
       const value = timeMap.get(dayId)
@@ -92,7 +119,7 @@ export class DoorMutationService {
     }, {})
   }
 
-  updateDoor = ({ door, time }: { door: TCreateDoorHeadVar, time: TCreateTimeSlot[] }) => {
+  updateDoor = ({ door, time }: TEditDoorReq) => {
     const whname = this.warehouseServ.currentWarehouseName()
     const warehouseId = this.warehouseServ.warehouseId()
     if (!warehouseId) throw new Error('invalid warehouse')

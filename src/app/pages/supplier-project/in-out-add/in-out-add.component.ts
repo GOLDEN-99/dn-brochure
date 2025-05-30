@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DoorFormService } from '../../../service/ibob/door-form.service';
 import { DoorMutationService } from '../../../service/ibob/door-mutation.service';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { DoorService } from '../../../service/ibob/door.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../../service/toast/toast.service';
+import { DoorFormCreateService } from '../../../service/ibob/door-form-create.service';
 
 @Component({
   selector: 'app-in-out-add',
@@ -14,7 +14,7 @@ import { ToastService } from '../../../service/toast/toast.service';
   styleUrl: './in-out-add.component.scss'
 })
 export class InOutAddComponent {
-  private doorFormServ = inject(DoorFormService)
+  private doorFormServ = inject(DoorFormCreateService)
   private doorMutServ = inject(DoorMutationService)
   private doorServ = inject(DoorService)
   private router = inject(Router)
@@ -31,12 +31,8 @@ export class InOutAddComponent {
   getDisable = this.doorFormServ.getDisableState
 
   submitForm = () => {
-    const head = this.doorFormServ.getFormHead()
-    const time = this.doorFormServ.getTimeList()
-    this.doorMutServ.createDoor({
-      door: head,
-      time
-    }).subscribe({
+    const req = this.doorFormServ.request
+    this.doorMutServ.createDoor(req).subscribe({
       next: (res) => {
         console.log(res);
         console.log('ok');

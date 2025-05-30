@@ -177,13 +177,17 @@ export const routes: Routes = [
                     },
                     {
                         path: 'list/:doorId',
-                        component: InOutDetailComponent,
-                        resolve: [fetchDoorDetailResolver]
-                    },
-                    {
-                        path: 'list/:doorId/edit',
-                        component: InOutEditComponent,
-                        resolve: [fetchDoorDetailResolver]
+                        resolve: [fetchDoorDetailResolver],
+                        children: [
+                            {
+                                path: '',
+                                component: InOutDetailComponent
+                            },
+                            {
+                                path: 'edit',
+                                component: InOutEditComponent
+                            }
+                        ]
                     },
                     {
                         path: 'query',

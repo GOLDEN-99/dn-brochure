@@ -1,0 +1,167 @@
+import { FormArray, FormGroup, NonNullableFormBuilder, Validators } from "@angular/forms"
+import { NgbTimeStruct } from "@ng-bootstrap/ng-bootstrap"
+import { TMapForm } from "../../types"
+import { inject, signal } from "@angular/core"
+import { filter } from "rxjs"
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop"
+import { TCreateTimeSlot } from "../../types/ibob-supplier.type"
+import { TCreateDoorReq, TEditDoorReq } from "./door-mutation.service"
+
+export abstract class BaseDoorForm<T extends TEditableDuration | TDuration> {
+    constructor() {
+        this.headForm.controls.timeUse.valueChanges
+            .pipe(
+                filter(d => d >= 0),
+                takeUntilDestroyed()
+            ).subscribe((d) => this.durationStep.update(() => d))
+    }
+
+    protected nnfb = inject(NonNullableFormBuilder)
+
+    durationStep = signal<number>(5)
+
+    getThaiDay = (k: TFormKey) => {
+        switch (k) {
+            case 'sun': return 'วันอาทิตย์'
+            case 'mon': return 'วันจันทร์'
+            case 'tue': return 'วันอังคาร'
+            case 'wed': return 'วันพุธ'
+            case 'thu': return 'วันพฤหัส'
+            case 'fri': return 'วันศุกร์'
+            case 'sat': return 'วันเสาร์'
+        }
+    }
+
+
+    genIndex = (k: TFormKey) => {
+        switch (k) {
+            case 'sun': return 7
+            case 'mon': return 1
+            case 'tue': return 2
+            case 'wed': return 3
+            case 'thu': return 4
+            case 'fri': return 5
+            case 'sat': return 6
+        }
+    }
+
+    dayId2Key = (id: number): TFormKey => {
+        switch (id) {
+            case 1: return 'mon'
+            case 2: return 'tue'
+            case 3: return 'wed'
+            case 4: return 'thu'
+            case 5: return 'fri'
+            case 6: return 'sat'
+            case 7: return 'sun'
+            default: throw new Error('invalid day id')
+        }
+    }
+
+    keys: TFormKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+
+    headForm = this.nnfb.group({
+        doorname: this.nnfb.control("", [Validators.required]),
+        timeUse: this.nnfb.control(5, [Validators.required, Validators.min(1)]),
+        note: this.nnfb.control(""),
+        intendant: this.nnfb.control("", [Validators.required]),
+        mail: this.nnfb.control("", [Validators.required, Validators.email]),
+        multiple: this.nnfb.control(false)
+    })
+
+    abstract slotForm: TSlotForm<T>
+
+    getFormHead = () => {
+        const { mail, multiple, doorname, note, intendant, timeUse } = this.headForm.getRawValue()
+        return { doorname, timeUse, note, intendant, mail, multiple: multiple ? "1" : "0" }
+    }
+
+    clearForm = () => {
+        this.slotForm.controls.mon.clear()
+        this.slotForm.controls.tue.clear()
+        this.slotForm.controls.wed.clear()
+        this.slotForm.controls.thu.clear()
+        this.slotForm.controls.fri.clear()
+        this.slotForm.controls.sat.clear()
+        this.slotForm.controls.sun.clear()
+    }
+
+    getDisableState = (ctrl: TDurationSubForm | TEditDurationSubForm) => {
+        const form = ctrl.controls.form.getRawValue()
+        const to = ctrl.controls.to.getRawValue()
+        return (form.hour === to.hour && form.minute >= to.minute) || form.hour > to.hour || form.hour < 8 || to.hour >= 17
+    }
+
+    removeForm(key: TFormKey, idx: number) {
+        this.slotForm.controls[key].removeAt(idx)
+    }
+
+    protected formatTime = (t: NgbTimeStruct) => {
+        const { hour, minute } = t
+        return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`
+    }
+
+    abstract prepareArray: (d: TFormKey) => (ele: T) => [TPrepareArr<T>]
+
+    abstract addForm(ctrlName: TFormKey): void
+
+    abstract patchForm(ctrlName: TFormKey): (value: T) => void
+
+    getTimeList = () => {
+        const formattedList = this.keys.flatMap(
+            (d) => {
+                const partialFn = this.prepareArray(d)
+                const temp = this.slotForm.controls[d].getRawValue()
+                return temp.map(e => partialFn(e))
+            })
+
+        return formattedList
+    }
+
+    get request(): TGetReq<T> {
+        const head = this.headForm.getRawValue()
+        const time = this.getTimeList()
+        return {
+            door: { ...head, multiple: head.multiple ? '1' : '0' },
+            time
+        }
+    }
+
+}
+
+export type TDayDetail = {
+    dayId: number
+    dayName: string
+}
+
+export type TDuration = {
+    form: NgbTimeStruct,
+    to: NgbTimeStruct
+}
+
+export type TDurationSubForm = FormGroup<TMapForm<TDuration>>
+
+export type TFormKey = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
+
+export type TMainForm = FormGroup<{
+    [key in TFormKey]: FormArray<TDurationSubForm>
+}>
+
+export type TEditableDuration = { doorId: number, id: number } & TDuration
+
+export type TEditDurationSubForm = FormGroup<TMapForm<TEditableDuration>>
+
+export type TEditMainForm = FormGroup<{
+    [key in TFormKey]: FormArray<TEditDurationSubForm>
+}>
+
+export type TSlotForm<T extends TDuration | TEditableDuration> = FormGroup<{
+    [key in TFormKey]: FormArray<FormGroup<TMapForm<T>>>
+}>
+
+type TGetReq<T extends TDuration | TEditableDuration> = T extends TDuration ? TCreateDoorReq : TEditDoorReq
+
+type TPrepareArr<T extends TDuration | TEditableDuration> = T extends TEditableDuration ? {
+    doorId: number
+    id: number
+} & TCreateTimeSlot : TCreateTimeSlot
