@@ -7,6 +7,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TDate } from '../../lib';
 import { NgbCalendar, NgbDate } from '@ng-bootstrap/ng-bootstrap';
 import { TMaybe } from '../../types';
+import { WarehouseService } from './warehouse.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,12 +21,10 @@ export class DailyCalendarService {
     const date = this.currentDate()
     return `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
   })
+  private warehouseServ = inject(WarehouseService)
 
   private date$ = toObservable(this.isoDate)
 
-  private warehosue$ = new Subject<string>()
-
-  setWarehouse = (id: string) => this.warehosue$.next(id)
 
   setDate = ({ year, month, day }: TDate) => {
     console.log(year, month, day)
@@ -34,7 +33,7 @@ export class DailyCalendarService {
   }
 
   private params = combineLatest({
-    warehouseId: this.warehosue$,
+    warehouseId: this.warehouseServ.warehouseId$,
     date: this.date$
   })
 
@@ -95,7 +94,7 @@ export class DailyCalendarService {
 
   private detailDoorParams = combineLatest({
     date: this.date$,
-    warehouseId: this.warehosue$,
+    warehouseId: this.warehouseServ.warehouseId$,
     door: this.doorId$
   })
 
