@@ -42,17 +42,23 @@ const imageLoader = async (ele: HTMLElement) => {
 
 export const export2Img = async (html: HTMLElement, filename: string) => {
     const timpstampe = new Date().getTime();
+    try {
 
-    await imageLoader(html)
+        await imageLoader(html)
 
-    await html2canvas(html, {
-        useCORS: true,
-        scale: .25,
-    }).then(canvas => {
+        const canvas = await html2canvas(html, {
+            useCORS: true,
+            scale: 1,
+            logging: true
+        })
+
         const img = canvas.toDataURL('image/jpeg', 1)
         const link = document.createElement('a');
         link.download = `${filename}-${timpstampe}.jpg`;
         link.href = img;
         link.click();
-    })
+
+    } catch (err) {
+        console.log(err)
+    }
 }
