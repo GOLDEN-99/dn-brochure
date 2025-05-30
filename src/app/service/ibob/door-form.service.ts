@@ -167,7 +167,7 @@ export class DoorFormService {
 
   private formatTime = (t: NgbTimeStruct) => {
     const { hour, minute } = t
-    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`
+    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
   }
 
   private prepareArray = (d: TDayDetail) => ({ form, to, ...res }: TDuration): TCreateTimeSlot => ({
