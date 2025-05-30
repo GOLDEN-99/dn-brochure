@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseDoorForm, TEditableDuration, TEditDurationSubForm, TFormKey, TSlotForm } from './baseDoorForm';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Validators } from '@angular/forms';
-import { TEditTimeSlot } from './door-mutation.service';
+import { TEditTimeSlot } from '../../types/ibob-supplier.type';
 
 @Injectable({
   providedIn: 'root'

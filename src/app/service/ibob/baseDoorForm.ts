@@ -4,8 +4,7 @@ import { TMapForm } from "../../types"
 import { inject, signal } from "@angular/core"
 import { filter } from "rxjs"
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop"
-import { TCreateTimeSlot } from "../../types/ibob-supplier.type"
-import { TCreateDoorReq, TEditDoorReq, TEditTimeSlot } from "./door-mutation.service"
+import { TCreateDoorReq, TEditDoorReq } from "./door-mutation.service"
 
 export abstract class BaseDoorForm<T extends TEditableDuration | TDuration> {
     constructor() {

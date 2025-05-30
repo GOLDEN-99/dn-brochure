@@ -135,3 +135,11 @@ export class DoorMutationService {
 type TCreateDoorHeadVar = Pick<TCreateDoorInfo, 'doorname' | 'intendant' | 'multiple' | 'mail' | 'note' | 'timeUse'>
 
 type TTimeSlotTemp = Pick<TTimeSlotInfo, 'id' | 'doorId'> & TDuration
+
+export type TCreateDoorReq = {
+  door: TCreateDoorHeadVar, time: TCreateTimeSlot[]
+}
+
+export type TEditDoorReq = {
+  door: TCreateDoorHeadVar, time: TCreateTimeSlot[]
+}
