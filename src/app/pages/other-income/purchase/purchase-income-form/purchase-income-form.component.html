@@ -1,0 +1,224 @@
+<section class="layout">
+  <div class="row">
+    <div class="col-md mb-3">
+      <form class="color-form p-3">
+        <div class="row">
+          <div class="col">
+            <div class="app-form-field">
+              <label for="supName">ชื่อซัพ</label>
+              <input type="text" name="supName" id="supName" />
+            </div>
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-warning">ค้นหาซัพพลายเออร์</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-md mb-3">
+      <form class="color-form p-3">
+        <div class="row">
+          <div class="col">
+            <div class="app-form-field">
+              <label for="goodName">ค้นหาสินค้า</label>
+              <input type="text" name="goodName" id="goodName" />
+            </div>
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-warning">ค้นหา</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">VAT</div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="vat"
+          id="include"
+          [value]="true"
+          [(ngModel)]="incVat"
+        />
+        <label for="include">รวม vat</label>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="vat"
+          id="exclude"
+          [value]="false"
+          [(ngModel)]="incVat"
+        />
+        <label for="exclude">ไม่รวม vat</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">ส่วนลด</div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="discount"
+          id="discount-true"
+          [value]="true"
+          [(ngModel)]="discount"
+        />
+        <label for="discount-true">หักส่วนลด</label>
+      </div>
+      @if (discount()) {
+      <div class="mb-3">select box form api here</div>
+      }
+    </div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="discount"
+          id="discount-false"
+          [value]="false"
+          [(ngModel)]="discount"
+        />
+        <label for="discount-false">ไม่หักส่วนลด</label>
+      </div>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label for="period" class="form-label">ระยะเวลาเก็บเงิน</label>
+    <select name="period" id="period" class="form-select" [(ngModel)]="period">
+      <option [ngValue]="0" disabled>กรุณาเลือก</option>
+      <option [ngValue]="1">3 เดือน</option>
+      <option [ngValue]="2">6 เดือน</option>
+      <option [ngValue]="3">...</option>
+      <option [ngValue]="4">...(ii)</option>
+    </select>
+  </div>
+  <div class="row mb-3">
+    <div class="col">
+      <div class="dp-hidden position-absolute">
+        <div class="input-group">
+          <input
+            id="form-date"
+            name="datepicker"
+            class="form-control"
+            ngbDatepicker
+            #datepicker="ngbDatepicker"
+            tabindex="-1"
+            [(ngModel)]="fromDate"
+          />
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="form-floating">
+          <input
+            #dpFromDate
+            class="form-control"
+            placeholder="yyyy-mm-dd"
+            name="dpFromDate"
+          />
+          <label for="form-date" class="form-label">วันที่เริ่ม</label>
+        </div>
+        <button
+          class="btn btn-outline-secondary bi bi-calendar3"
+          (click)="datepicker.toggle()"
+          type="button"
+        ></button>
+      </div>
+    </div>
+    <div class="col">
+      <div class="input-group">
+        <div class="form-floating">
+          <input
+            #dpToDate
+            class="form-control"
+            placeholder="yyyy-mm-dd"
+            name="dpToDate"
+          />
+        </div>
+        <button
+          class="btn btn-outline-secondary bi bi-calendar3"
+          (click)="datepicker.toggle()"
+          type="button"
+        ></button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="mb-3">
+      <label class="form-label" for="target">target</label>
+      <select
+        class="form-select"
+        name="target"
+        id="target"
+        [(ngModel)]="target"
+      >
+        <option [ngValue]="0" disabled>กรุณาเลือก</option>
+        <option [ngValue]="1">flat</option>
+        <option [value]="2">step</option>
+      </select>
+    </div>
+    @if (target() === 1) {
+    <div class="app-form-field">
+      <label for="percent">ระบุ %</label>
+      <input type="number" name="percent" id="percent" [(ngModel)]="percent" />
+    </div>
+    }
+    <!---->
+    @if (target() === 2 ) { }
+  </div>
+  <div class="row">
+    <div class="col-md-3">อัตราจ่ายไม่เกินกำหนด</div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="limit"
+          id="limit-true"
+          [value]="true"
+          [ngModel]="limit()"
+          (ngModelChange)="toggleLimit($event)"
+        />
+        <label for="limit-true">กำหนด</label>
+      </div>
+      @if (limit()) {
+      <div class="app-form-field">
+        <label for="limit-amount" style="display: none"></label>
+        <input
+          type="number"
+          name="limit-amount"
+          id="limit-amount"
+          [(ngModel)]="limitAmount"
+        />
+      </div>
+      }
+    </div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <label for="limit-false">ไม่กำหนด</label>
+        <input
+          type="radio"
+          name="limit"
+          id="limit-false"
+          [value]="false"
+          [ngModel]="limit()"
+          (ngModelChange)="toggleLimit($event)"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center" style="gap: 1rem">
+    <button class="btn btn-success">
+      <i class="bi bi-floppy"></i>
+      <span> บันทึก </span>
+    </button>
+    <a routerLink="/other-income/purchase" class="btn btn-outline-danger"
+      >ย้อนกลับ</a
+    >
+  </div>
+</section>

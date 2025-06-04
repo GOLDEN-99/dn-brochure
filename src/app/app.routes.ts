@@ -26,6 +26,10 @@ import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
+import { PurchaseLayoutComponent } from './layout/other-income/purchase-layout/purchase-layout.component';
+import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
+import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
+import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
 
 export const routes: Routes = [
     {
@@ -199,6 +203,30 @@ export const routes: Routes = [
                 .then(r => r.SupplierInhouseComponent),
         providers: [
             { provide: SUPPLIER_TOKEN, useExisting: SupplierHuService }
+        ]
+    },
+    {
+        path: 'other-income',
+        title: 'รายได้อื่นๆ',
+        children: [
+            {
+                path: 'purchase',
+                component: PurchaseLayoutComponent,
+                children: [
+                    {
+                        path: '',
+                        component: PurchaseHomeComponent
+                    },
+                    {
+                        path: 'report',
+                        component: PurchaseReportComponent
+                    }
+                ]
+            },
+            {
+                path: 'purchase/create',
+                component: PurchaseIncomeFormComponent
+            }
         ]
     },
     {
