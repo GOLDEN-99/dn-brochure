@@ -52,9 +52,9 @@ export class DoorMutationService {
   doorHead$ = this.sharedDoor$.pipe(map(d => {
     const door = d?.door
     if (!door) return null
-    const { doorId, doorname, mail, note, intendant, timeUse, multiple } = door
+    const { doorId, doorname, mail, note, intendant, timeUse, multiple, maxBox, minBox } = door
     return {
-      doorname, timeUse, note, mail, multiple: multiple === '1', intendant: intendant ?? '', doorId: Number(doorId)
+      doorname, timeUse, note, mail, multiple: multiple === '1', intendant: intendant ?? '', doorId: Number(doorId), maxBox, minBox
     }
   }))
 

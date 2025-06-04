@@ -27,6 +27,8 @@ export type TDoor = {
     timeUse: number
     multiple: string
     intendant: string | null
+    minBox: number,
+    maxBox: number
 }
 
 export type TAppDoor = {
@@ -159,6 +161,8 @@ export type TCreateDoorInfo = {
     mail: string
     whname: string
     doorname: string
+    minBox: number
+    maxBox: number
 } & Pick<TDoor, 'warehouseId' | 'note' | 'timeUse' | 'intendant' | 'multiple'>
 
 export type TAvalTimeSlot = {
