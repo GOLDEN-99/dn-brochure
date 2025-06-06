@@ -1,9 +1,10 @@
 import { Component, computed, input, signal } from '@angular/core';
 import { TFlashSaleItem } from '../../../types';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-flash-sale-card',
-  imports: [],
+  imports: [DecimalPipe],
   templateUrl: './flash-sale-card.component.html',
   styleUrl: './flash-sale-card.component.scss'
 })
