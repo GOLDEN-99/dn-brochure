@@ -30,6 +30,8 @@ import { PurchaseLayoutComponent } from './layout/other-income/purchase-layout/p
 import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
 import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
+import { PurchaseTemplateComponent } from './components/other-income/purchase-template/purchase-template.component';
+import { PurchaseIncomeForm2Component } from './pages/other-income/purchase/purchase-income-form-2/purchase-income-form-2.component';
 
 export const routes: Routes = [
     {
@@ -224,8 +226,20 @@ export const routes: Routes = [
                 ]
             },
             {
-                path: 'purchase/create',
+                path: 'purchase/create-1',
                 component: PurchaseIncomeFormComponent
+            },
+            {
+                path: 'purchase/create-2',
+                component: PurchaseIncomeForm2Component
+            },
+            {
+                path: 'purchase/:id',
+                component: PurchaseTemplateComponent
+            },
+            {
+                path: 'purchase/:id/edit',
+                component: PurchaseTemplateComponent
             }
         ]
     },

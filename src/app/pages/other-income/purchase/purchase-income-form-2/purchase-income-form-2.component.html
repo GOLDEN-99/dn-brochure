@@ -110,47 +110,8 @@
       </div>
     </div>
   </div>
-  <!-- discount toggle -->
-  <app-discount-subform
-    [(discount)]="discount"
-    [(discountType)]="discountType"
-  />
-  <!-- period -->
-  <div class="mb-3">
-    <label for="period" class="form-label">ระยะเวลาเก็บเงิน</label>
-    <select name="period" id="period" class="form-select" [(ngModel)]="period">
-      <option [ngValue]="0" disabled>กรุณาเลือก</option>
-      <option [ngValue]="1">3 เดือน</option>
-      <option [ngValue]="2">6 เดือน</option>
-      <option [ngValue]="3">...</option>
-      <option [ngValue]="4">...(ii)</option>
-    </select>
-  </div>
-  <!-- date picker -->
-  <div class="row">
-    <div class="col">
-      <app-date-input label="วันที่เริ่ม" [(date)]="fromDate" />
-    </div>
-    <div class="col">
-      <app-date-input label="วันที่สิ้นสุด" [(date)]="toDate" />
-    </div>
-  </div>
-  <!-- select event w8 for api -->
-  <div class="app-form-select">
-    <label for="event-select">กิจกรรม select event from api here </label>
-    <select name="event-select" id="event-select">
-      <option [ngValue]="0" disabled>empty</option>
-      <option [ngValue]="1">DC</option>
-    </select>
-  </div>
-  <!-- toggle target -->
-  <app-target-subform
-    [(percent)]="percent"
-    [(target)]="target"
-    [(step)]="step"
-  />
   <!-- limit subform -->
-  <app-limit-subform [(limit)]="limit" [(limitAmount)]="limitAmount" />
+  <!-- <app-limit-subform [(limit)]="limit" [(limitAmount)]="limitAmount" />
   <div class="d-flex justify-content-center" style="gap: 1rem">
     <button class="btn btn-success">
       <i class="bi bi-floppy"></i>
@@ -172,4 +133,5 @@
     (selectComp)="selectComp($event)"
     (close)="modal.dismiss('Cross click')"
   />
-</ng-template>
+</ng-template> -->
+</section>
