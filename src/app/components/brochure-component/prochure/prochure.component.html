@@ -26,7 +26,12 @@
       [color]="color()"
     />
     }@else {
-    <app-prochure-card [props]="card" [color]="color()" [isStatic]="static" />
+    <app-prochure-card
+      [props]="card"
+      [color]="color()"
+      [isStatic]="static"
+      [priceType]="priceType()"
+    />
     } }
   </div>
 
