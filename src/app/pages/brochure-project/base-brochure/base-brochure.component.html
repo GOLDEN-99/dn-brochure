@@ -11,6 +11,7 @@
 
   <div class="content-wrapper">
     <app-prochure
+      [priceType]="priceType.priceType"
       [head]="headdata"
       [itemList]="currentGroup()"
       [size]="maxItem()"
@@ -35,6 +36,7 @@
 <div class="not-show">
   @for (g of content(); track $index) {
   <app-prochure
+    [priceType]="priceType.priceType"
     [head]="headdata"
     [itemList]="g"
     [size]="maxItem()"

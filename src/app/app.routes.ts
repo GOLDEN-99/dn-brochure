@@ -3,7 +3,7 @@ import { SearchPageComponent } from './pages/brochure-project/search-page/search
 import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
 import { NotfoundComponent } from './pages/notfound/notfound.component';
-import { BROCHURE_TOKEN, SUPPLIER_TOKEN } from './lib';
+import { BROCHURE_PRICE_TYPE_TOKEN, BROCHURE_TOKEN, SUPPLIER_TOKEN } from './lib';
 import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
 import { cnResolver } from './resolvers/cn/cn.resolver';
 import { BaseBrochureComponent } from './pages/brochure-project/base-brochure/base-brochure.component';
@@ -38,7 +38,8 @@ export const routes: Routes = [
         component: BaseBrochureComponent,
         resolve: { itemList: promotionResolver },
         providers: [
-            { provide: BROCHURE_TOKEN, useExisting: ProchureService }
+            { provide: BROCHURE_TOKEN, useExisting: ProchureService },
+            { provide: BROCHURE_PRICE_TYPE_TOKEN, useValue: { priceType: 'price' } }
         ]
     },
     {
@@ -46,7 +47,8 @@ export const routes: Routes = [
         component: BaseBrochureComponent,
         resolve: { itemList: marketingResolver },
         providers: [
-            { provide: BROCHURE_TOKEN, useExisting: MarketingService }
+            { provide: BROCHURE_TOKEN, useExisting: MarketingService },
+            { provide: BROCHURE_PRICE_TYPE_TOKEN, useValue: { priceType: 'priceGold' } }
         ]
     },
     {
