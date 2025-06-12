@@ -1,0 +1,8 @@
+.layout {
+  margin: auto;
+  padding: 1rem;
+  width: 100%;
+  @media (min-width: 992px) {
+    width: 920px;
+  }
+}

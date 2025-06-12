@@ -127,17 +127,19 @@ export class TargetSubformComponent {
   invalidPercentTarget = computed(() => this.target() === 1 && this.percent() === 0)
   changeTarget(value: number) {
     const currentTarget = this.target()
-    if (currentTarget === 1) {
+
+
+    if (currentTarget === 2 || currentTarget === 3) {
+      if (value !== 2 && value !== 3) {
+        this.stepChange.emit([])
+      }
+    } else {
       this.percentChange.emit(0)
       if (value === 2 || value === 3) {
         this.stepChange.emit([this.defaultStep])
       }
     }
-    if (currentTarget === 2 || currentTarget === 3) {
-      if (value !== 2 && value !== 3) {
-        this.stepChange.emit([])
-      }
-    }
+
     this.targetChange.emit(value)
   }
 

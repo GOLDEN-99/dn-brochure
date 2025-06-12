@@ -1,5 +1,6 @@
 import { Component, computed, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TProduct } from '../../../types';
 
 @Component({
   selector: 'app-search-product-modal',
@@ -9,8 +10,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class SearchProductModalComponent {
   term = signal("")
-  result = signal<TProduct[]>([
-    { check: false, name: 'product 1', id: 1 }, { check: true, name: 'product 2', id: 2 }
+  result = signal<TAppProduct[]>([
+    { check: false, productName: 'product 1', id: '1' }, { check: true, productName: 'product 2', id: '2' }
   ])
 
   isSelectAllItem = computed(() => this.result().every(({ check }) => check))
@@ -19,7 +20,7 @@ export class SearchProductModalComponent {
     this.result.update(prev => prev.map((p) => ({ ...p, check: !current })))
   }
 
-  selectedList = computed(() => this.result().flatMap((p) => p.check ? [p] : []))
+  selectedList = computed(() => this.result().flatMap(({ check, id, productName }) => check ? [{ id, productName }] : []))
   selectProduct = output<TProduct[]>()
 
   selectSomeProduct(id: number) {
@@ -36,4 +37,4 @@ export class SearchProductModalComponent {
   }
 }
 
-type TProduct = { name: string, check: boolean, id: number }
+type TAppProduct = { check: boolean } & TProduct

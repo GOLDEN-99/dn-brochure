@@ -1,73 +1,51 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { NgbCalendar, NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DateInputComponent } from "../../../../components/date-input/date-input.component";
-import { SearchProductModalComponent } from '../../../../components/other-income/search-product-modal/search-product-modal.component';
 import { DiscountSubformComponent } from "../../../../components/other-income/form/discount-subform/discount-subform.component";
 import { TargetSubformComponent } from "../../../../components/other-income/form/target-subform/target-subform.component";
-import { LimitSubformComponent } from "../../../../components/other-income/form/limit-subform/limit-subform.component";
-import { SearchSupplierComponent } from "../../../../components/inbound-outbound/search-supplier/search-supplier.component";
-import { OtherIncomeModalComponent } from "../../../../components/other-income/other-income-modal/other-income-modal.component";
+import { OtherIncomeFormService } from '../../../../service/other-income/other-income-form.service';
+import { SearchProductModalComponent } from "../../../../components/other-income/search-product-modal/search-product-modal.component";
 import { OtherSearchSupplierModalComponent } from "../../../../components/other-income/other-search-supplier-modal/other-search-supplier-modal.component";
-
+import { TProduct } from '../../../../types';
 @Component({
   selector: 'app-purchase-income-form',
-  imports: [FormsModule, NgbDatepickerModule, RouterLink, DateInputComponent, SearchProductModalComponent, DiscountSubformComponent, TargetSubformComponent, LimitSubformComponent, SearchSupplierComponent, OtherIncomeModalComponent, OtherSearchSupplierModalComponent],
+  imports: [FormsModule, NgbDatepickerModule, RouterLink, DateInputComponent, DiscountSubformComponent, TargetSubformComponent, SearchProductModalComponent, OtherSearchSupplierModalComponent],
   templateUrl: './purchase-income-form.component.html',
   styleUrl: './purchase-income-form.component.scss'
 })
 export class PurchaseIncomeFormComponent {
-  compCode = signal("")
-  compName = signal("")
-  selectComp({ compCode, compName }: TComp) {
-    this.productList.update(() => [])
-    this.compCode.update(() => compCode)
-    this.compName.update(() => compName)
-    this.modalService.dismissAll()
-  }
-  notSelectComp = computed(() => this.compCode() === '' || this.compName() === '')
 
-  incVat = signal<boolean>(false)
+  private formServ = inject(OtherIncomeFormService)
+  formState = this.formServ.state
+  update = this.formServ.updator
 
-  discount = signal(false)
-  discountType = signal(0)
-
-  target = signal(0)
-  percent = signal(0)
-  invalidPercentTarget = computed(() => this.target() === 1 && this.percent() === 0)
-
-  period = signal(0)
-
-  limit = signal(false)
-  limitAmount = signal(0)
-  invalidLimitAmount = computed(() => this.limit() && this.limitAmount() === 0)
-
-  calendar = inject(NgbCalendar);
-  fromDate = signal(this.calendar.getToday())
-  toDate = signal(this.calendar.getToday())
-
-  step = signal<TStepItem[]>([{ start: 0, percent: 0 }])
-  productList = signal<TProduct[]>([])
   private modalService = inject(NgbModal)
   private searchProductModal = viewChild('searchProductModal')
   openSearchProduct() {
     const ref = this.modalService.open(this.searchProductModal())
   }
-
-  private productIdSet = new Set<number>()
+  currentProduct = computed(() => this.formState().productList)
+  private setProductList = this.update('productList')
+  private productIdSet = new Set<string>()
   onSelectProduct(products: TProduct[]) {
+    console.table(products)
     const validProduct = products.flatMap((p) => {
       const hasValue = this.productIdSet.has(p.id)
       if (hasValue) return []
       this.productIdSet.add(p.id)
       return [p]
     })
-    this.productList.update((p) => [...p, ...validProduct])
+    const currentProduct = this.currentProduct()
+    const newProduct = [...currentProduct, ...validProduct]
+    this.setProductList(newProduct)
     this.modalService.dismissAll()
   }
-  onRemoveProduct(id: number) {
-    this.productList.update(p => p.filter((p) => p.id !== id))
+  onRemoveProduct(id: string) {
+    const currentProduct = this.currentProduct()
+    const newProduct = currentProduct.filter((p) => p.id !== id)
+    this.setProductList(newProduct)
     this.productIdSet.delete(id)
   }
 
@@ -75,13 +53,22 @@ export class PurchaseIncomeFormComponent {
   openSearchSupplier() {
     const ref = this.modalService.open(this.searchSupplierModal())
   }
+  selectComp({ compCode, compName }: TComp) {
+    this.setProductList([])
+    this.formServ.updateMany({ compCode, compName })
+    this.modalService.dismissAll()
+  }
+  notSelectComp = this.formServ.notSelectComp
+
+  // endPoint = computed(() => this.event() !== 0 ? '/other-income/purchase/create-1' : '/other-income/purchase')
+  // endPointDisable = computed(() => this.invalidEvent() || this.invalidDiscountType() || this.invalidPeriod() ? 'btn btn-success disabled' : 'btn btn-success')
 }
 
 type TStepItem = {
   start: number
   percent: number
 }
-type TProduct = { name: string, check: boolean, id: number }
+
 type TComp = {
   compCode: string
   compName: string

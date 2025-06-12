@@ -31,7 +31,7 @@ import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-ho
 import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
 import { PurchaseTemplateComponent } from './components/other-income/purchase-template/purchase-template.component';
-import { PurchaseIncomeForm2Component } from './pages/other-income/purchase/purchase-income-form-2/purchase-income-form-2.component';
+import { SpecialIncomeFormComponent } from './pages/other-income/purchase/special-income-form/special-income-form.component';
 
 export const routes: Routes = [
     {
@@ -226,12 +226,12 @@ export const routes: Routes = [
                 ]
             },
             {
-                path: 'purchase/create-1',
+                path: 'purchase/create',
                 component: PurchaseIncomeFormComponent
             },
             {
-                path: 'purchase/create-2',
-                component: PurchaseIncomeForm2Component
+                path: 'purchase/create-special',
+                component: SpecialIncomeFormComponent
             },
             {
                 path: 'purchase/:id',
