@@ -1,0 +1,22 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ header() }}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="close.emit()"
+  ></button>
+</div>
+<div class="modal-body">
+  <app-timeslot-row [(range)]="state" [withDel]="false" />
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-success w-100"
+    [disabled]="invalid()"
+    (click)="onSubmit()"
+  >
+    เพิ่ม
+  </button>
+</div>

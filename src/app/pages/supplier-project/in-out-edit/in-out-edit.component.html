@@ -15,6 +15,7 @@
     padding: 16px;
   "
 >
+  <!--head-->
   <form [formGroup]="headForm">
     <div class="row">
       <div class="col">
@@ -113,6 +114,7 @@
       </div>
     </div>
   </form>
+  <!--list-->
   <form
     [formGroup]="slotForm"
     style="
@@ -141,60 +143,47 @@
             placeholder="ไม่สามารถจองได้"
           />
         </div>
-        <div class="col-auto" style="flex: 0 0 120px">
-          <button
-            class="btn btn-success"
-            [disabled]="durationStep() <= 0"
-            (click)="addForm(k)"
-          >
-            <i class="bi bi-plus"></i>
-          </button>
+        <div class="col-auto">
+          <div style="padding: 0 12px">
+            <button
+              class="btn btn-success"
+              [disabled]="durationStep() <= 0"
+              (click)="openAddModal(k)"
+            >
+              <i class="bi bi-plus"></i>
+            </button>
+          </div>
         </div>
       </div>
       } @else {
       <!---->
       <div class="row">
-        @for (d of cur.controls;let j = $index; track j) {
-        <div class="row align-items-center mb-3">
-          <div class="col-auto" style="flex: 0 0 120px">
-            {{ j === 0 ? getDayOfWeek(k) : "" }}
+        <div class="col-auto" style="flex: 0 0 120px">
+          {{ getDayOfWeek(k) }}
+        </div>
+        <div class="col">
+          @for (d of cur.controls;let j = $index; track j) {
+          <!---->
+          @let cv = d.getRawValue();
+          <div class="row">
+            <div class="col">
+              <app-timeslot-row
+                [range]="{ form: cv.form, to: cv.to }"
+                (rangeChange)="patchValueAt(k, j)($event)"
+                [id]="cv.id"
+                (delete)="deleteSlot(cv.id)"
+              />
+            </div>
           </div>
-          <div class="col">
-            <ngb-timepicker
-              [spinners]="false"
-              [formControl]="d.controls.form"
-            ></ngb-timepicker>
-          </div>
-          <div class="col-auto">ถึง</div>
-          <div class="col">
-            <ngb-timepicker
-              [spinners]="false"
-              [formControl]="d.controls.to"
-            ></ngb-timepicker>
-          </div>
-          <div
-            class="col-auto"
-            style="
-              flex: 0 0 120px;
-              display: flex;
-              justify-content: space-between;
-            "
-          >
-            <button class="btn btn-danger" (click)="removeForm(k, j)">
-              <i class="bi bi-trash"></i>
-            </button>
-            @if (j === cur.length-1) {
-            <button
-              class="btn btn-success"
-              [disabled]="getDisable(d)"
-              (click)="addForm(k)"
-            >
-              <i class="bi bi-plus"></i>
-            </button>
-            }
+          }
+          <div class="row justify-content-end" style="padding: 0 12px">
+            <div class="col-auto">
+              <button class="btn btn-success" (click)="openAddModal(k)">
+                <i class="bi bi-plus"></i>
+              </button>
+            </div>
           </div>
         </div>
-        }
       </div>
       }
     </form>
@@ -217,3 +206,12 @@
     </button>
   </div>
 </div>
+
+<ng-template #content let-modal>
+  <app-ibob-add-time-modal
+    [day]="currentDay()"
+    [last]="last()"
+    (close)="modal.dismiss('Cross click')"
+    (submit)="onAddSlot($event)"
+  />
+</ng-template>

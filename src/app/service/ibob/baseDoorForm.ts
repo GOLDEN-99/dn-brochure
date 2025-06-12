@@ -97,17 +97,30 @@ export abstract class BaseDoorForm<T extends TEditableDuration | TDuration> {
         this.slotForm.controls[key].removeAt(idx)
     }
 
-    protected formatTime = (t: NgbTimeStruct) => {
+    formatTime = (t: NgbTimeStruct) => {
         const { hour, minute } = t
         return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`
+    }
+
+    protected invalidMorning(min: number) {
+        const lowerBound = (8 * 60) + 30
+        const upperBound = (12 * 60)
+        return min < lowerBound && min > upperBound
+    }
+
+    protected invalidAfternoon(min: number) {
+        const lowerBound = (13 * 60)
+        const upperBound = (17 * 60) + 30
+        return min < lowerBound && min > upperBound
     }
 
     abstract addForm(ctrlName: TFormKey): void
 
     abstract patchForm(ctrlName: TFormKey): (value: T) => void
 
-    abstract get request(): T extends TEditableDuration ? TEditDoorReq : TCreateDoorReq
+    abstract updateForm(ctrlName: TFormKey, idx: number): (value: Partial<T>) => void
 
+    abstract get request(): T extends TEditableDuration ? TEditDoorReq : TCreateDoorReq
 }
 
 export type TDayDetail = {
