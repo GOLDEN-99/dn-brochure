@@ -4,7 +4,7 @@ import { Component, input, output } from '@angular/core';
   selector: 'app-modal-layout',
   imports: [],
   templateUrl: './modal-layout.component.html',
-  styleUrl: './modal-layout.component.scss'
+  styles: ''
 })
 export class ModalLayoutComponent {
   crossClick = output<void>()

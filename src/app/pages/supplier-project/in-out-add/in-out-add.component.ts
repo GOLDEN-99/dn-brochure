@@ -11,7 +11,7 @@ import { DoorFormCreateService } from '../../../service/ibob/door-form-create.se
   selector: 'app-in-out-add',
   imports: [ReactiveFormsModule, NgbTimepickerModule, FormsModule],
   templateUrl: './in-out-add.component.html',
-  styleUrl: './in-out-add.component.scss'
+  styles: ''
 })
 export class InOutAddComponent {
   private doorFormServ = inject(DoorFormCreateService)

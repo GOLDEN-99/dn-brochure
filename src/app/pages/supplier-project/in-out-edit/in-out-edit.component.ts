@@ -14,7 +14,7 @@ import { TDuration, TFormKey } from '../../../service/ibob/baseDoorForm';
   selector: 'app-in-out-edit',
   imports: [ReactiveFormsModule, FormsModule, RouterLink, TimeslotRowComponent, IbobAddTimeModalComponent],
   templateUrl: './in-out-edit.component.html',
-  styleUrl: './in-out-edit.component.scss'
+  styles: ''
 })
 export class InOutEditComponent implements OnInit, OnDestroy {
   doorFormServ = inject(DoorFormEditService)
