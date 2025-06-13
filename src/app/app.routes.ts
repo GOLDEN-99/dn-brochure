@@ -24,15 +24,19 @@ import { RegisterPageComponent } from './pages/supplier-project/register-page/re
 import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolver';
 import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
 import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-add.component';
+import { InOutDetailComponent } from './pages/supplier-project/in-out-detail/in-out-detail.component';
+import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.resolver';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
+
 import { PurchaseLayoutComponent } from './layout/other-income/purchase-layout/purchase-layout.component';
 import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
 import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
 import { PurchaseTemplateComponent } from './components/other-income/purchase-template/purchase-template.component';
 import { SpecialIncomeFormComponent } from './pages/other-income/purchase/special-income-form/special-income-form.component';
+
 
 export const routes: Routes = [
     {
@@ -177,12 +181,14 @@ export const routes: Routes = [
                         component: InOutAddComponent
                     },
                     {
-                        path: 'list/:slot',
-                        component: InOutEditComponent
+                        path: 'list/:doorId',
+                        component: InOutDetailComponent,
+                        resolve: [fetchDoorDetailResolver]
                     },
                     {
-                        path: 'list/:slot/edit',
-                        component: InOutEditComponent
+                        path: 'list/:doorId/edit',
+                        component: InOutEditComponent,
+                        resolve: [fetchDoorDetailResolver]
                     },
                     {
                         path: 'query',
