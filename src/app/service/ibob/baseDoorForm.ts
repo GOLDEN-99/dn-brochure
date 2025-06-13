@@ -5,7 +5,6 @@ import { inject, signal } from "@angular/core"
 import { filter } from "rxjs"
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop"
 import { TCreateTimeSlot, TDoor, TDoorInfo, TTimeSlot, TTimeSlotInfo } from "../../types/ibob-supplier.type"
-
 export abstract class BaseDoorForm<T extends TEditableDuration | TDuration> {
     constructor() {
         this.headForm.controls.timeUse.valueChanges
@@ -155,3 +154,4 @@ export type TSlotForm<T extends TDuration | TEditableDuration> = FormGroup<{
 type TDoorState = Pick<TDoor, 'note' | 'intendant' | 'maxBox' | 'minBox' | 'multiple' | 'timeUse'> & { doorname: string }
 type TEditDoorReq = { door: TDoorState, time: TTimeSlotInfo[] }
 type TCreateDoorReq = { door: TDoorState, time: TCreateTimeSlot[] }
+

@@ -44,4 +44,5 @@ export class IbobQueryTabComponent {
   }
 
   disable = computed(() => this.currentOption() === 0 || this.term() === '')
+
 }

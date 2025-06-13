@@ -4,6 +4,7 @@ import { SUPPLIER_TOKEN } from '../../../service/supplier/supplier.token';
 import { CUSTOM_FIELD_SEARCH_TOKEN, IBOB_SUPPLIER_COMP_SEARCH } from '../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
 import { IbobQueryTabComponent } from '../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab.component';
 
+
 @Component({
   selector: 'app-supplier-inhouse',
   imports: [IbobQueryTabComponent],

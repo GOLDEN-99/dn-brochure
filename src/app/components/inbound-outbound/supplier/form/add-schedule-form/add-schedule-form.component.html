@@ -164,6 +164,33 @@
         }
       </div>
       }
+       @for (d of cur.controls;let j = $index; track j) {
+      <div class="row align-items-center">
+        <div class="col-auto" style="flex: 0 0 120px">
+          {{ j === 0 ? getThaiDay(k) : "" }}
+        </div>
+        <div class="col">
+          <app-time-range [form]="d.controls" [step]="durationStep()" />
+        </div>
+        <div
+          class="col-auto"
+          style="flex: 0 0 120px; display: flex; justify-content: space-between"
+        >
+          <button class="btn btn-danger" (click)="removeForm(k, j)">
+            <i class="bi bi-trash"></i>
+          </button>
+          @if (j === cur.length-1) {
+          <button
+            class="btn btn-success"
+            [disabled]="getDisableState(d)"
+            (click)="addForm(k)"
+          >
+            <i class="bi bi-plus"></i>
+          </button>
+          }
+        </div>
+      </div>
+      }  
     </form>
     }
   </form>
@@ -183,4 +210,4 @@
       บันทึก
     </button>
   </div>
-</div> -->
+-->

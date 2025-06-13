@@ -153,7 +153,6 @@ export class DoorFormService {
       case 'sat': return 'วันเสาร์'
     }
   }
-
   genIndex = (k: TFormKey) => {
     switch (k) {
       case 'sun': return 7

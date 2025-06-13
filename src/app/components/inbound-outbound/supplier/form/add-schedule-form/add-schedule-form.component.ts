@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbTimepicker } from '@ng-bootstrap/ng-bootstrap';
 import { RouterLink } from '@angular/router';
 import { DoorMutationService } from '../../../../../service/ibob/door-mutation.service';
+import { DoorFormCreateService } from '../../../../../service/ibob/door-form-create.service';
 
 @Component({
   selector: 'app-add-schedule-form',
@@ -11,32 +12,29 @@ import { DoorMutationService } from '../../../../../service/ibob/door-mutation.s
   styleUrl: './add-schedule-form.component.scss'
 })
 export class AddScheduleFormComponent implements OnInit {
+  ngOnInit(): void {
 
-  ngOnInit(): void { }
+  }
 
-  // private doorFormServ = inject(DoorFormService)
-  // private doorMutServ = inject(DoorMutationService)
+  private doorFormServ = inject(DoorFormCreateService)
+  private doorMutServ = inject(DoorMutationService)
 
-  // durationStep = this.doorFormServ.durationStep
-  // headForm = this.doorFormServ.headForm
-  // slotForm = this.doorFormServ.slotForm
-  // dayKey = this.doorFormServ.keys
-  // getDayOfWeek = this.doorFormServ.getThaiDay
-  // addForm = this.doorFormServ.addForm
-  // removeForm = this.doorFormServ.removeForm
-  // getDisable = this.doorFormServ.getDisableState
+  durationStep = this.doorFormServ.durationStep
+  headForm = this.doorFormServ.headForm
+  slotForm = this.doorFormServ.slotForm
+  dayKey = this.doorFormServ.keys
+  getDayOfWeek = this.doorFormServ.getThaiDay
+  addForm = this.doorFormServ.addForm
+  removeForm = this.doorFormServ.removeForm
+  getDisable = this.doorFormServ.getDisableState
 
-  // submitForm = () => {
-  //   const head = this.doorFormServ.getFormHead()
-  //   const time = this.doorFormServ.getTimeList()
+  submitForm = () => {
+    const req = this.doorFormServ.request
 
-  //   this.doorMutServ.createDoor({
-  //     door: head,
-  //     time
-  //   }).subscribe({
-  //     next: () => { console.log('ok') },
-  //     error: (err) => { console.error(err) }
-  //   })
-  // }
+    this.doorMutServ.createDoor(req).subscribe({
+      next: () => { console.log('ok') },
+      error: (err) => { console.error(err) }
+    })
+  }
 
 }

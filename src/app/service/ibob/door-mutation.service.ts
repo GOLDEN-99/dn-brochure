@@ -156,3 +156,12 @@ type TCreateDoorHeadVar = Pick<TCreateDoorInfo, 'doorname' | 'intendant' | 'mult
 type TAddTimeSlotState = { dayId: number, dayName: string, startTime: string, endTime: string }
 
 type TTimeSlotTemp = Pick<TTimeSlotInfo, 'id' | 'doorId'> & TDuration
+
+export type TCreateDoorReq = {
+  door: TCreateDoorHeadVar, time: TCreateTimeSlot[]
+}
+
+export type TEditDoorReq = {
+  door: TCreateDoorHeadVar, time: TCreateTimeSlot[]
+}
+
