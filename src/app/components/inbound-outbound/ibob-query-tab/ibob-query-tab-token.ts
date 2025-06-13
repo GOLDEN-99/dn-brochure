@@ -13,3 +13,10 @@ export const IBOB_RESERVATION_SEARCH: ICustomFieldSearch = {
 export const IBOB_SUPPLIER_COMP_SEARCH: ICustomFieldSearch = {
     opt: new Map([[1, { label: 'ชื่อซัพพลายเออร์', field: 'compName' }], [2, { label: 'รหัสซัพพลายเออร์', field: 'compCode' }]])
 }
+
+export const OTHER_INCOME_SEARCH: ICustomFieldSearch = {
+    opt: new Map([
+        [1, { label: 'รหัสซัพพลายเออร์', field: 'compCode' }],
+        [2, { label: 'รหัสสินค้า', field: 'goodCode' }]
+    ])
+}

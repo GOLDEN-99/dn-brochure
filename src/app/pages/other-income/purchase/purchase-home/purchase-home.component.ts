@@ -1,11 +1,19 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { IbobQueryTabComponent } from "../../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab.component";
+import { CUSTOM_FIELD_SEARCH_TOKEN, OTHER_INCOME_SEARCH } from '../../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
 
 @Component({
   selector: 'app-purchase-home',
-  imports: [RouterLink],
+  imports: [RouterLink, IbobQueryTabComponent],
   templateUrl: './purchase-home.component.html',
-  styleUrl: './purchase-home.component.scss'
+  styleUrl: './purchase-home.component.scss',
+  providers: [
+    {
+      provide: CUSTOM_FIELD_SEARCH_TOKEN,
+      useValue: OTHER_INCOME_SEARCH
+    }
+  ]
 })
 export class PurchaseHomeComponent {
   data = signal<any[]>([])
