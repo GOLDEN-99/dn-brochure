@@ -27,8 +27,8 @@ import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-ad
 import { InOutDetailComponent } from './pages/supplier-project/in-out-detail/in-out-detail.component';
 import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.resolver';
 import { SUPPLIER_TOKEN } from './service/supplier/supplier.token';
-
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
+
 import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
@@ -38,9 +38,6 @@ import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
 import { PurchaseTemplateComponent } from './components/other-income/purchase-template/purchase-template.component';
 import { SpecialIncomeFormComponent } from './pages/other-income/purchase/special-income-form/special-income-form.component';
-
-
-
 
 export const routes: Routes = [
     {
