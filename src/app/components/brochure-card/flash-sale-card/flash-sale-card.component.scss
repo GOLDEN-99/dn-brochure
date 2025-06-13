@@ -51,7 +51,6 @@
 }
 
 .content {
-  flex: 1 1 auto;
   display: flex;
   justify-content: center;
   .content-section {
@@ -59,13 +58,11 @@
   }
   img:not(.static) {
     max-width: 150px;
-    max-height: 200px;
   }
 
   &.static img {
-    max-width: 590px;
-    min-width: 300px;
-    max-height: 750px;
+    min-width: 400px;
+    max-width: 500px;
   }
 }
 
@@ -74,7 +71,7 @@
   position: absolute;
   width: 100%;
   text-align: center;
-  translate: 0 75%;
+  translate: 0 100%;
   &.static {
     font-size: 90px;
     translate: 0 75%;

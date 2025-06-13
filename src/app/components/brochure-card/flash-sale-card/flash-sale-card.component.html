@@ -5,13 +5,13 @@
   <div [className]="textClass()">{{ prop.goodName }}</div>
 </div>
 <div [className]="contentClass()">
-  <div class="content-section" style="flex-direction: column; display: flex">
-    <div style="display: flex">
-      <div [className]="goodCodeClass()">{{ prop.barCode }}</div>
-      <div style="flex: 1 1 auto"></div>
-    </div>
-    <div style="display: flex; justify-content: center; flex: 1 1 auto">
-      <img [src]="imgUrl()" class="product-img" alt="product image" />
+  <div class="content-section" style="display: flex; justify-content: center">
+    <div>
+      <div style="display: flex">
+        <div [className]="goodCodeClass()">{{ prop.barCode }}</div>
+        <div style="flex: 1 1 auto"></div>
+      </div>
+      <img [src]="imgUrl()" alt="product image" />
     </div>
   </div>
   <div class="content-section" style="position: relative; align-items: end">

@@ -26,6 +26,7 @@ export class FsBrochureComponent {
 
   dayActive = computed(() => this.head().dayActive)
 
+
   mainClass = computed(() => this.isStatic() ? 'flash-sale-bg flash-sale-page main-gap static' : 'flash-sale-bg flash-sale-page container main-gap')
 
   headClass = computed(() => this.isStatic() ? 'head-space static' : 'head-space')
