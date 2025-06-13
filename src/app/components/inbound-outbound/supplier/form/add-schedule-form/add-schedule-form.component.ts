@@ -12,7 +12,7 @@ import { DoorMutationService } from '../../../../../service/ibob/door-mutation.s
 
 @Component({
   selector: 'app-add-schedule-form',
-  imports: [FormsModule, ReactiveFormsModule, NgbTimepicker, RouterLink, TimeRangeComponent],
+  imports: [FormsModule, ReactiveFormsModule, NgbTimepicker, RouterLink],
   templateUrl: './add-schedule-form.component.html',
   styleUrl: './add-schedule-form.component.scss'
 })
