@@ -1,0 +1,12 @@
+@let currentComp = comp();
+<!---->
+@if (!currentComp) {
+<div>ไม่พบข้อมูล</div>
+} @else {
+<app-auth-page
+  [initialValue]="{
+    username: currentComp.username,
+    userpass: currentComp.userpass
+  }"
+/>
+}

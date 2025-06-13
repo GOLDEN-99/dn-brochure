@@ -32,3 +32,5 @@ export const saleCodeHandler = paramsHandler('saleCode')(predicateString)
 export const wholeNumbHandler = paramsHandler('wholeNumb')(predicateString)
 export const zoneHandler = paramsHandler('zone')(predicateZone)
 
+export const compCodeHandler = paramsHandler('compCode')(predicateString)
+

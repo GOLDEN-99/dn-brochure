@@ -228,7 +228,7 @@ export type TCondiBranch = {
 
 export type TcondiReq = TCondiSup & TCondiBranch //10
 
-type TCompAuth = {
+export type TCompAuth = {
     username: string,
     userpass: string
 } //2
@@ -259,6 +259,31 @@ type TCompDb = {
     updateDate: string,
     sapUpdateDate: string,
 } //3
+
+export interface ICompBase {
+    compPhone: string,
+    compEmail: string,
+    compCode: string,
+    compName: string,
+    compAddr: string,
+    compName2: string,
+    compFax: string,
+    compStat: string,
+    orderRemark: string,
+    orderFileType: string,
+    compGroupCode: string,
+    parentCompCode: string,
+    billIncludeVAT: string,
+    timeStamp: string,
+    updateDate: string,
+    sapUpdateDate: string,
+    paymentTerms: 0,
+    cashPerDisc: 0,
+    tradePerDisc: 0,
+    dcPerDisc: 0,
+    username: string,
+    userpass: string
+}
 
 export type THUComp = {
     shipTo: string,
@@ -296,3 +321,7 @@ export type TCompDetailRes = {
     dn: TDNComp | null
     item: TCompProduct[]
 }
+
+export type THUCompRes = Pick<TCompDetailRes, 'hu' | 'item'>
+
+export type TDNCompRes = Pick<TCompDetailRes, 'dn' | 'item'>

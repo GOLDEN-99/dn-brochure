@@ -38,6 +38,8 @@ import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
 import { PurchaseTemplateComponent } from './components/other-income/purchase-template/purchase-template.component';
 import { SpecialIncomeFormComponent } from './pages/other-income/purchase/special-income-form/special-income-form.component';
+import { SupplierFormViewComponent } from './pages/supplier-project/supplier-form-view/supplier-form-view.component';
+import { supplierCompResolver } from './resolvers/Ibob/supplier-comp.resolver';
 
 export const routes: Routes = [
     {
@@ -208,21 +210,53 @@ export const routes: Routes = [
     {
         path: 'supplier/dn',
         title: 'DN Inhouse',
-        loadComponent: () =>
-            import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
-                .then(r => r.SupplierInhouseComponent),
         providers: [
             { provide: SUPPLIER_TOKEN, useExisting: SupplierDnService }
+        ],
+        children: [
+            {
+                path: '',
+                loadComponent: () =>
+                    import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
+                        .then(r => r.SupplierInhouseComponent),
+            },
+            {
+                path: ':compCode',
+                component: SupplierLayoutComponent,
+                resolve: [supplierCompResolver],
+                children: [
+                    {
+                        path: '',
+                        component: SupplierFormViewComponent
+                    }
+                ]
+            }
         ]
     },
     {
         path: 'supplier/hu',
         title: 'HU Inhouse',
-        loadComponent: () =>
-            import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
-                .then(r => r.SupplierInhouseComponent),
         providers: [
             { provide: SUPPLIER_TOKEN, useExisting: SupplierHuService }
+        ],
+        children: [
+            {
+                path: '',
+                loadComponent: () =>
+                    import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
+                        .then(r => r.SupplierInhouseComponent),
+            },
+            {
+                path: ':compCode',
+                component: SupplierLayoutComponent,
+                resolve: [supplierCompResolver],
+                children: [
+                    {
+                        path: '',
+                        component: SupplierFormViewComponent
+                    }
+                ]
+            }
         ]
     },
     {

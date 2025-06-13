@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { TMapForm } from '../../types';
-import { TCondiBranch, TcondiReq, TCondiSup } from '../../types/ibob-supplier.type';
+import { TCompAuth, TCondiBranch, TcondiReq, TCondiSup } from '../../types/ibob-supplier.type';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,8 +13,12 @@ export class SupplierFromService {
 
   private authForm = this.fb.nonNullable.group({
     username: this.fb.nonNullable.control('', Validators.required),
-    userpass: this.fb.nonNullable.control("", Validators.required)
+    userpass: this.fb.nonNullable.control('', Validators.required)
   })
+
+  patchAuth = (value: Partial<TCompAuth>) => {
+    this.authForm.patchValue({ ...value })
+  }
 
   addGeneralContacForm = () => this.form.controls.general.controls.contact.push(
     this.fb.nonNullable.group({
