@@ -4,7 +4,7 @@ import { TMapForm } from "../../types"
 import { inject, signal } from "@angular/core"
 import { filter } from "rxjs"
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop"
-import { TCreateDoorReq, TEditDoorReq } from "./door-mutation.service"
+import { TCreateTimeSlot, TDoor, TDoorInfo, TTimeSlot, TTimeSlotInfo } from "../../types/ibob-supplier.type"
 
 export abstract class BaseDoorForm<T extends TEditableDuration | TDuration> {
     constructor() {
@@ -152,3 +152,6 @@ export type TEditMainForm = FormGroup<{
 export type TSlotForm<T extends TDuration | TEditableDuration> = FormGroup<{
     [key in TFormKey]: FormArray<FormGroup<TMapForm<T>>>
 }>
+type TDoorState = Pick<TDoor, 'note' | 'intendant' | 'maxBox' | 'minBox' | 'multiple' | 'timeUse'> & { doorname: string }
+type TEditDoorReq = { door: TDoorState, time: TTimeSlotInfo[] }
+type TCreateDoorReq = { door: TDoorState, time: TCreateTimeSlot[] }

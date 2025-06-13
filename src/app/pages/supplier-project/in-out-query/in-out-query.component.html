@@ -3,6 +3,10 @@
   <a href="" class="btn btn-danger mb-3">เพิ่มการจอง</a>
 </div>
 }
+<div class="row">
+  <div class="col"><app-date-input label="ตั้งแต่" [(date)]="from" /></div>
+  <div class="col"><app-date-input label="ถึง" [(date)]="to" /></div>
+</div>
 <app-ibob-query-tab />
 <table class="table table-bordered table-striped">
   <thead>

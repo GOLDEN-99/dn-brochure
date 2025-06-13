@@ -1,5 +1,6 @@
-import { Component, computed, input, model, OnInit, output, signal } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CUSTOM_FIELD_SEARCH_TOKEN } from './ibob-query-tab-token';
 
 @Component({
   selector: 'app-ibob-query-tab',
@@ -8,36 +9,39 @@ import { FormsModule } from '@angular/forms';
   styles: ``
 })
 export class IbobQueryTabComponent {
-  private optionRefMap = new Map([[1, 'ชื่อซัพพลายเออร์'], [2, 'เลข PO']])
-  private optionRefList = [...this.optionRefMap.entries()].map(([id, label]) => ({ id, label }))
+  private optionToken = inject(CUSTOM_FIELD_SEARCH_TOKEN)
+  private optionRefMap = this.optionToken.opt
+  private optionRefList = [...this.optionRefMap.entries()].map(([id, { label }]) => ({ id, label }))
   selectOption = signal(this.optionRefList)
 
   currentOption = signal(0)
   term = signal('')
+  id = computed(() => `search-input-opt-${this.currentOption()}`)
 
   onCurrentOptionChange = (s: number) => {
     this.currentOption.update(() => s);
     this.term.update(() => '')
   }
 
-  inputLabel = computed(() => this.optionRefMap.get(this.currentOption()) ?? 'มีข้อผิดพลาด')
+  currentData = computed(() => this.optionRefMap.get(this.currentOption()))
   inputId = computed(() => `text-opt-${this.currentOption()}`)
   fieldName = computed(() => {
-    const cur = this.currentOption()
-    if (cur === 1) return 'supplier'
-    if (cur === 2) return 'po'
-    return null
+    const temp = this.currentData()
+    return temp?.field ?? ''
+  })
+  labelText = computed(() => {
+    const temp = this.currentData()
+    return temp?.label ?? ''
   })
 
-  search = output()
+  search = output<{ field: string, term: string }>()
 
   onClick = () => {
-    this.search.emit()
+    const field = this.fieldName()
+    if (!field) return
+    const term = this.term()
+    this.search.emit({ field, term })
   }
 
-  // ngOnInit(): void {
-  //   const ref = [...this.optionRefMap.entries()]
-  //   const formatRef = ref.map(([id, label]) => ({ id, label }))
-  //   this.selectOption.set(formatRef)
-  // }
+  disable = computed(() => this.currentOption() === 0 || this.term() === '')
 }
