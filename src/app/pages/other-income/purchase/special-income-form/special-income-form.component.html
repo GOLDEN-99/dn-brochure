@@ -1,0 +1,128 @@
+@let formData = formState();
+<section class="layout">
+  <h1 class="mb-3 text-center">รายได้อื่น live box</h1>
+  <!-- select event w8 for api -->
+  <!-- <div class="app-form-select">
+    <label for="event-select">กิจกรรม select event from api here </label>
+    <select
+      name="event-select"
+      id="event-select"
+      [ngModel]="event()"
+      (ngModelChange)="update('event')($event)"
+    >
+      <option [ngValue]="0" disabled>กรุณาเลือก</option>
+      <option [ngValue]="1">DC</option>
+    </select>
+  </div> -->
+
+  <!-- period -->
+  <div class="mb-3">
+    @let period = formData.period;
+    <label for="period" class="form-label">ระยะเวลาเก็บเงิน</label>
+    <select
+      name="period"
+      id="period"
+      class="form-select"
+      [ngModel]="period"
+      (ngModelChange)="update('period')($event)"
+    >
+      <option [ngValue]="0" disabled>กรุณาเลือก</option>
+      <option [ngValue]="1">3 เดือน</option>
+      <option [ngValue]="2">6 เดือน</option>
+      <option [ngValue]="3">...</option>
+      <option [ngValue]="4">...(ii)</option>
+    </select>
+  </div>
+  <!-- date picker -->
+  <div class="row">
+    <div class="col">
+      <app-date-input
+        label="วันที่เริ่ม"
+        [date]="formData.fromDate"
+        (dateChange)="update('fromDate')($event)"
+      />
+    </div>
+    <div class="col">
+      <app-date-input
+        label="วันที่สิ้นสุด"
+        [date]="formData.toDate"
+        (dateChange)="update('toDate')($event)"
+      />
+    </div>
+  </div>
+  <!-- vat -->
+  <div class="row">
+    @let incVat = formData.incVat;
+    <div class="col-md-3">VAT</div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="vat"
+          id="include"
+          [value]="true"
+          [ngModel]="incVat"
+          (ngModelChange)="update('incVat')($event)"
+        />
+        <label for="include">รวม vat</label>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="vat"
+          id="exclude"
+          [value]="false"
+          [ngModel]="incVat"
+          (ngModelChange)="update('incVat')($event)"
+        />
+        <label for="exclude">ไม่รวม vat</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- discount toggle -->
+  @let discount = formData.discount; @let discountType = formData.discountType;
+  <app-discount-subform
+    [discount]="discount"
+    (discountChange)="update('discount')($event)"
+    [discountType]="discountType"
+    (discountTypeChange)="update('discountType')($event)"
+  />
+
+  <!-- special target -->
+  <div class="row">
+    <div class="col app-form-field">
+      <label for="target-branch">เป้าหมายสาขา</label>
+      <input
+        type="number"
+        id="target-branch"
+        name="target-branch"
+        [ngModel]="formData.target"
+        (ngModelChange)="update('target')($event)"
+      />
+    </div>
+    <div class="col app-form-field">
+      <label for="target-amount">ยอด (บาท)</label>
+      <input
+        type="number"
+        id="target-amount"
+        name="target-amount"
+        [ngModel]="formData.targetAmount"
+        (ngModelChange)="update('targetAmount')($event)"
+      />
+    </div>
+  </div>
+
+  <!--  action -->
+  <div class="d-flex justify-content-center" style="gap: 1rem">
+    <button class="btn btn-success">
+      <i class="bi bi-floppy"></i>
+      <span> บันทึก </span>
+    </button>
+    <a routerLink="/other-income/purchase" class="btn btn-outline-danger"
+      >ย้อนกลับ</a
+    >
+  </div>
+</section>

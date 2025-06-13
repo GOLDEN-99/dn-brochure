@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TReturnForm } from '../../../service/supplier/supplier-form/supplier-from.service';
+import { TReturnForm } from '../../../service/supplier/supplier-from.service';
 
 @Component({
   selector: 'app-condition-page',
@@ -12,6 +12,14 @@ import { TReturnForm } from '../../../service/supplier/supplier-form/supplier-fr
   styleUrl: './condition-page.component.scss'
 })
 export class ConditionPageComponent extends BaseSupplierForm {
+
+  constructor() {
+    super()
+    this.form.valueChanges.subscribe({
+      next: () => console.log(this.formService.getCondi())
+    })
+  }
+
   active = signal(1)
 
   form = this.formService.form.controls.condi
@@ -28,4 +36,6 @@ export class ConditionPageComponent extends BaseSupplierForm {
   get branchForm(): TReturnForm | null {
     return this.form.get('branch') as any as TReturnForm;
   }
+
+
 }

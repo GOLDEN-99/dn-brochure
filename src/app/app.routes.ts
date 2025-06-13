@@ -3,7 +3,7 @@ import { SearchPageComponent } from './pages/brochure-project/search-page/search
 import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
 import { NotfoundComponent } from './pages/notfound/notfound.component';
-import { BROCHURE_TOKEN, SUPPLIER_TOKEN } from './lib';
+import { BROCHURE_TOKEN } from './lib';
 import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
 import { cnResolver } from './resolvers/cn/cn.resolver';
 import { BaseBrochureComponent } from './pages/brochure-project/base-brochure/base-brochure.component';
@@ -12,8 +12,8 @@ import { ProchureService } from './service/brochure/prochure/prochure.service';
 import { MarketingService } from './service/brochure/marketing/marketing.service';
 import { cnGuard } from './guard/cn-guard.guard';
 import { SupplierLayoutComponent } from './layout/supplier-layout/supplier-layout.component';
-import { SupplierDnService } from './service/supplier/supplier-dn/supplier-dn.service';
-import { SupplierHuService } from './service/supplier/supplier-hu/supplier-hu.service';
+import { SupplierDnService } from './service/supplier/supplier-dn.service';
+import { SupplierHuService } from './service/supplier/supplier-hu.service';
 import { SupplierReserveLayoutComponent } from './layout/supplier-reserve-layout/supplier-reserve-layout.component';
 import { SupplierReserveComponent } from './pages/supplier-project/supplier-reserve/supplier-reserve.component';
 import { InOutLayoutComponent } from './layout/in-out-layout/in-out-layout.component';
@@ -23,14 +23,26 @@ import { InOutListComponent } from './pages/supplier-project/in-out-list/in-out-
 import { RegisterPageComponent } from './pages/supplier-project/register-page/register-page.component';
 import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolver';
 import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
+import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-add.component';
+import { InOutDetailComponent } from './pages/supplier-project/in-out-detail/in-out-detail.component';
+import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.resolver';
+import { SUPPLIER_TOKEN } from './service/supplier/supplier.token';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
-import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
+
+import { FlashSaleCardComponent } from './components/brochure-card/flash-sale-card/flash-sale-card.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
+
+import { PurchaseLayoutComponent } from './layout/other-income/purchase-layout/purchase-layout.component';
+import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
+import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
+import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
+import { PurchaseTemplateComponent } from './components/other-income/purchase-template/purchase-template.component';
+import { SpecialIncomeFormComponent } from './pages/other-income/purchase/special-income-form/special-income-form.component';
 
 export const routes: Routes = [
     {
         path: 'flash-sale/:zone/:idPromotion',
-        component: FlashSaleComponent,
+        component: FlashSaleCardComponent,
         resolve: { fs: flashSaleResolver }
     },
     {
@@ -129,6 +141,7 @@ export const routes: Routes = [
     },
     {
         path: 'supplier/reserve',
+        title: 'DN SUPPLIER RESERVATION',
         component: SupplierReserveLayoutComponent,
         children: [
             {
@@ -151,6 +164,7 @@ export const routes: Routes = [
     {
         path: 'supplier/in-out',
         component: InOutNavComponent,
+        title: 'INBOUND OUTBOUND',
         children: [
             {
                 path: ':warehouse',
@@ -166,18 +180,28 @@ export const routes: Routes = [
                         component: InOutListComponent
                     },
                     {
+                        path: 'list/add',
+                        component: InOutAddComponent
+                    },
+                    {
+                        path: 'list/:doorId',
+                        resolve: [fetchDoorDetailResolver],
+                        children: [
+                            {
+                                path: '',
+                                component: InOutDetailComponent
+                            },
+                            {
+                                path: 'edit',
+                                component: InOutEditComponent
+                            }
+                        ]
+                    },
+                    {
                         path: 'query',
                         component: InOutQueryComponent
                     }
                 ]
-            },
-            {
-                path: 'list/:id',
-                component: InOutEditComponent
-            },
-            {
-                path: 'list/:id/edit',
-                component: InOutEditComponent
             }
         ]
     },
@@ -199,6 +223,42 @@ export const routes: Routes = [
                 .then(r => r.SupplierInhouseComponent),
         providers: [
             { provide: SUPPLIER_TOKEN, useExisting: SupplierHuService }
+        ]
+    },
+    {
+        path: 'other-income',
+        title: 'รายได้อื่นๆ',
+        children: [
+            {
+                path: 'purchase',
+                component: PurchaseLayoutComponent,
+                children: [
+                    {
+                        path: '',
+                        component: PurchaseHomeComponent
+                    },
+                    {
+                        path: 'report',
+                        component: PurchaseReportComponent
+                    }
+                ]
+            },
+            {
+                path: 'purchase/create',
+                component: PurchaseIncomeFormComponent
+            },
+            {
+                path: 'purchase/create-special',
+                component: SpecialIncomeFormComponent
+            },
+            {
+                path: 'purchase/:id',
+                component: PurchaseTemplateComponent
+            },
+            {
+                path: 'purchase/:id/edit',
+                component: PurchaseTemplateComponent
+            }
         ]
     },
     {

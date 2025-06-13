@@ -26,6 +26,9 @@ export type TDoor = {
     note: string
     timeUse: number
     multiple: string
+    intendant: string | null
+    minBox: number,
+    maxBox: number
 }
 
 export type TAppDoor = {
@@ -152,4 +155,144 @@ export type TMonthlyReq = {
 export type TMonthlyRes = {
     date: string
     status: number
+}
+
+export type TCreateDoorInfo = {
+    mail: string
+    whname: string
+    doorname: string
+    minBox: number
+    maxBox: number
+} & Pick<TDoor, 'warehouseId' | 'note' | 'timeUse' | 'intendant' | 'multiple'>
+
+export type TAvalTimeSlot = {
+    dayId: number
+    dayName: string
+    startTime: string
+    endTime: string
+    isAvailable: true
+}
+
+export type TUnavalTimeSlot = {
+    dayId: number
+    dayName: string
+    isAvailable: false
+}
+
+export type TCreateTimeSlot = {
+    dayId: number
+    dayName: string
+    startTime: string | null
+    endTime: string | null
+    isAvailable: boolean
+}
+
+export type TEditTimeSlot = { doorId: number, id: number } & TCreateTimeSlot
+
+export type TCreateDoorReq = {
+    door: TCreateDoorInfo
+    time: TCreateTimeSlot[]
+}
+
+export type TCreateDoorRes = {}
+
+export type TDoorInfo = { doorId: string } & TCreateDoorInfo
+
+export type TTimeSlotInfo = { id: number, doorId: number } & TCreateTimeSlot
+
+export type TDoorDetail = {
+    door: TDoorInfo
+    time: TTimeSlotInfo[]
+}
+
+export type TGeneratedCompCode = {
+    compCode: string
+    dnCompCode: string
+}
+
+export type TCondiSup = {
+    supReturn: string
+    supFullBox: string
+    supSameLot: string
+    supMonthBeforeExp: number
+    supMonthAfterExp: number
+}
+
+export type TCondiBranch = {
+    stkReturn: string
+    stkFullBox: string
+    stkSameLot: string
+    stkMonthBeforeExp: number
+    stkMonthAfterExp: number
+}
+
+export type TcondiReq = TCondiSup & TCondiBranch //10
+
+type TCompAuth = {
+    username: string,
+    userpass: string
+} //2
+
+type TCompBaseInfo = {
+    compCode: string,
+    compName: string,
+    compAddr: string,
+    compName2: string,
+    compFax: string,
+    compStat: string,
+    orderRemark: string,
+    orderFileType: string,
+    compGroupCode: string,
+    parentCompCode: string,
+    billIncludeVAT: string,
+} //11
+
+type TCompDiscount = {
+    paymentTerms: 0,
+    cashPerDisc: 0,
+    tradePerDisc: 0,
+    dcPerDisc: 0,
+} //4
+
+type TCompDb = {
+    timeStamp: string,
+    updateDate: string,
+    sapUpdateDate: string,
+} //3
+
+export type THUComp = {
+    shipTo: string,
+    compPhone: string,
+    compEmail: string,
+    saleName: string,
+
+    fixedPrice: string,
+    registered: string,
+} & TCompAuth & TcondiReq & TCompDiscount & TCompBaseInfo & TCompDb
+
+export type TDNComp = {
+    compEmail: string,
+    compPhone: string,
+} & TCompAuth & TCompDiscount & TCompBaseInfo & TCompDb
+
+type TNullable<T extends Record<string, unknown>> = {
+    [key in keyof T]: T[key] | null
+}
+
+export type TCompProduct = {
+    goodCode: string
+    goodName: string
+    goodStat: string // '0' | '1'
+    isShipTo: string | null //  '0' | '1' | null
+} & TNullable<TcondiReq>
+
+export type TCreateCompInfoReq = {
+    hu: THUComp
+    dn: TDNComp
+}
+
+export type TCompDetailRes = {
+    hu: THUComp | null
+    dn: TDNComp | null
+    item: TCompProduct[]
 }

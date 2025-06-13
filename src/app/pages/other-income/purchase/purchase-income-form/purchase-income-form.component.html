@@ -1,0 +1,203 @@
+<section class="layout">
+  @let formData = formState();
+  <h1 class="mb-3 text-center">ข้อมูลอื่นๆ</h1>
+  <!-- select event w8 for api -->
+  <div class="app-form-select">
+    <label for="event-select">กิจกรรม select event from api here </label>
+    <select
+      name="event-select"
+      id="event-select"
+      [ngModel]="formData.event"
+      (ngModelChange)="update('event')($event)"
+    >
+      <option [ngValue]="0" disabled>กรุณาเลือก</option>
+      <option [ngValue]="1">DC</option>
+    </select>
+  </div>
+  <!-- period -->
+  <div class="mb-3">
+    <label for="period" class="form-label">ระยะเวลาเก็บเงิน</label>
+    <select
+      name="period"
+      id="period"
+      class="form-select"
+      [ngModel]="formData.period"
+      (ngModelChange)="update('period')($event)"
+    >
+      <option [ngValue]="0" disabled>กรุณาเลือก</option>
+      <option [ngValue]="1">3 เดือน</option>
+      <option [ngValue]="2">6 เดือน</option>
+      <option [ngValue]="3">...</option>
+      <option [ngValue]="4">...(ii)</option>
+    </select>
+  </div>
+  <!-- date picker -->
+  <div class="row">
+    <div class="col">
+      <app-date-input
+        label="วันที่เริ่ม"
+        [date]="formData.fromDate"
+        (dateChange)="update('fromDate')($event)"
+      />
+    </div>
+    <div class="col">
+      <app-date-input
+        label="วันที่สิ้นสุด"
+        [date]="formData.toDate"
+        (dateChange)="update('toDate')($event)"
+      />
+    </div>
+  </div>
+  <!-- vat -->
+  <div class="row">
+    <div class="col-md-3">VAT</div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="vat"
+          id="include"
+          [value]="true"
+          [ngModel]="formData.incVat"
+          (ngModelChange)="update('incVat')($event)"
+        />
+        <label for="include">รวม vat</label>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="vat"
+          id="exclude"
+          [value]="false"
+          [ngModel]="formData.incVat"
+          (ngModelChange)="update('incVat')($event)"
+        />
+        <label for="exclude">ไม่รวม vat</label>
+      </div>
+    </div>
+  </div>
+  <!-- discount toggle -->
+  <app-discount-subform
+    [discount]="formData.discount"
+    (discountChange)="update('discount')($event)"
+    [discountType]="formData.discountType"
+    (discountTypeChange)="update('discountType')($event)"
+  />
+  <!-- toggle target -->
+  <app-target-subform
+    [percent]="formData.percent"
+    (percentChange)="update('percent')($event)"
+    [target]="formData.target"
+    (targetChange)="update('target')($event)"
+    [step]="formData.step"
+    (stepChange)="update('step')($event)"
+  />
+  <div class="row mb-3">
+    <!-- search product ; to do compName vs compCode-->
+    <div class="col-md">
+      <div class="bg-lightgray p-3">
+        <div class="row align-items-center px-3">
+          <button class="btn btn-warning" (click)="openSearchSupplier()">
+            ค้นหาซัพพลายเออร์
+          </button>
+        </div>
+        @if (!notSelectComp()) {
+        <div class="row pt-3">
+          <div class="col">
+            <label for="comp-name-input" class="col-form-label"
+              >ชื่อบริษัท</label
+            >
+          </div>
+          <div class="col">
+            <input
+              id="comp-name-input"
+              name="comp name"
+              type="text"
+              disabled
+              [ngModel]="formData.compName"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="row pt-3">
+          <div class="col">
+            <label for="comp-code-input" class="col-form-label"
+              >รหัสบริษัท</label
+            >
+          </div>
+          <div class="col">
+            <input
+              type="text"
+              name="comp code"
+              id="comp-code-input"
+              class="form-control"
+              [ngModel]="formData.compName"
+              disabled
+            />
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    <!-- seach good ; to do on select comp behavior-->
+    <div class="col-md">
+      <div class="bg-lightgray p-3">
+        <div class="row align-items-center px-3">
+          <button
+            class="btn btn-warning"
+            (click)="openSearchProduct()"
+            [disabled]="notSelectComp()"
+          >
+            ค้นหาสินค้า
+          </button>
+        </div>
+        @let products = formData.productList;
+        <!---->
+        @if (products.length !== 0) {
+        <ul class="mt-3">
+          @for (product of products; track product.id) {
+          <li class="row" style="list-style: none">
+            <div class="col-1">
+              <div class="app-form-check">
+                <input
+                  type="checkbox"
+                  [ngModel]="product.id"
+                  (ngModelChange)="onRemoveProduct(product.id)"
+                />
+              </div>
+            </div>
+            <div class="col">{{ product.productName }}</div>
+          </li>
+          }
+        </ul>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!--  action -->
+  <div class="d-flex justify-content-center" style="gap: 1rem">
+    <button class="btn btn-success">
+      <i class="bi bi-floppy"></i>
+      <span> บันทึก </span>
+    </button>
+    <a routerLink="/other-income/purchase" class="btn btn-outline-danger"
+      >ย้อนกลับ</a
+    >
+  </div>
+</section>
+
+<ng-template #searchProductModal let-modal>
+  <app-search-product-modal
+    (selectProduct)="onSelectProduct($event)"
+    (close)="modal.dismiss('Cross click')"
+  />
+</ng-template>
+<ng-template #searchSupplierModal let-modal>
+  <app-other-search-supplier-modal
+    (selectComp)="selectComp($event)"
+    (close)="modal.dismiss('Cross click')"
+  />
+</ng-template>

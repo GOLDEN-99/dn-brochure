@@ -1,0 +1,21 @@
+<div class="form-wrapper">
+  <ul class="nav nav-tabs" style="border: none">
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        routerLink="./"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >รายการรายได้อื่น</a
+      >
+    </li>
+    <li>
+      <a routerLink="./report" routerLinkActive="active" class="nav-link"
+        >report</a
+      >
+    </li>
+  </ul>
+  <div class="content">
+    <router-outlet />
+  </div>
+</div>
