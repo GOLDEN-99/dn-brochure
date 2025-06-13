@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { TMapForm } from '../../types';
 import { TCondiBranch, TcondiReq, TCondiSup } from '../../types/ibob-supplier.type';
-
 @Injectable({
   providedIn: 'root'
 })

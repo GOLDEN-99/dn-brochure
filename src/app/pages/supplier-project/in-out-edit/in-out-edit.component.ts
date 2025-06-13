@@ -42,7 +42,6 @@ export class InOutEditComponent implements OnInit, OnDestroy {
     this.des$.next()
     this.des$.complete()
   }
-
   doorHead = this.doorMutServ.doorHead
   durationStep = this.doorFormServ.durationStep
   headForm = this.doorFormServ.headForm

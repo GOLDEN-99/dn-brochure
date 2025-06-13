@@ -27,3 +27,4 @@ export class InOutDetailComponent {
     return data ?? []
   }
 }
+
