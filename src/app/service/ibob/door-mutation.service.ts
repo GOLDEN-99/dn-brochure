@@ -2,7 +2,7 @@ import { computed, inject, Injectable } from '@angular/core';
 import { WarehouseService } from './warehouse.service';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
-import { TCreateDoorInfo, TCreateTimeSlot, TDoorDetail, TTimeSlotInfo } from '../../types/ibob-supplier.type';
+import { TCreateDoorInfo, TCreateTimeSlot, TDoorDetail, TEditTimeSlot, TTimeSlotInfo } from '../../types/ibob-supplier.type';
 import { BehaviorSubject, catchError, combineLatest, filter, finalize, forkJoin, map, of, shareReplay, switchMap, throwError } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -123,7 +123,7 @@ export class DoorMutationService {
     }, {})
   }
 
-  updateDoor = ({ door, time }: { door: TCreateDoorHeadVar, time: Array<{ id: number } & TAddTimeSlotState> }) => {
+  updateDoor = ({ door, time }: { door: TCreateDoorHeadVar, time: TEditTimeSlot[] }) => {
     const whname = this.warehouseServ.currentWarehouseName()
     const warehouseId = this.warehouseServ.warehouseId()
     if (!warehouseId) throw new Error('invalid warehouse')
