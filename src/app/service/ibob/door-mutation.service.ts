@@ -123,7 +123,7 @@ export class DoorMutationService {
     }, {})
   }
 
-  updateDoor = ({ door, time }: TEditDoorReq) => {
+  updateDoor = ({ door, time }: { door: TCreateDoorHeadVar, time: Array<{ id: number } & TAddTimeSlotState> }) => {
     const whname = this.warehouseServ.currentWarehouseName()
     const warehouseId = this.warehouseServ.warehouseId()
     if (!warehouseId) throw new Error('invalid warehouse')
