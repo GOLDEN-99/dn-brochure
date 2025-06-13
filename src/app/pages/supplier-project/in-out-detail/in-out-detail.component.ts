@@ -10,7 +10,7 @@ import { TFormKey } from '../../../service/ibob/baseDoorForm';
   selector: 'app-in-out-detail',
   imports: [FormsModule, NgbTimepicker, RouterLink],
   templateUrl: './in-out-detail.component.html',
-  styleUrl: './in-out-detail.component.scss'
+  styles: ''
 })
 export class InOutDetailComponent {
   private doorMutServ = inject(DoorMutationService)
