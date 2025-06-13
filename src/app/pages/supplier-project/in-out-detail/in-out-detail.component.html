@@ -44,6 +44,32 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col">
+        <div class="app-form-field">
+          <label for="minBox">จำนวนขั้นต่ำ (ลัง) </label>
+          <input
+            type="number"
+            name="minBox"
+            id="minBox"
+            [ngModel]="info.minBox"
+            disabled
+          />
+        </div>
+      </div>
+      <div class="col">
+        <div class="app-form-field">
+          <label for="maxBox">จำนวนสูงสุด (ลัง)</label>
+          <input
+            type="number"
+            id="maxBox"
+            name="maxBox"
+            [ngModel]="info.maxBox"
+            disabled
+          />
+        </div>
+      </div>
+    </div>
     <div class="app-form-field">
       <label for="note">หมายเหตุ</label>
       <textarea name="note" id="note" [ngModel]="info.note"></textarea>

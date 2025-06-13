@@ -22,11 +22,10 @@ export class InOutEditComponent implements OnInit, OnDestroy {
         if (!res) return
         this.doorFormServ.clearForm()
         const { door, time } = res
-        const { doorname, doorId, timeUse, note, intendant, mail, multiple } = door
+        const { doorname, doorId, timeUse, note, intendant, mail, multiple, minBox, maxBox } = door
         this.doorFormServ.currentDoorId = Number(doorId)
-        console.log(this.doorFormServ.currentDoorId)
         this.headForm.patchValue({
-          doorname, timeUse, note, intendant: intendant ?? '', mail, multiple: multiple === '1'
+          doorname, timeUse, note, intendant: intendant ?? '', mail, multiple: multiple === '1', minBox, maxBox
         })
         const timeMap = this.doorMutServ.createTimeMap(time)
         const v = [...timeMap.entries()]

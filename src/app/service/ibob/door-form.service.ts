@@ -29,6 +29,8 @@ export class DoorFormService {
     note: this.nnfb.control(""),
     intendant: this.nnfb.control("", [Validators.required]),
     mail: this.nnfb.control("", [Validators.required, Validators.email]),
+    minBox: this.nnfb.control(0, [Validators.required, Validators.min(0)]),
+    maxBox: this.nnfb.control(0, [Validators.required, Validators.min(0)]),
     multiple: this.nnfb.control(false)
   })
 
