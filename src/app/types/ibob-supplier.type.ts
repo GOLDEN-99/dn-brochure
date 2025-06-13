@@ -183,6 +183,8 @@ export type TCreateTimeSlot = {
     isAvailable: boolean
 }
 
+export type TEditTimeSlot = { doorId: number, id: number } & TCreateTimeSlot
+
 export type TCreateDoorReq = {
     door: TCreateDoorInfo
     time: TCreateTimeSlot[]
