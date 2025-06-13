@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { DoorMutationService } from '../../../service/ibob/door-mutation.service';
 import { FormsModule } from '@angular/forms';
-import { DoorFormService, TFormKey } from '../../../service/ibob/door-form.service';
 import { NgbTimepicker } from '@ng-bootstrap/ng-bootstrap';
 import { RouterLink } from '@angular/router';
+import { DoorFormEditService } from '../../../service/ibob/door-form-edit.service';
+import { TFormKey } from '../../../service/ibob/baseDoorForm';
 
 @Component({
   selector: 'app-in-out-detail',
@@ -13,7 +14,7 @@ import { RouterLink } from '@angular/router';
 })
 export class InOutDetailComponent {
   private doorMutServ = inject(DoorMutationService)
-  private doorFormServ = inject(DoorFormService)
+  private doorFormServ = inject(DoorFormEditService)
   id = this.doorMutServ.doorId
   doorInfo = this.doorMutServ.doorHead
   timeMap = this.doorMutServ.timeMap

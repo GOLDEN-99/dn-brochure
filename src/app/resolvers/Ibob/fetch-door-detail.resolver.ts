@@ -7,12 +7,19 @@ export const fetchDoorDetailResolver: ResolveFn<boolean> = (route, state) => {
   const router = inject(Router)
   const toast = inject(ToastService)
   try {
+    console.log('fetch')
     const doorMutServ = inject(DoorMutationService)
-    const doorId = route.paramMap.get('doorId')
+    let doorId = route.paramMap.get('doorId')
+    console.log(doorId)
     if (!doorId) {
-      toast.danger('cannot get door id from resolver')
-      router.navigateByUrl('/supplier/in-out')
-      return false
+      const temp = route.parent?.paramMap.get('doorId')
+      if (!temp) {
+
+        toast.danger('cannot get door id from resolver')
+        router.navigateByUrl('/supplier/in-out')
+        return false
+      }
+      doorId = temp
     }
     const isNumber = parseInt(doorId)
     if (isNaN(isNumber)) {
@@ -20,6 +27,7 @@ export const fetchDoorDetailResolver: ResolveFn<boolean> = (route, state) => {
       router.navigateByUrl('/supplier/in-out')
       return false
     }
+    console.log('set door')
     doorMutServ.setDoor(doorId)
     return true
   } catch (err) {
