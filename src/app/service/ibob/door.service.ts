@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { catchError, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, map, of, switchMap, throwError } from 'rxjs';
 import { ApiService } from '../api/api.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TAppDoor, TDoor } from '../../types/ibob-supplier.type';
@@ -27,13 +27,19 @@ export class DoorService {
 
   private api = inject(ApiService)
 
+  private fetch$ = new BehaviorSubject('fetch')
+
   private fetchDoor = (warehouseId: string) => this.api.get<TDoor[]>(`${this.url}/GetDoor`, { params: { warehouseId } })
 
-  private door$ = this.warehouseServ.warehouseId$.pipe(
-    switchMap(this.fetchDoor),
-    map((door) => door.map(d => ({ ...d, check: true }))),
-    catchError((err) => { return of([] as TAppDoor[]) })
-  )
+  private door$ =
+    this.fetch$.pipe(
+      switchMap(() => this.warehouseServ.warehouseId$.pipe(
+        switchMap(this.fetchDoor),
+        map((door) => door.map(d => ({ ...d, check: true }))),
+        catchError((err) => throwError(() => err))
+      )),
+      catchError((err) => of([] as TAppDoor[]))
+    )
 
   doorList = signal<TAppDoor[]>([])
 
@@ -46,6 +52,8 @@ export class DoorService {
   )
 
   whname = this.warehouseServ.currentWarehouseName
+
+  refetch = () => this.fetch$.next('fetch')
 
 
 }

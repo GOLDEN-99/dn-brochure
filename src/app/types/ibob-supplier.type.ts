@@ -198,3 +198,8 @@ export type TDoorDetail = {
     time: TTimeSlotInfo[]
 }
 
+export type TGeneratedCompCode = {
+    compCode: string
+    dnCompCode: string
+}
+

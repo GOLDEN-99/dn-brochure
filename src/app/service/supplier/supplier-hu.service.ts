@@ -1,12 +1,12 @@
 import { inject, Injectable, Signal, signal } from '@angular/core';
-import { ISupplierList } from '../../../lib';
-import { TSupplierItem } from '../../../types';
-import { ApiService } from '../../api/api.service';
+import { TSupplierItem } from '../../types';
+import { ApiService } from '../api/api.service';
+import { ISupplierList } from './supplier.token';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SupplierDnService implements ISupplierList {
+export class SupplierHuService implements ISupplierList {
 
   constructor() { }
 
@@ -19,5 +19,5 @@ export class SupplierDnService implements ISupplierList {
     address: 'อาคารสำนักงานใหญ่ เลขที่ 26/56-57 ซอย, 62/2 King Kaeo Rd, Racha Thewa, Bang Phli District, Samut Prakan 10540',
     tel: '0888888888'
   }])
-  pageLabel: Signal<'DN' | 'HU'> = signal('DN')
+  pageLabel: Signal<'DN' | 'HU'> = signal('HU')
 }
