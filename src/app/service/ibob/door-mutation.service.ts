@@ -2,10 +2,11 @@ import { computed, inject, Injectable } from '@angular/core';
 import { WarehouseService } from './warehouse.service';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
-import { TCreateDoorInfo, TCreateTimeSlot, TDoorDetail } from '../../types/ibob-supplier.type';
-import { catchError, filter, of, Subject, switchMap } from 'rxjs';
+import { TCreateDoorInfo, TCreateTimeSlot, TDoorDetail, TTimeSlotInfo } from '../../types/ibob-supplier.type';
+import { catchError, filter, of, Subject, switchMap, throwError } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { TDuration } from './door-form.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,11 @@ export class DoorMutationService {
     this.doorId$.next(id)
   }
 
-  private fetchDoorDetail = (DoorId: string) => this.api.get<TDoorDetail>(`${this.url}/GetDoorDetail`, { params: { DoorId } })
+  private fetchDoorDetail = (DoorId: string) => {
+    console.log(DoorId)
+    return this.api.get<TDoorDetail>(`${this.url}/GetDoorDetail`, { params: { DoorId } })
+      .pipe(catchError(err => throwError(() => err)))
+  }
 
   private doorDetail$ = this.doorId$.pipe(
     filter(id => !!id),
@@ -46,7 +51,7 @@ export class DoorMutationService {
     if (!door) return null
     const { doorId, doorname, mail, note, intendant, timeUse, multiple } = door
     return {
-      doorname, timeUse, note, mail, multiple: multiple === '1'
+      doorname, timeUse, note, mail, multiple: multiple === '1', intendant: intendant ?? '', doorId: Number(doorId)
     }
   })
 
@@ -59,15 +64,20 @@ export class DoorMutationService {
     }
   }
 
-  timeList = computed(() => {
-    const time = this.doorDetail()?.time
-    if (!time) return []
-    return time.map(({ startTime, endTime, ...res }) => {
-      if (!startTime || !endTime) return [{ ...res }]
-      return [{
-        ...res, form: this.convertToTimeStruct(startTime), to: this.convertToTimeStruct(endTime)
-      }]
+  timeMap = computed(() => {
+    const time = this.doorDetail()?.time ?? []
+    const timeMap = new Map<number, Array<TTimeSlotTemp>>()
+    time.forEach(({ startTime, endTime, dayId, doorId, id }) => {
+      const value = timeMap.get(dayId)
+      if (!startTime || !endTime) return
+      if (!value) {
+        timeMap.set(dayId, [{ form: this.convertToTimeStruct(startTime), to: this.convertToTimeStruct(endTime), doorId, id }])
+        return
+      }
+      const newValue = [...value, { form: this.convertToTimeStruct(startTime), to: this.convertToTimeStruct(endTime), doorId, id }]
+      timeMap.set(dayId, newValue)
     })
+    return timeMap
   })
 
   createDoor = ({ door, time }: { door: TCreateDoorHeadVar, time: TCreateTimeSlot[] }) => {
@@ -96,3 +106,5 @@ export class DoorMutationService {
 }
 
 type TCreateDoorHeadVar = Pick<TCreateDoorInfo, 'doorname' | 'intendant' | 'multiple' | 'mail' | 'note' | 'timeUse'>
+
+type TTimeSlotTemp = Pick<TTimeSlotInfo, 'id' | 'doorId'> & TDuration

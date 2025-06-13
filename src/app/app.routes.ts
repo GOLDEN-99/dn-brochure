@@ -144,6 +144,7 @@ export const routes: Routes = [
     },
     {
         path: 'supplier/reserve',
+        title: 'DN SUPPLIER RESERVATION',
         component: SupplierReserveLayoutComponent,
         children: [
             {
@@ -166,6 +167,7 @@ export const routes: Routes = [
     {
         path: 'supplier/in-out',
         component: InOutNavComponent,
+        title: 'INBOUND OUTBOUND',
         children: [
             {
                 path: ':warehouse',

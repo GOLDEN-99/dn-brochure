@@ -191,7 +191,7 @@ export type TCreateDoorRes = {}
 
 export type TDoorInfo = { doorId: string } & TCreateDoorInfo
 
-export type TTimeSlotInfo = { id: string, doorId: string } & TCreateTimeSlot
+export type TTimeSlotInfo = { id: number, doorId: number } & TCreateTimeSlot
 
 export type TDoorDetail = {
     door: TDoorInfo
@@ -219,4 +219,76 @@ export type TCondiBranch = {
     stkMonthAfterExp: number
 }
 
-export type TcondiReq = TCondiSup & TCondiBranch
+export type TcondiReq = TCondiSup & TCondiBranch //10
+
+type TCompAuth = {
+    username: string,
+    userpass: string
+} //2
+
+type TCompBaseInfo = {
+    compCode: string,
+    compName: string,
+    compAddr: string,
+    compName2: string,
+    compFax: string,
+    compStat: string,
+    orderRemark: string,
+    orderFileType: string,
+    compGroupCode: string,
+    parentCompCode: string,
+    billIncludeVAT: string,
+} //11
+
+type TCompDiscount = {
+    paymentTerms: 0,
+    cashPerDisc: 0,
+    tradePerDisc: 0,
+    dcPerDisc: 0,
+} //4
+
+type TCompDb = {
+    timeStamp: string,
+    updateDate: string,
+    sapUpdateDate: string,
+} //3
+
+
+export type THUComp = {
+    shipTo: string,
+    compPhone: string,
+    compEmail: string,
+    saleName: string,
+
+    fixedPrice: string,
+    registered: string,
+} & TCompAuth & TcondiReq & TCompDiscount & TCompBaseInfo & TCompDb
+
+export type TDNComp = {
+    compEmail: string,
+    compPhone: string,
+} & TCompAuth & TCompDiscount & TCompBaseInfo & TCompDb
+
+type TNullable<T extends Record<string, unknown>> = {
+    [key in keyof T]: T[key] | null
+}
+
+export type TCompProduct = {
+    goodCode: string
+    goodName: string
+    goodStat: string // '0' | '1'
+    isShipTo: string | null //  '0' | '1' | null
+} & TNullable<TcondiReq>
+
+export type TCreateCompInfoReq = {
+    hu: THUComp
+    dn: TDNComp
+}
+
+export type TCompDetailRes = {
+    hu: THUComp | null
+    dn: TDNComp | null
+    item: TCompProduct[]
+}
+
+

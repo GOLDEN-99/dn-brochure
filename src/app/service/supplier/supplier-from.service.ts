@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { TMapForm } from '../../types';
 import { TCondiBranch, TcondiReq, TCondiSup } from '../../types/ibob-supplier.type';
 
@@ -19,8 +19,9 @@ export class SupplierFromService {
 
   addGeneralContacForm = () => this.form.controls.general.controls.contact.push(
     this.fb.nonNullable.group({
-      compPhone: this.fb.nonNullable.control('', Validators.required),
-      name: this.fb.nonNullable.control("", Validators.required)
+      emplPhone: this.fb.nonNullable.control('', Validators.required),
+      emplName: this.fb.nonNullable.control("", Validators.required),
+      emplEmail: this.fb.nonNullable.control("")
     })
   )
 
@@ -33,8 +34,9 @@ export class SupplierFromService {
     compName2: this.fb.nonNullable.control("", Validators.required),
     compAddr: this.fb.nonNullable.control("", Validators.required),
     contact: this.fb.nonNullable.array<TContacListForm>([this.fb.nonNullable.group({
-      compPhone: this.fb.nonNullable.control('', Validators.required),
-      name: this.fb.nonNullable.control("", Validators.required)
+      emplPhone: this.fb.nonNullable.control("", Validators.required),
+      emplName: this.fb.nonNullable.control("", Validators.required),
+      emplEmail: this.fb.nonNullable.control("")
     })], Validators.minLength(1)),
     compEmail: this.fb.nonNullable.control("", Validators.required),
     compFax: this.fb.nonNullable.control("", Validators.required),
@@ -185,8 +187,9 @@ type TAuthForm = FormGroup<{
 }>
 
 type TContacListForm = FormGroup<{
-  compPhone: FormControl<string>
-  name: FormControl<string>
+  emplPhone: FormControl<string>
+  emplName: FormControl<string>
+  emplEmail: FormControl<string>
 }>
 
 type TComp = { compGroupCode: string, compName: string }
