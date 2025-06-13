@@ -48,11 +48,11 @@ export class InOutEditComponent implements OnInit, OnDestroy {
   doorHead = this.doorMutServ.doorHead
   durationStep = this.doorFormServ.durationStep
   headForm = this.doorFormServ.headForm
-  slotForm = this.doorFormServ.slotEditForm
+  slotForm = this.doorFormServ.slotForm
   dayKey = this.doorFormServ.keys
   getDayOfWeek = this.doorFormServ.getThaiDay
-  addForm = this.doorFormServ.addEditForm
-  removeForm = this.doorFormServ.removeEditForm
+  addForm = this.doorFormServ.addForm
+  removeForm = this.doorFormServ.removeForm
   getDisable = this.doorFormServ.getDisableState
   private toastServ = inject(ToastService)
 
