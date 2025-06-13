@@ -86,42 +86,42 @@
       formGroupName="payment"
     >
       <div class="app-form-field">
-        <label for="duration">กำหนดชำระ (ระบุจำนวนวัน)</label>
+        <label for="paymentTerms">กำหนดชำระ (ระบุจำนวนวัน)</label>
         <input
           type="number"
-          name="duration"
-          id="duration"
-          formControlName="duration"
+          name="paymentTerms"
+          id="paymentTerms"
+          formControlName="paymentTerms"
           placeholder="ระบุจำนวนวัน"
         />
       </div>
       <div class="app-form-field">
-        <label for="saleDiscount">ส่วนลดการค้า %</label>
+        <label for="tradePerDisc">ส่วนลดการค้า %</label>
         <input
           type="number"
           min="0"
           max="100"
-          id="saleDiscount"
-          name="saleDiscount"
-          formControlName="saleDiscount"
+          id="tradePerDisc"
+          name="tradePerDisc"
+          formControlName="tradePerDisc"
         />
       </div>
       <div class="app-form-field">
-        <label for="cashDiscount">ส่วนลดเงินสด %</label>
+        <label for="cashPerDisc">ส่วนลดเงินสด %</label>
         <input
           type="number"
-          id="cashDiscount"
-          name="cashDiscount"
-          formControlName="cashDiscount"
+          id="cashPerDisc"
+          name="cashPerDisc"
+          formControlName="cashPerDisc"
         />
       </div>
       <div class="app-form-field">
-        <label for="dcDiscount">ส่วนลดdc %</label>
+        <label for="dcPerDisc">ส่วนลดdc %</label>
         <input
           type="number"
-          id="dcDiscount"
-          name="dcDiscount"
-          formControlName="dcDiscount"
+          id="dcPerDisc"
+          name="dcPerDisc"
+          formControlName="dcPerDisc"
         />
       </div>
     </form>

@@ -56,10 +56,10 @@ export class SupplierFromService {
   })], Validators.minLength(1))
 
   private paymentForm: TPaymentForm = this.fb.nonNullable.group({
-    duration: this.fb.nonNullable.control(0, [Validators.required, Validators.min(0)]),
-    saleDiscount: this.fb.nonNullable.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
-    cashDiscount: this.fb.nonNullable.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
-    dcDiscount: this.fb.nonNullable.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
+    paymentTerms: this.fb.nonNullable.control(0, [Validators.required, Validators.min(0)]),
+    tradePerDisc: this.fb.nonNullable.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
+    cashPerDisc: this.fb.nonNullable.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
+    dcPerDisc: this.fb.nonNullable.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
   })
 
 
@@ -211,10 +211,10 @@ type TEmplItemForm = FormGroup<TMapForm<TEmpl>>
 type TEmplListForm = FormArray<TEmplItemForm>
 
 type TSupplierPayment = {
-  duration: number
-  saleDiscount: number
-  cashDiscount: number
-  dcDiscount: number
+  paymentTerms: number
+  tradePerDisc: number
+  cashPerDisc: number
+  dcPerDisc: number
 }
 
 type TPaymentForm = FormGroup<TMapForm<TSupplierPayment>>
