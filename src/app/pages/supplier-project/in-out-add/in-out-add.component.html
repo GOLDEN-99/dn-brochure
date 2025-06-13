@@ -177,6 +177,7 @@
       >ย้อนกลับ</a
     >
     <button
+      [disabled]="headForm.invalid"
       class="btn btn-success"
       (click)="submitForm()"
       style="flex: 1 1 auto"

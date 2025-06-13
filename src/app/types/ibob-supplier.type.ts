@@ -290,4 +290,3 @@ export type TCompDetailRes = {
     dn: TDNComp | null
     item: TCompProduct[]
 }
-

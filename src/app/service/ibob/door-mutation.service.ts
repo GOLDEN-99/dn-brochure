@@ -7,8 +7,6 @@ import { BehaviorSubject, catchError, filter, map, of, shareReplay, switchMap, t
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { TDuration } from './baseDoorForm';
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -33,7 +31,6 @@ export class DoorMutationService {
   setDoor(id: string) {
     this.doorId$.next(id)
   }
-
 
   private fetchDoorDetail = (DoorId: string) => {
     return this.api.get<TDoorDetail>(`${this.url}/GetDoorDetail`, { params: { DoorId } })
