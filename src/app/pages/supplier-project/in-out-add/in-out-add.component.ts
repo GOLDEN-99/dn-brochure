@@ -14,7 +14,6 @@ import { DoorFormCreateService } from '../../../service/ibob/door-form-create.se
   styleUrl: './in-out-add.component.scss'
 })
 export class InOutAddComponent {
-
   private doorFormServ = inject(DoorFormCreateService)
   private doorMutServ = inject(DoorMutationService)
   private doorServ = inject(DoorService)

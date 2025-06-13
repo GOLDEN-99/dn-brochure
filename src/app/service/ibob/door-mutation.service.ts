@@ -8,6 +8,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { TDuration } from './baseDoorForm';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -33,6 +34,7 @@ export class DoorMutationService {
     this.doorId$.next(id)
   }
 
+
   private fetchDoorDetail = (DoorId: string) => {
     return this.api.get<TDoorDetail>(`${this.url}/GetDoorDetail`, { params: { DoorId } })
       .pipe(catchError(err => throwError(() => err)))
@@ -40,6 +42,7 @@ export class DoorMutationService {
 
   private doorDetail$ = this.doorId$.pipe(
     filter(this.predicateNull),
+
     switchMap(this.fetchDoorDetail)
     , catchError((err) => {
       console.error(err)
@@ -65,7 +68,6 @@ export class DoorMutationService {
   private rawTimeList = toSignal(this.time$, { initialValue: [] })
 
   private doorDetail = toSignal(this.doorDetail$, { initialValue: null })
-
 
   private convertToTimeStruct = (time: string): NgbTimeStruct => {
     const [hr, min, _] = time.split(':')
@@ -135,3 +137,4 @@ export class DoorMutationService {
 type TCreateDoorHeadVar = Pick<TCreateDoorInfo, 'doorname' | 'intendant' | 'multiple' | 'mail' | 'note' | 'timeUse'>
 
 type TTimeSlotTemp = Pick<TTimeSlotInfo, 'id' | 'doorId'> & TDuration
+

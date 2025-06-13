@@ -18,7 +18,9 @@ import { DoorMutationService } from '../../../../../service/ibob/door-mutation.s
 })
 export class AddScheduleFormComponent implements OnInit {
 
+
   ngOnInit(): void { }
+
 
   private doorFormServ = inject(DoorFormService)
   private doorMutServ = inject(DoorMutationService)

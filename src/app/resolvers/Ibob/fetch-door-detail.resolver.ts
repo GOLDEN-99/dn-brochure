@@ -7,7 +7,6 @@ export const fetchDoorDetailResolver: ResolveFn<boolean> = (route, state) => {
   const router = inject(Router)
   const toast = inject(ToastService)
   try {
-    console.log('fetch')
     const doorMutServ = inject(DoorMutationService)
     let doorId = route.paramMap.get('doorId')
     console.log(doorId)
@@ -27,7 +26,7 @@ export const fetchDoorDetailResolver: ResolveFn<boolean> = (route, state) => {
       router.navigateByUrl('/supplier/in-out')
       return false
     }
-    console.log('set door')
+
     doorMutServ.setDoor(doorId)
     return true
   } catch (err) {
