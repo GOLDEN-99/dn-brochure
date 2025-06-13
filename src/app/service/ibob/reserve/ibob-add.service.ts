@@ -12,18 +12,13 @@ import { LocalService } from '../../local/local.service';
 @Injectable({
   providedIn: 'root'
 })
-export class IbobAddService implements IIbObLogin, IIbObComp, IIbObReserve {
+export class IbobAddService implements IIbObLogin, IIbObReserve {
 
   constructor() { }
 
   private api = inject(ApiService)
   private baseurl = environment.ibob
   private storage = inject(LocalService)
-
-  private getWarehouseList = this.api.get<TWarehouse[]>(`${this.baseurl}/GetWarehouses`)
-  warehouseList = toSignal(this.getWarehouseList, { initialValue: [] })
-  getCurrentWarehouse = (warehouseId: string) => this.warehouseList()
-    .filter(({ id }) => id === warehouseId)[0]?.name ?? 'ไม่พบคลัง'
 
   currentComp = signal<TMaybe<TModifiedComp>>({
     compCode: 'test code',

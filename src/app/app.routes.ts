@@ -23,6 +23,7 @@ import { InOutListComponent } from './pages/supplier-project/in-out-list/in-out-
 import { RegisterPageComponent } from './pages/supplier-project/register-page/register-page.component';
 import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolver';
 import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
+import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-add.component';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
@@ -172,18 +173,22 @@ export const routes: Routes = [
                         component: InOutListComponent
                     },
                     {
+                        path: 'list/add',
+                        component: InOutAddComponent
+                    },
+                    {
+                        path: 'list/:slot',
+                        component: InOutEditComponent
+                    },
+                    {
+                        path: 'list/:slot/edit',
+                        component: InOutEditComponent
+                    },
+                    {
                         path: 'query',
                         component: InOutQueryComponent
                     }
                 ]
-            },
-            {
-                path: 'list/:id',
-                component: InOutEditComponent
-            },
-            {
-                path: 'list/:id/edit',
-                component: InOutEditComponent
             }
         ]
     },

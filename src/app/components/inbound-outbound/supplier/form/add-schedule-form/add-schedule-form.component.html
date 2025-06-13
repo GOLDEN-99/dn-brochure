@@ -13,63 +13,49 @@
     <div class="row">
       <div class="col">
         <div class="app-form-field">
-          <label for="name">ชื่อประตู</label>
+          <label for="doorname">ชื่อประตู</label>
           <input
             type="text"
-            name="name"
-            id="name"
-            [disabled]="inactive"
-            formControlName="name"
+            name="doorname"
+            id="doorname"
+            formControlName="doorname"
           />
         </div>
       </div>
       <div class="col">
         <div class="app-form-field">
-          <label for="duration">ระยะเวลา (ต่อรอบ)</label>
+          <label for="timeUse">ระยะเวลา (ต่อรอบ)</label>
           <input
             type="number"
             step="5"
             min="0"
-            id="duration"
-            name="duration"
-            formControlName="duration"
-            [disabled]="inactive"
+            id="timeUse"
+            name="timeUse"
+            formControlName="timeUse"
           />
         </div>
       </div>
     </div>
     <div class="app-form-field">
-      <label for="remark">หมายเหตุ</label>
-      <textarea
-        name="remark"
-        id="remark"
-        [disabled]="inactive"
-        formControlName="remark"
-      ></textarea>
+      <label for="note">หมายเหตุ</label>
+      <textarea name="note" id="note" formControlName="note"></textarea>
     </div>
     <div class="row">
       <div class="col">
         <div class="app-form-field">
-          <label for="admin">ชื่อผู้ดูแล</label>
+          <label for="intendant">ชื่อผู้ดูแล</label>
           <input
             type="text"
-            name="admin"
-            id="admin"
-            [disabled]="inactive"
-            formControlName="admin"
+            name="intendant"
+            id="intendant"
+            formControlName="intendant"
           />
         </div>
       </div>
       <div class="col">
         <div class="app-form-field">
-          <label for="email">E mail ผู้ดูแล</label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            [disabled]="inactive"
-            formControlName="adminEmail"
-          />
+          <label for="mail">E mail ผู้ดูแล</label>
+          <input type="mail" name="mail" id="mail" formControlName="mail" />
         </div>
       </div>
       <div>
@@ -80,7 +66,7 @@
               type="radio"
               id="single-reserve"
               [value]="false"
-              formControlName="isMultiple"
+              formControlName="multiple"
             />
             <label for="single-reserve">จองได้ 1 ช่วงเวลา</label>
           </div>
@@ -89,7 +75,7 @@
               type="radio"
               id="multiple-reserve"
               [value]="true"
-              formControlName="isMultiple"
+              formControlName="multiple"
             />
             <label for="multiple-reserve">จองหลายช่วงเวลา</label>
           </div>
@@ -126,7 +112,11 @@
           />
         </div>
         <div class="col-auto" style="flex: 0 0 120px">
-          <button class="btn btn-success" (click)="addForm(k)">
+          <button
+            class="btn btn-success"
+            [disabled]="durationStep() <= 0"
+            (click)="addForm(k)"
+          >
             <i class="bi bi-plus"></i>
           </button>
         </div>
@@ -142,7 +132,6 @@
           <div class="col">
             <ngb-timepicker
               [spinners]="false"
-              [readonlyInputs]="inactive"
               [formControl]="d.controls.form"
             ></ngb-timepicker>
           </div>
@@ -150,7 +139,6 @@
           <div class="col">
             <ngb-timepicker
               [spinners]="false"
-              [readonlyInputs]="inactive"
               [formControl]="d.controls.to"
               [minuteStep]="durationStep()"
             ></ngb-timepicker>
@@ -167,7 +155,11 @@
               <i class="bi bi-trash"></i>
             </button>
             @if (j === cur.length-1) {
-            <button class="btn btn-success" (click)="addForm(k)">
+            <button
+              class="btn btn-success"
+              [disabled]="getDisableState(d)"
+              (click)="addForm(k)"
+            >
               <i class="bi bi-plus"></i>
             </button>
             }
@@ -175,8 +167,33 @@
         </div>
         }
       </div>
-
-      }
+      @for (d of cur.controls;let j = $index; track j) {
+      <div class="row align-items-center">
+        <div class="col-auto" style="flex: 0 0 120px">
+          {{ j === 0 ? getThaiDay(k) : "" }}
+        </div>
+        <div class="col">
+          <!-- <app-time-range [form]="d.controls" [step]="durationStep()" /> -->
+        </div>
+        <div
+          class="col-auto"
+          style="flex: 0 0 120px; display: flex; justify-content: space-between"
+        >
+          <button class="btn btn-danger" (click)="removeForm(k, j)">
+            <i class="bi bi-trash"></i>
+          </button>
+          @if (j === cur.length-1) {
+          <button
+            class="btn btn-success"
+            [disabled]="getDisableState(d)"
+            (click)="addForm(k)"
+          >
+            <i class="bi bi-plus"></i>
+          </button>
+          }
+        </div>
+      </div>
+      } }
     </form>
     }
   </form>
@@ -188,6 +205,24 @@
       role="button"
       >ย้อนกลับ</a
     >
-    <button class="btn btn-success" style="flex: 1 1 auto">บันทึก</button>
+    <button
+      class="btn btn-success"
+      (click)="submitForm()"
+      style="flex: 1 1 auto"
+    >
+      บันทึก
+    </button>
   </div>
+</div>
+<div
+  style="
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background-color: #f5f5f5;
+    padding: 16px;
+    margin-bottom: 16px;
+  "
+>
+  <app-time-range [step]="durationStep()" />
 </div>
