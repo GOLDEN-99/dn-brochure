@@ -29,7 +29,6 @@ import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.reso
 import { SUPPLIER_TOKEN } from './service/supplier/supplier.token';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 
-
 import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 

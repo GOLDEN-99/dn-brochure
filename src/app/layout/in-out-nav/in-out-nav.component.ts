@@ -1,7 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { IBOBCOMPLIST_TOKEN } from '../../service/ibob/ibobToken';
-import { IbobAddService } from '../../service/ibob/ibob-add.service';
 import { WarehouseService } from '../../service/ibob/warehouse.service';
 
 @Component({
