@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseDoorForm, TDuration, TDurationSubForm, TFormKey, TSlotForm } from './baseDoorForm';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Validators } from '@angular/forms';
+import { TCreateTimeSlot } from '../../types/ibob-supplier.type';
 
 @Injectable({
   providedIn: 'root'
@@ -58,27 +59,21 @@ export class DoorFormCreateService extends BaseDoorForm<TDuration> {
 
   override patchForm = (ctrlName: TFormKey) => (value: TDuration) => { }
 
-  getTimeList = () => {
-    const rawList = this.slotForm.getRawValue()
-    const keyList = Object.keys(rawList) as TFormKey[]
-
-
-    const formattedList = keyList.flatMap(
-      (d) => {
-        const partialFn = this.preparedArrWithDay(d)
-        const temp = rawList[d]
-        return temp.length === 0
-          ? [{
-            startTime: null,
-            endTime: null,
-            dayId: this.genIndex(d),
-            dayName: this.getThaiDay(d),
-            isAvailable: false
-          }]
-          : temp.map(partialFn)
-      })
-
-    return formattedList
+  override get request() {
+    const rawHead = this.headForm.getRawValue()
+    const time = this.keys.flatMap<TCreateTimeSlot>(
+      (k) => {
+        const value = this.slotForm.controls[k].getRawValue()
+        const dayId = this.genIndex(k)
+        const dayName = this.getThaiDay(k)
+        if (value.length === 0) return [{ dayId, dayName, startTime: null, endTime: null, isAvailable: false }]
+        return value.map(({ form, to }) => ({ dayId, dayName, startTime: this.formatTime(form), endTime: this.formatTime(to), isAvailable: true }))
+      }
+    )
+    return {
+      door: { ...rawHead, multiple: rawHead.multiple ? '1' : '0' },
+      time
+    }
   }
 
 }

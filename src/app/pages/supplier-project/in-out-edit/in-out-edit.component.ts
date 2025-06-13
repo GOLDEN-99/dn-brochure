@@ -24,6 +24,7 @@ export class InOutEditComponent implements OnInit, OnDestroy {
         const { door, time } = res
         const { doorname, doorId, timeUse, note, intendant, mail, multiple } = door
         this.doorFormServ.currentDoorId = Number(doorId)
+        console.log(this.doorFormServ.currentDoorId)
         this.headForm.patchValue({
           doorname, timeUse, note, intendant: intendant ?? '', mail, multiple: multiple === '1'
         })
