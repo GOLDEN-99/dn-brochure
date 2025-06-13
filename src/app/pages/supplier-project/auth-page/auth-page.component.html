@@ -1,6 +1,12 @@
 <div class="app-form-field">
   <label for="supplierCode">รหัสซัพ</label>
-  <input type="text" name="supplierCode" id="supplierCode" disabled />
+  <input
+    type="text"
+    name="supplierCode"
+    id="supplierCode"
+    disabled
+    [ngModel]="comp()?.compCode"
+  />
 </div>
 <form
   [formGroup]="stepOneForm"
@@ -17,13 +23,13 @@
     />
   </div>
   <div class="app-form-field">
-    <label for="password">Password</label>
+    <label for="userpass">Password</label>
     <div class="input-group">
       <input
         [type]="passwordType()"
-        name="password"
-        id="password"
-        formControlName="password"
+        name="userpass"
+        id="userpass"
+        formControlName="userpass"
       />
       <span
         class="input-group-text"
