@@ -72,6 +72,10 @@ export class DoorFormEditService extends BaseDoorForm<TEditableDuration> {
     this.slotForm.controls[ctrlName].push(entry)
   }
 
+  override updateForm(ctrlName: TFormKey, idx: number): (value: Partial<TEditableDuration>) => void {
+    return (value: Partial<TEditableDuration>) => this.slotForm.controls[ctrlName].controls[idx].patchValue({ ...value })
+  }
+
 
   override get request() {
     const rawHead = this.headForm.getRawValue()
@@ -81,16 +85,7 @@ export class DoorFormEditService extends BaseDoorForm<TEditableDuration> {
         const timeUse = rawHead.timeUse
         const dayId = this.genIndex(k)
         const dayName = this.getThaiDay(k)
-        if (value.length === 0) return [
-          {
-            id: 0,
-            dayId, dayName,
-            doorId: this.currentDoorId, multiple: rawHead.multiple ? '1' : '0',
-            isAvailable: false,
-            startTime: null,
-            endTime: null
-          }
-        ]
+        if (value.length === 0) return []
         return value.map(({ form, to, doorId, id }) => ({ id, doorId, dayId, dayName, startTime: this.formatTime(form), endTime: this.formatTime(to), isAvailable: true, timeUse }))
       }
     )

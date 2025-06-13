@@ -3,7 +3,7 @@ import { WarehouseService } from './warehouse.service';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
 import { TCreateDoorInfo, TCreateTimeSlot, TDoorDetail, TTimeSlotInfo } from '../../types/ibob-supplier.type';
-import { BehaviorSubject, catchError, filter, map, of, shareReplay, switchMap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, filter, finalize, forkJoin, map, of, shareReplay, switchMap, throwError } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { TDuration } from './baseDoorForm';
@@ -20,7 +20,11 @@ export class DoorMutationService {
 
   private api = inject(ApiService)
 
+  private fetch$ = new BehaviorSubject(1)
+
   private doorId$ = new BehaviorSubject<string | null>(null)
+
+  private temp$ = combineLatest([this.fetch$, this.doorId$]).pipe(map(([__dirname, id]) => id))
 
   private predicateNull = <T>(value: T | null): value is T => value !== null
 
@@ -37,7 +41,7 @@ export class DoorMutationService {
       .pipe(catchError(err => throwError(() => err)))
   }
 
-  private doorDetail$ = this.doorId$.pipe(
+  private doorDetail$ = this.temp$.pipe(
     filter(this.predicateNull),
     switchMap(this.fetchDoorDetail)
     , catchError((err) => {
@@ -105,6 +109,8 @@ export class DoorMutationService {
     return timeMap
   })
 
+  refetch = () => this.fetch$.next(1)
+
   createDoor = ({ door, time }: { door: TCreateDoorHeadVar, time: TCreateTimeSlot[] }) => {
     const whname = this.warehouseServ.currentWarehouseName()
     const warehouseId = this.warehouseServ.warehouseId()
@@ -126,10 +132,27 @@ export class DoorMutationService {
         ...door, whname, warehouseId
       },
       time
-    }, {})
+    }, {}).pipe(finalize(() => this.refetch()))
+  }
+
+  deleteTimeSlot = (slotId: number) => {
+    return this.api.post(`${this.url}/ChangeStatusSlotTimeGate`, {}, { params: { id: slotId } })
+      .pipe(
+        finalize(() => this.refetch())
+      )
+  }
+
+  addTimeSlot = (state: TAddTimeSlotState) => {
+    const doorId = this.doorId()
+    const timeUse = this.doorDetail()?.door.timeUse
+    if (!timeUse) throw new Error('invalid door detail')
+    if (!doorId) throw new Error('invalid doorId')
+    return this.api.post(`${this.url}/CreateSlotTimeGate`, { doorId, timeUse, ...state })
   }
 }
 
 type TCreateDoorHeadVar = Pick<TCreateDoorInfo, 'doorname' | 'intendant' | 'multiple' | 'mail' | 'note' | 'timeUse'>
+
+type TAddTimeSlotState = { dayId: number, dayName: string, startTime: string, endTime: string }
 
 type TTimeSlotTemp = Pick<TTimeSlotInfo, 'id' | 'doorId'> & TDuration

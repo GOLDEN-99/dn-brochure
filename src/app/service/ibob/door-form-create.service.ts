@@ -59,6 +59,10 @@ export class DoorFormCreateService extends BaseDoorForm<TDuration> {
 
   override patchForm = (ctrlName: TFormKey) => (value: TDuration) => { }
 
+  override updateForm(ctrlName: TFormKey, idx: number): (value: Partial<TDuration>) => void {
+    return (value: Partial<TDuration>) => this.slotForm.controls[ctrlName].controls[idx].patchValue({ ...value })
+  }
+
   override get request() {
     const rawHead = this.headForm.getRawValue()
     const time = this.keys.flatMap<TCreateTimeSlot>(
