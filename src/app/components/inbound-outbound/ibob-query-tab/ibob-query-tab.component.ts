@@ -1,4 +1,4 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CUSTOM_FIELD_SEARCH_TOKEN } from './ibob-query-tab-token';
 
@@ -14,6 +14,7 @@ export class IbobQueryTabComponent {
   private optionRefList = [...this.optionRefMap.entries()].map(([id, { label }]) => ({ id, label }))
   selectOption = signal(this.optionRefList)
 
+  label = input.required<string>()
   currentOption = signal(0)
   term = signal('')
   id = computed(() => `search-input-opt-${this.currentOption()}`)
