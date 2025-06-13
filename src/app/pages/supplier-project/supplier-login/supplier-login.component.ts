@@ -3,7 +3,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { ToastService } from '../../../service/toast/toast.service';
 import { LOGINABLE_TOKEN } from '../../../service/ibob/ibobToken';
-import { IbobAddService } from '../../../service/ibob/reserve/ibob-add.service';
+import { IbobAddService } from '../../../service/ibob/ibob-add.service';
 
 @Component({
   selector: 'app-supplier-login',

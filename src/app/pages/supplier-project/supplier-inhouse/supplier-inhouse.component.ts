@@ -1,12 +1,21 @@
 import { Component, inject } from '@angular/core';
-import { SUPPLIER_TOKEN } from '../../../lib';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SUPPLIER_TOKEN } from '../../../service/supplier/supplier.token';
+import { CUSTOM_FIELD_SEARCH_TOKEN, IBOB_SUPPLIER_COMP_SEARCH } from '../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
+import { IbobQueryTabComponent } from '../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab.component';
+
 
 @Component({
   selector: 'app-supplier-inhouse',
-  imports: [],
+  imports: [IbobQueryTabComponent],
   templateUrl: './supplier-inhouse.component.html',
-  styleUrl: './supplier-inhouse.component.scss'
+  styleUrl: './supplier-inhouse.component.scss',
+  providers: [
+    {
+      provide: CUSTOM_FIELD_SEARCH_TOKEN,
+      useValue: IBOB_SUPPLIER_COMP_SEARCH
+    }
+  ]
 })
 export class SupplierInhouseComponent {
   dataService = inject(SUPPLIER_TOKEN)

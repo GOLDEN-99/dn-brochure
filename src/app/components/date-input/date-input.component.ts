@@ -6,7 +6,7 @@ import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bo
   selector: 'app-date-input',
   imports: [NgbDatepickerModule, FormsModule],
   templateUrl: './date-input.component.html',
-  styleUrl: './date-input.component.scss'
+  styles: ''
 })
 export class DateInputComponent {
   private calendar = inject(NgbCalendar)

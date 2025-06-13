@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-supllier-select',
   imports: [FormsModule],
   templateUrl: './supllier-select.component.html',
-  styleUrl: './supllier-select.component.scss'
+  styles: ''
 })
 export class SupllierSelectComponent {
   selectedOption = model<IOption | null>(null)

@@ -1,9 +1,10 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { catchError, map, of, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, map, of, switchMap, throwError } from 'rxjs';
 import { ApiService } from '../api/api.service';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TAppDoor, TDoor } from '../../types/ibob-supplier.type';
+import { WarehouseService } from './warehouse.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,19 +21,25 @@ export class DoorService {
     })
   }
 
+  private warehouseServ = inject(WarehouseService)
+
   private url = environment.ibob
 
   private api = inject(ApiService)
 
-  private warehouse$ = new Subject<string>()
+  private fetch$ = new BehaviorSubject('fetch')
 
   private fetchDoor = (warehouseId: string) => this.api.get<TDoor[]>(`${this.url}/GetDoor`, { params: { warehouseId } })
 
-  private door$ = this.warehouse$.pipe(
-    switchMap(this.fetchDoor),
-    map((door) => door.map(d => ({ ...d, check: true }))),
-    catchError((err) => { return of([] as TAppDoor[]) })
-  )
+  private door$ =
+    this.fetch$.pipe(
+      switchMap(() => this.warehouseServ.warehouseId$.pipe(
+        switchMap(this.fetchDoor),
+        map((door) => door.map(d => ({ ...d, check: true }))),
+        catchError((err) => throwError(() => err))
+      )),
+      catchError((err) => of([] as TAppDoor[]))
+    )
 
   doorList = signal<TAppDoor[]>([])
 
@@ -44,5 +51,10 @@ export class DoorService {
     )
   )
 
-  setWarehouseId = (id: string) => this.warehouse$.next(id)
+  whname = this.warehouseServ.currentWarehouseName
+
+  refetch = () => this.fetch$.next('fetch')
+
 }
+
+
