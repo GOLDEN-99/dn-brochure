@@ -196,6 +196,7 @@ export const routes: Routes = [
                                 component: InOutEditComponent
                             }
                         ]
+
                     },
                     {
                         path: 'query',

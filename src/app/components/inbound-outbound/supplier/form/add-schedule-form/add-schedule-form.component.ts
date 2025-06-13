@@ -5,10 +5,10 @@ import { RouterLink } from '@angular/router';
 import { TMapForm } from '../../../../../types';
 import { DoorService } from '../../../../../service/ibob/door.service';
 import { TCreateTimeSlot } from '../../../../../types/ibob-supplier.type';
-
 import { filter, tap } from 'rxjs';
-import { DoorFormService } from '../../../../../service/ibob/door-form.service';
+import { DoorFormService } from '../../../../../service/ibob/door-form-edit.service';
 import { DoorMutationService } from '../../../../../service/ibob/door-mutation.service';
+
 
 @Component({
   selector: 'app-add-schedule-form',
@@ -18,9 +18,7 @@ import { DoorMutationService } from '../../../../../service/ibob/door-mutation.s
 })
 export class AddScheduleFormComponent implements OnInit {
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void { }
 
   private doorFormServ = inject(DoorFormService)
   private doorMutServ = inject(DoorMutationService)
@@ -34,12 +32,9 @@ export class AddScheduleFormComponent implements OnInit {
   removeForm = this.doorFormServ.removeForm
   getDisable = this.doorFormServ.getDisableState
 
-
-
   submitForm = () => {
     const head = this.doorFormServ.getFormHead()
     const time = this.doorFormServ.getTimeList()
-
     this.doorMutServ.createDoor({
       door: head,
       time
@@ -48,5 +43,4 @@ export class AddScheduleFormComponent implements OnInit {
       error: (err) => { console.error(err) }
     })
   }
-
 }

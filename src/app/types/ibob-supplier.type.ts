@@ -161,6 +161,7 @@ export type TCreateDoorInfo = {
     doorname: string
 } & Pick<TDoor, 'warehouseId' | 'note' | 'timeUse' | 'intendant' | 'multiple'>
 
+
 export type TAvalTimeSlot = {
     dayId: number
     dayName: string
@@ -187,6 +188,7 @@ export type TCreateDoorReq = {
     door: TCreateDoorInfo
     time: TCreateTimeSlot[]
 }
+
 export type TCreateDoorRes = {}
 
 export type TDoorInfo = { doorId: string } & TCreateDoorInfo
@@ -253,7 +255,6 @@ type TCompDb = {
     sapUpdateDate: string,
 } //3
 
-
 export type THUComp = {
     shipTo: string,
     compPhone: string,
@@ -290,5 +291,3 @@ export type TCompDetailRes = {
     dn: TDNComp | null
     item: TCompProduct[]
 }
-
-
