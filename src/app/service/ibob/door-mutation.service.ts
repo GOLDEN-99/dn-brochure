@@ -39,7 +39,6 @@ export class DoorMutationService {
 
   private doorDetail$ = this.doorId$.pipe(
     filter(this.predicateNull),
-
     switchMap(this.fetchDoorDetail)
     , catchError((err) => {
       console.error(err)

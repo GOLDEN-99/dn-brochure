@@ -12,7 +12,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class DoorFormService {
 
   constructor() {
-
     this.headForm.controls.timeUse.valueChanges
       .pipe(
         filter(d => d >= 0),
@@ -74,6 +73,7 @@ export class DoorFormService {
         }))
       return
     }
+
     const startTime = {
       hour: 8,
       minute: 30,

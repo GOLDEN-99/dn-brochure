@@ -34,6 +34,7 @@ export class AddScheduleFormComponent implements OnInit {
   submitForm = () => {
     const head = this.doorFormServ.getFormHead()
     const time = this.doorFormServ.getTimeList()
+
     this.doorMutServ.createDoor({
       door: head,
       time
@@ -43,53 +44,4 @@ export class AddScheduleFormComponent implements OnInit {
     })
   }
 
-  private doorServ = inject(DoorService)
-
-  private genIndex = (k: TFormKey) => {
-    switch (k) {
-      case 'sun': return 7
-      case 'mon': return 1
-      case 'tue': return 2
-      case 'wed': return 3
-      case 'thu': return 4
-      case 'fri': return 5
-      case 'sat': return 6
-    }
-  }
-
-  private formatTime = (t: NgbTimeStruct) => {
-    const { hour, minute } = t
-    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-  }
-
-  private prepareArray = (d: TDayDetail) => ({ form, to }: TDuration): TCreateTimeSlot => ({
-    startTime: this.formatTime(form),
-    endTime: this.formatTime(to),
-    ...d,
-    isAvailable: true
-  })
-
-  private preparedArrWithDay = (d: TFormKey) => {
-    const dayId = this.genIndex(d)
-    const dayName = this.getThaiDay(d)
-    return this.prepareArray({ dayId, dayName })
-  }
-
-  submitForm = () => {
-    const { mail, multiple, doorname, note, intendant, timeUse } = this.headForm.getRawValue()
-    const formmatedHead = { doorname, timeUse, note, intendant, mail, multiple: multiple ? "1" : "0" }
-    const rawList = this.form.getRawValue()
-    const keyList = Object.keys(rawList) as TFormKey[]
-
-    const formattedList = keyList.flatMap((d) => {
-      const partialFn = this.preparedArrWithDay(d)
-      return rawList[d].map(partialFn)
-    })
-  }
-
-}
-
-type TDayDetail = {
-  dayId: number
-  dayName: string
 }

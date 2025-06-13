@@ -9,7 +9,6 @@ export const fetchDoorDetailResolver: ResolveFn<boolean> = (route, state) => {
   try {
     const doorMutServ = inject(DoorMutationService)
     let doorId = route.paramMap.get('doorId')
-    console.log(doorId)
     if (!doorId) {
       const temp = route.parent?.paramMap.get('doorId')
       if (!temp) {
@@ -26,7 +25,6 @@ export const fetchDoorDetailResolver: ResolveFn<boolean> = (route, state) => {
       router.navigateByUrl('/supplier/in-out')
       return false
     }
-
     doorMutServ.setDoor(doorId)
     return true
   } catch (err) {
