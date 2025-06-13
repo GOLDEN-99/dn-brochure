@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { DoorService } from '../../../service/ibob/door.service';
 import { DoorMutationService } from '../../../service/ibob/door-mutation.service';
 import { FormsModule } from '@angular/forms';
 import { DoorFormService, TFormKey } from '../../../service/ibob/door-form.service';
@@ -27,3 +26,4 @@ export class InOutDetailComponent {
     return data ?? []
   }
 }
+
