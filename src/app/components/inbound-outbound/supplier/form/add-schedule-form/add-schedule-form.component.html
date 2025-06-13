@@ -1,4 +1,4 @@
-<h2>เพิ่มประตู</h2>
+<!-- <h2>เพิ่มประตู</h2>
 <div
   style="
     display: flex;
@@ -94,9 +94,7 @@
   >
     @for (k of dayKey; let i = $index;track i) {
     <form [formArrayName]="k">
-      @let cur = slotForm.controls[k];
-      <!---->
-      @if (cur.length === 0) {
+      @let cur = slotForm.controls[k]; @if (cur.length === 0) {
       <div class="row">
         <div class="col-auto" style="width: 120px">{{ getDayOfWeek(k) }}</div>
         <div class="col">
@@ -120,7 +118,7 @@
         </div>
       </div>
       } @else {
-      <!---->
+  
       <div class="row">
         @for (d of cur.controls;let j = $index; track j) {
         <div class="row align-items-center mb-3">
@@ -185,4 +183,4 @@
       บันทึก
     </button>
   </div>
-</div>
+</div> -->
