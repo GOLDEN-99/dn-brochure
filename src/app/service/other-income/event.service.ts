@@ -18,7 +18,7 @@ export class EventService {
 }
 
 
-type TEvent = {
+export type TEvent = {
   id: number
   eventName: number
   isLight: boolean

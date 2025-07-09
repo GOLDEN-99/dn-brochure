@@ -35,4 +35,4 @@ export class CompanyService {
 
 type TQuery = Record<string, string>
 type TCompField = 'name' | 'code'
-type TOIComp = { compCode: string, compName: string }
+export type TOIComp = { compCode: string, compName: string, compType?: string }

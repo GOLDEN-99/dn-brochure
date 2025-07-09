@@ -37,13 +37,22 @@
         <th>เริ่ม</th>
         <th>จบ</th>
         <th>ชื่อซัพพลายเออร์</th>
-        <th>ชื่อสินค้า</th>
-        <th>เป้าหมาย</th>
+        <th>cn</th>
+        <th>ชื่อเรียกเก็บ</th>
+        <!-- <th>ชื่อสินค้า</th>
+        <th>เป้าหมาย</th> -->
       </tr>
     </thead>
     <tbody>
       @for (item of data(); track $index) {
-      <tr></tr>
+      <tr>
+        <td>{{ item.event.eventName }}</td>
+        <td>{{ item.startDate | date }}</td>
+        <td>{{ item.endDate | date }}</td>
+        <td>{{ item.company.compName }}</td>
+        <td>{{ item.cn }}</td>
+        <td>{{ item.displayName }}</td>
+      </tr>
       }
     </tbody>
   </table>

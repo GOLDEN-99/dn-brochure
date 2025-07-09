@@ -17,7 +17,6 @@ export class OiBaseformService {
     compCode: '',
     compType: 'DN',
     compName: '',
-    // incVat: false,
     eventId: 0,
     period: 0,
     startDate: this.today,

@@ -22,7 +22,7 @@ export class DiscountService {
   discount = toSignal(this.discount$, { initialValue: [] })
 }
 
-type TDiscount = {
+export type TDiscount = {
   id: number
   discountName: string
 }
