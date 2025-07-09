@@ -32,12 +32,17 @@ import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-ou
 import { FlashSaleCardComponent } from './components/brochure-card/flash-sale-card/flash-sale-card.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
-import { PurchaseLayoutComponent } from './layout/other-income/purchase-layout/purchase-layout.component';
+import { PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
 import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
 import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
 import { PurchaseTemplateComponent } from './components/other-income/purchase-template/purchase-template.component';
 import { SpecialIncomeFormComponent } from './pages/other-income/purchase/special-income-form/special-income-form.component';
+import { AccountHomeComponent } from './pages/other-income/account/account-home/account-home.component';
+import { OtherIncomeReportComponent } from './pages/other-income/other-income-report/other-income-report.component';
+import { BaseLayoutComponent, LABEL_TOKEN } from './layout/other-income/base-layout/base-layout.component';
+import { OtherIncomeLightFormComponent } from './components/other-income/form/other-income-light-form/other-income-light-form.component';
+import { OtherIncomeNotLightFormComponent } from './components/other-income/form/other-income-not-light-form/other-income-not-light-form.component';
 
 export const routes: Routes = [
     {
@@ -232,6 +237,12 @@ export const routes: Routes = [
             {
                 path: 'purchase',
                 component: PurchaseLayoutComponent,
+                providers: [
+                    {
+                        provide: TAB_TOKEN,
+                        useValue: PURCHASE_TAB_TOKEN
+                    }
+                ],
                 children: [
                     {
                         path: '',
@@ -245,11 +256,43 @@ export const routes: Routes = [
             },
             {
                 path: 'purchase/create',
-                component: PurchaseIncomeFormComponent
+                component: BaseLayoutComponent,
+                providers: [
+                    {
+                        provide: LABEL_TOKEN,
+                        useValue: { label: "รายได้อื่นๆ" }
+                    }
+                ],
+                children: [
+                    {
+                        path: "",
+                        component: PurchaseIncomeFormComponent
+                    },
+                    {
+                        path: ":headId",
+                        component: OtherIncomeNotLightFormComponent
+                    }
+                ]
             },
             {
                 path: 'purchase/create-special',
-                component: SpecialIncomeFormComponent
+                component: BaseLayoutComponent,
+                providers: [
+                    {
+                        provide: LABEL_TOKEN,
+                        useValue: { label: "รายได้อื่นๆ light box" }
+                    }
+                ],
+                children: [
+                    {
+                        path: "",
+                        component: SpecialIncomeFormComponent
+                    },
+                    {
+                        path: ":headId",
+                        component: OtherIncomeLightFormComponent
+                    }
+                ]
             },
             {
                 path: 'purchase/:id',
@@ -258,6 +301,34 @@ export const routes: Routes = [
             {
                 path: 'purchase/:id/edit',
                 component: PurchaseTemplateComponent
+            },
+            {
+                path: "account",
+                component: PurchaseLayoutComponent,
+                providers: [
+                    {
+                        provide: TAB_TOKEN,
+                        useValue: PURCHASE_TAB_TOKEN
+                    }
+                ],
+                children: [
+                    {
+                        path: '',
+                        component: AccountHomeComponent
+                    },
+                    {
+                        path: 'report',
+                        component: PurchaseReportComponent
+                    }
+                ]
+            },
+            {
+                path: "account/:id",
+                component: PurchaseTemplateComponent
+            },
+            {
+                path: "report/:year",
+                component: OtherIncomeReportComponent
             }
         ]
     },

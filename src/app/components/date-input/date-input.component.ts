@@ -11,7 +11,7 @@ import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bo
 export class DateInputComponent {
   private calendar = inject(NgbCalendar)
   id = Math.floor(Math.random() * 1000)
-  date = input(this.calendar.getToday())
+  date = input<NgbDateStruct>(this.calendar.getToday())
   label = input.required<string>()
   disableClick = input(false)
   thaiDate(date: NgbDateStruct | null) {

@@ -3,4 +3,5 @@ export const environment = {
     imagePath: "https://file.drugnetcenter.com/drugpos/GoodPictures",
     cnPath: "https://api.drugnetcenter.com/ReturnRequest",
     ibob: "https://api.drugnetcenter.com/IbOb",
+    oi: "http://localhost:5266"
 };

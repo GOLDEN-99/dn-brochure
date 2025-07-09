@@ -34,8 +34,8 @@ import { FormsModule } from '@angular/forms';
               type="number"
               name="percent"
               id="percent"
-              [ngModel]="percent()"
-              (ngModelChange)="percentChange.emit($event)"
+              [ngModel]="step()[0].percent"
+              (ngModelChange)="changePercent(0)($event)"
             />
           </div>
         </div>
@@ -121,25 +121,10 @@ export class TargetSubformComponent {
   // 2wbd of target
   target = input(0)
   targetChange = output<number>()
-  // 2wbd of percent in case of target === 1
-  percent = input(0)
-  percentChange = output<number>()
-  invalidPercentTarget = computed(() => this.target() === 1 && this.percent() === 0)
+
   changeTarget(value: number) {
-    const currentTarget = this.target()
-
-
-    if (currentTarget === 2 || currentTarget === 3) {
-      if (value !== 2 && value !== 3) {
-        this.stepChange.emit([])
-      }
-    } else {
-      this.percentChange.emit(0)
-      if (value === 2 || value === 3) {
-        this.stepChange.emit([this.defaultStep])
-      }
-    }
-
+    const resetStep = [this.defaultStep]
+    this.stepChange.emit(resetStep)
     this.targetChange.emit(value)
   }
 

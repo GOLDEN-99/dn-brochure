@@ -1,5 +1,7 @@
-import { Component, output, signal } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CompanyService } from '../../../service/other-income/company.service';
+import { TCompType } from '../../../types';
 
 @Component({
   selector: 'app-other-search-supplier-modal',
@@ -8,8 +10,28 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './other-search-supplier-modal.component.scss'
 })
 export class OtherSearchSupplierModalComponent {
-  term = signal("")
-  result = signal<IComp[]>([{ compCode: '1', compName: 'company 1' }, { compName: 'company 2', compCode: '2' }])
+
+  private searchComp = inject(CompanyService)
+  term = this.searchComp.term
+  field = this.searchComp.field
+  isName = computed(() => this.field() === 'name')
+  changeName = (changeToName: boolean) => {
+    if (changeToName) {
+      this.field.set('name')
+    } else {
+      this.field.set('code')
+    }
+  }
+  compList = this.searchComp.compList
+  compType = signal<TCompType>('DN')
+  isDn = computed(() => this.compType() === 'DN')
+  changeDn = (changeToDn: boolean) => {
+    if (changeToDn) {
+      this.compType.set('DN')
+    } else {
+      this.compType.set('HU')
+    }
+  }
 
   selectComp = output<IComp>()
 
