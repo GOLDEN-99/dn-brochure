@@ -16,9 +16,11 @@ export class FlashSaleCardComponent {
   textClass = computed(() => {
     const stat = this.isStatic()
     if (stat) {
-      return this.cardProp().goodName.length > 30 ? 'header-text text-white long static' : 'header-text text-white static'
+      return 'header-text text-white static'
+      // return this.cardProp().goodName.length > 30 ? 'header-text text-white long static' : 'header-text text-white static'
     }
-    return this.cardProp().goodName.length > 30 ? 'header-text text-white long' : 'header-text text-white'
+    return 'header-text text-white'
+    //return this.cardProp().goodName.length > 30 ? 'header-text text-white long' : 'header-text text-white'
   }
   )
 
