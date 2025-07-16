@@ -43,6 +43,11 @@ import { OtherIncomeReportComponent } from './pages/other-income/other-income-re
 import { BaseLayoutComponent, LABEL_TOKEN } from './layout/other-income/base-layout/base-layout.component';
 import { OtherIncomeLightFormComponent } from './components/other-income/form/other-income-light-form/other-income-light-form.component';
 import { OtherIncomeNotLightFormComponent } from './components/other-income/form/other-income-not-light-form/other-income-not-light-form.component';
+import { PurchasingLightHomeComponent } from './pages/other-income/purchase/purchasing-light-home/purchasing-light-home.component';
+import { getOtherIncomeLightIdResolver } from './resolvers/other-income/get-other-income-light-id.resolver';
+import { getOtherIncomeNotLightIdResolver } from './resolvers/other-income/get-other-income-not-light-id.resolver';
+import { NotLightSingleComponent } from './pages/other-income/purchase/not-light-single/not-light-single.component';
+import { LightSingleComponent } from './pages/other-income/purchase/light-single/light-single.component';
 
 export const routes: Routes = [
     {
@@ -245,8 +250,12 @@ export const routes: Routes = [
                 ],
                 children: [
                     {
-                        path: '',
+                        path: 'not-light',
                         component: PurchaseHomeComponent
+                    },
+                    {
+                        path: 'light',
+                        component: PurchasingLightHomeComponent
                     },
                     {
                         path: 'report',
@@ -255,7 +264,7 @@ export const routes: Routes = [
                 ]
             },
             {
-                path: 'purchase/create',
+                path: 'purchase/not-light/create',
                 component: BaseLayoutComponent,
                 providers: [
                     {
@@ -275,7 +284,7 @@ export const routes: Routes = [
                 ]
             },
             {
-                path: 'purchase/create-special',
+                path: 'purchase/light/create',
                 component: BaseLayoutComponent,
                 providers: [
                     {
@@ -295,13 +304,23 @@ export const routes: Routes = [
                 ]
             },
             {
-                path: 'purchase/:id',
-                component: PurchaseTemplateComponent
+                path: 'purchase/light/:headId',
+                resolve: { single: getOtherIncomeLightIdResolver },
+                component: LightSingleComponent
             },
             {
-                path: 'purchase/:id/edit',
-                component: PurchaseTemplateComponent
+                path: 'purchase/not-light/:headId',
+                resolve: { single: getOtherIncomeNotLightIdResolver },
+                component: NotLightSingleComponent
             },
+            // {
+            //     path: 'purchase/:id',
+            //     component: PurchaseTemplateComponent
+            // },
+            // {
+            //     path: 'purchase/:id/edit',
+            //     component: PurchaseTemplateComponent
+            // },
             {
                 path: "account",
                 component: PurchaseLayoutComponent,

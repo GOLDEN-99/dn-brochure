@@ -3,7 +3,7 @@
   <div class="d-flex justify-content-end mb-3" style="gap: 16px">
     <a
       routerLink="./create"
-      class="btn btn-success"
+      class="btn btn-info"
       style="
         display: flex;
         justify-content: center;
@@ -13,6 +13,7 @@
     >
       <i class="bi bi-plus"></i>
       <span> เพิ่มรายการรายได้อื่นๆ </span>
+      <span style="color: red"> กรณี live box </span>
     </a>
   </div>
   <app-ibob-query-tab label="ค้นหารายการรายได้อื่นๆ" />
@@ -23,9 +24,10 @@
         <th>เริ่ม</th>
         <th>จบ</th>
         <th>ชื่อซัพพลายเออร์</th>
-        <th>cn</th>
-        <th>ชื่อเรียกเก็บ</th>
-        <th></th>
+        <th>จำนวนสาขา</th>
+        <th>ยอดคาดหมาย</th>
+        <!-- <th>ชื่อสินค้า</th>
+        <th>เป้าหมาย</th> -->
       </tr>
     </thead>
     <tbody>
@@ -35,9 +37,8 @@
         <td>{{ item.startDate | date }}</td>
         <td>{{ item.endDate | date }}</td>
         <td>{{ item.company.compName }}</td>
-        <td>{{ item.cn }}</td>
-        <td>{{ item.displayName }}</td>
-        <td><a [routerLink]="`${item.id}`">รายละเอียด</a></td>
+        <td>{{ item.totalBranch }}</td>
+        <td>{{ item.totalAmount }}</td>
       </tr>
       }
     </tbody>

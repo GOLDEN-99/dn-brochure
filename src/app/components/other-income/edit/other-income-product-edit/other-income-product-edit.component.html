@@ -1,0 +1,38 @@
+<div class="mb-3">
+  @let cur = value();
+  <div class="row" style="justify-content: space-between">
+    @let showProduct = cur.isProduct;
+    <h2 class="col-auto">รายการสินค้า</h2>
+    @if(showProduct){
+    <div class="col-auto">
+      <button class="btn btn-primary">เพิ่ม</button>
+    </div>
+    }
+  </div>
+  @if (showProduct) {
+  <div style="max-height: 250px; overflow-y: scroll; position: relative">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>รหัส</th>
+          <th>ชื่อ</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @let products = cur.productList;
+        <!---->
+        @for (product of products; track product.id) {
+        <tr>
+          <td>{{ product.goodCode }}</td>
+          <td>{{ product.goodName }}</td>
+          <td>
+            <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>

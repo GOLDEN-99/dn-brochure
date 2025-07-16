@@ -1,0 +1,7 @@
+<section class="app-container">
+  @if (invalidValue()) {
+  <div>ไม่พบเอกสาร</div>
+  } @else {
+  <app-other-income-head-edit [value]="head()" />
+  }
+</section>

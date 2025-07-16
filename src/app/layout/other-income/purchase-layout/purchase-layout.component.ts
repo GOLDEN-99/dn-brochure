@@ -16,12 +16,12 @@ export const PURCHASE_TAB_TOKEN: ITabSetting = {
   tabList: [
     {
       label: 'รายได้อื่นๆ',
-      link: './',
+      link: './not-light',
       exact: true
     },
     {
       label: 'รายได้อื่นๆ light-box',
-      link: './light-box',
+      link: './light',
       exact: false
     },
     {

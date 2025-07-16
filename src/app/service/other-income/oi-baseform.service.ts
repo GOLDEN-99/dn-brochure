@@ -52,5 +52,5 @@ export class OiBaseformService {
 
 }
 
-type TAppBaseformInsert = TBaseOiInsert<'app'>
-type TApiBaseformInsert = TBaseOiInsert<'api'>
+export type TAppBaseformInsert = TBaseOiInsert<'app'>
+export type TApiBaseformInsert = TBaseOiInsert<'api'>

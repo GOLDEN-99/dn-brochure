@@ -1,0 +1,72 @@
+<section class="app-container">
+  @if (invalidValue()) {
+  <div>ไม่พบเอกสาร</div>
+  }@else{
+
+  <app-other-income-head-edit [value]="head()" />
+  <app-other-income-not-light-edit [eventDetail]="eventDetail()" />
+  <app-other-income-product-edit [value]="productDetail()" />
+  <!--action-->
+  <div class="row">
+    <div class="col">
+      <button class="btn btn-primary" (click)="openModal(monthlyModal)">
+        เพิ่มรายได้รายเดือน
+      </button>
+    </div>
+    <div class="col">
+      <button class="btn btn-secondary">สรุปรายงวด</button>
+    </div>
+  </div>
+  }
+</section>
+
+<ng-template #monthlyModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">ค้นหาซัพพลายเออร์</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-month-select />
+    <app-year-select />
+    <div class="app-form-field-inline" style="justify-content: space-between">
+      <div>
+        <label for="">ยอดเรียกเก็บ</label>
+      </div>
+      <div>
+        <input type="number" disabled />
+      </div>
+    </div>
+    <div class="app-form-field-inline" style="justify-content: space-between">
+      <div>
+        <label for="">ยอดเรียกเก็บจริง</label>
+      </div>
+      <div>
+        <input type="number" />
+      </div>
+    </div>
+    <div class="app-form-field-inline" style="justify-content: space-between">
+      <div>
+        <label for="">ส่วนต่าง</label>
+      </div>
+      <div>
+        <input type="number" disabled />
+      </div>
+    </div>
+    <div class="app-form-field-inline" style="justify-content: space-between">
+      <div>
+        <label for="">เหตุผล</label>
+      </div>
+      <div>
+        <input type="text" />
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary w-100">บันทึก</button>
+  </div>
+</ng-template>

@@ -20,6 +20,6 @@ export class EventService {
 
 export type TEvent = {
   id: number
-  eventName: number
+  eventName: string
   isLight: boolean
 }
