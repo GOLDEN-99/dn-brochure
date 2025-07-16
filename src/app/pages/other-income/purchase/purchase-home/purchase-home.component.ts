@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IbobQueryTabComponent } from "../../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab.component";
-import { CUSTOM_FIELD_SEARCH_TOKEN, OTHER_INCOME_SEARCH } from '../../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
+import { CUSTOM_FIELD_SEARCH_TOKEN, OTHER_INCOME_NL_SEARCH } from '../../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
 import { OiNotLightService } from '../../../../service/other-income/oi-not-light.service';
 import { DatePipe } from '@angular/common';
 
@@ -13,13 +13,18 @@ import { DatePipe } from '@angular/common';
   providers: [
     {
       provide: CUSTOM_FIELD_SEARCH_TOKEN,
-      useValue: OTHER_INCOME_SEARCH
+      useValue: OTHER_INCOME_NL_SEARCH
     }
   ]
 })
 export class PurchaseHomeComponent {
   private notLightServ = inject(OiNotLightService)
   data = this.notLightServ.notLightList
+
+  onSearch(e: any) {
+    const { field: mode, term } = e
+    this.notLightServ.searchMany(mode, term)
+  }
 }
 
 

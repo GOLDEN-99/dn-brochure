@@ -15,7 +15,10 @@
       <span> เพิ่มรายการรายได้อื่นๆ </span>
     </a>
   </div>
-  <app-ibob-query-tab label="ค้นหารายการรายได้อื่นๆ" />
+  <app-ibob-query-tab
+    label="ค้นหารายการรายได้อื่นๆ"
+    (search)="onSearch($event)"
+  />
   <table class="table table-striped table-bordered">
     <thead>
       <tr>

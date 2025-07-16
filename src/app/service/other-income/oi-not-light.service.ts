@@ -6,8 +6,8 @@ import { TEvent } from './event.service';
 import { TOIComp } from './company.service';
 import { TDiscount } from './discount.service';
 import { TIncome } from './income.service';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, catchError, combineLatest, map, of, Subject, switchMap, tap } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, catchError, combineLatest, filter, map, of, Subject, switchMap, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -223,17 +223,27 @@ export class OiNotLightService extends BaseOiService {
       .pipe(catchError(err => of([])))
   }
 
-  private notLight$ = this.getAll({})
+  private term$ = new Subject<string>()
+  private mode$ = new Subject<number>()
+  private queryParam = combineLatest([this.mode$, this.term$]).pipe(filter(([mode, term]) => mode !== 0 && !!term))
+
+  private notLight$ = this.queryParam.pipe(
+    switchMap(([mode, term]) => this.getAll({ mode, term }))
+  )
+  searchMany(mode: number, term: string) {
+    this.term$.next(term)
+    this.mode$.next(mode)
+  }
 
   notLightList = toSignal(this.notLight$, { initialValue: [] })
 
   getById(id: number) {
-    // return this.api.get<NotLightSingle[]>(`${this.url}/other-income/contact/not-light/${id}`)
-    //   .pipe(catchError(err => {
-    //     console.log(err);
-    //     return of(this.mock);
-    //   }
-    //   ))
+    return this.api.get<NotLightSingle[]>(`${this.url}/other-income/contact/not-light/${id}`)
+      .pipe(catchError(err => {
+        console.log(err);
+        return of(this.mock);
+      }
+      ))
     return of(this.mock)
   }
 
