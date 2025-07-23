@@ -1,1 +1,17 @@
-<p>other-income-light-edit works!</p>
+<div class="mb-3">
+  @let curEvent = eventDetail();
+  <div class="row" style="justify-content: space-between">
+    <h2 class="col-auto">รายละเอียด light box</h2>
+    <div class="col-auto">
+      <button class="btn btn-primary" (click)="openModal()">แก้ไข</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">จำนวนสาขาทั้งหมด</div>
+    <div class="col">{{ curEvent.totalAmount }}</div>
+  </div>
+  <div class="row">
+    <div class="col">จำนวนเงินทั้งหมด</div>
+    <div class="col">{{ curEvent.totalBranch }}</div>
+  </div>
+</div>

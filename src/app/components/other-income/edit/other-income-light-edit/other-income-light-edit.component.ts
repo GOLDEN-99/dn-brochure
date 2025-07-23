@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 
 @Component({
   selector: 'app-other-income-light-edit',
@@ -7,5 +7,12 @@ import { Component } from '@angular/core';
   styleUrl: './other-income-light-edit.component.scss'
 })
 export class OtherIncomeLightEditComponent {
+  eventDetail = input.required<TOiLEditProps>()
 
+  openModal() { }
+}
+
+type TOiLEditProps = {
+  totalBranch: number
+  totalAmount: number
 }

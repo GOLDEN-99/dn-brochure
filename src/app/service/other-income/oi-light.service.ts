@@ -1,10 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { ApiService } from '../api/api.service';
-import { BaseOiService } from './base-oi';
+import { BaseOiService, TDetailLight, TLightSummary } from './base-oi';
 import { environment } from '../../../environments/environment';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TOIComp } from './company.service';
-import { TEvent } from './event.service';
 import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, Subject, switchMap } from 'rxjs';
 
 @Injectable({
@@ -28,6 +25,9 @@ export class OiLightService extends BaseOiService {
   }
 
   private fetch$ = new BehaviorSubject<boolean>(true)
+  refetch() {
+    this.fetch$.next(true)
+  }
   private id$ = new Subject<number>()
   private param$ = combineLatest([this.fetch$, this.id$])
   fetchById(id: number) {
@@ -58,20 +58,3 @@ export class OiLightService extends BaseOiService {
 }
 
 
-type TLightSummary = {
-  id: number
-  lightId: number
-  period: number
-  startDate: string
-  endDate: string
-  totalBranch: number
-  totalAmount: number
-  company: TOIComp
-  event: TEvent,
-}
-
-
-
-type TDetailLight = {
-
-} & TLightSummary

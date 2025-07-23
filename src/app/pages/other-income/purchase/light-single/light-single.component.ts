@@ -3,10 +3,13 @@ import { OiLightService } from '../../../../service/other-income/oi-light.servic
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TCompType } from '../../../../types';
 import { OtherIncomeHeadEditComponent } from "../../../../components/other-income/edit/other-income-head-edit/other-income-head-edit.component";
+import { OtherIncomeLightEditComponent } from '../../../../components/other-income/edit/other-income-light-edit/other-income-light-edit.component';
+import { OtherIncomeBranchComponent } from '../../../../components/other-income/edit/other-income-branch/other-income-branch.component';
+import { OtherIncomeMonthlyLightEditComponent } from '../../../../components/other-income/edit/other-income-monthly-light-edit/other-income-monthly-light-edit.component';
 
 @Component({
   selector: 'app-light-single',
-  imports: [OtherIncomeHeadEditComponent],
+  imports: [OtherIncomeHeadEditComponent, OtherIncomeLightEditComponent, OtherIncomeBranchComponent, OtherIncomeMonthlyLightEditComponent],
   templateUrl: './light-single.component.html',
   styleUrl: './light-single.component.scss'
 })
@@ -31,15 +34,14 @@ export class LightSingleComponent {
       isLight
     }
   })
+  lightId = computed(() => this.currentResult().lightId)
   eventDetail = computed(() => {
-    // const cur = this.currentResult()
-    // const { notLightId, cn, displayName, incVat, capAmount,
-    //   discount: { id: discountId, discountName },
-    //   income: { incomeName, id: incomeId, isProduct },
-    //   stepList, isStep
-    // } = cur
-    // return { notLightId, discountId, discountName, incomeId, isProduct, incomeName, cn, displayName, capAmount, incVat, stepList, isStep }
+    const cur = this.currentResult()
+    const { totalAmount, totalBranch } = cur
+    return { totalAmount, totalBranch }
   })
+  branchList = computed(() => this.currentResult().branchList)
+  incomeList = computed(() => this.currentResult().incomeList)
 
   // productDetail = computed(() => {
   //   const cur = this.currentResult()

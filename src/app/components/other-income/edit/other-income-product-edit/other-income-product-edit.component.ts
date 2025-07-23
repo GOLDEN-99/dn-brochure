@@ -8,6 +8,7 @@ import { Component, input } from '@angular/core';
 })
 export class OtherIncomeProductEditComponent {
   value = input.required<TProductEditProps>()
+  canEdit = input(false)
 }
 
 type TProductItem = {
@@ -18,5 +19,4 @@ type TProductItem = {
 
 type TProductEditProps = {
   productList: TProductItem[]
-  isProduct: boolean
 }

@@ -2,6 +2,12 @@
   @if (invalidValue()) {
   <div>ไม่พบเอกสาร</div>
   } @else {
-  <app-other-income-head-edit [value]="head()" />
+  <app-other-income-head-edit [value]="head()" [canEdit]="true" />
+  <app-other-income-light-edit [eventDetail]="eventDetail()" />
+  <app-other-income-branch [lightId]="lightId()" [branchList]="branchList()" />
+  <app-other-income-monthly-light-edit
+    [incomeList]="incomeList()"
+    [id]="head().id"
+  />
   }
 </section>

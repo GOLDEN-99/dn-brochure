@@ -15,6 +15,7 @@ import { SearchCompSubformComponent } from "../../form/search-comp-subform/searc
   styleUrl: './other-income-head-edit.component.scss'
 })
 export class OtherIncomeHeadEditComponent {
+  canEdit = input(false)
   value = input.required<TEditHeadProps>()
   submit = output<TApiBaseformInsert>()
   mode = input<TFilter>('all')

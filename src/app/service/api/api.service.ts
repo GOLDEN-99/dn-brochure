@@ -16,6 +16,9 @@ export class ApiService {
   post<T>(path: string, body: any, opt: TApiOpt = {}) {
     return this.https.post<T>(path, body, opt).pipe(catchError(err => throwError(() => err)))
   }
+  delete<T = any>(path: string, opt: TApiOpt = {}) {
+    return this.https.delete<T>(path, opt).pipe(catchError(err => throwError(() => err)))
+  }
 }
 
 export type TApiOpt = {

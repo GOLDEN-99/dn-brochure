@@ -1,0 +1,169 @@
+<div class="mb-3">
+  <div class="row" style="justify-content: space-between">
+    <h2 class="col-auto">สรุปราย Period</h2>
+  </div>
+  <div style="max-height: 200px; overflow-y: auto">
+    <table class="table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>ยอดซื้อจริง</th>
+          <th>รายได้คำนวน</th>
+          <th>ยอดสินค้า</th>
+          <th>ยอดใบแจ้งหนี้</th>
+          <th>ยอดใบเสร็จรับเงิน</th>
+          <th style="min-height: 250px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (period of periodList(); track period.id) {
+        <tr>
+          <td>{{ period.remark }}</td>
+          <td>{{ period.totalAmount | number : "1.2-2" }}</td>
+          <td>{{ period.totalIncome | number : "1.2-2" }}</td>
+          <td>{{ period.orderAmount | number : "1.2-2" }}</td>
+          <td>{{ period.invAmount | number : "1.2-2" }}</td>
+          <td>{{ period.receAmount | number : "1.2-2" }}</td>
+          <td>
+            <button
+              class="btn btn-sm btn-primary me-1"
+              (click)="openInvoice(period.id, period.totalIncome)"
+            >
+              เพิ่มใบแจ้งหนี้
+            </button>
+
+            <button
+              class="btn btn-sm btn-secondary"
+              (click)="openReceipt(period.id)"
+            >
+              เพิ่มใบเสร็จรับเงิน
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #receiptModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">เพิ่มใบเสร็จ</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-date-input [(date)]="receiptDate" label="วันที่ใบเสร็จรับเงิน" />
+    <div class="app-form-field-inline">
+      <div style="flex: 1">
+        <label for="rece-numb">เลขที่ใบเสร็จรับเงิน</label>
+      </div>
+      <div style="flex: 1">
+        <input
+          type="text"
+          id="rece-numb"
+          name="rece-numb"
+          [(ngModel)]="receiptNumb"
+        />
+      </div>
+    </div>
+    <div class="app-form-field-inline">
+      <div style="flex: 1">
+        <label for="rece-amou">ยอดใบเสร็จรับเงิน</label>
+      </div>
+      <div style="flex: 1">
+        <input
+          type="number"
+          id="rece-amou"
+          name="rece-amou"
+          [(ngModel)]="receiptAmount"
+        />
+      </div>
+    </div>
+    <div class="app-form-field-inline">
+      <div style="flex: 1"><label for="rece-remark">หมายเหตุ</label></div>
+      <div style="flex: 1">
+        <input
+          type="text"
+          id="rece-remark"
+          name="rece-remark"
+          [(ngModel)]="receiptRemark"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary w-100" (click)="onInsertRece()">
+      บันทึก
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #invoiceModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">เพิ่มใบแจ้งหนี้</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-date-input [(date)]="invoiceDate" label="วันที่ใบแจ้งหนี้" />
+    <div class="row mb-3">
+      <div class="col">ยอดรายได้</div>
+      <div class="col">{{ invoiceIncome() | number : "1.2-2" }}</div>
+    </div>
+    <div class="row mb-3">
+      <div class="col">รายได้คงค้าง</div>
+      <div class="col">{{ invoiceIncome() | number : "1.2-2" }}</div>
+    </div>
+    <div class="app-form-field-inline">
+      <div style="flex: 1"><label for="inv-numb">เลขที่ใบแจ้งหนี้</label></div>
+      <div style="flex: 1">
+        <input
+          type="text"
+          id="inv-numb"
+          name="inv-numb"
+          [(ngModel)]="invoiceNumb"
+        />
+      </div>
+    </div>
+    <div class="app-form-field-inline">
+      <div style="flex: 1"><label for="inv-amou">ยอดใบแจ้งหนี้</label></div>
+      <div style="flex: 1">
+        <input
+          type="text"
+          id="inv-amou"
+          name="inv-amou"
+          [(ngModel)]="invoiceAmount"
+        />
+      </div>
+    </div>
+    <div class="app-form-field-inline">
+      <div style="flex: 1"><label for="inv-whd">หัก ณ ที่จ่าย</label></div>
+      <div style="flex: 1">
+        <input
+          type="text"
+          id="inv-whd"
+          name="inv-whd"
+          [(ngModel)]="withholding"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-primary w-100"
+      [disabled]="invoiceDisable()"
+      (click)="onInsertInv()"
+    >
+      บันทึก
+    </button>
+  </div>
+</ng-template>

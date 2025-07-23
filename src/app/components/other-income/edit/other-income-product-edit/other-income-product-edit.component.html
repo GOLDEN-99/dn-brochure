@@ -1,16 +1,15 @@
 <div class="mb-3">
   @let cur = value();
   <div class="row" style="justify-content: space-between">
-    @let showProduct = cur.isProduct;
     <h2 class="col-auto">รายการสินค้า</h2>
-    @if(showProduct){
+    @if (canEdit()) {
     <div class="col-auto">
       <button class="btn btn-primary">เพิ่ม</button>
     </div>
     }
   </div>
-  @if (showProduct) {
-  <div style="max-height: 250px; overflow-y: scroll; position: relative">
+
+  <div style="max-height: 250px; overflow-y: auto">
     <table class="table">
       <thead>
         <tr>
@@ -34,5 +33,4 @@
       </tbody>
     </table>
   </div>
-  }
 </div>

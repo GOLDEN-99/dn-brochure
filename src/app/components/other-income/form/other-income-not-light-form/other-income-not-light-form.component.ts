@@ -12,7 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-other-income-not-light-form',
-  imports: [DiscountSubformComponent, TargetSubformComponent, FormsModule, SearchProductSubformComponent, IncomeSelectComponent],
+  imports: [TargetSubformComponent, FormsModule, SearchProductSubformComponent, IncomeSelectComponent],
   templateUrl: './other-income-not-light-form.component.html',
   styleUrl: './other-income-not-light-form.component.scss'
 })
@@ -22,8 +22,12 @@ export class OtherIncomeNotLightFormComponent {
   isProduct = signal(false)
   discountId = signal(1)
   incVat = signal(false)
+  isDc = signal(false)
+  isInce = signal(false)
+  isComp = signal(false)
   stepType = signal(0)
   stepList = signal<AppStep[]>([])
+  isRebate = signal(false)
   invalidStep = computed(() => {
     const stepType = this.stepType()
     if (stepType === 0) {
@@ -39,11 +43,7 @@ export class OtherIncomeNotLightFormComponent {
   productsList = signal<TOIProduct[]>([])
   invalidProduct = computed(() => {
     const products = this.productsList()
-    const isProduct = this.isProduct()
-    if (isProduct) {
-      return products.length === 0
-    }
-    return isProduct
+    return products.length === 0
   })
 
   disable = computed(() => {
@@ -80,9 +80,12 @@ export class OtherIncomeNotLightFormComponent {
   get request() {
     const cn = this.cn()
     const displayName = this.displayName()
-    const discountId = this.discountId()
     const incomeId = this.incomeId()
     const incVat = this.incVat()
+    const isRebate = this.isRebate()
+    const isDc = this.isDc()
+    const isComp = this.isComp()
+    const isInce = this.isInce()
     const step = this.stepType()
     const capAmount = this.capAmount()
     const stepList = this.stepList().map((step, i, arr) => {
@@ -93,9 +96,9 @@ export class OtherIncomeNotLightFormComponent {
       const max = typeof nextStart === 'number' ? nextStart : null
       return { min, max, rate } satisfies ReqStep
     })
-    const productList = this.isProduct() ? this.productsList().map(({ goodCode }) => goodCode) : []
+    const productList = this.productsList().map(({ goodCode }) => goodCode)
     return {
-      cn, displayName, incVat, capAmount, productList, stepList, step, discountId, incomeId
+      cn, displayName, incVat, capAmount, productList, stepList, step, incomeId, isRebate, isInce, isComp, isDc
     }
   }
   private toastService = inject(ToastService)

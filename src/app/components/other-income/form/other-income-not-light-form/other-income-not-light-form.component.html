@@ -25,7 +25,6 @@
   [(incomeId)]="incomeId"
   (isProductChange)="isProduct.set($event)"
 />
-<app-discount-subform [(discountType)]="discountId" />
 <div class="row">
   <div class="col-md-3">VAT</div>
   <div class="col-md">
@@ -53,6 +52,115 @@
     </div>
   </div>
 </div>
+<div class="row">
+  <div class="col-md-3">rebate</div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="rebate"
+        id="reba-inc"
+        [value]="true"
+        [(ngModel)]="isRebate"
+      />
+      <label for="reba-inc">ลด</label>
+    </div>
+  </div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="rebate"
+        id="reba-ext"
+        [value]="false"
+        [(ngModel)]="isRebate"
+      />
+      <label for="reba-ext">ไม่ลด</label>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">dc</div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="dc"
+        id="dc-inc"
+        [value]="true"
+        [(ngModel)]="isDc"
+      />
+      <label for="dc-inc">ลด</label>
+    </div>
+  </div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="dc"
+        id="dc-ext"
+        [value]="false"
+        [(ngModel)]="isDc"
+      />
+      <label for="dc-ext">ไม่ลด</label>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">incentive</div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="ince"
+        id="ince-inc"
+        [value]="true"
+        [(ngModel)]="isInce"
+      />
+      <label for="ince-inc">ลด</label>
+    </div>
+  </div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="ince"
+        id="ince-ext"
+        [value]="false"
+        [(ngModel)]="isInce"
+      />
+      <label for="ince-ext">ไม่ลด</label>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">Compensate</div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="comp"
+        id="comp-inc"
+        [value]="true"
+        [(ngModel)]="isComp"
+      />
+      <label for="comp-inc">ลด</label>
+    </div>
+  </div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="comp"
+        id="comp-ext"
+        [value]="false"
+        [(ngModel)]="isComp"
+      />
+      <label for="comp-ext">ไม่ลด</label>
+    </div>
+  </div>
+</div>
+
 <div class="row">
   <div class="col-md-3">จ่ายไม่เกินกำหนด</div>
   <div class="col-md">
@@ -88,13 +196,13 @@
     </div>
   </div>
 </div>
-@if (isProduct()) {
+
 <app-search-product-subform
   [selectProducts]="productsList()"
   (onAdd)="handleAdd($event)"
   (onDelete)="handleDelete($event)"
 />
-}
+
 <app-target-subform [(target)]="stepType" [(step)]="stepList" />
 <div class="d-flex justify-content-center" style="gap: 1rem">
   <button class="btn btn-success" (click)="onSubmit()" [disabled]="disable()">

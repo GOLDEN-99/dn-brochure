@@ -1,0 +1,65 @@
+<div class="mb-3">
+  <div class="col-auto">
+    <button class="btn btn-primary w-100" (click)="openPeriod()">
+      สรุป period
+    </button>
+  </div>
+</div>
+
+<ng-template #periodModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">สรุป period</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="app-form-field-inline">
+      <div><label for="remark">หมายเหตุ</label></div>
+      <div>
+        <input type="text" name="remar" id="remark" [(ngModel)]="remark" />
+      </div>
+    </div>
+    <table class="table">
+      <thead>
+        <th>งวด</th>
+        <th>ยอดจริง</th>
+        <th>รายได้</th>
+        <th></th>
+      </thead>
+      <tbody>
+        @for (inc of incomeState(); track inc.id) {
+        <tr>
+          <td>
+            <div class="app-form-check m-0">
+              <input
+                type="checkbox"
+                [name]="inc.createDate + '-check'"
+                [id]="inc.checkDate + '-check'"
+                [ngModel]="inc.check"
+                (ngModelChange)="checkItem(inc.id)"
+              />
+            </div>
+          </td>
+          <td>{{ formateDate(inc.createDate) }}</td>
+          <td>{{ inc.actualAmount }}</td>
+          <td>{{ inc.incomeAmount }}</td>
+        </tr>
+        } @let summary = sum();
+        <tr>
+          <td colspan="2">รวม</td>
+          <td>{{ summary.totalAmount }}</td>
+          <td>{{ summary.totalIncome }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary w-100" (click)="onAddPeriod()">
+      บันทึก
+    </button>
+  </div>
+</ng-template>

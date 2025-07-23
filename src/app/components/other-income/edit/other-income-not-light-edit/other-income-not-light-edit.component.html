@@ -2,9 +2,11 @@
   @let curEvent = eventDetail();
   <div class="row" style="justify-content: space-between">
     <h2 class="col-auto">รายละเอียดกิจกรรม</h2>
+    @if (canEdit()) {
     <div class="col-auto">
       <button class="btn btn-primary" (click)="openModal()">แก้ไข</button>
     </div>
+    }
   </div>
   <div class="row">
     <div class="col">cn</div>
@@ -17,12 +19,24 @@
     </div>
   </div>
   <div class="row">
-    <div class="col">ส่วลด</div>
-    <div class="col">{{ curEvent.discountName }}</div>
-  </div>
-  <div class="row">
     <div class="col">VAT</div>
     <div class="col">{{ curEvent.incVat ? "รวม VAT" : "ไม่รวม VAT" }}</div>
+  </div>
+  <div class="row">
+    <div class="col">Rebate</div>
+    <div class="col">{{ curEvent.isRebate ? "ลด" : "ไม่ลด" }}</div>
+  </div>
+  <div class="row">
+    <div class="col">DC</div>
+    <div class="col">{{ curEvent.isDc ? "ลด" : "ไม่ลด" }}</div>
+  </div>
+  <div class="row">
+    <div class="col">Compensate</div>
+    <div class="col">{{ curEvent.isComp ? "ลด" : "ไม่ลด" }}</div>
+  </div>
+  <div class="row">
+    <div class="col">Incentive</div>
+    <div class="col">{{ curEvent.isInce ? "ลด" : "ไม่ลด" }}</div>
   </div>
   <div class="row">
     <div class="col">จ่ายไม่เกินกำหนด</div>
@@ -68,7 +82,7 @@
       [(incomeId)]="incomeId"
       (isProductChange)="isProduct.set($event)"
     />
-    <app-discount-subform [(discountType)]="discountId" />
+
     <div class="row">
       <div class="col-md-3">VAT</div>
       <div class="col-md">
@@ -96,6 +110,115 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-md-3">rebate</div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="rebate"
+            id="reba-inc"
+            [value]="true"
+            [(ngModel)]="isRebate"
+          />
+          <label for="reba-inc">ลด</label>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="rebate"
+            id="reba-ext"
+            [value]="false"
+            [(ngModel)]="isRebate"
+          />
+          <label for="reba-ext">ไม่ลด</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">dc</div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="dc"
+            id="dc-inc"
+            [value]="true"
+            [(ngModel)]="isDc"
+          />
+          <label for="dc-inc">ลด</label>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="dc"
+            id="dc-ext"
+            [value]="false"
+            [(ngModel)]="isDc"
+          />
+          <label for="dc-ext">ไม่ลด</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">incentive</div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="ince"
+            id="ince-inc"
+            [value]="true"
+            [(ngModel)]="isInce"
+          />
+          <label for="ince-inc">ลด</label>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="ince"
+            id="ince-ext"
+            [value]="false"
+            [(ngModel)]="isInce"
+          />
+          <label for="ince-ext">ไม่ลด</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">Compensate</div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="comp"
+            id="comp-inc"
+            [value]="true"
+            [(ngModel)]="isComp"
+          />
+          <label for="comp-inc">ลด</label>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="comp"
+            id="comp-ext"
+            [value]="false"
+            [(ngModel)]="isComp"
+          />
+          <label for="comp-ext">ไม่ลด</label>
+        </div>
+      </div>
+    </div>
+
     <div class="row">
       <div class="col-md-3">จ่ายไม่เกินกำหนด</div>
       <div class="col-md">

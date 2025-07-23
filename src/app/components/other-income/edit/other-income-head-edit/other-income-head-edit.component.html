@@ -2,9 +2,11 @@
   @let curHead = value();
   <div class="row" style="justify-content: space-between">
     <h2 class="col-auto">รายการรายได้อื่นๆ</h2>
+    @if(canEdit()){
     <div class="col-auto">
       <button class="btn btn-primary" (click)="openModal()">แก้ไข</button>
     </div>
+    }
   </div>
   <div class="row">
     <div class="col">รหัสซัพ</div>
