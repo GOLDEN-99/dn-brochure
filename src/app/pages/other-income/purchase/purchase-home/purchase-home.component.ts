@@ -1,29 +1,34 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { IbobQueryTabComponent } from "../../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab.component";
-import { CUSTOM_FIELD_SEARCH_TOKEN, OTHER_INCOME_NL_SEARCH } from '../../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OiNotLightService } from '../../../../service/other-income/oi-not-light.service';
 import { DatePipe } from '@angular/common';
+import { OtherIncomePurchasingQueryTabComponent } from "../../account/other-income-purchasing-query-tab.component";
 
 @Component({
   selector: 'app-purchase-home',
-  imports: [RouterLink, IbobQueryTabComponent, DatePipe],
+  imports: [RouterLink, DatePipe, OtherIncomePurchasingQueryTabComponent],
   templateUrl: './purchase-home.component.html',
   styleUrl: './purchase-home.component.scss',
-  providers: [
-    {
-      provide: CUSTOM_FIELD_SEARCH_TOKEN,
-      useValue: OTHER_INCOME_NL_SEARCH
-    }
-  ]
 })
 export class PurchaseHomeComponent {
   private notLightServ = inject(OiNotLightService)
   data = this.notLightServ.notLightList
 
-  onSearch(e: any) {
-    const { field: mode, term } = e
-    this.notLightServ.searchMany(mode, term)
+  term = signal("")
+  mode = signal(1)
+  compType = signal(1)
+
+  onSearch() {
+    const term = this.term()
+    const mode = this.mode()
+    const compType = this.compType()
+    this.notLightServ.searchMany(mode, term, compType)
+  }
+
+  private router = inject(Router)
+  private route = inject(ActivatedRoute)
+  genUrl = (id: number, compType?: string) => {
+    return this.router.createUrlTree([id,], { relativeTo: this.route, queryParams: { compType } })
   }
 }
 

@@ -5,10 +5,12 @@ import { OiLightService } from '../../service/other-income/oi-light.service';
 
 export const getOtherIncomeLightIdResolver: ResolveFn<boolean> = (route, state) => {
   try {
+    const qString = route.queryParams as any
+    const compType = qString?.compType
     const headId = headIdHandler(route)
     const validHead = Number(headId)
     const lightServ = inject(OiLightService)
-    lightServ.fetchById(validHead)
+    lightServ.fetchById(validHead, compType)
     return true;
   } catch (err) {
     console.log(err)

@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, input, OnDestroy, OnInit, output, signal, viewChild } from '@angular/core';
 import { NgbCalendar, NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TBranchItem } from '../../../../service/other-income/base-oi';
 import { DatePipe } from '@angular/common';
@@ -23,6 +23,7 @@ export class OtherIncomeBranchComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.branchSet.clear();
   }
+  refetch = output<void>()
   lightId = input.required<number>()
   branchList = input<TBranchItem[]>([])
   private toastServ = inject(ToastService)
@@ -42,7 +43,6 @@ export class OtherIncomeBranchComponent implements OnInit, OnDestroy {
     return this.queryBranch().filter(({ branchCode }) => this.branchSet.has(branchCode) === false)
   }
   )
-  private lightServ = inject(OiLightService)
   private monthServ = inject(MonthlyService)
   addBranch(branchCode: string) {
     if (this.branchSet.has(branchCode)) {
@@ -54,10 +54,10 @@ export class OtherIncomeBranchComponent implements OnInit, OnDestroy {
     const iso = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     this.monthServ.insertBranch(lightId, branchCode, iso).subscribe({
       next: (res) => {
-        this.toastServ.success('เพิ่มสาขาสำเร็จ')
-        this.branchSet.add(branchCode)
-        this.lightServ.refetch()
-        this.modalService.dismissAll()
+        this.toastServ.success('เพิ่มสาขาสำเร็จ');
+        this.branchSet.add(branchCode);
+        this.refetch.emit();
+        this.modalService.dismissAll();
       },
       error: (err) => {
         this.toastServ.danger(err.message)
@@ -70,7 +70,7 @@ export class OtherIncomeBranchComponent implements OnInit, OnDestroy {
         next: () => {
           this.toastServ.success('ลบสำเร็จ')
           this.branchSet.delete(branchCode)
-          this.lightServ.refetch()
+          this.refetch.emit()
         },
         error: (err) => {
           this.toastServ.danger(err.message)

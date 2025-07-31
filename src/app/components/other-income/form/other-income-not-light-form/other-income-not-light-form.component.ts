@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { DiscountSubformComponent } from "../discount-subform/discount-subform.component";
 import { TargetSubformComponent } from "../target-subform/target-subform.component";
 import { FormsModule } from '@angular/forms';
@@ -9,6 +9,8 @@ import { ApiService } from '../../../../service/api/api.service';
 import { environment } from '../../../../../environments/environment';
 import { ToastService } from '../../../../service/toast/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { map, tap } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-other-income-not-light-form',
@@ -17,6 +19,19 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './other-income-not-light-form.component.scss'
 })
 export class OtherIncomeNotLightFormComponent {
+  private route = inject(ActivatedRoute)
+  compData$ = this.route.queryParamMap.pipe(
+    map((query => {
+      const compType = query.get("compType")
+      const compCode = query.get("compCode")
+      if (!compType || !compCode) return null
+      return { compCode, compType }
+    }))
+  )
+
+  compData = toSignal(this.compData$, { initialValue: null })
+  invalidCompData = computed(() => this.compData() === null)
+
   headId = input<number>()
   incomeId = signal(0)
   isProduct = signal(false)
@@ -103,7 +118,6 @@ export class OtherIncomeNotLightFormComponent {
   }
   private toastService = inject(ToastService)
   private router = inject(Router)
-  private route = inject(ActivatedRoute)
   onSubmit() {
     console.log(this.request)
     return this.api.post<{ id: number }>(

@@ -12,6 +12,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class SearchProductSubformComponent {
   private productService = inject(OiProductService)
+  comp = input.required<{ compCode: string, compType: string }>()
   term = this.productService.term
   result = this.productService.product
 
@@ -29,7 +30,8 @@ export class SearchProductSubformComponent {
   }
 
   submit() {
-    this.onAdd.emit(this.selectedList())
+    this.onAdd.emit(this.selectedList());
+    this.modalService.dismissAll();
   }
 
   productList = signal<any[]>([])
@@ -38,6 +40,8 @@ export class SearchProductSubformComponent {
   productModal = viewChild("searchProductModal")
   private modalService = inject(NgbModal)
   openSearchProduct() {
+    const { compCode, compType } = this.comp();
+    this.productService.setComp(compCode, compType);
     this.modalService.open(this.productModal())
   }
 }

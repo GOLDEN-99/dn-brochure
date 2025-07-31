@@ -1,1 +1,90 @@
-<p>purchase-report works!</p>
+<h4>รายเดือน</h4>
+<div class="mb-3">
+  <div class="row">
+    <div class="app-form-select col">
+      <label for="month">เดือน</label>
+      <select
+        name="month"
+        id="month"
+        [ngModel]="date().month"
+        (ngModelChange)="changeMonth($event)"
+      >
+        @for (month of monthArray; track month) {
+        <option [ngValue]="month">{{ month }}</option>
+        }
+      </select>
+    </div>
+    <div class="app-form-select col">
+      <label for="year">ปี</label>
+      <select
+        name="year"
+        id="year"
+        [ngModel]="date().year"
+        (ngModelChange)="changeYear($event)"
+      >
+        @for (year of yearArray; track year) {
+        <option [ngValue]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+    <div class="app-form-field col">
+      <label for="code">รหัสซัพ</label>
+      <input type="text" id="code" name="code" [(ngModel)]="compCode" />
+    </div>
+  </div>
+  <button
+    class="btn btn-primary w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportMonthDN()"
+  >
+    รายงานซัพพลายเออร์ DN รายเดือน
+  </button>
+  <button
+    class="btn btn-success w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportMonthHU()"
+  >
+    รายงานซัพพลายเออร์ HU รายเดือน
+  </button>
+  <div class="row">
+    <div class="col">ซัพ {{ compType() }}</div>
+    <div class="col"></div>
+  </div>
+  @for (item of monthDis(); track item.id) {
+  <div class="row">
+    <div class="col">{{ item.comp }}</div>
+    <div class="col">
+      <button class="btn btn-primary" (click)="toExcel()">excel</button>
+    </div>
+  </div>
+  }
+</div>
+<h4>รายปี</h4>
+<div class="mb-3">
+  <button
+    class="btn btn-primary w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportAnnualDN()"
+  >
+    รายงานซัพพลายเออร์ DN รายปี
+  </button>
+  <button
+    class="btn btn-success w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportAnnualHU()"
+  >
+    รายงานซัพพลายเออร์ HU รายปี
+  </button>
+  <div class="row">
+    <div class="col">ซัพ {{ compType() }}</div>
+    <div class="col"></div>
+  </div>
+  @for (item of yearDis(); track item.id) {
+  <div class="row">
+    <div class="col">{{ item.comp }}</div>
+    <div class="col">
+      <button class="btn btn-primary" (click)="toAnnualExcel()">excel</button>
+    </div>
+  </div>
+  }
+</div>

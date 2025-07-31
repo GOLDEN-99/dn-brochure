@@ -9,28 +9,26 @@
     }
   </div>
 
-  <div style="max-height: 250px; overflow-y: auto">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>รหัส</th>
-          <th>ชื่อ</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @let products = cur.productList;
-        <!---->
-        @for (product of products; track product.id) {
-        <tr>
-          <td>{{ product.goodCode }}</td>
-          <td>{{ product.goodName }}</td>
-          <td>
-            <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 25%">รหัส</th>
+        <th style="width: 75%">ชื่อ</th>
+        <!-- <th></th> -->
+      </tr>
+    </thead>
+    <tbody>
+      @let products = cur.productList;
+      <!---->
+      @for (product of products; track product.id) {
+      <tr>
+        <td>{{ product.goodCode }}</td>
+        <td>{{ product.goodName }}</td>
+        <!-- <td>
+          <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
+        </td> -->
+      </tr>
+      }
+    </tbody>
+  </table>
 </div>

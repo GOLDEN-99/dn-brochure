@@ -1,9 +1,7 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { TIncomeItem } from '../../../../service/other-income/base-oi';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { OiLightService } from '../../../../service/other-income/oi-light.service';
 import { MonthlyService } from '../../../../service/other-income/monthly.service';
-import { ToastService } from '../../../../service/toast/toast.service';
 import { DecimalPipe } from '@angular/common';
 import { MonthSelectComponent } from "../../../date-input/month-select.component";
 import { YearSelectComponent } from "../../../date-input/year-select.component";
@@ -17,12 +15,13 @@ import { YearSelectComponent } from "../../../date-input/year-select.component";
 export class OtherIncomeMonthlyLightEditComponent {
   incomeList = input.required<TIncomeItem[]>()
   id = input.required<number>()
+  success = output<string>()
+  fail = output<string>()
 
   private modalService = inject(NgbModal)
   openModal(content: any) {
     this.modalService.open(content)
   }
-  private lightServ = inject(OiLightService)
   private monthService = inject(MonthlyService)
   date = this.monthService.date
   isoDate = computed(() => {
@@ -32,20 +31,17 @@ export class OtherIncomeMonthlyLightEditComponent {
   onMonthChange = this.monthService.updateDate('month')
   onYearChange = this.monthService.updateDate('year')
 
-  private toast = inject(ToastService)
-
   onSubmit() {
     const id = this.id()
     const createDate = this.isoDate()
     this.monthService.insertLMonth(id, createDate).subscribe({
       next: (res) => {
         console.log(res.purchasingId)
-        this.toast.success('เพิ่มรับรู้รายเดือนสำเร็จ')
+        this.success.emit('เพิ่มรับรู้รายเดือนสำเร็จ')
         this.modalService.dismissAll()
-        this.lightServ.refetch()
       },
       error: (err) => {
-        this.toast.danger(err.message)
+        this.fail.emit(err.message)
       }
     })
   }
@@ -53,11 +49,10 @@ export class OtherIncomeMonthlyLightEditComponent {
   onDelete(id: number) {
     this.monthService.deleteMonthly(id).subscribe({
       next: () => {
-        this.toast.success('ลบสำเร็จ');
-        this.lightServ.refetch();
+        this.success.emit('ลบสำเร็จ');
       },
       error: (err) => {
-        this.toast.danger(err.message);
+        this.fail.emit(err.message);
       }
     })
   }

@@ -25,17 +25,12 @@ export class MonthlyService {
     })
   )
   private comp$ = new Subject<TCompType>()
-  private discFactor$ = new Subject<TDiscFactor>()
   private param$ = combineLatest([this.id$, this.convertDate$, this.comp$])
 
   getMonthlyIncome({ id, month, comp }: TMonthlyReq) {
     return this.api.get<TMonthlyIncomeItem2[]>(
       `${this.url}/monthly-income/income-list/${id}`,
       { params: { month, comp } }
-    ).pipe(
-      tap(
-        income => this.incomeList2.update(() => income.map(i => ({ ...i, actualAmount: i.calAmount })))
-      )
     )
   }
   calIncome(comp: TCompType, id: number) {
@@ -47,8 +42,6 @@ export class MonthlyService {
       switchMap(([id, month, comp]) => this.getMonthlyIncome({ id, month, comp }))
     )
   incomeList = toSignal(this.incomeList$, { initialValue: [] })
-  incomeList2 = signal<TAppIncomeItem[]>([])
-  updateActual = (idx: number) => (actualAmount: number) => this.incomeList2.update((prev) => prev.map((p, i) => i === idx ? ({ ...p, actualAmount }) : p))
 
   insertNlMonth(headId: number, req: TInsertReq) {
     return this.api.post<any>(`${this.url}/monthly-income/${headId}/add-income`, req)
@@ -129,8 +122,7 @@ type TAppIncomeItem = {
 
 type TPurchaseReceItem = {
   calAmount: number
-  actualAmount: number
-  income: number
+  receNumb: string
 }
 
 type TInsertReq = {

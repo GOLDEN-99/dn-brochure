@@ -2,44 +2,80 @@
   @if (invalidValue()) {
   <div>ไม่พบเอกสาร</div>
   }@else{
-
+  <!---->
+  @let e = currentResult(); @let comp = e.company;@let incomes =
+  e.incomeList;@let periods = e.periodList;
   <app-other-income-head-edit [value]="head()" [canEdit]="true" />
   <app-other-income-not-light-edit
     [eventDetail]="eventDetail()"
     [canEdit]="true"
   />
-  <app-other-income-product-edit [value]="productDetail()" [canEdit]="true" />
+  <app-other-income-product-edit [value]="productDetail()" />
   @let a = acc(); @let s = stepInfo();
   <app-other-income-monthly-edit
-    [incomeList]="incomeList()"
-    [id]="currentResult().id"
-    [compType]="currentResult().company.compType"
-    [canEdit]="true"
+    [incomeList]="incomes"
+    [id]="e.id"
+    [compType]="comp.compType"
     [accAmount]="a.accAmount"
     [accIncome]="a.accIncome"
     [isStep]="s.isStep"
     [stepList]="s.stepList"
-    [capAmount]="currentResult().capAmount"
+    [capAmount]="e.capAmount"
+    [canEdit]="true"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
   />
   <app-create-period
-    [incomeList]="incomeList()"
-    [headId]="head().id"
-    [compCode]="head().compCode"
-    [compType]="head().compType"
+    [incomeList]="incomes"
+    [headId]="e.id"
+    [compCode]="comp.compCode"
+    [compType]="comp.compType"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
   />
-  <app-other-income-not-light-period-edit
-    [headId]="head().id"
-    [compCode]="head().compCode"
-    [compType]="head().compType"
-    [canEdit]="true"
-    [periodList]="periodList()"
-  />
-  <app-other-income-period-account
-    [headId]="head().id"
-    [compCode]="head().compCode"
-    [compType]="head().compType"
-    [canEdit]="true"
-    [periodList]="periodList()"
+  @for (period of periods; track period.id) {
+  <div class="row bg-success bg-opacity-10">
+    <div class="row">
+      <div class="col">ชื่อเรียกเก็บ</div>
+      <div class="col">ยอดซื้อ</div>
+      <div class="col">รายได้บันทึก</div>
+      <div class="col">ยอด PO</div>
+      <div class="col">ยอดใบแจ้งหนี้</div>
+      <div class="col">ยอดใบเสร็จ</div>
+    </div>
+    <div class="row">
+      <div class="col">{{ period.remark }}</div>
+      <div class="col">{{ period.totalAmount | number : "1.2-2" }}</div>
+      <div class="col">{{ period.totalIncome | number : "1.2-2" }}</div>
+      <div class="col">{{ period.orderAmount | number : "1.2-2" }}</div>
+      <div class="col">{{ period.invAmount | number : "1.2-2" }}</div>
+      <div class="col">{{ period.receAmount | number : "1.2-2" }}</div>
+    </div>
+  </div>
+  @if (isProduct()) {
+  <app-other-income-order-period
+    [actualAmount]="period.totalIncome"
+    [orderList]="period.orderList"
+    [periodId]="period.id"
+    [compCode]="comp.compCode"
+    [compType]="comp.compType"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
   />
   }
+  <app-other-income-invoice-period
+    [invoiceList]="period.invoiceList"
+    [periodId]="period.id"
+    [exIncome]="period.totalIncome"
+    [discount]="period.invAmount"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  <app-other-income-recipt-period
+    [receiptList]="period.receiptList"
+    [periodId]="period.id"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  } }
 </section>

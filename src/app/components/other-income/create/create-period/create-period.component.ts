@@ -1,6 +1,4 @@
-import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
-import { ToastService } from '../../../../service/toast/toast.service';
-import { OiNotLightService } from '../../../../service/other-income/oi-not-light.service';
+import { Component, computed, inject, input, output, signal, viewChild } from '@angular/core';
 import { TIncomeItem } from '../../../../service/other-income/base-oi';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -16,11 +14,9 @@ export class CreatePeriodComponent {
   compType = input.required<string | undefined>()
   compCode = input.required<string | undefined>()
   headId = input.required<number>();
-
-  private toastServ = inject(ToastService)
-  private notLightServ = inject(OiNotLightService)
-
   incomeList = input.required<TIncomeItem[]>()
+  success = output<string>()
+  fail = output<string>()
 
   incomeState = signal<Array<TIncomeItem & { check: boolean }>>([])
   checkItem(id: number) {
@@ -38,8 +34,6 @@ export class CreatePeriodComponent {
   step = input<any>()
   canEdit = input(false)
   isProduct = input(true)
-  onSubmit() { }
-
 
   private modalServ = inject(NgbModal)
   private periodModal = viewChild('periodModal')
@@ -72,12 +66,11 @@ export class CreatePeriodComponent {
     this.periodservice.createPeriod(headId, req).subscribe({
       next: ({ periodId }) => {
         console.log(periodId);
-        this.toastServ.success('สร้าง  period สำเร็จ')
+        this.success.emit('สร้าง  period สำเร็จ');
         this.modalServ.dismissAll();
-        this.notLightServ.refetch();
       },
       error: (err) => {
-        this.toastServ.danger(err.message)
+        this.fail.emit(err.message);
       }
     })
   }

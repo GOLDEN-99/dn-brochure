@@ -1,0 +1,65 @@
+import { Component, computed, inject } from '@angular/core';
+import { OiNotLightService } from '../../../service/other-income/oi-not-light.service';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { CUSTOM_FIELD_SEARCH_TOKEN, OTHER_INCOME_NL_SEARCH } from '../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
+import { OtherIncomeAccountQueryTabComponent } from "./other-income-account-query-tab.component";
+import { PeriodNotLightService } from '../../../service/other-income/period-not-light.service';
+
+@Component({
+  selector: 'app-account-not-light-product',
+  imports: [RouterLink, DatePipe, OtherIncomeAccountQueryTabComponent],
+  providers: [
+    {
+      provide: CUSTOM_FIELD_SEARCH_TOKEN,
+      useValue: OTHER_INCOME_NL_SEARCH
+    }
+  ],
+  template: `
+    <div>
+      <h1 class="text-center">รายการรายได้อื่น</h1>
+      <app-other-income-account-query-tab [(compType)]="comp" [(field)]="field" [(status)]="status" [(term)]="term" />
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>กิจกรรม</th>
+            <th>เริ่ม</th>
+            <th>จบ</th>
+            <th>ชื่อซัพพลายเออร์</th>
+            <th>ชื่อเรียกเก็บ period</th>
+            <th>สถานะ</th>
+            <th>รายละเอียด</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of data(); track item.id) {
+          <tr>
+            <td>{{ item.event.eventName }}</td>
+            <td>{{ item.startDate | date }}</td>
+            <td>{{ item.endDate | date }}</td>
+            <td>{{ item.company.compName }}</td>
+            <td>{{ item.remark }}</td>
+            <td>{{ item.status }}</td>
+            <td><a [routerLink]="genUrl(item.company.compCode, item.company.compType, item.id)">ดู</a></td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  `,
+  styles: ''
+})
+export class AccountNotLightProductComponent {
+  private periodNotLight = inject(PeriodNotLightService)
+  data = this.periodNotLight.modProPeriod
+  term = this.periodNotLight.term
+  field = this.periodNotLight.mode
+  status = this.periodNotLight.filter
+  comp = this.periodNotLight.comp
+
+  private router = inject(Router)
+  private route = inject(ActivatedRoute)
+  genUrl(compCode: string, compType: string, id: number) {
+    return this.router.createUrlTree([id], { relativeTo: this.route, queryParams: { compCode, compType } })
+  }
+}

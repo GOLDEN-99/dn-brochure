@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { TBaseOIHead, TBaseOiInsert } from '../../types';
 import { ApiService } from '../api/api.service';
@@ -22,6 +22,10 @@ export class OiBaseformService {
     startDate: this.today,
     endDate: this.today,
   }
+  compData = computed(() => {
+    const { compCode, compType } = this.baseformState()
+    return { compCode, compType }
+  })
 
   baseformState = signal(this.defaultValue)
 

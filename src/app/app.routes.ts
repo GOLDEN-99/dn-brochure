@@ -32,7 +32,7 @@ import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-ou
 import { FlashSaleCardComponent } from './components/brochure-card/flash-sale-card/flash-sale-card.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
-import { PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
+import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
 import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
 import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
@@ -48,6 +48,9 @@ import { getOtherIncomeLightIdResolver } from './resolvers/other-income/get-othe
 import { getOtherIncomeNotLightIdResolver } from './resolvers/other-income/get-other-income-not-light-id.resolver';
 import { NotLightSingleComponent } from './pages/other-income/purchase/not-light-single/not-light-single.component';
 import { LightSingleComponent } from './pages/other-income/purchase/light-single/light-single.component';
+import { AccountNotLightInvoiceComponent } from './pages/other-income/account/account-not-light-invoice.component';
+import { AccountNotLightProductComponent } from './pages/other-income/account/account-not-light-product.component';
+import { AccountLightBoxComponent } from './pages/other-income/account/account-light-box.component';
 
 export const routes: Routes = [
     {
@@ -313,33 +316,48 @@ export const routes: Routes = [
                 resolve: { single: getOtherIncomeNotLightIdResolver },
                 component: NotLightSingleComponent
             },
-            // {
-            //     path: 'purchase/:id',
-            //     component: PurchaseTemplateComponent
-            // },
-            // {
-            //     path: 'purchase/:id/edit',
-            //     component: PurchaseTemplateComponent
-            // },
             {
                 path: "account",
                 component: PurchaseLayoutComponent,
                 providers: [
                     {
                         provide: TAB_TOKEN,
-                        useValue: PURCHASE_TAB_TOKEN
+                        useValue: ACCOUNT_TAB_TOKEN
                     }
                 ],
                 children: [
                     {
-                        path: '',
-                        component: AccountHomeComponent
+                        path: 'not-light',
+                        component: AccountNotLightInvoiceComponent
+                    },
+                    {
+                        path: 'not-light-product',
+                        component: AccountNotLightProductComponent
+                    },
+                    {
+                        path: 'light',
+                        component: AccountLightBoxComponent
                     },
                     {
                         path: 'report',
                         component: PurchaseReportComponent
                     }
                 ]
+            },
+            {
+                path: 'account/light/:headId',
+                resolve: { single: getOtherIncomeLightIdResolver },
+                component: LightSingleComponent
+            },
+            {
+                path: 'account/not-light/:headId',
+                resolve: { single: getOtherIncomeNotLightIdResolver },
+                component: NotLightSingleComponent
+            },
+            {
+                path: 'account/not-light-product/:headId',
+                resolve: { single: getOtherIncomeNotLightIdResolver },
+                component: NotLightSingleComponent
             },
             {
                 path: "account/:id",

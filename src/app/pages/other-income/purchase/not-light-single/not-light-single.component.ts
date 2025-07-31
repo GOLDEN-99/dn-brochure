@@ -6,23 +6,30 @@ import { OtherIncomeNotLightEditComponent } from "../../../../components/other-i
 import { OtherIncomeProductEditComponent } from "../../../../components/other-income/edit/other-income-product-edit/other-income-product-edit.component";
 import { FormsModule } from '@angular/forms';
 import { OtherIncomeMonthlyEditComponent } from "../../../../components/other-income/edit/other-income-monthly-edit/other-income-monthly-edit.component";
-import { OtherIncomeNotLightPeriodEditComponent } from "../../../../components/other-income/edit/other-income-not-light-period-edit/other-income-not-light-period-edit.component";
 import { CreatePeriodComponent } from "../../../../components/other-income/create/create-period/create-period.component";
-import { OtherIncomePeriodAccountComponent } from '../../../../components/other-income/edit/other-income-period-account/other-income-period-account.component';
+import { OtherIncomeOrderPeriodComponent } from '../../../../components/other-income/period/other-income-order-period.component';
+import { OtherIncomeProductPeriodComponent } from '../../../../components/other-income/period/other-income-product-period.component';
+import { ToastService } from '../../../../service/toast/toast.service';
+import { DecimalPipe } from '@angular/common';
+import { OtherIncomeInvoicePeriodComponent } from '../../../../components/other-income/period/other-income-invoice-period.component';
+import { OtherIncomeReciptPeriodComponent } from '../../../../components/other-income/period/other-income-recipt-period.component';
 
 @Component({
   selector: 'app-not-light-single',
   imports: [
     OtherIncomeHeadEditComponent, OtherIncomeNotLightEditComponent,
     OtherIncomeMonthlyEditComponent, OtherIncomeProductEditComponent,
-    OtherIncomeMonthlyEditComponent, OtherIncomeNotLightPeriodEditComponent,
-    CreatePeriodComponent, OtherIncomePeriodAccountComponent,
-    NgbDatepickerModule, FormsModule,
+    OtherIncomeMonthlyEditComponent, CreatePeriodComponent,
+    OtherIncomeOrderPeriodComponent, OtherIncomeProductPeriodComponent,
+    OtherIncomeReciptPeriodComponent, OtherIncomeInvoicePeriodComponent,
+    NgbDatepickerModule, FormsModule, DecimalPipe
   ],
   templateUrl: './not-light-single.component.html',
   styleUrl: './not-light-single.component.scss'
 })
 export class NotLightSingleComponent {
+  private toastService = inject(ToastService)
+
   private notLightServ = inject(OiNotLightService)
   data = this.notLightServ.singleRecord
   invalidValue = computed(() => this.data().length !== 1)
@@ -47,6 +54,8 @@ export class NotLightSingleComponent {
     return { notLightId, isRebate, isDc, isComp, isInce, incomeId, isProduct, incomeName, cn, displayName, capAmount, incVat, stepList, isStep }
   })
 
+  isProduct = computed(() => this.currentResult().income.isProduct)
+
   criteria = computed(() => {
     const cur = this.currentResult()
     const { isDc, isRebate, isComp, isInce, incVat } = cur
@@ -66,9 +75,13 @@ export class NotLightSingleComponent {
 
   periodList = computed(() => this.currentResult().periodList)
 
-  private modalService = inject(NgbModal)
-  openModal(content: any) {
-    this.modalService.open(content)
+  onSuccess(value: string) {
+    this.toastService.success(value);
+    this.notLightServ.refetch();
+  }
+
+  onFail(value: string) {
+    this.toastService.danger(value);
   }
 
 }

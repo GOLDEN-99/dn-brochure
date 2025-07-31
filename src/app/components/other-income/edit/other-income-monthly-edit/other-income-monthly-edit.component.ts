@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MonthlyService } from '../../../../service/other-income/monthly.service';
@@ -19,6 +19,8 @@ import { calFlat, calSemi, calStep } from './lib';
 })
 export class OtherIncomeMonthlyEditComponent {
   incomeList = input.required<TIncomeItem[]>()
+  success = output<string>()
+  fail = output<string>()
 
   isStep = input.required<boolean>()
   stepList = input.required<TOIStepItem[]>()
@@ -38,7 +40,9 @@ export class OtherIncomeMonthlyEditComponent {
   capAmount = input.required<number | null>()
   calWithCap = computed(() => {
     const capAmount = this.capAmount()
-    return this.calFunc()(capAmount)
+    const accAmount = this.accAmount()
+    const accIncome = this.accIncome()
+    return this.calFunc()(capAmount, accAmount, accIncome)
   })
 
   compType = input.required<string | undefined>()
@@ -49,7 +53,6 @@ export class OtherIncomeMonthlyEditComponent {
   openModal(content: any) {
     this.modalService.open(content)
   }
-  private notLightServ = inject(OiNotLightService)
   private monthService = inject(MonthlyService)
   date = this.monthService.date
   isoDate = computed(() => {
@@ -58,43 +61,15 @@ export class OtherIncomeMonthlyEditComponent {
   })
   onMonthChange = this.monthService.updateDate('month')
   onYearChange = this.monthService.updateDate('year')
-  incomeList2 = this.monthService.incomeList2
-  summary = computed(() => this.mod2().reduce((acc, cur) =>
-  ({
-    actualAmount: acc.actualAmount + cur.actualAmount,
-    calAmount: acc.calAmount + cur.calAmount,
-    incomeAmount: acc.incomeAmount + cur.income
-  }),
-    { actualAmount: 0, calAmount: 0, incomeAmount: 0 }))
-  private amoMap = new Map<number, number>()
-  private incMap = new Map<number, number>()
-  mod2 = computed(() => {
-    const lst = this.incomeList2()
-    const accAmount = this.accAmount()
-    const accIncome = this.accIncome()
-    this.amoMap.set(0, accAmount)
-    this.incMap.set(0, accIncome)
-    const fn = this.calWithCap()
-    return lst.map((l, i) => {
-      const saveInc = this.incMap.get(i)
-      const saveAmo = this.amoMap.get(i)
-      if (typeof saveInc === 'number' && typeof saveAmo === 'number') {
-        const curInc = fn(saveAmo, saveInc, l.actualAmount)
-        this.incMap.set(i + 1, curInc + saveInc)
-        this.amoMap.set(i + 1, l.actualAmount + saveAmo)
-        return { ...l, income: curInc }
-      }
-      throw new Error('error on compute income')
-    })
-  })
-  updateList2 = this.monthService.updateActual
+  calIncome = this.monthService.incomeList
+  summary = computed(() => this.calIncome().reduce((acc, cur) => acc + cur.calAmount, 0))
+
   private queryReceipt = this.monthService.incomeList
   calAmount = computed(() => this.queryReceipt().reduce((acc, { calAmount }) => acc + calAmount, 0))
   actualAmount = signal(0)
-  dif = computed(() => {
-    const { calAmount, actualAmount } = this.summary()
-    return calAmount - actualAmount
-  })
+  incomeAmount = computed(() => this.calWithCap()(this.actualAmount()))
+
+  dif = computed(() => this.summary() - this.actualAmount())
   reason = signal('')
 
   onSearch() {
@@ -104,22 +79,21 @@ export class OtherIncomeMonthlyEditComponent {
     this.monthService.calIncome(comp, id)
   }
 
-  private toast = inject(ToastService)
-
   onSubmit() {
     const id = this.id()
     const createDate = this.isoDate()
     const reason = this.reason()
-    const { calAmount, actualAmount, incomeAmount } = this.summary()
-    const receList = this.mod2()
+    const receList = this.calIncome().map(({ calAmount, receNumb }) => ({ calAmount, receNumb }))
+    const calAmount = this.summary()
+    const actualAmount = this.actualAmount()
+    const incomeAmount = this.incomeAmount()
     this.monthService.insertNlMonth(id, { calAmount, actualAmount, createDate, reason, incomeAmount, receList }).subscribe({
       next: (res) => {
-        this.toast.success('เพิ่มรับรู้รายเดือนสำเร็จ')
+        this.success.emit('เพิ่มรับรู้รายเดือนสำเร็จ')
         this.modalService.dismissAll()
-        this.notLightServ.refetch()
       },
       error: (err) => {
-        this.toast.danger(err.message)
+        this.fail.emit(err.message)
       }
     })
   }
@@ -132,11 +106,10 @@ export class OtherIncomeMonthlyEditComponent {
   onDelete(incId: number) {
     this.monthService.deleteMonthly(incId).subscribe({
       next: () => {
-        this.toast.success('ลบสำเร็จ')
-        this.notLightServ.refetch()
+        this.success.emit('ลบสำเร็จ')
       },
       error: (err) => {
-        this.toast.danger(err.message);
+        this.fail.emit(err.message);
       }
     })
   }

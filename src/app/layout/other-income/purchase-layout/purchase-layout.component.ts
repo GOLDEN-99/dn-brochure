@@ -32,6 +32,91 @@ export const PURCHASE_TAB_TOKEN: ITabSetting = {
   ]
 }
 
+export const ACCOUNT_TAB_TOKEN: ITabSetting = {
+  tabList: [
+    {
+      label: 'รายได้อื่นๆ',
+      link: './not-light',
+      exact: false
+    },
+    {
+      label: 'รายได้อื่นๆ light-box',
+      link: './light',
+      exact: false
+    },
+    {
+      label: 'รายได้อื่นๆ รับรู้จากสินค้า',
+      link: './not-light-product',
+      exact: false
+    },
+    {
+      label: 'report',
+      link: './report',
+      exact: false
+    }
+  ]
+}
+
+export const NOTLIGHT_PRODUCT_TAB_TOKEN = {
+  tabList: [
+    {
+      label: 'รายละเอียด',
+      link: '',
+      exact: true
+    },
+    {
+      label: 'รายเดือน',
+      link: './monthly',
+      exact: false
+    },
+    {
+      label: 'ราย period',
+      link: './period-order',
+      exact: false
+    }
+  ]
+}
+
+export const NOTLIGHT_INVOICE_TAB_TOKEN = {
+  tabList: [
+    {
+      label: 'รายละเอียด',
+      link: '',
+      exact: true
+    },
+    {
+      label: 'รายเดือน',
+      link: './monthly',
+      exact: false
+    },
+    {
+      label: 'ราย period',
+      link: './period-invoice',
+      exact: false
+    }
+  ]
+}
+
+export const LIGHT_TAB_TOKEN = {
+  tabList: [
+    {
+      label: 'รายละเอียด',
+      link: '',
+      exact: true
+    },
+    {
+      label: 'รายเดือน',
+      link: './monthly',
+      exact: false
+    },
+    {
+      label: 'ราย period',
+      link: './period-invoice',
+      exact: false
+    }
+  ]
+}
+
 @Component({
   selector: 'app-purchase-layout',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],

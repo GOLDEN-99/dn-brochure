@@ -46,14 +46,16 @@ import { OiBaseformService } from '../../../../service/other-income/oi-baseform.
 })
 export class PurchaseIncomeFormComponent {
   private baseFormService = inject(OiBaseformService)
+  private comp = this.baseFormService.compData
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   onSubmit = () => {
+    const comp = this.comp()
     this.baseFormService.createHead().subscribe(
       {
         next: ({ id }) => {
           this.baseFormService.resetForm()
-          this.router.navigate([id], { relativeTo: this.route })
+          this.router.navigate([id], { relativeTo: this.route, queryParams: { ...comp } })
         },
         error: (err) => {
           console.log(err)
