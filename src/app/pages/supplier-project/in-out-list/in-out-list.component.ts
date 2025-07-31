@@ -6,7 +6,7 @@ import { DoorService } from '../../../service/ibob/door.service';
   selector: 'app-in-out-list',
   imports: [RouterLink],
   templateUrl: './in-out-list.component.html',
-  styleUrl: './in-out-list.component.scss'
+  styles: ''
 })
 export class InOutListComponent {
   private route = inject(ActivatedRoute)

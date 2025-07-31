@@ -3,11 +3,13 @@ import { ResolveFn, Router } from '@angular/router';
 import { ToastService } from '../../service/toast/toast.service';
 import { DoorService } from '../../service/ibob/door.service';
 import { DailyCalendarService } from '../../service/ibob/daily-calendar.service';
+import { WarehouseService } from '../../service/ibob/warehouse.service';
 
 export const getByWarehouseResolver: ResolveFn<boolean> = (route, state) => {
   const router = inject(Router)
   const toast = inject(ToastService)
   try {
+    const warehosuServ = inject(WarehouseService)
     const serv = inject(DoorService)
     const dailyServ = inject(DailyCalendarService)
     const warehouseId = route.paramMap.get('warehouse')
@@ -22,8 +24,7 @@ export const getByWarehouseResolver: ResolveFn<boolean> = (route, state) => {
       router.navigateByUrl('/supplier/reserve')
       return false
     }
-    serv.setWarehouseId(warehouseId)
-    dailyServ.setWarehouse(warehouseId)
+    warehosuServ.warehouseId.set(warehouseId)
     return true
   } catch (err) {
     console.log(err)

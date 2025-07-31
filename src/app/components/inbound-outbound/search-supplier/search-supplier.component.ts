@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-search-supplier',
   imports: [SupllierSelectComponent, FormsModule],
   templateUrl: './search-supplier.component.html',
-  styleUrl: './search-supplier.component.scss'
+  styles: ''
 })
 export class SearchSupplierComponent {
   selectedSuplier = output<TComp>()

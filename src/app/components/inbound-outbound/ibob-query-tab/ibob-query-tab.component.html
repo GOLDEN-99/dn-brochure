@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="mb-3">
+    <label for="search-field-select" class="form-label">{{ label() }}</label>
+    <select
+      name="search-field-select"
+      id="search-field-select"
+      [ngModel]="currentOption()"
+      (ngModelChange)="onCurrentOptionChange($event)"
+      class="form-select"
+    >
+      <option [ngValue]="0" disabled>กรุณาเลือก</option>
+      @for (item of selectOption(); track $index) {
+      <option [ngValue]="item.id">{{ item.label }}</option>
+      }
+    </select>
+  </div>
+</div>
+@if (currentOption() !== 0) {
+<div class="app-form-field">
+  @let inputId =id();
+  <label [attr.for]="inputId">{{ labelText() }}</label>
+  <input type="text" name="search-field" [id]="inputId" [(ngModel)]="term" />
+</div>
+}
+<button
+  class="btn btn-success w-100 mb-3"
+  [disabled]="disable()"
+  (click)="onClick()"
+>
+  ค้นหา
+</button>

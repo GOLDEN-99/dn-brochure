@@ -1,0 +1,57 @@
+<div class="mb-3">
+  @let incomes = incomeList();
+  <div class="row" style="justify-content: space-between">
+    <h2 class="col-auto">รายการรับรู้รายเดือน</h2>
+    <div class="col-auto">
+      <button class="btn btn-primary" (click)="openModal(monthlyModal)">
+        เพิ่มรายได้รายเดือน
+      </button>
+    </div>
+  </div>
+  <div style="max-height: 200px; overflow-y: auto">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>งวด</th>
+          <th>ยอดคำนวน</th>
+          <th style="width: 10%"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (income of incomes; track income.id) {
+        <tr>
+          <td>{{ formatMonth(income.createDate) }}</td>
+          <td>{{ income.calAmount | number : "1.2-2" }}</td>
+          <td>
+            <button class="btn btn-danger" (click)="onDelete(income.id)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #monthlyModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">รับรู้รายเดือน</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-month-select
+      [month]="date().month"
+      (monthChange)="onMonthChange($event)"
+    />
+    <app-year-select [year]="date().year" (yearChange)="onYearChange($event)" />
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary w-100" (click)="onSubmit()">บันทึก</button>
+  </div>
+</ng-template>

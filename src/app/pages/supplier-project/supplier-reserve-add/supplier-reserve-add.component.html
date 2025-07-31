@@ -126,9 +126,19 @@
     <label for="remark">หมายเหตุ</label>
     <textarea name="remark" id="remark" rows="3" [(ngModel)]="note"></textarea>
   </div>
+  <div class="mb-3">
+    @if (tooLow()) {
+    <label for=""></label>
+    <div style="color: red">จำนวนลังน้อยเกินกำหนด</div>
+    }
+    <!---->
+    @if (tooHigh()) {
+    <div style="color: red">จำนวนลังเกินกำหนด กรุณาเลือกช่วงเวลาเพิ่ม</div>
+    }
+  </div>
   <button
     class="btn btn-success w-100 mb-3"
-    [disabled]="total === 0"
+    [disabled]="disableSubmit()"
     (click)="handleSubmit()"
   >
     จอง

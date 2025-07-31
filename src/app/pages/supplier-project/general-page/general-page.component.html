@@ -1,47 +1,62 @@
 <form [formGroup]="stepTwoForm">
-  <div class="app-form-field">
-    <label for="engName">ชื่อบริษัท (ภาษาอังกฤษ)</label>
-    <input type="text" id="engName" name="engName" formControlName="engName" />
+  <div class="row">
+    <div class="app-form-field col-md">
+      <label for="compName">ชื่อบริษัท (ภาษาอังกฤษ)</label>
+      <input
+        type="text"
+        id="compName"
+        name="compName"
+        formControlName="compName"
+      />
+    </div>
+    <div class="app-form-field col-md">
+      <label for="compName2">ชื่อบริษัท (ภาษาไทย)</label>
+      <input
+        type="text"
+        id="compName2"
+        name="compName2"
+        formControlName="compName2"
+      />
+    </div>
   </div>
   <div class="app-form-field">
-    <label for="thaiName">ชื่อบริษัท (ภาษาไทย)</label>
-    <input
-      type="text"
-      id="thaiName"
-      name="thaiName"
-      formControlName="thaiName"
-    />
-  </div>
-  <div class="app-form-field">
-    <label for="address">ที่อยู่</label>
+    <label for="compAddr">ที่อยู่</label>
     <textarea
-      name="address"
-      id="address"
+      name="compAddr"
+      id="compAddr"
       rows="3"
-      formControlName="address"
+      formControlName="compAddr"
     ></textarea>
   </div>
   @let contactForm = stepTwoForm.controls.contact.controls;
   <!---->
   @for (c of contactForm; track $index) {
-
-  <div class="row align-items-end">
-    <div class="app-form-field col">
-      <label [attr.for]="$index + 'tel'">โทรศัพท์</label>
-      <input
-        type="tel"
-        name="tel"
-        [attr.id]="$index + 'tel'"
-        [formControl]="c.controls.tel"
-      />
-    </div>
-    <div class="app-form-field col">
-      <label [attr.for]="$index + 'name'">ชื่อ</label>
+  <div class="row align-items-end px-3 px-sm-0">
+    <div class="app-form-field col-sm">
+      <label [attr.for]="$index + 'emplName'">ชื่อ</label>
       <input
         type="text"
-        name="name"
-        [attr.id]="$index + 'name'"
-        [formControl]="c.controls.name"
+        name="emplName"
+        [attr.id]="$index + 'emplName'"
+        [formControl]="c.controls.emplName"
+      />
+    </div>
+    <div class="app-form-field col-sm">
+      <label [attr.for]="$index + 'emplPhone'">โทรศัพท์</label>
+      <input
+        type="tel"
+        name="emplPhone"
+        [attr.id]="$index + 'emplPhone'"
+        [formControl]="c.controls.emplPhone"
+      />
+    </div>
+    <div class="app-form-field col-sm">
+      <label [attr.for]="$index + 'emplEmail'">Email</label>
+      <input
+        type="email"
+        name="emplEmail"
+        [attr.id]="$index + 'emplEmail'"
+        [formControl]="c.controls.emplEmail"
       />
     </div>
     <div class="col-2 d-flex justify-content-between mb-3">
@@ -60,23 +75,25 @@
     </div>
   </div>
   }
-  <div class="app-form-field">
-    <label for="teleGram">โทรสาร</label>
-    <input
-      type="text"
-      name="teleGram"
-      id="teleGram"
-      formControlName="teleGram"
-    />
-  </div>
-  <div class="app-form-field">
-    <label for="email">E-mail</label>
-    <input
-      type="email"
-      name="email"
-      id="email"
-      formControlName="email"
-      autocomplete="email"
-    />
+  <div class="row">
+    <div class="app-form-field col-md">
+      <label for="compFax">โทรสาร</label>
+      <input
+        type="text"
+        name="compFax"
+        id="compFax"
+        formControlName="compFax"
+      />
+    </div>
+    <div class="app-form-field col-md">
+      <label for="compEmail">E-mail</label>
+      <input
+        type="email"
+        name="compEmail"
+        id="compEmail"
+        formControlName="compEmail"
+        autocomplete="compEmail"
+      />
+    </div>
   </div>
 </form>

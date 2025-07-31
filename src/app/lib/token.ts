@@ -9,10 +9,6 @@ export interface IBrochureService {
     totalPage: Signal<number[]>
     color: Signal<TColor>
 }
-export interface ISupplierList {
-    data: Signal<TSupplierItem[]>
-    pageLabel: Signal<'DN' | 'HU'>
-}
 
 export const BROCHURE_TOKEN = new InjectionToken<IBrochureService>('brochure')
 

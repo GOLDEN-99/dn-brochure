@@ -1,0 +1,61 @@
+<section class="app-container">
+  @if (invalidValue()) {
+  <div>ไม่พบเอกสาร</div>
+  } @else { @let e = currentResult();@let branches = e.branchList;@let comp =
+  e.company;@let incomes = e.incomeList;@let periods = e.periodList;
+  <app-other-income-head-edit [value]="head()" [canEdit]="true" />
+  <app-other-income-light-edit [eventDetail]="eventDetail()" />
+  <app-other-income-branch
+    [lightId]="e.lightId"
+    [branchList]="branches"
+    (refetch)="onRefetch()"
+  />
+  <app-other-income-monthly-light-edit
+    [incomeList]="incomes"
+    [id]="e.id"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  <app-create-period
+    [compType]="comp.compType"
+    [compCode]="comp.compCode"
+    [headId]="e.id"
+    [incomeList]="incomes"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  @for (period of periods; track period.id) {
+  <div class="row bg-success bg-opacity-10">
+    <div class="row">
+      <div class="col">ชื่อเรียกเก็บ</div>
+      <div class="col">ยอดซื้อ</div>
+      <div class="col">รายได้บันทึก</div>
+      <div class="col">ยอด PO</div>
+      <div class="col">ยอดใบแจ้งหนี้</div>
+      <div class="col">ยอดใบเสร็จ</div>
+    </div>
+    <div class="row">
+      <div class="col">{{ period.remark }}</div>
+      <div class="col">{{ period.totalAmount | number : "1.2-2" }}</div>
+      <div class="col">{{ period.totalIncome | number : "1.2-2" }}</div>
+      <div class="col">{{ period.orderAmount | number : "1.2-2" }}</div>
+      <div class="col">{{ period.invAmount | number : "1.2-2" }}</div>
+      <div class="col">{{ period.receAmount | number : "1.2-2" }}</div>
+    </div>
+  </div>
+  <app-other-income-invoice-period
+    [invoiceList]="period.invoiceList"
+    [periodId]="period.id"
+    [exIncome]="period.totalIncome"
+    [discount]="period.invAmount"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  <app-other-income-recipt-period
+    [receiptList]="period.receiptList"
+    [periodId]="period.id"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  } }
+</section>

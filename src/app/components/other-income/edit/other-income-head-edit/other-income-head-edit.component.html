@@ -1,0 +1,99 @@
+<div mb-3>
+  @let curHead = value();
+  <div class="row" style="justify-content: space-between">
+    <h2 class="col-auto">รายการรายได้อื่นๆ</h2>
+    @if(canEdit()){
+    <div class="col-auto">
+      <button class="btn btn-primary" (click)="openModal()">แก้ไข</button>
+    </div>
+    }
+  </div>
+  <div class="row">
+    <div class="col">รหัสซัพ</div>
+    <div class="col">{{ curHead.compCode }}</div>
+  </div>
+  <div class="row">
+    <div class="col">ชื่อซัพ</div>
+    <div class="col">{{ curHead.compName }}</div>
+  </div>
+  <div class="row">
+    <div class="col">กิจกรรม</div>
+    <div class="col">{{ curHead.eventName }}</div>
+  </div>
+  <div class="row">
+    <div class="col">ระยะเวลาเก็บเงิน</div>
+    <div class="col">{{ curHead.period }}</div>
+  </div>
+  <div class="row">
+    <div class="col">เริ่ม</div>
+    <div class="col">{{ curHead.startDate | date }}</div>
+  </div>
+  <div class="row">
+    <div class="col">จบ</div>
+    <div class="col">{{ curHead.endDate | date }}</div>
+  </div>
+</div>
+<ng-template #headModal let-modal>
+  @let formData = state();
+  <div class="modal-header">
+    <h4>แก้ไขรายการรายได้อื่นๆ</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-event-select
+      [eventId]="formData.eventId"
+      (eventIdChange)="updateEvent($event)"
+      [filter]="mode()"
+    />
+    <!-- period -->
+    <div class="mb-3">
+      <label for="period" class="form-label">ระยะเวลาเก็บเงิน</label>
+      <select
+        name="period"
+        id="period"
+        class="form-select"
+        [ngModel]="formData.period"
+        (ngModelChange)="updatePeriod($event)"
+      >
+        <option [ngValue]="0" disabled>กรุณาเลือก</option>
+        <option [ngValue]="1">1 เดือน</option>
+        <option [ngValue]="3">3 เดือน</option>
+        <option [ngValue]="6">6 เดือน</option>
+        <option [ngValue]="12">12 เดือน</option>
+      </select>
+    </div>
+    <!-- date picker -->
+    <div class="row">
+      <div class="col">
+        <app-date-input
+          label="วันที่เริ่ม"
+          [date]="formData.startDate"
+          (dateChange)="updateStartDate($event)"
+        />
+      </div>
+      <div class="col">
+        <app-date-input
+          label="วันที่สิ้นสุด"
+          [date]="formData.endDate"
+          (dateChange)="updateEndDate($event)"
+        />
+      </div>
+    </div>
+    <app-search-comp-subform
+      [compType]="formData.compType"
+      (compTypeChange)="updateCompType($event)"
+      [compCode]="formData.compCode"
+      (compCodeChange)="updateCompCode($event)"
+      [compName]="formData.compName"
+      (compNameChange)="updateCompName($event)"
+    />
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary w-100" (click)="submitForm()">บันทึก</button>
+  </div>
+</ng-template>

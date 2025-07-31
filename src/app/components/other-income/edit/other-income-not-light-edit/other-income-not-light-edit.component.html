@@ -1,0 +1,269 @@
+<div class="mb-3">
+  @let curEvent = eventDetail();
+  <div class="row" style="justify-content: space-between">
+    <h2 class="col-auto">รายละเอียดกิจกรรม</h2>
+    @if (canEdit()) {
+    <div class="col-auto">
+      <button class="btn btn-primary" (click)="openModal()">แก้ไข</button>
+    </div>
+    }
+  </div>
+  <div class="row">
+    <div class="col">cn</div>
+    <div class="col">{{ curEvent.cn }}</div>
+  </div>
+  <div class="row">
+    <div class="col">ชื่อเรียกเก็บ</div>
+    <div class="col">
+      {{ curEvent.displayName === "" ? "ไมระบุ" : curEvent.displayName }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">VAT</div>
+    <div class="col">{{ curEvent.incVat ? "รวม VAT" : "ไม่รวม VAT" }}</div>
+  </div>
+  <div class="row">
+    <div class="col">Rebate</div>
+    <div class="col">{{ curEvent.isRebate ? "ลด" : "ไม่ลด" }}</div>
+  </div>
+  <div class="row">
+    <div class="col">DC</div>
+    <div class="col">{{ curEvent.isDc ? "ลด" : "ไม่ลด" }}</div>
+  </div>
+  <div class="row">
+    <div class="col">Compensate</div>
+    <div class="col">{{ curEvent.isComp ? "ลด" : "ไม่ลด" }}</div>
+  </div>
+  <div class="row">
+    <div class="col">Incentive</div>
+    <div class="col">{{ curEvent.isInce ? "ลด" : "ไม่ลด" }}</div>
+  </div>
+  <div class="row">
+    <div class="col">จ่ายไม่เกินกำหนด</div>
+    <div class="col">
+      {{ curEvent.capAmount === null ? 'ไม่กำหนด' : `${curEvent.capAmount} บาท` }}
+    </div>
+  </div>
+</div>
+
+<ng-template #notLightModal let-modal>
+  <div class="modal-header">
+    <h4>แก้ไขรายละเอียดกิจกรรม</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="app-form-field">
+      <div>
+        <label class="mt-0" for="cn">CN</label>
+      </div>
+      <div>
+        <input type="text" name="cn" id="cn" [(ngModel)]="cn" />
+      </div>
+    </div>
+    <div class="app-form-field">
+      <div>
+        <label for="displayName">ชื่อเรียกเก็บ</label>
+      </div>
+      <div>
+        <input
+          type="text"
+          name="displayName"
+          id="displayName"
+          [(ngModel)]="displayName"
+        />
+      </div>
+    </div>
+    <app-income-select
+      [(incomeId)]="incomeId"
+      (isProductChange)="isProduct.set($event)"
+    />
+
+    <div class="row">
+      <div class="col-md-3">VAT</div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="vat"
+            id="include"
+            [value]="true"
+            [(ngModel)]="incVat"
+          />
+          <label for="include">รวม vat</label>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="vat"
+            id="exclude"
+            [value]="false"
+            [(ngModel)]="incVat"
+          />
+          <label for="exclude">ไม่รวม vat</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">rebate</div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="rebate"
+            id="reba-inc"
+            [value]="true"
+            [(ngModel)]="isRebate"
+          />
+          <label for="reba-inc">ลด</label>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="rebate"
+            id="reba-ext"
+            [value]="false"
+            [(ngModel)]="isRebate"
+          />
+          <label for="reba-ext">ไม่ลด</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">dc</div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="dc"
+            id="dc-inc"
+            [value]="true"
+            [(ngModel)]="isDc"
+          />
+          <label for="dc-inc">ลด</label>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="dc"
+            id="dc-ext"
+            [value]="false"
+            [(ngModel)]="isDc"
+          />
+          <label for="dc-ext">ไม่ลด</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">incentive</div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="ince"
+            id="ince-inc"
+            [value]="true"
+            [(ngModel)]="isInce"
+          />
+          <label for="ince-inc">ลด</label>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="ince"
+            id="ince-ext"
+            [value]="false"
+            [(ngModel)]="isInce"
+          />
+          <label for="ince-ext">ไม่ลด</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">Compensate</div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="comp"
+            id="comp-inc"
+            [value]="true"
+            [(ngModel)]="isComp"
+          />
+          <label for="comp-inc">ลด</label>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="comp"
+            id="comp-ext"
+            [value]="false"
+            [(ngModel)]="isComp"
+          />
+          <label for="comp-ext">ไม่ลด</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-3">จ่ายไม่เกินกำหนด</div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="cap"
+            id="cap-null"
+            [value]="false"
+            [ngModel]="isNullCap()"
+            (input)="capAmount.set(0)"
+          />
+          <label for="cap-null">กำหนด (บาท)</label>
+        </div>
+        @if (!isNullCap()) {
+        <div class="app-form-field">
+          <label for="capAmount">ระบุ (บาท)</label>
+          <input type="number" [(ngModel)]="capAmount" id="capAmount" />
+        </div>
+        }
+      </div>
+      <div class="col-md">
+        <div class="app-form-check">
+          <input
+            type="radio"
+            name="cap"
+            id="cap-true"
+            [value]="true"
+            [ngModel]="isNullCap()"
+            (input)="capAmount.set(null)"
+          />
+          <label for="cap-true">ไม่กำหนด</label>
+        </div>
+      </div>
+    </div>
+    <!-- @if (isProduct()) {
+    <app-search-product-subform
+      [selectProducts]="productsList()"
+      (onAdd)="handleAdd($event)"
+      (onDelete)="handleDelete($event)"
+    />
+    } -->
+    <app-target-subform [(target)]="stepType" [(step)]="stepList" />
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary w-100" (click)="submitForm()">บันทึก</button>
+  </div>
+</ng-template>

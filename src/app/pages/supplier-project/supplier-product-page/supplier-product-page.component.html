@@ -1,6 +1,6 @@
 <section class="m-3">
   <div class="mb-3" style="display: flex; gap: 16px">
-    <button class="btn btn-outline-success">
+    <button class="btn btn-outline-success" (click)="openProductModal()">
       <i class="bi bi-plus"></i>
       เพิ่มสินค้าจำหน่าย
     </button>
@@ -116,3 +116,17 @@
     </tbody>
   </table>
 </section>
+
+<ng-template #productModal let-modal>
+  <app-modal-layout
+    title="เพิ่มสินค้าจำหน่าย"
+    (crossClick)="modal.dismiss('Cross click')"
+  >
+    <div modalBody>component here</div>
+    <div modalFooter>
+      <button class="btn btn-secondary" (click)="modal.close('Close modal')">
+        Close
+      </button>
+    </div>
+  </app-modal-layout>
+</ng-template>

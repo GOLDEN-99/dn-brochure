@@ -1,0 +1,45 @@
+<p>other-income-report works!</p>
+<div>{{ year() }}</div>
+<div style="overflow-x: scroll">
+  <table class="table">
+    <thead>
+      <tr>
+        <td colspan="6"></td>
+        @for (month of monthList; track $index) {
+        <td colspan="3">{{ month }}</td>
+        }
+      </tr>
+      <tr>
+        <td></td>
+        <td>ชื่อบริษัท</td>
+        <td>ชื่อกิจกรรม</td>
+        <td>ชื่อส่วนลด</td>
+        <td>วันที่เริ่ม</td>
+        <td>วันที่จบ</td>
+
+        @for (month of monthList; track $index) {
+        <td>ส่วนลด</td>
+        <td>ยอดใบแจ้งหนี้</td>
+        <td>ยอดใบเสร็จ</td>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (oi of otherIncomeList; track $index){
+      <tr>
+        <td>{{ oi.id }}</td>
+        <td style="min-width: 120px">{{ oi.comp }}</td>
+        <td style="min-width: 120px">{{ oi.eventName }}</td>
+        <td style="min-width: 120px">{{ oi.discountName }}</td>
+        <td style="min-width: 120px">{{ oi.startDate }}</td>
+        <td style="min-width: 120px">{{ oi.endDate }}</td>
+        @for (month of monthList; track $index) {
+        <td style="min-width: 80px">{{ getSale(oi.id, month) }}</td>
+        <td style="min-width: 120px">{{ getInv(oi.id, month) }}</td>
+        <td style="min-width: 120px">{{ getInv(oi.id, month) }}</td>
+        }
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

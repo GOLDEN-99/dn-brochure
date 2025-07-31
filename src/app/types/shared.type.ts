@@ -22,3 +22,5 @@ export type TSupplierItem = {
     address: string
     tel: string
 }
+
+export type TCsBool = '0' | '1'

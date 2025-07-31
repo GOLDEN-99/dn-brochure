@@ -1,0 +1,56 @@
+<div>
+  <h1 class="text-center">รายการรายได้อื่น</h1>
+  <div class="d-flex justify-content-end mb-3" style="gap: 16px">
+    <a
+      routerLink="./create"
+      class="btn btn-info"
+      style="
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        align-items: center;
+      "
+    >
+      <i class="bi bi-plus"></i>
+      <span> เพิ่มรายการรายได้อื่นๆ </span>
+      <span style="color: red"> กรณี live box </span>
+    </a>
+  </div>
+  <app-other-income-purchasing-query-tab
+    [(term)]="term"
+    [(field)]="mode"
+    [(compType)]="compType"
+    [disbleMode]="true"
+    (click)="onSearch()"
+  />
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>กิจกรรม</th>
+        <th>เริ่ม</th>
+        <th>จบ</th>
+        <th>ชื่อซัพพลายเออร์</th>
+        <th>จำนวนสาขา</th>
+        <th>ยอดคาดหมาย</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of data(); track $index) {
+      <tr>
+        <td>{{ item.event.eventName }}</td>
+        <td>{{ item.startDate | date }}</td>
+        <td>{{ item.endDate | date }}</td>
+        <td>{{ item.company.compName }}</td>
+        <td>{{ item.totalBranch }}</td>
+        <td>{{ item.totalAmount }}</td>
+        <td>
+          <a [routerLink]="genUrl(item.id, item.company.compType)"
+            >รายละเอียด</a
+          >
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
