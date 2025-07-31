@@ -3,7 +3,7 @@ import { SearchPageComponent } from './pages/brochure-project/search-page/search
 import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
 import { NotfoundComponent } from './pages/notfound/notfound.component';
-import { BROCHURE_PRICE_TYPE_TOKEN, BROCHURE_TOKEN, SUPPLIER_TOKEN } from './lib';
+import { BROCHURE_PRICE_TYPE_TOKEN, BROCHURE_TOKEN } from './lib';
 import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
 import { cnResolver } from './resolvers/cn/cn.resolver';
 import { BaseBrochureComponent } from './pages/brochure-project/base-brochure/base-brochure.component';

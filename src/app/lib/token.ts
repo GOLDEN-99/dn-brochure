@@ -1,5 +1,6 @@
 import { InjectionToken, Signal } from "@angular/core"
 import { TBorchureHead, TColor, TDropdownProps, TGroupItemList, TMaybe, TPrice, TSupplierItem } from "../types"
+import { ISupplierList } from "../service/supplier/supplier.token"
 
 
 export interface IBrochureService {
