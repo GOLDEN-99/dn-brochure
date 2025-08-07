@@ -33,6 +33,12 @@ export class CnOrderService {
   orderHead = signal<TMaybe<Omit<TOrderRes, 'goodList'>>>(null)
 
   itemList = signal<TAppGoodItem[]>([])
+  itemInvalidCnAmount = computed(() => this.itemList().map(({ lot, useItem }) => {
+    const totalCn = lot.reduce((acc, { check, returnAmou }) => check ? acc + returnAmou : acc, 0)
+    const totalItem = lot.reduce((acc, { goodAmou }) => acc + goodAmou, 0)
+    return totalItem > totalCn + useItem
+  }))
+  invalidByGoodReuturnAmou = computed(() => this.itemInvalidCnAmount().some(i => i))
   selectItem = computed(() => this.itemList().filter(({ check }) => check))
   handleSelect = (id: number, check: boolean) => {
     this.itemList.update(prev => prev.map((i, idx) => idx === id ? ({ ...i, check }) : i))
