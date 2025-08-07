@@ -71,6 +71,7 @@ export class OtherIncomeMonthlyEditComponent {
 
   dif = computed(() => this.summary() - this.actualAmount())
   reason = signal('')
+  cn = signal(0)
 
   onSearch() {
     const comp = this.compType()
