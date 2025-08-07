@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BaseSubmitCn } from '../../../lib/cn';
 import { FormsModule } from '@angular/forms';
@@ -10,10 +10,17 @@ import { UploaderComponent } from '../../../components/uploader/uploader.compone
   templateUrl: './cn-upload.component.html',
   styleUrl: './cn-upload.component.scss'
 })
-export class CnUploadComponent extends BaseSubmitCn {
+export class CnUploadComponent extends BaseSubmitCn implements OnInit, OnDestroy {
+
+  ngOnInit(): void {
+    this.getUrl()
+  }
+
+  ngOnDestroy(): void {
+    this.unsub()
+  }
 
   touch = signal(false)
-
   handleInput = (e: Event) => {
     this.touch.set(true)
     const input = e.target as HTMLInputElement

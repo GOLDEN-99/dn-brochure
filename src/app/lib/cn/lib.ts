@@ -1,14 +1,35 @@
-import { inject, Signal } from "@angular/core";
+import { inject, input, OnInit, signal, Signal } from "@angular/core";
 import { CnOrderService } from "../../service/cn/cn-order/cn-order.service";
 import { CnApiService } from "../../service/cn/cn-api/cn-api.service";
 import { UploadImageService } from "../../service/cn/cn-upload-image/upload-image.service";
 import { CnRemarkService } from "../../service/cn/cn-remark/cn-remark.service";
 import { ToastService } from "../../service/toast/toast.service";
 import { TGoodItemReq } from "../../types/cn.type";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
+import { distinctUntilChanged, filter, map, Subject, takeUntil, tap } from "rxjs";
 
 export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
+    private route = inject(ActivatedRoute)
+    private sub$ = new Subject<void>()
+    protected getUrl() {
+        this.route.parent?.paramMap
+            .pipe(
+                map(r => r.get('isWWR'))
+                , filter(r => typeof r === 'string')
+                , distinctUntilChanged()
+            )
+            .subscribe({
+                next: (wwr) => {
+                    this.isWWR.set(wwr)
+                }
+            })
+    }
+    protected unsub() {
+        this.sub$.next();
+        this.sub$.complete();
+    }
     private router = inject(Router)
+    protected isWWR = signal("")
     protected cnApiServ = inject(CnApiService)
     protected orderServ = inject(CnOrderService)
     protected imageServ = inject(UploadImageService)
@@ -37,7 +58,8 @@ export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
         const totalprice = this.totalprice()
         const motive = this.motive()
         const image = this.image()
-        this.submit({ ...head, goodList: nonNullableLotGoodList, image, totalprice, ...motive })
+        const isWWR = this.isWWR()
+        this.submit({ ...head, goodList: nonNullableLotGoodList, image, totalprice, ...motive, isWWR })
             .subscribe(this.handler)
     }
     abstract disable: Signal<boolean>;
