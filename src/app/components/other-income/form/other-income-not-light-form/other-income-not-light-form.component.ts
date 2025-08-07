@@ -54,6 +54,8 @@ export class OtherIncomeNotLightFormComponent {
   cn = signal('')
   displayName = signal('')
   capAmount = signal<number | null>(null)
+  setCapNull = () => this.capAmount.set(null)
+  setCapZero = () => this.capAmount.set(0)
   isNullCap = computed(() => this.capAmount() === null)
   productsList = signal<TOIProduct[]>([])
   invalidProduct = computed(() => {
@@ -119,7 +121,6 @@ export class OtherIncomeNotLightFormComponent {
   private toastService = inject(ToastService)
   private router = inject(Router)
   onSubmit() {
-    console.log(this.request)
     return this.api.post<{ id: number }>(
       `${this.url}/other-income/contact/not-light/${this.headId()}`,
       this.request

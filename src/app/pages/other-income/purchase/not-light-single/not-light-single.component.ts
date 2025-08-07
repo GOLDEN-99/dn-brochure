@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
 import { OtherIncomeMonthlyEditComponent } from "../../../../components/other-income/edit/other-income-monthly-edit/other-income-monthly-edit.component";
 import { CreatePeriodComponent } from "../../../../components/other-income/create/create-period/create-period.component";
 import { OtherIncomeOrderPeriodComponent } from '../../../../components/other-income/period/other-income-order-period.component';
-import { OtherIncomeProductPeriodComponent } from '../../../../components/other-income/period/other-income-product-period.component';
 import { ToastService } from '../../../../service/toast/toast.service';
 import { DecimalPipe } from '@angular/common';
 import { OtherIncomeInvoicePeriodComponent } from '../../../../components/other-income/period/other-income-invoice-period.component';
@@ -20,7 +19,7 @@ import { OtherIncomeReciptPeriodComponent } from '../../../../components/other-i
     OtherIncomeHeadEditComponent, OtherIncomeNotLightEditComponent,
     OtherIncomeMonthlyEditComponent, OtherIncomeProductEditComponent,
     OtherIncomeMonthlyEditComponent, CreatePeriodComponent,
-    OtherIncomeOrderPeriodComponent, OtherIncomeProductPeriodComponent,
+    OtherIncomeOrderPeriodComponent,
     OtherIncomeReciptPeriodComponent, OtherIncomeInvoicePeriodComponent,
     NgbDatepickerModule, FormsModule, DecimalPipe
   ],
