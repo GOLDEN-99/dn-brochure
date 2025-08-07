@@ -5,6 +5,7 @@ import { GoodItemComponent } from '../../../components/cn/good-item/good-item.co
 import { LotItemComponent } from '../../../components/cn/lot-item/lot-item.component';
 import { UploaderComponent } from '../../../components/uploader/uploader.component';
 import { DecimalPipe } from '@angular/common';
+import { TAppGoodItem } from '../../../types/cn.type';
 
 @Component({
   selector: 'app-cn-some-detail',
@@ -31,5 +32,12 @@ export class CnSomeDetailComponent extends BaseSubmitCn implements OnInit, OnDes
     this.imageServ.invalidImage()
     || this.remarkServ.invalidRemarkOpt()
     || this.remarkServ.cnType() !== 'some'
+    || this.orderServ.invalidByGoodReuturnAmou()
   )
+  // invalidAmount = (item: TAppGoodItem) => {
+  //   const { useItem, lot } = item
+  //   const totalCn = lot.reduce((acc, { check, goodAmou, returnAmou }) => check ? acc + returnAmou : acc, 0)
+  //   const totalItem = lot.reduce((acc, { goodAmou }) => acc + goodAmou, 0)
+  //   return totalItem
+  // }
 }

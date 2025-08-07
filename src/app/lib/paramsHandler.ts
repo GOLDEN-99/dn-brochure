@@ -27,6 +27,7 @@ export const wholeHandler = paramsHandler('wholeType')(predicateWhole)
 export const tokenHandler = paramsHandler('token')(predicateString)
 export const wholeCodeHandler = paramsHandler('wholeCode')(predicateString)
 export const idPromotionHandler = paramsHandler('idPromotion')(predicateNumber)
+export const isWRRHandler = paramsHandler('isWRR')(predicateString)
 
 export const saleCodeHandler = paramsHandler('saleCode')(predicateString)
 export const wholeNumbHandler = paramsHandler('wholeNumb')(predicateString)
