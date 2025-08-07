@@ -28,7 +28,6 @@
   <div class="row bg-success bg-opacity-10">
     <div class="row">
       <div class="col">ชื่อเรียกเก็บ</div>
-      <div class="col">ยอดซื้อ</div>
       <div class="col">รายได้บันทึก</div>
       <div class="col">ยอด PO</div>
       <div class="col">ยอดใบแจ้งหนี้</div>
@@ -36,7 +35,6 @@
     </div>
     <div class="row">
       <div class="col">{{ period.remark }}</div>
-      <div class="col">{{ period.totalAmount | number : "1.2-2" }}</div>
       <div class="col">{{ period.totalIncome | number : "1.2-2" }}</div>
       <div class="col">{{ period.orderAmount | number : "1.2-2" }}</div>
       <div class="col">{{ period.invAmount | number : "1.2-2" }}</div>

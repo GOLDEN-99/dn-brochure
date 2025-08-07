@@ -342,7 +342,7 @@ export const routes: Routes = [
                     },
                     {
                         path: 'report',
-                        component: PurchaseReportComponent
+                        component: OtherIncomeReportComponent
                     }
                 ]
             },

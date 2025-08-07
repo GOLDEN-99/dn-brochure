@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, output, signal, viewChild } from '@angular/core';
 import { TIncomeItem } from '../../../../service/other-income/base-oi';
 import { FormsModule } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCalendar, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PeriodService } from '../../../../service/other-income/period.service';
 
 @Component({
@@ -11,6 +11,9 @@ import { PeriodService } from '../../../../service/other-income/period.service';
   styleUrl: './create-period.component.scss'
 })
 export class CreatePeriodComponent {
+  private cal = inject(NgbCalendar)
+  private today = this.cal.getToday();
+  date = signal({ day: 1, month: this.today.month, year: this.today.year })
   compType = input.required<string | undefined>()
   compCode = input.required<string | undefined>()
   headId = input.required<number>();
@@ -65,7 +68,6 @@ export class CreatePeriodComponent {
     const headId = this.headId()
     this.periodservice.createPeriod(headId, req).subscribe({
       next: ({ periodId }) => {
-        console.log(periodId);
         this.success.emit('สร้าง  period สำเร็จ');
         this.modalServ.dismissAll();
       },

@@ -1,64 +1,58 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
+import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
+import { SupplierReportService } from '../../../service/other-income/supplier-report.service';
+import { FormsModule } from '@angular/forms';
+import { OtherIncomeOrderReportComponent } from "../../../components/other-income/report/other-income-order-report/other-income-order-report.component";
 
 @Component({
   selector: 'app-other-income-report',
-  imports: [],
+  imports: [FormsModule, OtherIncomeOrderReportComponent],
   templateUrl: './other-income-report.component.html',
   styleUrl: './other-income-report.component.scss'
 })
 export class OtherIncomeReportComponent {
-  year = input<string>()
-  monthList = [...Array(12)].map((_, i) => i + 1)
+  private calServ = inject(NgbCalendar)
+  private today = this.calServ.getToday()
+  compCode = signal("")
+  date = signal({
+    day: this.today.day,
+    month: this.today.month,
+    year: this.today.year
+  })
 
-  invoiceMap = new Map<number, number[]>([
-    [1, [20_000, 30_000, 25_000, 30_000, 20_000, 18_000]],
-    [2, [20_000, 30_000, 25_000, 30_000, 20_000, 18_000]]
-  ])
+  monthArray = Array.from({ length: 12 }).map((_, i) => i + 1)
 
-  getInv = (id: number, month: number) => {
-    const value = this.invoiceMap.get(id)
-    return value?.[month] ?? 0
+  changeMonth(month: number) {
+    this.date.update(prev => ({ ...prev, month }))
   }
 
-  receiptMap = new Map<number, number[]>([
-    [1, [20_000, 30_000, 25_000, 30_000, 20_000, 18_000]],
-    [2, [20_000, 30_000, 25_000, 30_000, 20_000, 18_000]]
-  ])
+  yearArray = Array
+    .from({ length: 10 })
+    .map((_, i) => this.today.year - 5 + i)
 
-  getRece = (id: number, month: number) => {
-    const value = this.receiptMap.get(id)
-    return value?.[month] ?? 0
+  changeYear(year: number) {
+    this.date.update(prev => ({ ...prev, year }))
+  }
+  compType = signal("")
+  disable1 = computed(() => !this.compCode())
+  private reportServ = inject(SupplierReportService)
+  yearDis = this.reportServ.displayYear
+  exportAnnualDN() {
+    const date = this.date()
+    const compCode = this.compCode()
+    const compType = 'DN'
+    this.compType.set('DN')
+    this.reportServ.fetchYear(date, compCode, compType)
+  }
+  exportAnnualHU() {
+    const date = this.date()
+    const compCode = this.compCode()
+    const compType = 'HU'
+    this.compType.set('HU')
+    this.reportServ.fetchYear(date, compCode, compType)
   }
 
-  saleMap = new Map<number, number[]>([
-    [1, [20_000, 30_000, 25_000, 30_000, 20_000, 18_000]],
-    [2, [20_000, 30_000, 25_000, 30_000, 20_000, 18_000]]
-  ])
-
-  getSale = (id: number, month: number) => {
-    const value = this.saleMap.get(id)
-    return value?.[month] ?? 0
+  async toAnnualExcel() {
+    await this.reportServ.annualExport();
   }
-
-  otherIncomeList = [
-    {
-      id: 1,
-      comp: "sup 1",
-      startDate: '2025-01-01',
-      endDate: "2025-12-16",
-      discountId: 1,
-      discountName: "ไม่ลด",
-      eventName: "rebate"
-    },
-    {
-      id: 2,
-      comp: "sup2",
-      startDate: '2025-12-01',
-      endDate: "2025-12-16",
-      discountId: 2,
-      discountName: "ท้ายบิล",
-      eventName: "rebate"
-    }
-  ]
-
 }
