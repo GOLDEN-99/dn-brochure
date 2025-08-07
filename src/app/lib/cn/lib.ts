@@ -6,7 +6,7 @@ import { CnRemarkService } from "../../service/cn/cn-remark/cn-remark.service";
 import { ToastService } from "../../service/toast/toast.service";
 import { TGoodItemReq } from "../../types/cn.type";
 import { ActivatedRoute, Router } from "@angular/router";
-import { distinctUntilChanged, filter, map, Subject, takeUntil, tap } from "rxjs";
+import { distinctUntilChanged, filter, map, Subject } from "rxjs";
 
 export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
     private route = inject(ActivatedRoute)
@@ -14,13 +14,13 @@ export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
     protected getUrl() {
         this.route.parent?.paramMap
             .pipe(
-                map(r => r.get('isWWR'))
+                map(r => r.get('isWRR'))
                 , filter(r => typeof r === 'string')
                 , distinctUntilChanged()
             )
             .subscribe({
-                next: (wwr) => {
-                    this.isWWR.set(wwr)
+                next: (wrr) => {
+                    this.isWRR.set(wrr)
                 }
             })
     }
@@ -29,7 +29,7 @@ export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
         this.sub$.complete();
     }
     private router = inject(Router)
-    protected isWWR = signal("")
+    protected isWRR = signal("")
     protected cnApiServ = inject(CnApiService)
     protected orderServ = inject(CnOrderService)
     protected imageServ = inject(UploadImageService)
@@ -58,8 +58,8 @@ export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
         const totalprice = this.totalprice()
         const motive = this.motive()
         const image = this.image()
-        const isWWR = this.isWWR()
-        this.submit({ ...head, goodList: nonNullableLotGoodList, image, totalprice, ...motive, isWWR })
+        const isWRR = this.isWRR()
+        this.submit({ ...head, goodList: nonNullableLotGoodList, image, totalprice, ...motive, isWRR })
             .subscribe(this.handler)
     }
     abstract disable: Signal<boolean>;

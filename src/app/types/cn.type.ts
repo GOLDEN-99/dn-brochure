@@ -93,4 +93,4 @@ export type TPrependOrder = {
     goodList: TGoodItemReq[]
 }
 
-export type TCreateReq = TPrepenCnApi & TPrependRemark & TPrependImage & TPrependOrder & { isWWR: string }
+export type TCreateReq = TPrepenCnApi & TPrependRemark & TPrependImage & TPrependOrder & { isWRR: string }
