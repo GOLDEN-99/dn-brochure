@@ -12,8 +12,9 @@ export const cnGuard = (expectedCnType: TCnType): CanActivateFn => (route, state
     const saleCode = route.parent?.paramMap.get('saleCode');
     const wholeCode = route.parent?.paramMap.get('wholeCode');
     const wholeNumb = route.parent?.paramMap.get('wholeNumb');
+    const isWrr = route.parent?.paramMap.get('isWRR');
     if (!saleCode || !wholeCode || !wholeNumb) throw new Error('invalid params')
-    return router.createUrlTree([`/cn/${saleCode}/${wholeCode}/${wholeNumb}`]);
+    return router.createUrlTree([`/cn/${saleCode}/${wholeCode}/${wholeNumb}/${isWrr}`]);
   } catch (err) {
     return router.navigateByUrl('notfound')
   }
