@@ -16,6 +16,7 @@ export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
             .pipe(
                 map(r => r.get('isWRR'))
                 , filter(r => typeof r === 'string')
+                , map(r => r === '0' ? '' : r)
                 , distinctUntilChanged()
             )
             .subscribe({
