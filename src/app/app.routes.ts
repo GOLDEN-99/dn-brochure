@@ -77,7 +77,7 @@ export const routes: Routes = [
         ]
     },
     {
-        path: "cn/:saleCode/:wholeCode/:wholeNumb",
+        path: "cn/:saleCode/:wholeCode/:wholeNumb/:isWWR",
         component: CnLayoutComponent,
         resolve: { wholeItem: cnResolver },
         children: [
