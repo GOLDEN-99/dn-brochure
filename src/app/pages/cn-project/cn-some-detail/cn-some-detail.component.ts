@@ -33,11 +33,6 @@ export class CnSomeDetailComponent extends BaseSubmitCn implements OnInit, OnDes
     || this.remarkServ.invalidRemarkOpt()
     || this.remarkServ.cnType() !== 'some'
     || this.orderServ.invalidByGoodReuturnAmou()
+    || this.totalprice() === 0
   )
-  // invalidAmount = (item: TAppGoodItem) => {
-  //   const { useItem, lot } = item
-  //   const totalCn = lot.reduce((acc, { check, goodAmou, returnAmou }) => check ? acc + returnAmou : acc, 0)
-  //   const totalItem = lot.reduce((acc, { goodAmou }) => acc + goodAmou, 0)
-  //   return totalItem
-  // }
 }

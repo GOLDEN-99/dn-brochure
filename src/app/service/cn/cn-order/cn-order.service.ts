@@ -36,7 +36,7 @@ export class CnOrderService {
   itemInvalidCnAmount = computed(() => this.itemList().map(({ lot, useItem }) => {
     const totalCn = lot.reduce((acc, { check, returnAmou }) => check ? acc + returnAmou : acc, 0)
     const totalItem = lot.reduce((acc, { goodAmou }) => acc + goodAmou, 0)
-    return totalItem > totalCn + useItem
+    return totalItem < totalCn + useItem
   }))
   invalidByGoodReuturnAmou = computed(() => this.itemInvalidCnAmount().some(i => i))
   selectItem = computed(() => this.itemList().filter(({ check }) => check))
