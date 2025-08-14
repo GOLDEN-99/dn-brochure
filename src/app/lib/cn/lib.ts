@@ -43,7 +43,7 @@ export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
     private handler = {
         next: () => {
             const p = this.cnApiServ.paramsSignal()
-            const isWRR = this.isWRR()
+            const isWRR = this.isWRR() ?? '0'
             if (!p) return
             const { saleCode, wholeCode, wholeNumb } = p
             this.toast.success('สำเร็จ')
