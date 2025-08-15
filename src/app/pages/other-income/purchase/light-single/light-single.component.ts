@@ -7,7 +7,6 @@ import { OtherIncomeBranchComponent } from '../../../../components/other-income/
 import { OtherIncomeMonthlyLightEditComponent } from '../../../../components/other-income/edit/other-income-monthly-light-edit/other-income-monthly-light-edit.component';
 import { CreatePeriodComponent } from '../../../../components/other-income/create/create-period/create-period.component';
 import { ToastService } from '../../../../service/toast/toast.service';
-import { OtherIncomeBranchPeriodComponent } from '../../../../components/other-income/period/other-income-branch-period.component';
 import { DecimalPipe } from '@angular/common';
 import { OtherIncomeInvoicePeriodComponent } from "../../../../components/other-income/period/other-income-invoice-period.component";
 import { OtherIncomeReciptPeriodComponent } from "../../../../components/other-income/period/other-income-recipt-period.component";
@@ -16,7 +15,7 @@ import { OtherIncomeReciptPeriodComponent } from "../../../../components/other-i
   imports: [
     OtherIncomeHeadEditComponent, OtherIncomeLightEditComponent,
     OtherIncomeBranchComponent, OtherIncomeMonthlyLightEditComponent,
-    CreatePeriodComponent, OtherIncomeBranchPeriodComponent, DecimalPipe,
+    CreatePeriodComponent, DecimalPipe,
     OtherIncomeInvoicePeriodComponent,
     OtherIncomeReciptPeriodComponent
   ],

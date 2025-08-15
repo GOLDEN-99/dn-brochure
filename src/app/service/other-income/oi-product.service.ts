@@ -27,7 +27,7 @@ export class OiProductService {
     debounceTime(300)
   )
   private params$ = combineLatest([this.compCode$, this.compType$, this.term$])
-  private getProduct = (compCode: string, compType: string, name: string) => this.api.get<TSearchProductResult[]>(`${this.url}/${compType}`, { params: { name, compCode } })
+  private getProduct = (compCode: string, compType: string, name: string) => this.api.get<TSearchProductResult[]>(`${this.url}/${compType}`, { params: { compCode } })
   private product$: Observable<TAppSearchProductResult[]> = this.params$
     .pipe(switchMap(([compCode, compType, term]) => this.getProduct(compCode, compType, term)))
     .pipe(

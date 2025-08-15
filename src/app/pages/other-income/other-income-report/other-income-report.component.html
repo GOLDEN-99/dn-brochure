@@ -1,45 +1,62 @@
-<p>other-income-report works!</p>
-<div>{{ year() }}</div>
-<div style="overflow-x: scroll">
-  <table class="table">
-    <thead>
-      <tr>
-        <td colspan="6"></td>
-        @for (month of monthList; track $index) {
-        <td colspan="3">{{ month }}</td>
+<h4>รายปี</h4>
+<div class="mb-3">
+  <div class="row">
+    <div class="app-form-select col">
+      <label for="month">เดือน</label>
+      <select
+        name="month"
+        id="month"
+        [ngModel]="date().month"
+        (ngModelChange)="changeMonth($event)"
+      >
+        @for (month of monthArray; track month) {
+        <option [ngValue]="month">{{ month }}</option>
         }
-      </tr>
-      <tr>
-        <td></td>
-        <td>ชื่อบริษัท</td>
-        <td>ชื่อกิจกรรม</td>
-        <td>ชื่อส่วนลด</td>
-        <td>วันที่เริ่ม</td>
-        <td>วันที่จบ</td>
-
-        @for (month of monthList; track $index) {
-        <td>ส่วนลด</td>
-        <td>ยอดใบแจ้งหนี้</td>
-        <td>ยอดใบเสร็จ</td>
+      </select>
+    </div>
+    <div class="app-form-select col">
+      <label for="year">ปี</label>
+      <select
+        name="year"
+        id="year"
+        [ngModel]="date().year"
+        (ngModelChange)="changeYear($event)"
+      >
+        @for (year of yearArray; track year) {
+        <option [ngValue]="year">{{ year }}</option>
         }
-      </tr>
-    </thead>
-    <tbody>
-      @for (oi of otherIncomeList; track $index){
-      <tr>
-        <td>{{ oi.id }}</td>
-        <td style="min-width: 120px">{{ oi.comp }}</td>
-        <td style="min-width: 120px">{{ oi.eventName }}</td>
-        <td style="min-width: 120px">{{ oi.discountName }}</td>
-        <td style="min-width: 120px">{{ oi.startDate }}</td>
-        <td style="min-width: 120px">{{ oi.endDate }}</td>
-        @for (month of monthList; track $index) {
-        <td style="min-width: 80px">{{ getSale(oi.id, month) }}</td>
-        <td style="min-width: 120px">{{ getInv(oi.id, month) }}</td>
-        <td style="min-width: 120px">{{ getInv(oi.id, month) }}</td>
-        }
-      </tr>
-      }
-    </tbody>
-  </table>
+      </select>
+    </div>
+    <div class="app-form-field col">
+      <label for="code">รหัสซัพ</label>
+      <input type="text" id="code" name="code" [(ngModel)]="compCode" />
+    </div>
+  </div>
+  <button
+    class="btn btn-primary w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportAnnualDN()"
+  >
+    รายงานซัพพลายเออร์ DN รายปี
+  </button>
+  <button
+    class="btn btn-success w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportAnnualHU()"
+  >
+    รายงานซัพพลายเออร์ HU รายปี
+  </button>
+  <div class="row">
+    <div class="col">ซัพ {{ compType() }}</div>
+    <div class="col"></div>
+  </div>
+  @for (item of yearDis(); track item.id) {
+  <div class="row">
+    <div class="col">{{ item.comp }}</div>
+    <div class="col">
+      <button class="btn btn-primary" (click)="toAnnualExcel()">excel</button>
+    </div>
+  </div>
+  }
 </div>
+<app-other-income-order-report [year]="date().year" />
