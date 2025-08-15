@@ -75,6 +75,7 @@ export const routes: Routes = [
             { provide: BROCHURE_PRICE_TYPE_TOKEN, useValue: { priceType: 'priceGold' } }
         ]
     },
+    // cn
     {
         path: "cn/:saleCode/:wholeCode/:wholeNumb/:isWRR",
         component: CnLayoutComponent,
@@ -120,6 +121,7 @@ export const routes: Routes = [
             }
         ]
     },
+    // inbound out bound
     {
         path: 'supplier/form/product',
         loadComponent: () => import('./pages/supplier-project/supplier-product-page/supplier-product-page.component')
@@ -239,6 +241,7 @@ export const routes: Routes = [
             { provide: SUPPLIER_TOKEN, useExisting: SupplierHuService }
         ]
     },
+    //รายได้อื่นๆ
     {
         path: 'other-income',
         title: 'รายได้อื่นๆ',
