@@ -171,7 +171,7 @@
         id="cap-null"
         [value]="false"
         [ngModel]="isNullCap()"
-        (input)="capAmount.set(0)"
+        (input)="setCapZero()"
       />
       <label for="cap-null">กำหนด (บาท)</label>
     </div>
@@ -190,7 +190,7 @@
         id="cap-true"
         [value]="true"
         [ngModel]="isNullCap()"
-        (input)="capAmount.set(null)"
+        (input)="setCapNull()"
       />
       <label for="cap-true">ไม่กำหนด</label>
     </div>
