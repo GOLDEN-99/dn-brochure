@@ -10,27 +10,27 @@ export const calFlat: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | nu
 
 export const calStep: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | null, accAmount: number, accIncome: number,) => (current: number) => {
     const rawTarget = accAmount + current
-    let validAmount = rawTarget
-    if (capAmount !== null) {
-        if (capAmount <= accAmount) return 0
-        validAmount = rawTarget >= capAmount ? capAmount : rawTarget
-    }
+    const validAmount = applyCap(rawTarget, capAmount)
+    if (validAmount === 0) return 0
     const cal = steps.reduce(
-        ([target, acc, result], { min, max, rate }) => {
-            if (acc === target) return [target, acc, result]
+        ([remain, result], { min, max, rate }) => {
+            // end of recursive acc === target
+            if (remain === 0) return [0, result]
             if (max === null) {
-                const cur = (target - acc) * rate
-                return [target, target, result + cur]
+                // no upper bound => last step
+                const cur = remain * rate
+                return [0, result + cur]
             }
-            if (target >= max) {
-                const range = max - min
-                const cur = range * rate
-                return [target, acc + range, result + cur]
+            const range = max - min
+            if (remain <= range) {
+                // within bracket => last step
+                const cur = remain * rate
+                return [0, result + cur]
             }
-            const diff = target - min
-            const cur = diff * rate
-            return [target, target, result + cur]
-        }, [validAmount, 0, 0]
+            //greater than bracket > cal this step and subtract bracket size
+            const cur = range * rate
+            return [remain - range, result + cur]
+        }, [validAmount, 0]
     )
     const calIncome = cal[2] / 100
     return calIncome - accIncome
@@ -38,26 +38,36 @@ export const calStep: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | nu
 
 export const calSemi: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | null, accAmount: number, accIncome: number,) => (current: number) => {
     const rawTarget = accAmount + current
-    let validAmount = rawTarget;
-    if (capAmount !== null) {
-        if (capAmount <= accAmount) return 0
-        validAmount = rawTarget >= capAmount ? capAmount : rawTarget
-    }
+    const validAmount = applyCap(rawTarget, capAmount)
+    if (validAmount === 0) return 0
     const cal = steps.reduce(
         (acc, { min, max, rate }) => {
-            const [target, remain, result] = acc
-            if (target === remain) return acc
+            const [start, end, _] = acc
+            if (start <= end) {
+                // start <= end >> no further calculation
+                return acc
+            }
             if (max === null) {
-                const cur = target * rate
-                return [target, target, cur]
+                // last step break here
+                const cur = start * rate
+                return [start, start, cur]
             }
-            if (target >= max) {
-                return [target, remain + max - min, result]
+            const range = max - min
+            const diff = start - end
+            if (diff > range) {
+                return [start, end + range, 0]
             }
-            const cur = target * rate
-            return [target, target, cur]
+            const cur = start * rate
+            return [start, end, cur]
+
         }, [validAmount, 0, 0]
     )
     const calIncome = cal[2] / 100
     return calIncome - accIncome
 }
+
+const applyCap = (amount: number, capAmount: number | null): number => {
+    if (capAmount === null) return amount;
+    if (capAmount <= amount) return 0;
+    return Math.min(amount, capAmount);
+};

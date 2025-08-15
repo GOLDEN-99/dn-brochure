@@ -131,5 +131,6 @@ type TInsertReq = {
   createDate: string
   reason: string
   incomeAmount: number
+  cn: number
   receList: TPurchaseReceItem[]
 }

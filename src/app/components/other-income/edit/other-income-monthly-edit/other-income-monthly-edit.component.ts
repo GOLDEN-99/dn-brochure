@@ -88,7 +88,8 @@ export class OtherIncomeMonthlyEditComponent {
     const calAmount = this.summary()
     const actualAmount = this.actualAmount()
     const incomeAmount = this.incomeAmount()
-    this.monthService.insertNlMonth(id, { calAmount, actualAmount, createDate, reason, incomeAmount, receList }).subscribe({
+    const cn = this.cn()
+    this.monthService.insertNlMonth(id, { calAmount, actualAmount, createDate, reason, incomeAmount, receList, cn }).subscribe({
       next: (res) => {
         this.success.emit('เพิ่มรับรู้รายเดือนสำเร็จ')
         this.modalService.dismissAll()
