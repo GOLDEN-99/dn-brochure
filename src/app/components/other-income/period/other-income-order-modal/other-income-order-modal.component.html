@@ -8,62 +8,49 @@
   ></button>
 </div>
 <div class="modal-body" style="max-height: 75vh; overflow-y: auto">
-  <div class="app-form-field-inline">
-    <div>
-      <label for="search-po">ค้นหาเลข po</label>
-    </div>
-    <div>
-      <input type="text" name="search-po" id="search-po" [(ngModel)]="term" />
-    </div>
-  </div>
   <table class="table">
     <thead>
       <tr>
-        <th>เลข po</th>
-        <td></td>
-      </tr>
-    </thead>
-    <tbody>
-      @for (order of orderList(); track $index) {
-      <tr>
-        <td>{{ order.orderNumb }}</td>
-        <td>
-          <button class="btn btn-danger" (click)="addOrder(order)">
+        <th style="width: 180px">po</th>
+        <th style="width: 180px">ยอด</th>
+        <th>
+          <button
+            class="btn btn-primary"
+            [disabled]="invalidOrder()"
+            (click)="addOrder()"
+          >
             <i class="bi bi-plus"></i>
           </button>
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
-  <span>po ที่เลือก</span>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>po</th>
-        <th>ยอด</th>
-        <th></th>
+        </th>
       </tr>
     </thead>
     <tbody>
-      @for (selected of selectOrder(); track selected.orderNumb) {
+      @for (selected of selectOrder(); track $index) {
       <tr>
-        <th>{{ selected.orderNumb }}</th>
         <th>
           <input
-            type="number"
+            style="width: 140px"
+            type="text"
             [id]="selected.orderNumb + '-actual'"
-            [ngModel]="selected.actualAmount"
-            (ngModelChange)="updateAmount(selected.orderNumb, $event)"
+            [ngModel]="selected.orderNumb"
+            (ngModelChange)="updateOrder($index, $event)"
           />
         </th>
         <th>
-          <button
-            class="btn btn-outline-danger"
-            (click)="deleteOrder(selected.orderNumb)"
-          >
+          <input
+            style="width: 140px"
+            type="number"
+            [id]="selected.orderNumb + '-actual'"
+            [ngModel]="selected.actualAmount"
+            (ngModelChange)="updateAmount($index, $event)"
+          />
+        </th>
+        <th>
+          @if (selectOrder().length -1 === $index) {
+          <button class="btn btn-outline-danger" (click)="deleteOrder($index)">
             <i class="bi bi-trash"></i>
           </button>
+          }
         </th>
       </tr>
       }
