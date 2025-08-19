@@ -28,8 +28,6 @@ import { InOutDetailComponent } from './pages/supplier-project/in-out-detail/in-
 import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.resolver';
 import { SUPPLIER_TOKEN } from './service/supplier/supplier.token';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
-
-import { FlashSaleCardComponent } from './components/brochure-card/flash-sale-card/flash-sale-card.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
 import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
