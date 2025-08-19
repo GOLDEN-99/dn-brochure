@@ -51,11 +51,12 @@ import { LightSingleComponent } from './pages/other-income/purchase/light-single
 import { AccountNotLightInvoiceComponent } from './pages/other-income/account/account-not-light-invoice.component';
 import { AccountNotLightProductComponent } from './pages/other-income/account/account-not-light-product.component';
 import { AccountLightBoxComponent } from './pages/other-income/account/account-light-box.component';
+import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
 
 export const routes: Routes = [
     {
         path: 'flash-sale/:zone/:idPromotion',
-        component: FlashSaleCardComponent,
+        component: FlashSaleComponent,
         resolve: { fs: flashSaleResolver }
     },
     {
