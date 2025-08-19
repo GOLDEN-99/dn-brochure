@@ -9,9 +9,11 @@ import { LotItemComponent } from '../lot-item/lot-item.component';
   styleUrl: './good-item.component.scss'
 })
 export class GoodItemComponent {
+  notCheck = input(false)
   item = input.required<TAppGoodItem>()
   invalid = computed(() => {
-    const { useItem, goodCode, lot } = this.item()
+    if (this.notCheck()) return false
+    const { useItem, lot } = this.item()
     const totalCnItem = lot.reduce((acc, { check, returnAmou }) => check ? acc + returnAmou : acc, 0)
     const totalItem = lot.reduce((acc, { goodAmou }) => acc + goodAmou, 0)
     const res = totalItem < totalCnItem + useItem

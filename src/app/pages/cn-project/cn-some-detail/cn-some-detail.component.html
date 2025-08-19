@@ -17,7 +17,7 @@
   }
   <!---->
   @for (item of addList; track $index) {
-  <app-good-item [item]="item">
+  <app-good-item [item]="item" [notCheck]="true">
     @for (l of item.lot; track $index) {
     <app-lot-item
       [lotItem]="l"

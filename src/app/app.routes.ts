@@ -29,6 +29,7 @@ import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.reso
 import { SUPPLIER_TOKEN } from './service/supplier/supplier.token';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 
+import { FlashSaleCardComponent } from './components/brochure-card/flash-sale-card/flash-sale-card.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
 import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
@@ -37,6 +38,7 @@ import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
 import { PurchaseTemplateComponent } from './components/other-income/purchase-template/purchase-template.component';
 import { SpecialIncomeFormComponent } from './pages/other-income/purchase/special-income-form/special-income-form.component';
+import { AccountHomeComponent } from './pages/other-income/account/account-home/account-home.component';
 import { OtherIncomeReportComponent } from './pages/other-income/other-income-report/other-income-report.component';
 import { BaseLayoutComponent, LABEL_TOKEN } from './layout/other-income/base-layout/base-layout.component';
 import { OtherIncomeLightFormComponent } from './components/other-income/form/other-income-light-form/other-income-light-form.component';
