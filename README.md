@@ -25,5 +25,3 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-ssh -p5333 -t px@file.drugnetcenter.com "sudo chmod -R 755 /var/www/promotion.drugnetcenter.com"
-scp -r -P5333 ./dist/dn-prochure/browser/* px@file.drugnetcenter.com:/var/www/promotion.drugnetcenter.com/html/
