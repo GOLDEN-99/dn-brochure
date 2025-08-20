@@ -22,12 +22,6 @@ export class CnSomeDetailComponent extends BaseSubmitCn implements OnInit, OnDes
     this.unsub()
   }
   selected = this.orderServ.selectItem
-  mappedSelected = computed(() => this.selected().flatMap(
-    ({ lot, ...res }) =>
-      lot.flatMap(
-        ({ check, ...l }) => check ? [({ ...l, ...res })] : [])
-  ))
-  invalidSelected = computed(() => this.mappedSelected().some(({ returnAmou }) => returnAmou === 0))
   cnt = this.orderServ.totalCnt
   handleCheckItem = this.orderServ.handleCheckLot
   handleCheckAdded = this.orderServ.handleCheckLotAdded
@@ -39,6 +33,5 @@ export class CnSomeDetailComponent extends BaseSubmitCn implements OnInit, OnDes
     || this.remarkServ.invalidRemarkOpt()
     || this.remarkServ.cnType() !== 'some'
     || this.orderServ.invalidByGoodReuturnAmou()
-    || this.invalidSelected()
   )
 }
