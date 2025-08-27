@@ -27,13 +27,22 @@ export class PeriodService {
   insertRece(periodId: number, req: TPeriodReceReq) {
     return this.api.post<any>(`${this.url}/period/${periodId}/receipt`, req)
   }
+
+  insertCredit(periodId: number, req: TPeriodCreditReq) {
+    return this.api.post<any>(`${this.url}/period/${periodId}/credit`, req)
+  }
+}
+
+type TMonth = {
+  id: number
+  createDate: string
 }
 
 type TCreatPeriodReq = {
   remark: string
   totalAmount: number
   totalIncome: number
-  monthlyList: number[]
+  monthlyList: TMonth[]
 }
 
 type TOrderList = {
@@ -54,4 +63,11 @@ type TPeriodReceReq = {
   receDate: string
   receAmount: number
   receRemark: string
+}
+
+type TPeriodCreditReq = {
+  creditNumb: string
+  creditDate: string
+  creditAmount: number
+  creditRemark: string
 }

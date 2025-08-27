@@ -1,20 +1,20 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { OrderService, TOiBill, TOiOrder } from '../../../../service/other-income/order.service';
+import { DiscountSelectComponent } from "../../form/discount-select/discount-select.component";
+import { OrderService, TOiGood, TOiOrder } from '../../../../service/other-income/order.service';
 import { PeriodService } from '../../../../service/other-income/period.service';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
-import { DiscountSelectComponent } from "../../form/discount-select/discount-select.component";
 
 @Component({
-  selector: 'app-other-income-order-modal',
-  imports: [FormsModule, DecimalPipe, DiscountSelectComponent],
-  templateUrl: './other-income-order-modal.component.html',
-  styleUrl: './other-income-order-modal.component.scss'
+  selector: 'app-other-income-good-order-modal',
+  imports: [DiscountSelectComponent, FormsModule, DecimalPipe],
+  templateUrl: './other-income-good-order-modal.component.html',
+  styleUrl: './other-income-good-order-modal.component.scss'
 })
-export class OtherIncomeOrderModalComponent {
+export class OtherIncomeGoodOrderModalComponent {
   //search po set up
   private orderServ = inject(OrderService)
-  orderList = this.orderServ.billDiscount
+  orderList = this.orderServ.goodDiscount
   compType = input.required<string | undefined>()
   compCode = input.required<string | undefined>()
   term = signal("")
@@ -48,16 +48,16 @@ export class OtherIncomeOrderModalComponent {
   addOrder = () => {
     const currentOrder = this.selectOrder().map(({ orderNumb }) => orderNumb)
     const polist = this.orderList()
-    const modPoList = polist.flatMap(({ orderNumb, discount, receList }) => currentOrder.includes(orderNumb)
+    const modPoList = polist.flatMap(({ orderNumb, discount, productList }) => currentOrder.includes(orderNumb)
       ? []
-      : [{ orderNumb, discount, receNumb: receList[0].receNumb }])
+      : [{ orderNumb, discount, receNumb: productList[0].receNumb }])
     this.selectOrder.update(prev => [...prev, ...modPoList])
   }
-  addSingleOrder = ({ orderNumb, discount, receList }: TOiBill) => {
+  addSingleOrder = ({ orderNumb, discount, productList }: TOiGood) => {
     const current = this.selectOrder()
     const occuranceIndex = current.findIndex(c => c.orderNumb === orderNumb)
     if (occuranceIndex === -1) {
-      this.selectOrder.update((prev) => [...prev, { orderNumb, discount, receNumb: receList[0].receNumb }])
+      this.selectOrder.update((prev) => [...prev, { orderNumb, discount, receNumb: productList[0].receNumb }])
     }
   }
   deleteOrder(orderNumb: string) {

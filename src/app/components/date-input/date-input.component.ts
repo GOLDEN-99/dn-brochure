@@ -16,7 +16,7 @@ import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bo
         ngbDatepicker
         #cal="ngbDatepicker"
         tabindex="-1"
-        [ngModel]="date"
+        [ngModel]="date()"
         (ngModelChange)="onClick($event)"
         style="border: none"
       />
@@ -30,7 +30,7 @@ import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bo
         class="form-control"
         [value]="displayDate()"
         name="dpFromDate"
-        disabled
+        readonly
       />
       <label class="form-label" [attr.for]="'date-input-' + id">{{
         label()

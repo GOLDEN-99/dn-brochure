@@ -58,7 +58,7 @@ export class CreatePeriodComponent {
   get period() {
     const remark = this.remark()
     const incState = this.incomeState()
-    const monthlyList = incState.flatMap(({ id, check }) => check ? [id] : [])
+    const monthlyList = incState.flatMap(({ id, check, createDate }) => check ? [{ id, createDate }] : [])
     const summary = this.sum()
     return { remark, ...summary, monthlyList }
   }

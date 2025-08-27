@@ -24,7 +24,7 @@ import { IncomeService, TIncome } from '../../../../service/other-income/income.
 export class IncomeSelectComponent {
   incomeId = input.required<number>()
   incomeIdChange = output<number>()
-  isProductChange = output<boolean>()
+  isProductChange = output<number>()
   private incomeServ = inject(IncomeService)
   renderList = this.incomeServ.income
   onChange(id: number) {

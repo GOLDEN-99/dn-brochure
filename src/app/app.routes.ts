@@ -50,6 +50,7 @@ import { AccountNotLightInvoiceComponent } from './pages/other-income/account/ac
 import { AccountNotLightProductComponent } from './pages/other-income/account/account-not-light-product.component';
 import { AccountLightBoxComponent } from './pages/other-income/account/account-light-box.component';
 import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
+import { OtherIncomeInceFormComponent } from './components/other-income/form/other-income-ince-form/other-income-ince-form.component';
 
 export const routes: Routes = [
     {

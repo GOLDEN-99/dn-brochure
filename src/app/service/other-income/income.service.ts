@@ -33,5 +33,5 @@ export class IncomeService {
 export type TIncome = {
   id: number
   incomeName: string
-  isProduct: boolean
+  isProduct: number
 }

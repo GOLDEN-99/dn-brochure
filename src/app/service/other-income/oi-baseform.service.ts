@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { TBaseOIHead, TBaseOiInsert } from '../../types';
+import { NgbCalendar, NgbDate, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { TBaseOIHead, TBaseOiInsert, TOIProduct } from '../../types';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
 
@@ -12,6 +12,8 @@ export class OiBaseformService {
   constructor() { }
   private calendar = inject(NgbCalendar)
   private today = this.calendar.getToday()
+  private fdoy = new NgbDate(this.today.year, 1, 1)
+  private ldoy = new NgbDate(this.today.year, 12, 31)
 
   defaultValue: TAppBaseformInsert = {
     compCode: '',
@@ -19,13 +21,14 @@ export class OiBaseformService {
     compName: '',
     eventId: 0,
     period: 0,
-    startDate: this.today,
-    endDate: this.today,
+    startDate: this.fdoy,
+    endDate: this.ldoy,
   }
   compData = computed(() => {
     const { compCode, compType } = this.baseformState()
     return { compCode, compType }
   })
+  productList = signal<TOIProduct[] | null>(null)
 
   baseformState = signal(this.defaultValue)
 
@@ -37,7 +40,9 @@ export class OiBaseformService {
 
   get request(): TApiBaseformInsert {
     const { startDate, endDate, ...res } = this.baseformState()
-    return { ...res, startDate: this.toIso(startDate), endDate: this.toIso(endDate) }
+    const productList = this.productList()
+    const formatList = productList ? productList.map(({ goodCode }) => goodCode) : null
+    return { ...res, startDate: this.toIso(startDate), endDate: this.toIso(endDate), productList: formatList }
   }
 
   private toIso = (date: NgbDateStruct) => {
@@ -52,9 +57,12 @@ export class OiBaseformService {
     return this.api.post<{ id: number }>(`${this.url}/other-income/contact/head`, req)
   }
 
-  resetForm = () => this.baseformState.set(this.defaultValue)
+  resetForm = () => {
+    this.baseformState.set(this.defaultValue);
+    this.productList.set(null)
+  }
 
 }
 
 export type TAppBaseformInsert = TBaseOiInsert<'app'>
-export type TApiBaseformInsert = TBaseOiInsert<'api'>
+export type TApiBaseformInsert = TBaseOiInsert<'api'> & { productList: string[] | null }

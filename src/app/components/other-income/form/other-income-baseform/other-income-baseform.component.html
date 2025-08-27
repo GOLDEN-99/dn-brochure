@@ -3,6 +3,7 @@
   [eventId]="formData.eventId"
   (eventIdChange)="updateEvent($event)"
   [filter]="mode()"
+  (isLightChange)="isLightChange.emit($event)"
 />
 <!-- period -->
 <div class="mb-3">
@@ -46,3 +47,12 @@
   [compName]="formData.compName"
   (compNameChange)="updateCompName($event)"
 />
+@let products = productList(); @if (products !== null && formData.compCode !==
+'') {
+<app-search-product-subform
+  [comp]="{ compCode: formData.compCode, compType: formData.compType }"
+  [selectProducts]="products"
+  (onAdd)="handleAdd($event)"
+  (onDelete)="handleDelete($event)"
+/>
+}

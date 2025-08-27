@@ -12,6 +12,7 @@ import { ToastService } from '../../../../service/toast/toast.service';
 import { DecimalPipe } from '@angular/common';
 import { OtherIncomeInvoicePeriodComponent } from '../../../../components/other-income/period/other-income-invoice-period.component';
 import { OtherIncomeReciptPeriodComponent } from '../../../../components/other-income/period/other-income-recipt-period.component';
+import { OtherIncomeGoodOrderPeriodComponent } from "../../../../components/other-income/period/other-income-good-order-period.component";
 
 @Component({
   selector: 'app-not-light-single',
@@ -21,7 +22,8 @@ import { OtherIncomeReciptPeriodComponent } from '../../../../components/other-i
     OtherIncomeMonthlyEditComponent, CreatePeriodComponent,
     OtherIncomeOrderPeriodComponent,
     OtherIncomeReciptPeriodComponent, OtherIncomeInvoicePeriodComponent,
-    NgbDatepickerModule, FormsModule, DecimalPipe
+    NgbDatepickerModule, FormsModule, DecimalPipe,
+    OtherIncomeGoodOrderPeriodComponent
   ],
   templateUrl: './not-light-single.component.html',
   styleUrl: './not-light-single.component.scss'
@@ -35,29 +37,29 @@ export class NotLightSingleComponent {
   currentResult = computed(() => this.data()[0])
   head = computed(() => {
     const cur = this.currentResult()
-    const { id, period, startDate, endDate, company: { compCode, compName, compType }, event: { id: eventId, eventName, isLight } } = cur
+    const { head: { id, period, startDate, endDate }, company: { compCode, compName, compType }, event: { id: eventId, eventName, isLight } } = cur
     return { id, period, startDate, endDate, compCode, compName, compType, eventId, eventName, isLight }
   })
   acc = computed(() => {
-    const { accAmount, accIncome } = this.currentResult()
+    const { head: { accAmount, accIncome } } = this.currentResult()
     return { accAmount, accIncome }
   })
   incomeList = computed(() => this.currentResult().incomeList)
   eventDetail = computed(() => {
-    const cur = this.currentResult()
-    const { notLightId, cn, displayName, incVat, capAmount,
-      isRebate, isDc, isComp, isInce,
-      income: { incomeName, id: incomeId, isProduct },
-      stepList, isStep
-    } = cur
-    return { notLightId, isRebate, isDc, isComp, isInce, incomeId, isProduct, incomeName, cn, displayName, capAmount, incVat, stepList, isStep }
+    const notLightData = this.currentResult().notLight
+    if (!notLightData) return null
+    const { id: notLightId, isComp, isDc, isInce, isRebate, isStep, incVat, capAmount } = notLightData
+    const { head,
+      income: { id: incomeId, incomeName, isProduct }, stepList } = this.currentResult()
+    return { notLightId, isComp, isInce, isDc, isStep, isRebate, incVat, capAmount, ...head, incomeId, incomeName, isProduct, displayName: '', cn: '', stepList }
   })
 
   isProduct = computed(() => this.currentResult().income.isProduct)
 
   criteria = computed(() => {
-    const cur = this.currentResult()
-    const { isDc, isRebate, isComp, isInce, incVat } = cur
+    const { notLight } = this.currentResult()
+    if (!notLight) return null
+    const { isComp, isDc, isInce, incVat, isRebate } = notLight
     return { isDc, isRebate, isComp, isInce, incVat }
   })
 
@@ -67,9 +69,11 @@ export class NotLightSingleComponent {
     return { productList, isProduct }
   })
   stepInfo = computed(() => {
-    const cur = this.currentResult()
-    const { isStep, stepList, notLightId } = cur
-    return { isStep, stepList, notLightId }
+    const { stepList, notLight } = this.currentResult()
+    if (notLight == null) {
+      return null
+    }
+    return { isStep: notLight.isStep, stepList, notLightId: notLight.id }
   })
 
   periodList = computed(() => this.currentResult().periodList)

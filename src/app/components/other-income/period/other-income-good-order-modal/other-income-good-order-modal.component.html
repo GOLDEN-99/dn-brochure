@@ -10,7 +10,7 @@
 <div class="modal-body" style="max-height: 75vh; overflow-y: auto">
   <div class="row">
     <div class="col">
-      <app-discount-select [(discountId)]="discType" discountType="bill" />
+      <app-discount-select [(discountId)]="discType" discountType="good" />
     </div>
     <div class="col">
       <div class="app-form-field">
@@ -52,10 +52,15 @@
         <td>{{ order.discount | number : "1.2-2" }}</td>
         <td>
           <div style="display: flex; flex-direction: column">
-            @for (rece of order.receList; track $index) {
+            @for (rece of order.productList; track $index) {
             <div style="display: flex; justify-content: space-between">
               <div>
                 {{ rece.receNumb }}
+              </div>
+              <div>
+                {{
+                `(${rece.barCode}) ${rece.goodName}`
+                }}
               </div>
               <div>{{ rece.discount | number : "1.2-2" }}</div>
             </div>

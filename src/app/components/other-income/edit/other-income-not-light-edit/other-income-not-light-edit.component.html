@@ -8,16 +8,12 @@
     </div>
     }
   </div>
-  <div class="row">
-    <div class="col">cn</div>
-    <div class="col">{{ curEvent.cn }}</div>
-  </div>
-  <div class="row">
+  <!-- <div class="row">
     <div class="col">ชื่อเรียกเก็บ</div>
     <div class="col">
-      {{ curEvent.displayName === "" ? "ไมระบุ" : curEvent.displayName }}
+      {{ curEvent.displayName === "" ? "ไม่ระบุ" : curEvent.displayName }}
     </div>
-  </div>
+  </div> -->
   <div class="row">
     <div class="col">VAT</div>
     <div class="col">{{ curEvent.incVat ? "รวม VAT" : "ไม่รวม VAT" }}</div>
@@ -39,9 +35,22 @@
     <div class="col">{{ curEvent.isInce ? "ลด" : "ไม่ลด" }}</div>
   </div>
   <div class="row">
-    <div class="col">จ่ายไม่เกินกำหนด</div>
+    <div class="col">เพดาน</div>
     <div class="col">
-      {{ curEvent.capAmount === null ? 'ไม่กำหนด' : `${curEvent.capAmount} บาท` }}
+      {{ curEvent.capAmount === null ? 'ไม่กำหนดเพดาน' : `${curEvent.capAmount} บาท` }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">target: {{ curStepLabel() }}</div>
+    <div class="col" style="display: flex; flex-direction: column">
+      @if (curStepType() === 1) {
+      <div>{{ curEvent.stepList[0].rate }} %</div>
+      }@else { @for (st of curEvent.stepList; track $index) {
+      <div style="display: flex; gap: 1rem">
+        <div>ตั้งแต่ {{ st.min }}</div>
+        <div>คิด {{ st.rate }}%</div>
+      </div>
+      } }
     </div>
   </div>
 </div>
@@ -57,7 +66,7 @@
     ></button>
   </div>
   <div class="modal-body">
-    <div class="app-form-field">
+    <!-- <div class="app-form-field">
       <div>
         <label class="mt-0" for="cn">CN</label>
       </div>
@@ -77,7 +86,7 @@
           [(ngModel)]="displayName"
         />
       </div>
-    </div>
+    </div> -->
     <app-income-select
       [(incomeId)]="incomeId"
       (isProductChange)="isProduct.set($event)"

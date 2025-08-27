@@ -11,7 +11,7 @@ import { EventService } from '../../../../service/other-income/event.service';
     name="event-select"
     id="event-select"
     [ngModel]="eventId()"
-    (ngModelChange)="eventIdChange.emit($event)"
+    (ngModelChange)="onSelect($event)"
   >
     <option [ngValue]="0" disabled>กรุณาเลือก</option>
     @for (item of renderList(); track item.id) {
@@ -24,6 +24,13 @@ import { EventService } from '../../../../service/other-income/event.service';
 export class EventSelectComponent {
   eventId = input(0)
   eventIdChange = output<number>()
+  isLightChange = output<number>()
+  onSelect = (eventId: number) => {
+    const event = this.renderList().find(r => r.id === eventId)
+    if (!event) return
+    this.eventIdChange.emit(event.id);
+    this.isLightChange.emit(event.isLight);
+  }
   private eventService = inject(EventService)
   private items = this.eventService.event
   filter = input<TFilter>('all')
@@ -31,8 +38,8 @@ export class EventSelectComponent {
     const filter = this.filter()
     const all = this.items()
     switch (filter) {
-      case 'light': return all.filter(({ isLight }) => isLight === true)
-      case 'not-light': return all.filter(({ isLight }) => isLight === false)
+      case 'light': return all.filter(({ isLight }) => isLight === 1)
+      case 'not-light': return all.filter(({ isLight }) => isLight !== 1)
       case 'all': return all
     }
   })

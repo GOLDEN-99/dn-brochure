@@ -16,7 +16,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
             <tr>
               <th style="width: 20%;">ใบแจ้งหนี้</th>
               <th style="width: 20%;">ยอดใบแจ้งหนี้</th>
-              <th style="width: 20%;">หัก ณ ที่จ่าย</th>
               <th style="width: 20%;">วันที่ใบแจ้งหนี้</th>
               <th style="width: 20%;">
                 <button
@@ -32,7 +31,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
             <tr>
               <td>{{ inv.invNumb }}</td>
               <td>{{ inv.invAmount| number : "1.2-2" }}</td>
-              <td>{{ inv.withholding | number : "1.2-2" }}</td>
               <td colspan="2">{{ inv.invDate }}</td>
             </tr>
             }

@@ -26,6 +26,17 @@ export interface ISharedHead {
     event: TEvent
 }
 
+export type ManyContactResponse = {
+    id: number
+    startDate: string,
+    endDate: string,
+    compCode: string,
+    compName: string
+    eventName: string
+    eventType: number
+    compType: string
+}
+
 export type NotLightSummary = {
     id: number
     notLightId: number,
@@ -38,8 +49,8 @@ export type NotLightSummary = {
     incVat: boolean,
     cn: string,
     company: TOIComp
-    event: TEvent,
-    income: TIncome,
+    event: TEvent
+    income: TIncome
     isRebate: boolean,
     isDc: boolean,
     isComp: boolean,
@@ -50,6 +61,30 @@ export type NotLightSummary = {
     incomeDate: string | null
     receAmount: number
     invAmount: number
+}
+
+export type TContactHead = {
+    id: number
+    period: number,
+    startDate: string,
+    endDate: string,
+    accAmount: number,
+    amountDate: string | null,
+    accIncome: number
+    incomeDate: string | null
+    receAmount: number
+    invAmount: number
+}
+
+export type TContactNotLight = {
+    id: number
+    incVat: boolean
+    isRebate: boolean
+    isDc: boolean
+    isComp: boolean
+    isInce: boolean
+    capAmount: number | null
+    isStep: boolean
 }
 
 export type TPeriodResult = {
@@ -77,8 +112,15 @@ export type TInviceItemDto = {
     id: number
     invNumb: string
     invAmount: number
-    withholding: number
     invDate: string
+    checkDate: string | null
+}
+
+export type TCreditNoteDto = {
+    id: number
+    creditNumb: string
+    creditAmount: number
+    creditDate: string
     checkDate: string | null
 }
 
@@ -98,11 +140,16 @@ export type TPopulatedPeriodResult = {
 } & TPeriodResult
 
 export type NotLightSingle = {
+    head: TContactHead
+    notLight: TContactNotLight | null
     stepList: TOIStepItem[]
     productList: { id: number, goodCode: string, goodName: string }[]
     incomeList: TIncomeItem[]
     periodList: TPopulatedPeriodResult[]
-} & NotLightSummary
+    company: TOIComp
+    event: TEvent,
+    income: TIncome,
+}
 
 
 export type TIncomeItem = {

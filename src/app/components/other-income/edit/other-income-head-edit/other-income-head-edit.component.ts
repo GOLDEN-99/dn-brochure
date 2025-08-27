@@ -76,7 +76,7 @@ type TEditHeadProps = {
   compType?: string,
   eventId: number,
   eventName: string,
-  isLight: boolean
+  isLight: number
 }
 
 type TFilter = 'light' | 'not-light' | 'all'

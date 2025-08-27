@@ -1,40 +1,23 @@
-import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
-import { DiscountSubformComponent } from "../discount-subform/discount-subform.component";
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { TargetSubformComponent } from "../target-subform/target-subform.component";
 import { FormsModule } from '@angular/forms';
-import { SearchProductSubformComponent } from "../search-product-subform/search-product-subform.component";
-import { TOIProduct } from '../../../../types';
 import { IncomeSelectComponent } from "../income-select/income-select.component";
 import { ApiService } from '../../../../service/api/api.service';
 import { environment } from '../../../../../environments/environment';
 import { ToastService } from '../../../../service/toast/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, tap } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
-
 @Component({
   selector: 'app-other-income-not-light-form',
-  imports: [TargetSubformComponent, FormsModule, SearchProductSubformComponent, IncomeSelectComponent],
+  imports: [TargetSubformComponent, FormsModule, IncomeSelectComponent],
   templateUrl: './other-income-not-light-form.component.html',
   styleUrl: './other-income-not-light-form.component.scss'
 })
 export class OtherIncomeNotLightFormComponent {
   private route = inject(ActivatedRoute)
-  compData$ = this.route.queryParamMap.pipe(
-    map((query => {
-      const compType = query.get("compType")
-      const compCode = query.get("compCode")
-      if (!compType || !compCode) return null
-      return { compCode, compType }
-    }))
-  )
-
-  compData = toSignal(this.compData$, { initialValue: null })
-  invalidCompData = computed(() => this.compData() === null)
 
   headId = input<number>()
   incomeId = signal(0)
-  isProduct = signal(false)
+  isProduct = signal(0)
   discountId = signal(1)
   incVat = signal(false)
   isDc = signal(false)
@@ -57,39 +40,14 @@ export class OtherIncomeNotLightFormComponent {
   setCapNull = () => this.capAmount.set(null)
   setCapZero = () => this.capAmount.set(0)
   isNullCap = computed(() => this.capAmount() === null)
-  productsList = signal<TOIProduct[]>([])
-  invalidProduct = computed(() => {
-    const products = this.productsList()
-    return products.length === 0
-  })
 
   disable = computed(() => {
     const invalidIncome = this.incomeId() === 0
     const invalidDiscount = this.discountId() === 0
     const invalidStep = this.invalidStep()
     const invalidCap = this.capAmount() === 0
-    const invalidProduct = this.invalidProduct()
-    return invalidIncome || invalidDiscount || invalidStep || invalidCap || invalidProduct
+    return invalidIncome || invalidDiscount || invalidStep || invalidCap
   })
-
-  private goodCodeSet = new Set<string>()
-
-  handleAdd(product: TOIProduct[]) {
-    const validProduct = product.flatMap(({ goodCode, goodName }) => {
-      const hasValue = this.goodCodeSet.has(goodCode)
-      if (hasValue) return []
-      this.goodCodeSet.add(goodCode)
-      return [{ goodCode, goodName }]
-    })
-    this.productsList.update(prev => [...prev, ...validProduct])
-  }
-
-  handleDelete(goodCode: string) {
-    const hasDel = this.goodCodeSet.delete(goodCode)
-    if (hasDel) {
-      this.productsList.update(prev => prev.filter(p => p.goodCode !== goodCode))
-    }
-  }
 
   private api = inject(ApiService)
   private url = environment.oi
@@ -113,9 +71,8 @@ export class OtherIncomeNotLightFormComponent {
       const max = typeof nextStart === 'number' ? nextStart : null
       return { min, max, rate } satisfies ReqStep
     })
-    const productList = this.productsList().map(({ goodCode }) => goodCode)
     return {
-      cn, displayName, incVat, capAmount, productList, stepList, step, incomeId, isRebate, isInce, isComp, isDc
+      cn, displayName, incVat, capAmount, stepList, step, incomeId, isRebate, isInce, isComp, isDc
     }
   }
   private toastService = inject(ToastService)

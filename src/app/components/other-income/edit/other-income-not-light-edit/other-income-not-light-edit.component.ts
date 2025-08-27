@@ -15,7 +15,7 @@ export class OtherIncomeNotLightEditComponent {
   eventDetail = input.required<TOiNlEditProps>()
   headId = input<number>()
   incomeId = signal(0)
-  isProduct = signal(false)
+  isProduct = signal(0)
   isRebate = signal(false)
   isDc = signal(false)
   isComp = signal(false)
@@ -31,6 +31,7 @@ export class OtherIncomeNotLightEditComponent {
     const stepList = this.stepList()
     return stepList.some(({ percent }) => percent === 0)
   })
+
   cn = signal('')
   displayName = signal('')
   capAmount = signal<number | null>(null)
@@ -51,26 +52,13 @@ export class OtherIncomeNotLightEditComponent {
     if (stepList.length !== 1) return 2
     return 1
   })
-
-  // private goodCodeSet = new Set<string>()
-
-  // handleAdd(product: TOIProduct[]) {
-  //   const validProduct = product.flatMap(({ goodCode, goodName }) => {
-  //     const hasValue = this.goodCodeSet.has(goodCode)
-  //     if (hasValue) return []
-  //     this.goodCodeSet.add(goodCode)
-  //     return [{ goodCode, goodName }]
-  //   })
-  //   this.productsList.update(prev => [...prev, ...validProduct])
-  // }
-
-  // handleDelete(goodCode: string) {
-  //   const hasDel = this.goodCodeSet.delete(goodCode)
-  //   if (hasDel) {
-  //     this.productsList.update(prev => prev.filter(p => p.goodCode !== goodCode))
-  //   }
-  // }
-
+  curStepLabel = computed(() => {
+    switch (this.curStepType()) {
+      case 1: return "บาทแรก"
+      case 3: return "ขั้นบันได"
+      case 2: return "บาทแรก"
+    }
+  })
   get request() {
     const cn = this.cn()
     const displayName = this.displayName()
@@ -101,12 +89,13 @@ export class OtherIncomeNotLightEditComponent {
   private modalService = inject(NgbModal)
   private notLightModal = viewChild('notLightModal')
   openModal() {
-    const { cn, displayName, isRebate, isDc, isInce, isComp, incomeId, stepList, isProduct } = this.eventDetail()
+    const { cn, displayName, isRebate, isDc, isInce, isComp, incomeId, stepList, isProduct, incVat } = this.eventDetail()
     this.incomeId.set(incomeId);
     this.isRebate.set(isRebate);
     this.isDc.set(isDc);
     this.isInce.set(isInce);
     this.isComp.set(isComp);
+    this.incVat.set(incVat)
     this.cn.set(cn)
     this.displayName.set(displayName)
     this.isProduct.set(isProduct)
@@ -127,7 +116,7 @@ type TOiNlEditProps = {
   isInce: boolean,
   incomeId: number
   incomeName: string
-  isProduct: boolean
+  isProduct: number
   cn: string
   capAmount: number | null
   displayName: string

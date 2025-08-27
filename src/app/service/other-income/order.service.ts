@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, combineLatest, distinctUntilChanged, filter, Observable, of, Subject, switchMap } from 'rxjs';
+import { catchError, combineLatest, distinctUntilChanged, filter, Observable, of, shareReplay, Subject, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,34 +13,63 @@ export class OrderService {
 
   private api = inject(ApiService)
   private url = environment.oi
+  private billUrl = `${this.url}/po/bill`
+  private goodUrl = `${this.url}/po/good`
 
-  term = signal("")
-  private term$ = toObservable(this.term).pipe(distinctUntilChanged(), filter(term => !!term))
-  private compType$ = new Subject<string>()
-  private compCode$ = new Subject<string>()
-  private params = combineLatest([this.compType$, this.compCode$, this.term$,])
-  private search(compType: string, compCode: string, order: string): Observable<TOiOrder[]> {
-    return this.api.get<TOiOrder[]>(
-      `${this.url}/po/${compType}/${compCode}`,
-      { params: { order } }
-    ).pipe(catchError(err => of([])))
+  private params$ = new Subject<TOnSearchParams>()
+  private shared$ = this.params$.pipe(shareReplay(1))
+  private search({ compCode, compType, discType, order }: TOnSearchParams): Observable<TOiBill[]> {
+    const currentUrl = `${this.billUrl}/${compType}/${compCode}/${discType}`
+    if (order) {
+      return this.api.get<TOiBill[]>(currentUrl, { params: { order } })
+        .pipe(catchError(err => of([])))
+    }
+    return this.api.get<TOiBill[]>(currentUrl).pipe(catchError(err => of([])))
   }
-  private poList$ = this.params.pipe(
-    switchMap(([type, code, order]) => this.search(type, code, order)),
-  )
-  setComp(compCode: string, compType: string) {
-    if (compType !== 'DN' && compType !== 'HU') return
-    this.compCode$.next(compCode)
-    this.compType$.next(compType)
+  private searchGood({ compCode, compType, discType, order }: TOnSearchParams): Observable<TOiGood[]> {
+    const currentUrl = `${this.goodUrl}/${compType}/${compCode}/${discType}`
+    if (order) {
+      return this.api.get<TOiGood[]>(currentUrl, { params: { order } })
+        .pipe(catchError(err => of([])))
+    }
+    return this.api.get<TOiGood[]>(currentUrl).pipe(catchError(err => of([])))
   }
-  queryOrder = toSignal(this.poList$, { initialValue: [] })
+  // ท้ายบิล
+  private poList$ = this.shared$.pipe(switchMap(p => this.search(p)))
+  billDiscount = toSignal(this.poList$, { initialValue: [] })
+  // สินค้า
+  private goodOrderList$ = this.shared$.pipe(switchMap(p => this.searchGood(p)))
+  goodDiscount = toSignal(this.goodOrderList$, { initialValue: [] })
+  onSerach = (req: TOnSearchParams) => {
+    this.params$.next(req);
+  }
+}
+
+type TSmallRece = {
+  receNumb: string
+  discount: number
+}
+
+type TSmallProduct = {
+  goodCode: string
+  goodName: string
+  barCode: string
+  receNumb: string
+  discount: number
 }
 
 export type TOiOrder = {
   orderNumb: string
+  discount: number
 }
 
-export type TAppOIOrder = {
-  actualAmount: number
+export type TOiBill = {
+  receList: TSmallRece[]
 } & TOiOrder
 
+export type TOiGood = {
+  productList: TSmallProduct[]
+} & TOiOrder
+
+
+type TOnSearchParams = { compCode: string, compType: string, discType: number, order: string }

@@ -1,9 +1,10 @@
 import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { EventSelectComponent } from '../../../components/other-income/form/event-select/event-select.component';
 
 @Component({
   selector: 'app-other-income-account-query-tab',
-  imports: [FormsModule],
+  imports: [FormsModule, EventSelectComponent],
   template: `
   <div class="row">
     <div class="mb-3 col-md">
@@ -26,11 +27,11 @@ import { FormsModule } from '@angular/forms';
         id="search-field-select"
         [ngModel]="field()"
         (ngModelChange)="fieldChange.emit($event)"
-        [disabled]="disbleMode()"
         class="form-select"
       >
-        <option [ngValue]="1">รหัสซับ</option>
-        <option [ngValue]="2">รหัสสินค้า</option>
+        <option [ngValue]="1" >รหัสซับ</option>
+        <option [ngValue]="3">กิจกรรม</option>
+        <option [ngValue]="2" [disabled]="disbleMode()">รหัสสินค้า</option>
       </select>
     </div>
     <div class="mb-3 col-md">
@@ -48,17 +49,20 @@ import { FormsModule } from '@angular/forms';
         <option [ngValue]="4">รอเพิ่มใบเสร็จ</option>
       </select>
     </div>
-
+  @if(field() !== 3){
     <div class="app-form-field">
       <label for="acc-search-term">คำค้นหา</label>
       <input
-        type="text"
-        name="acc-search-term"
-        id="acc-search-term"
-        [ngModel]="term()"
-        (ngModelChange)="termChange.emit($event)"
+      type="text"
+      name="acc-search-term"
+      id="acc-search-term"
+      [ngModel]="term()"
+      (ngModelChange)="termChange.emit($event)"
       />
     </div>
+  }@else {
+    <app-event-select [filter]="'not-light'" [eventId]="event()" (eventIdChange)="eventChange.emit($event)" />
+  }
   </div>
   `,
 })
@@ -69,6 +73,9 @@ export class OtherIncomeAccountQueryTabComponent {
   field = input<number>(1)
   fieldChange = output<number>()
 
+  event = input(0)
+  eventChange = output<number>()
+
   status = input<number>(1)
   statusChange = output<number>()
 
@@ -76,4 +83,13 @@ export class OtherIncomeAccountQueryTabComponent {
   termChange = output<string>()
 
   disbleMode = input<boolean>(false)
+
+  onChangeFilter = (filter: number) => {
+    if (filter === 3) {
+      this.termChange.emit('')
+    } else {
+      this.eventChange.emit(0)
+    }
+    this.fieldChange.emit(filter);
+  }
 }
