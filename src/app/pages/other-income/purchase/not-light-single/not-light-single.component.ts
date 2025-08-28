@@ -37,7 +37,7 @@ export class NotLightSingleComponent {
   currentResult = computed(() => this.data()[0])
   head = computed(() => {
     const cur = this.currentResult()
-    const { head: { id, period, startDate, endDate }, company: { compCode, compName, compType }, event: { id: eventId, eventName, isLight } } = cur
+    const { head: { id, period, startDate, endDate }, company: { compCode, compName, compType }, event: { id: eventId, eventName, eventType: isLight } } = cur
     return { id, period, startDate, endDate, compCode, compName, compType, eventId, eventName, isLight }
   })
   acc = computed(() => {

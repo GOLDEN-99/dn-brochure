@@ -20,9 +20,11 @@ export class OiBaseformService {
     compType: 'DN',
     compName: '',
     eventId: 0,
+    incomeId: 0,
     period: 0,
     startDate: this.fdoy,
     endDate: this.ldoy,
+    displayName: 'ไม่ระบุ'
   }
   compData = computed(() => {
     const { compCode, compType } = this.baseformState()

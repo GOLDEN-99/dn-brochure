@@ -28,7 +28,7 @@ export class LightSingleComponent {
   currentResult = computed(() => this.data()[0])
   head = computed(() => {
     const cur = this.currentResult()
-    const { id, period, startDate, endDate, company: { compCode, compName, compType }, event: { id: eventId, eventName, isLight } } = cur
+    const { id, period, startDate, endDate, company: { compCode, compName, compType }, event: { id: eventId, eventName, eventType: isLight } } = cur
     const validCompType: TCompType = compType === 'HU' ? 'HU' : 'DN'
     return {
       id,

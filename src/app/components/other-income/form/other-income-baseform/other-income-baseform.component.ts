@@ -6,10 +6,11 @@ import { SearchCompSubformComponent } from "../search-comp-subform/search-comp-s
 import { EventSelectComponent } from "../event-select/event-select.component";
 import { SearchProductSubformComponent } from "../search-product-subform/search-product-subform.component";
 import { TOIProduct } from '../../../../types';
+import { IncomeSelectComponent } from "../income-select/income-select.component";
 
 @Component({
   selector: 'app-other-income-baseform',
-  imports: [FormsModule, DateInputComponent, SearchCompSubformComponent, EventSelectComponent, SearchProductSubformComponent],
+  imports: [FormsModule, DateInputComponent, SearchCompSubformComponent, EventSelectComponent, SearchProductSubformComponent, IncomeSelectComponent],
   templateUrl: './other-income-baseform.component.html',
   styleUrl: './other-income-baseform.component.scss'
 })
@@ -21,6 +22,8 @@ export class OtherIncomeBaseformComponent {
   updateCompName = this.updator('compName')
   updateCompType = this.updator('compType')
   updateEvent = this.updator('eventId')
+  updateIncome = this.updator('incomeId')
+  updateName = this.updator('displayName')
   updatePeriod = this.updator('period')
   updateStartDate = this.updator('startDate')
   updateEndDate = this.updator('endDate')
