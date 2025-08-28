@@ -29,7 +29,7 @@ export class EventSelectComponent {
     const event = this.renderList().find(r => r.id === eventId)
     if (!event) return
     this.eventIdChange.emit(event.id);
-    this.isLightChange.emit(event.isLight);
+    this.isLightChange.emit(event.eventType);
   }
   private eventService = inject(EventService)
   private items = this.eventService.event
@@ -38,8 +38,8 @@ export class EventSelectComponent {
     const filter = this.filter()
     const all = this.items()
     switch (filter) {
-      case 'light': return all.filter(({ isLight }) => isLight === 1)
-      case 'not-light': return all.filter(({ isLight }) => isLight !== 1)
+      case 'light': return all.filter(({ eventType }) => eventType === 2)
+      case 'not-light': return all.filter(({ eventType }) => eventType !== 2)
       case 'all': return all
     }
   })

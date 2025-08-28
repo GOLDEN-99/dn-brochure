@@ -21,5 +21,5 @@ export class EventService {
 export type TEvent = {
   id: number
   eventName: string
-  isLight: number
+  eventType: number
 }
