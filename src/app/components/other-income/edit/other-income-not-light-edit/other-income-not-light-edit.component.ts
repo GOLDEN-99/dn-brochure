@@ -1,20 +1,19 @@
 import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TargetSubformComponent } from "../../form/target-subform/target-subform.component";
-import { IncomeSelectComponent } from "../../form/income-select/income-select.component";
+import { TargetSubformComponent } from "../../form/target-subform.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-other-income-not-light-edit',
-  imports: [FormsModule, TargetSubformComponent, IncomeSelectComponent],
+  imports: [FormsModule, TargetSubformComponent],
   templateUrl: './other-income-not-light-edit.component.html',
   styleUrl: './other-income-not-light-edit.component.scss'
 })
 export class OtherIncomeNotLightEditComponent {
   canEdit = input(false)
-  eventDetail = input.required<TOiNlEditProps>()
+  notLight = input.required<TOiNlEditProps>()
+  steps = input.required<any[]>()
   headId = input<number>()
-  incomeId = signal(0)
   isProduct = signal(0)
   isRebate = signal(false)
   isDc = signal(false)
@@ -32,41 +31,31 @@ export class OtherIncomeNotLightEditComponent {
     return stepList.some(({ percent }) => percent === 0)
   })
 
-  cn = signal('')
-  displayName = signal('')
   capAmount = signal<number | null>(null)
   isNullCap = computed(() => this.capAmount() === null)
 
   disable = computed(() => {
-    const invalidIncome = this.incomeId() === 0
     const invalidStep = this.invalidStep()
     const invalidCap = this.capAmount() === 0
 
-    return invalidIncome || invalidStep || invalidCap
+    return invalidStep || invalidCap
   })
 
-  curStepType = computed(() => {
-    const cur = this.eventDetail()
-    const { stepList, isStep } = cur
-    if (isStep) return 3
-    if (stepList.length !== 1) return 2
-    return 1
-  })
+  currentStepType = computed(() => this.notLight().stepType)
+
   curStepLabel = computed(() => {
-    switch (this.curStepType()) {
+    switch (this.currentStepType()) {
       case 1: return "บาทแรก"
       case 3: return "ขั้นบันได"
       case 2: return "บาทแรก"
+      default: return "มีข้อผิดพลาด"
     }
   })
   get request() {
-    const cn = this.cn()
-    const displayName = this.displayName()
     const isRebate = this.isRebate()
     const isDc = this.isDc()
     const isComp = this.isComp()
     const isInce = this.isInce()
-    const incomeId = this.incomeId()
     const incVat = this.incVat()
     const step = this.stepType()
     const capAmount = this.capAmount()
@@ -78,9 +67,8 @@ export class OtherIncomeNotLightEditComponent {
       const max = typeof nextStart === 'number' ? nextStart : null
       return { min, max, rate }
     })
-    // const productList = this.isProduct() ? this.productsList().map(({ goodCode }) => goodCode) : []
     return {
-      cn, displayName, incVat, capAmount, stepList, step, isRebate, isComp, isDc, isInce, incomeId
+      incVat, capAmount, stepList, step, isRebate, isComp, isDc, isInce
     }
   }
 
@@ -89,18 +77,15 @@ export class OtherIncomeNotLightEditComponent {
   private modalService = inject(NgbModal)
   private notLightModal = viewChild('notLightModal')
   openModal() {
-    const { cn, displayName, isRebate, isDc, isInce, isComp, incomeId, stepList, isProduct, incVat } = this.eventDetail()
-    this.incomeId.set(incomeId);
+    const { isRebate, isDc, isInce, isComp, incVat } = this.notLight()
+    const stepList = this.steps()
     this.isRebate.set(isRebate);
     this.isDc.set(isDc);
     this.isInce.set(isInce);
     this.isComp.set(isComp);
-    this.incVat.set(incVat)
-    this.cn.set(cn)
-    this.displayName.set(displayName)
-    this.isProduct.set(isProduct)
-    const stepType = this.curStepType()
-    this.stepType.set(stepType)
+    this.incVat.set(incVat);
+    const stepType = this.currentStepType();
+    this.stepType.set(stepType);
     const modStep = stepList.map(({ min, rate }) => ({ start: min, percent: rate }))
     this.stepList.set(modStep)
     this.modalService.open(this.notLightModal())
@@ -109,18 +94,12 @@ export class OtherIncomeNotLightEditComponent {
 }
 
 type TOiNlEditProps = {
-  notLightId: number
+  id: number
   isRebate: boolean,
   isDc: boolean,
   isComp: boolean,
   isInce: boolean,
-  incomeId: number
-  incomeName: string
-  isProduct: number
-  cn: string
   capAmount: number | null
-  displayName: string
   incVat: boolean
-  isStep: boolean
-  stepList: any[]
+  stepType: number
 }

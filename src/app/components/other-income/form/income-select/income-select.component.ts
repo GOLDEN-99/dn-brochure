@@ -31,6 +31,6 @@ export class IncomeSelectComponent {
     if (id === 0) return
     const value = this.incomeServ.getValue(id)
     this.incomeIdChange.emit(id)
-    this.isProductChange.emit(value.isProduct)
+    this.isProductChange.emit(value.incomeType)
   }
 }

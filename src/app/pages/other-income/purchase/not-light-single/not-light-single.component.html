@@ -5,27 +5,34 @@
   <!---->
   @let e = currentResult(); @let comp = e.company;@let incomes =
   e.incomeList;@let periods = e.periodList;@let h = e.head;
-  <app-other-income-head-edit [value]="head()" [canEdit]="false" />
-  @let eveDetail = eventDetail();
-  <!---->
-  <app-other-income-product-edit [value]="productDetail()" />
-  @if (eveDetail !== null) {
-  <app-other-income-not-light-edit
-    [eventDetail]="eveDetail"
+  <app-other-income-head-edit
+    [head]="e.head"
+    [event]="e.event"
+    [income]="e.income"
+    [comp]="e.company"
     [canEdit]="false"
   />
-  @let a = acc(); @let s = stepInfo();
   <!---->
-  @if(s !== null){
+  <app-other-income-product-edit [productList]="e.productList" />
+
+  <app-other-income-not-light-edit
+    [steps]="e.stepList"
+    [notLight]="e.notLight"
+    [canEdit]="false"
+  />
+
+  @let a = acc();
+  <!---->
+  @if([1,2].includes(e.event.eventType)){
   <app-other-income-monthly-edit
     [incomeList]="incomes"
     [id]="h.id"
     [compType]="comp.compType"
     [accAmount]="a.accAmount"
     [accIncome]="a.accIncome"
-    [isStep]="s.isStep"
-    [stepList]="s.stepList"
-    [capAmount]="eveDetail.capAmount"
+    [stepType]="e.notLight.stepType"
+    [stepList]="e.stepList"
+    [capAmount]="e.notLight.capAmount"
     [canEdit]="true"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
@@ -38,7 +45,7 @@
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
-  } }
+  }
   <!--add incentive income here-->
   @if (e.event.eventType === 3) {
   <div class="mb-3">add incentive</div>
@@ -66,7 +73,7 @@
     </div>
     <div style="overflow-x: auto; max-width: 100%">
       <!--ท้ายบิล-->
-      @if (e.income.isProduct === 0) {
+      @if (e.income.incomeType === 1) {
       <div style="min-width: 100%" tabindex="0">
         <app-other-income-order-period
           [actualAmount]="period.totalIncome"
@@ -80,7 +87,7 @@
       </div>
       }
       <!--สินค้า-->
-      @if (e.income.isProduct === 1) {
+      @if (e.income.incomeType === 2) {
       <div style="min-width: 100%">
         <app-other-income-good-order-period
           [actualAmount]="period.totalIncome"
@@ -94,7 +101,7 @@
       </div>
       }
       <!--invoice-->
-      @if (e.income.isProduct === 2) {
+      @if (e.income.incomeType === 3) {
       <div style="min-width: 100%">
         <app-other-income-invoice-period
           [invoiceList]="period.invoiceList"
@@ -115,7 +122,7 @@
       </div>
       }
       <!--credit note-->
-      @if (e.income.isProduct === 3) {
+      @if (e.income.incomeType === 4) {
       <div style="min-width: 100%">add credit note</div>
       }
     </div>

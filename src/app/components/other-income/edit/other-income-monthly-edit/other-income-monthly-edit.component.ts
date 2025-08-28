@@ -22,18 +22,15 @@ export class OtherIncomeMonthlyEditComponent {
   success = output<string>()
   fail = output<string>()
 
-  isStep = input.required<boolean>()
+  stepType = input.required<number>()
   stepList = input.required<TOIStepItem[]>()
   calFunc = computed(() => {
-    const isStep = this.isStep()
-    const stepList = this.stepList()
-    if (isStep) {
-      return calStep(stepList)
+    const steps = this.stepList()
+    switch (this.stepType()) {
+      case 1: return calFlat(steps)
+      case 2: return calSemi(steps)
+      default: return calStep(steps)
     }
-    if (stepList.length === 1) {
-      return calFlat(stepList)
-    }
-    return calSemi(stepList)
   })
   accIncome = input.required<number>()
   accAmount = input.required<number>()

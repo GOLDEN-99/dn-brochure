@@ -16,7 +16,10 @@ import { SearchCompSubformComponent } from "../../form/search-comp-subform/searc
 })
 export class OtherIncomeHeadEditComponent {
   canEdit = input(false)
-  value = input.required<TEditHeadProps>()
+  head = input.required<TEditHeadProps>()
+  comp = input.required<TCompProps>()
+  income = input.required<TIncomeProps>()
+  event = input.required<TEventProps>()
   submit = output<TApiBaseformInsert>()
   mode = input<TFilter>('all')
   private calService = inject(NgbCalendar)
@@ -36,11 +39,13 @@ export class OtherIncomeHeadEditComponent {
   private modal = viewChild('headModal')
   openModal() {
     this.state.update(prev => {
-      const { startDate, endDate, eventId, compCode, compName, compType, period, } = this.value()
-      const validType = (compType ?? 'DN') as TCompType
+      const { startDate, endDate, period, } = this.head()
+      const { compCode, compName, compType } = this.comp()
+      const validComp = compType as TCompType
+      const { id: eventId } = this.event()
       const formatStart = this.convertToNgb(startDate)
       const formateEnd = this.convertToNgb(endDate)
-      return { ...prev, eventId, compCode, compName, period, startDate: formatStart, endDate: formateEnd, compType: validType }
+      return { ...prev, eventId, compCode, compName, period, startDate: formatStart, endDate: formateEnd, compType: validComp }
     })
     this.modalService.open(this.modal())
   }
@@ -71,12 +76,24 @@ type TEditHeadProps = {
   period: number,
   startDate: string,
   endDate: string,
-  compCode: string,
-  compName: string,
-  compType?: string,
-  eventId: number,
-  eventName: string,
-  isLight: number
+  displayName: string,
+}
+
+type TCompProps = {
+  compCode: string
+  compName: string
+  compType: string
+}
+type TIncomeProps = {
+  id: number
+  incomeName: string
+  incomeType: number
+}
+
+type TEventProps = {
+  id: number
+  eventName: string
+  eventType: number
 }
 
 type TFilter = 'light' | 'not-light' | 'all'

@@ -10,14 +10,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class IncomeService {
 
   constructor() { }
-  private incomeMap = new Map<number, Pick<TIncome, 'incomeName' | 'isProduct'>>()
+  private incomeMap = new Map<number, Pick<TIncome, 'incomeName' | 'incomeType'>>()
   private api = inject(ApiService)
   private url = environment.oi
   private income$ = this.api.get<TIncome[]>(`${this.url}/other-income/income`)
     .pipe(
       tap((value) => {
-        value.forEach(({ id, incomeName, isProduct }) => {
-          this.incomeMap.set(id, { incomeName, isProduct })
+        value.forEach(({ id, incomeName, incomeType }) => {
+          this.incomeMap.set(id, { incomeName, incomeType })
         })
       }),
       catchError(err => { console.log(err); return of([]) })
@@ -33,5 +33,5 @@ export class IncomeService {
 export type TIncome = {
   id: number
   incomeName: string
-  isProduct: number
+  incomeType: number
 }

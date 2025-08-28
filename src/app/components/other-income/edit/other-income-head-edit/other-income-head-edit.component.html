@@ -1,5 +1,6 @@
 <div mb-3>
-  @let curHead = value();
+  @let headValue = head();@let incomeValue = income();@let eventValue =
+  event();@let compValue = comp();
   <div class="row" style="justify-content: space-between">
     <h2 class="col-auto">รายการรายได้อื่นๆ</h2>
     @if(canEdit()){
@@ -10,27 +11,31 @@
   </div>
   <div class="row">
     <div class="col">รหัสซัพ</div>
-    <div class="col">{{ curHead.compCode }}</div>
+    <div class="col">{{ compValue.compCode }}</div>
   </div>
   <div class="row">
     <div class="col">ชื่อซัพ</div>
-    <div class="col">{{ curHead.compName }}</div>
+    <div class="col">{{ compValue.compName }}</div>
   </div>
   <div class="row">
     <div class="col">กิจกรรม</div>
-    <div class="col">{{ curHead.eventName }}</div>
+    <div class="col">{{ eventValue.eventName }}</div>
   </div>
   <div class="row">
     <div class="col">ระยะเวลาเก็บเงิน</div>
-    <div class="col">{{ curHead.period }}</div>
+    <div class="col">{{ headValue.period }}</div>
+  </div>
+  <div class="row">
+    <div class="col">วิธีการรับรู้</div>
+    <div class="col">{{ incomeValue.incomeName }}</div>
   </div>
   <div class="row">
     <div class="col">เริ่ม</div>
-    <div class="col">{{ curHead.startDate | date }}</div>
+    <div class="col">{{ headValue.startDate | date }}</div>
   </div>
   <div class="row">
     <div class="col">จบ</div>
-    <div class="col">{{ curHead.endDate | date }}</div>
+    <div class="col">{{ headValue.endDate | date }}</div>
   </div>
 </div>
 <ng-template #headModal let-modal>

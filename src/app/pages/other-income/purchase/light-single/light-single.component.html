@@ -3,7 +3,13 @@
   <div>ไม่พบเอกสาร</div>
   } @else { @let e = currentResult();@let branches = e.branchList;@let comp =
   e.company;@let incomes = e.incomeList;@let periods = e.periodList;
-  <app-other-income-head-edit [value]="head()" [canEdit]="true" />
+  <app-other-income-head-edit
+    [head]="e.head"
+    [comp]="e.company"
+    [event]="e.event"
+    [income]="e.income"
+    [canEdit]="false"
+  />
   <app-other-income-light-edit [eventDetail]="eventDetail()" />
   <app-other-income-branch
     [lightId]="e.lightId"

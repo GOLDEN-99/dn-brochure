@@ -68,6 +68,7 @@ export type TContactHead = {
     period: number,
     startDate: string,
     endDate: string,
+    displayName: string
     accAmount: number,
     amountDate: string | null,
     accIncome: number
@@ -84,7 +85,7 @@ export type TContactNotLight = {
     isComp: boolean
     isInce: boolean
     capAmount: number | null
-    isStep: boolean
+    stepType: number
 }
 
 export type TPeriodResult = {
@@ -141,7 +142,7 @@ export type TPopulatedPeriodResult = {
 
 export type NotLightSingle = {
     head: TContactHead
-    notLight: TContactNotLight | null
+    notLight: TContactNotLight
     stepList: TOIStepItem[]
     productList: { id: number, goodCode: string, goodName: string }[]
     incomeList: TIncomeItem[]
@@ -189,6 +190,10 @@ export type TLightSummary = {
 
 
 export type TDetailLight = {
+    head: TContactHead
+    company: TOIComp
+    event: TEvent,
+    income: TIncome,
     incomeList: TIncomeItem[]
     branchList: TBranchItem[]
     periodList: TPopulatedPeriodResult[]

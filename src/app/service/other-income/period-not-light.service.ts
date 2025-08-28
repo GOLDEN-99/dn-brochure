@@ -48,16 +48,18 @@ export class PeriodNotLightService {
     const hasInv = invDate !== null
     const hasRece = receDate !== null
     const status = this.mapStatus(hasInv, hasRece)
-    if (income.isProduct) return []
+    if (this.isProduct(income.incomeType)) return []
     return [{ ...res, income, receDate, invDate, status }]
   }))
   modProPeriod = computed(() => this.periods().flatMap(({ receDate, invDate, income, ...res }) => {
     const hasInv = invDate !== null
     const hasRece = receDate !== null
     const status = this.mapStatus(hasInv, hasRece)
-    if (income.isProduct) return [{ ...res, income, receDate, invDate, status }]
+    if (this.isProduct(income.incomeType)) return [{ ...res, income, receDate, invDate, status }]
     return []
   }))
+
+  private isProduct = (incomeType: number) => [1, 2].includes(incomeType)
 
   private mapStatus(hasInv: boolean, hasRece: boolean) {
     if (!hasInv) return 'รอเพิ่มใบแจ้งหนี้'

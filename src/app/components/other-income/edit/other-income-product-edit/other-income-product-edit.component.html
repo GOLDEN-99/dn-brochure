@@ -1,5 +1,6 @@
+@let products = productList(); @if (products.length !== 0) {
+
 <div class="mb-3">
-  @let cur = value();
   <div class="row" style="justify-content: space-between">
     <h2 class="col-auto">รายการสินค้า</h2>
     @if (canEdit()) {
@@ -18,18 +19,18 @@
         </tr>
       </thead>
       <tbody>
-        @let products = cur.productList;
-        <!---->
         @for (product of products; track product.id) {
         <tr>
           <td>{{ product.goodCode }}</td>
           <td>{{ product.goodName }}</td>
           <!-- <td>
-            <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
-          </td> -->
+                <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
+              </td> -->
         </tr>
         }
       </tbody>
     </table>
   </div>
 </div>
+
+}

@@ -7,7 +7,7 @@ import { Component, input } from '@angular/core';
   styleUrl: './other-income-product-edit.component.scss'
 })
 export class OtherIncomeProductEditComponent {
-  value = input.required<TProductEditProps>()
+  productList = input.required<TProductItem[]>()
   canEdit = input(false)
 }
 
@@ -15,8 +15,4 @@ type TProductItem = {
   goodCode: string
   goodName: string
   id: number
-}
-
-type TProductEditProps = {
-  productList: TProductItem[]
 }

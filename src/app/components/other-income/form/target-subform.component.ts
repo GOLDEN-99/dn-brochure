@@ -17,33 +17,14 @@ import { FormsModule } from '@angular/forms';
         (ngModelChange)="changeTarget($event)"
       >
         <option [ngValue]="0" disabled>กรุณาเลือก</option>
-        <option [ngValue]="1">flat</option>
-        <option [ngValue]="2">step(คิดจากบาทแรก)</option>
-        <option [ngValue]="3">step(คิดแบบขั้นบันได)</option>
+        <option [ngValue]="1">flat บาทแรก</option>
+        <option [ngValue]="2">step บาทแรก</option>
+        <option [ngValue]="3">คิดแบบขั้นบันได</option>
       </select>
     </div>
     <div class="p-3">
-      @if (targetValue === 1) {
-      <div class="bg-lightgray" style="padding: 0 8px">
-        <div class="app-form-field-inline">
-          <div style="margin: 16px 0">
-            <label for="percent">ระบุ %</label>
-          </div>
-          <div style="margin: 16px 0">
-            <input
-              type="number"
-              name="percent"
-              id="percent"
-              [ngModel]="step()[0].percent"
-              (ngModelChange)="changePercent(0)($event)"
-            />
-          </div>
-        </div>
-      </div>
-      }
-      <!---->
       @if (needStep()) {
-      <!---->
+      <!--case stepType 2,3-->
         @let stepList = step();
       <ul style="padding: 0; margin: 0">
         @for (s of stepList; track $index) {
@@ -81,7 +62,6 @@ import { FormsModule } from '@angular/forms';
                 <div>%</div>
               </div>
             </div>
-
             <div class="col-auto">
               <button
                 class="btn btn-danger"
@@ -100,6 +80,24 @@ import { FormsModule } from '@angular/forms';
           <button class="btn btn-success" (click)="addStep()">
             <i class="bi bi-plus"></i>
           </button>
+        </div>
+      </div>
+      } @else {
+      <!--case stepType = 0,1-->
+      <div class="bg-lightgray" style="padding: 0 8px">
+        <div class="app-form-field-inline">
+          <div style="margin: 16px 0">
+            <label for="percent">ระบุ %</label>
+          </div>
+          <div style="margin: 16px 0">
+            <input
+              type="number"
+              name="percent"
+              id="percent"
+              [ngModel]="step()[0].percent"
+              (ngModelChange)="changePercent(0)($event)"
+            />
+          </div>
         </div>
       </div>
       }
@@ -129,7 +127,7 @@ export class TargetSubformComponent {
   }
 
   // 2wbd of step in case of target === 2 , 3 
-  needStep = computed(() => { const currentTarget = this.target(); return currentTarget === 2 || currentTarget === 3; })
+  needStep = computed(() => [2, 3].includes(this.target()))
   step = input<TStepItem[]>([])
   stepChange = output<TStepItem[]>()
   private changeStepItem = <K extends keyof TStepItem>(k: K) => (idx: number) => (value: TStepItem[K]) => {

@@ -26,22 +26,6 @@ export class LightSingleComponent {
   data = this.lightServ.singleRecord
   invalidValue = computed(() => this.data().length !== 1)
   currentResult = computed(() => this.data()[0])
-  head = computed(() => {
-    const cur = this.currentResult()
-    const { id, period, startDate, endDate, company: { compCode, compName, compType }, event: { id: eventId, eventName, eventType: isLight } } = cur
-    const validCompType: TCompType = compType === 'HU' ? 'HU' : 'DN'
-    return {
-      id,
-      period,
-      startDate,
-      endDate,
-      compCode,
-      compName,
-      compType: validCompType,
-      eventId, eventName,
-      isLight
-    }
-  })
   lightId = computed(() => this.currentResult().lightId)
   eventDetail = computed(() => {
     const cur = this.currentResult()
