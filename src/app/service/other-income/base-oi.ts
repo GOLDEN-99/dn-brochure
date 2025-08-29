@@ -157,7 +157,9 @@ export type TIncomeItem = {
     id: number
     calAmount: number
     actualAmount: number
-    createDate: string
+    startDate: string
+    endDate: string
+    cn: number
     reason: string
     checkDate: string | null
     incomeAmount: number

@@ -128,7 +128,7 @@ type TPurchaseReceItem = {
 type TInsertReq = {
   calAmount: number
   actualAmount: number
-  createDate: string
+  startDate: string
   reason: string
   incomeAmount: number
   cn: number

@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
+import { TIncomeItem } from './base-oi';
 
 @Injectable({
   providedIn: 'root'
@@ -33,10 +34,7 @@ export class PeriodService {
   }
 }
 
-type TMonth = {
-  id: number
-  createDate: string
-}
+type TMonth = Pick<TIncomeItem, 'startDate' | 'endDate' | 'id'>
 
 type TCreatPeriodReq = {
   remark: string

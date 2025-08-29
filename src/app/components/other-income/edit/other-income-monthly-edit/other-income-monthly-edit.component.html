@@ -15,6 +15,7 @@
       <tr>
         <th>งวด</th>
         <th>ยอดคำนวน</th>
+        <th>cn</th>
         <th>ยอดจริง</th>
         <th>ส่วนต่าง</th>
         <th>สาเหตุ</th>
@@ -25,8 +26,9 @@
     <tbody>
       @for (income of incomes; track $index) {
       <tr>
-        <td>{{ formatMonth(income.createDate) }}</td>
+        <td>{{ formatMonth(income.startDate) }}</td>
         <td>{{ income.calAmount | number : "1.2-2" }}</td>
+        <td>{{ income.cn | number : "1.2-2" }}</td>
         <td>{{ income.actualAmount | number : "1.2-2" }}</td>
         <td>
           {{ income.calAmount - income.actualAmount | number : "1.2-2" }}

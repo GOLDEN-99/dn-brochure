@@ -37,14 +37,14 @@
             <div class="app-form-check m-0">
               <input
                 type="checkbox"
-                [name]="inc.createDate + '-check'"
+                [name]="inc.startDate + '-check'"
                 [id]="inc.checkDate + '-check'"
                 [ngModel]="inc.check"
                 (ngModelChange)="checkItem(inc.id)"
               />
             </div>
           </td>
-          <td>{{ formateDate(inc.createDate) }}</td>
+          <td>{{ formateDate(inc.startDate) }}</td>
           <td>{{ inc.actualAmount }}</td>
           <td>{{ inc.incomeAmount }}</td>
         </tr>
