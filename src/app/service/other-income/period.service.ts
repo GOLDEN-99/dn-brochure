@@ -37,7 +37,7 @@ export class PeriodService {
 type TMonth = Pick<TIncomeItem, 'startDate' | 'endDate' | 'id'>
 
 type TCreatPeriodReq = {
-  remark: string
+  periodName: string
   totalAmount: number
   totalIncome: number
   monthlyList: TMonth[]

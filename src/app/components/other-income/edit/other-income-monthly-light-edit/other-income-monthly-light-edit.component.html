@@ -20,7 +20,7 @@
       <tbody>
         @for (income of incomes; track income.id) {
         <tr>
-          <td>{{ formatMonth(income.createDate) }}</td>
+          <td>{{ formatMonth(income.startDate) }}</td>
           <td>{{ income.calAmount | number : "1.2-2" }}</td>
           <td>
             <button class="btn btn-danger" (click)="onDelete(income.id)">

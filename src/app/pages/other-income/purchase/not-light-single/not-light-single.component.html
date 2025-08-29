@@ -15,19 +15,19 @@
   <!---->
   <app-other-income-product-edit [productList]="e.productList" />
 
+  @if(e.event.eventType === 1){
+  <!---->
+  @let a = acc();
   <app-other-income-not-light-edit
     [steps]="e.stepList"
     [notLight]="e.notLight"
     [canEdit]="false"
   />
-
-  @let a = acc();
-  <!---->
-  @if([1,2].includes(e.event.eventType)){
   <app-other-income-monthly-edit
+    [eventType]="e.event.eventType"
     [incomeList]="incomes"
     [id]="h.id"
-    [compType]="comp.compType"
+    [compType]="e.company.compType"
     [accAmount]="a.accAmount"
     [accIncome]="a.accIncome"
     [stepType]="e.notLight.stepType"
@@ -37,7 +37,20 @@
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
+  }
+  <!--add incentive income here-->
+  @if (e.event.eventType === 3) {
+  <app-other-income-monthly-incentive-edit
+    [canEdit]="true"
+    [id]="e.head.id"
+    [eventType]="e.event.eventType"
+    [incomeList]="e.incomeList"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  }
   <app-create-period
+    [eventType]="e.event.eventType"
     [incomeList]="incomes"
     [headId]="e.head.id"
     [compCode]="comp.compCode"
@@ -45,30 +58,33 @@
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
-  }
-  <!--add incentive income here-->
-  @if (e.event.eventType === 3) {
-  <div class="mb-3">add incentive</div>
-  }
+
   <!---->
   @for (period of periods; track period.id) {
   <div class="mb-3">
     <div class="row bg-success bg-opacity-10">
       <div class="row">
-        <div class="col">ชื่อเรียกเก็บ</div>
+        @for (header of genPeriodHeader(e.income.incomeType); track $index) {
+        <div class="col">{{ header }}</div>
+        }
+        <!-- <div class="col">ชื่อเรียกเก็บ</div>
         <div class="col">ยอดซื้อ</div>
-        <div class="col">รายได้บันทึก</div>
+        <div class="col">รายได้คำนวณ</div>
         <div class="col">ยอด PO</div>
         <div class="col">ยอดใบแจ้งหนี้</div>
-        <div class="col">ยอดใบเสร็จ</div>
+        <div class="col">ยอดใบเสร็จ</div> -->
       </div>
       <div class="row">
-        <div class="col">{{ period.remark }}</div>
+        @for (periodValue of formatPeriodValue(e.income.incomeType)(period);
+        track $index) {
+        <div class="col">{{ periodValue }}</div>
+        }
+        <!-- <div class="col">{{ period.periodName }}</div>
         <div class="col">{{ period.totalAmount | number : "1.2-2" }}</div>
         <div class="col">{{ period.totalIncome | number : "1.2-2" }}</div>
         <div class="col">{{ period.orderAmount | number : "1.2-2" }}</div>
         <div class="col">{{ period.invAmount | number : "1.2-2" }}</div>
-        <div class="col">{{ period.receAmount | number : "1.2-2" }}</div>
+        <div class="col">{{ period.receAmount | number : "1.2-2" }}</div> -->
       </div>
     </div>
     <div style="overflow-x: auto; max-width: 100%">

@@ -90,7 +90,7 @@ export type TContactNotLight = {
 
 export type TPeriodResult = {
     id: number
-    remark: string
+    periodName: string
     totalAmount: number
     totalIncome: number
     invAmount: number

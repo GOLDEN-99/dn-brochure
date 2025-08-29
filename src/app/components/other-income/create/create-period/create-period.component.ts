@@ -14,6 +14,7 @@ export class CreatePeriodComponent {
   private cal = inject(NgbCalendar)
   private today = this.cal.getToday();
   date = signal({ day: 1, month: this.today.month, year: this.today.year })
+  eventType = input.required<number>()
   compType = input.required<string | undefined>()
   compCode = input.required<string | undefined>()
   headId = input.required<number>();
@@ -56,11 +57,11 @@ export class CreatePeriodComponent {
     return `${mm}/${yy}`
   }
   get period() {
-    const remark = this.remark()
+    const periodName = this.remark()
     const incState = this.incomeState()
     const monthlyList = incState.flatMap(({ id, check, startDate, endDate }) => check ? [{ id, startDate, endDate }] : [])
     const summary = this.sum()
-    return { remark, ...summary, monthlyList }
+    return { periodName, ...summary, monthlyList }
   }
   private periodservice = inject(PeriodService)
   onAddPeriod() {

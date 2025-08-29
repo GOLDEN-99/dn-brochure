@@ -21,7 +21,7 @@ export class OtherIncomeMonthlyEditComponent {
   incomeList = input.required<TIncomeItem[]>()
   success = output<string>()
   fail = output<string>()
-
+  eventType = input.required<number>()
   stepType = input.required<number>()
   stepList = input.required<TOIStepItem[]>()
   calFunc = computed(() => {
@@ -86,7 +86,8 @@ export class OtherIncomeMonthlyEditComponent {
     const actualAmount = this.actualAmount()
     const incomeAmount = this.incomeAmount()
     const cn = this.cn()
-    this.monthService.insertNlMonth(id, { calAmount, actualAmount, startDate, reason, incomeAmount, receList, cn }).subscribe({
+    const eventType = this.eventType()
+    this.monthService.insertNlMonth(id, { calAmount, actualAmount, startDate, reason, incomeAmount, receList, cn, eventType }).subscribe({
       next: (res) => {
         this.success.emit('เพิ่มรับรู้รายเดือนสำเร็จ')
         this.modalService.dismissAll()
@@ -112,12 +113,4 @@ export class OtherIncomeMonthlyEditComponent {
       }
     })
   }
-}
-
-type TCriteria = {
-  isRebate: boolean
-  isDc: boolean
-  isComp: boolean
-  isInce: boolean
-  incVat: boolean
 }
