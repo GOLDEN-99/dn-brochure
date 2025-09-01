@@ -147,6 +147,8 @@
           [incomeAmount]="period.totalIncome"
           [addedAmount]="period.creditAmount"
           [creditList]="period.creditList"
+          (success)="onSuccess($event)"
+          (fail)="onFail($event)"
         />
       </div>
       }
