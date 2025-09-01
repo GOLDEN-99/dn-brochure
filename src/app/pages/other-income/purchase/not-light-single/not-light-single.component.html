@@ -122,8 +122,8 @@
         <app-other-income-invoice-period
           [invoiceList]="period.invoiceList"
           [periodId]="period.id"
-          [exIncome]="period.totalIncome"
-          [discount]="period.invAmount"
+          [incomeAmount]="period.totalIncome"
+          [addedAmount]="period.invAmount"
           (success)="onSuccess($event)"
           (fail)="onFail($event)"
         />
@@ -131,6 +131,8 @@
       <div style="min-width: 100%">
         <app-other-income-recipt-period
           [receiptList]="period.receiptList"
+          [invAmount]="period.invAmount"
+          [receAmount]="period.receAmount"
           [periodId]="period.id"
           (success)="onSuccess($event)"
           (fail)="onFail($event)"
@@ -139,7 +141,14 @@
       }
       <!--credit note-->
       @if (e.income.incomeType === 4) {
-      <div style="min-width: 100%">add credit note</div>
+      <div style="min-width: 100%">
+        <app-other-income-credit-period
+          [periodId]="period.id"
+          [incomeAmount]="period.totalIncome"
+          [addedAmount]="period.creditAmount"
+          [creditList]="period.creditList"
+        />
+      </div>
       }
     </div>
     <!---->

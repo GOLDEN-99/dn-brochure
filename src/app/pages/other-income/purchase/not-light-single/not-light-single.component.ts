@@ -15,6 +15,7 @@ import { OtherIncomeReciptPeriodComponent } from '../../../../components/other-i
 import { OtherIncomeGoodOrderPeriodComponent } from "../../../../components/other-income/period/other-income-good-order-period.component";
 import { TPopulatedPeriodResult } from '../../../../service/other-income/base-oi';
 import { OtherIncomeMonthlyIncentiveEditComponent } from "../../../../components/other-income/edit/other-income-monthly-incentive-edit/other-income-monthly-incentive-edit.component";
+import { OtherIncomeCreditPeriodComponent } from "../../../../components/other-income/period/other-income-credit-period.component";
 
 @Component({
   selector: 'app-not-light-single',
@@ -26,7 +27,8 @@ import { OtherIncomeMonthlyIncentiveEditComponent } from "../../../../components
     OtherIncomeReciptPeriodComponent, OtherIncomeInvoicePeriodComponent,
     NgbDatepickerModule, FormsModule, DecimalPipe,
     OtherIncomeGoodOrderPeriodComponent,
-    OtherIncomeMonthlyIncentiveEditComponent
+    OtherIncomeMonthlyIncentiveEditComponent,
+    OtherIncomeCreditPeriodComponent
   ],
   templateUrl: './not-light-single.component.html',
   styleUrl: './not-light-single.component.scss'

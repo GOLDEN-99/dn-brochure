@@ -15,7 +15,7 @@ import { OtherIncomeReciptPeriodComponent } from "../../../../components/other-i
   imports: [
     OtherIncomeHeadEditComponent, OtherIncomeLightEditComponent,
     OtherIncomeBranchComponent, OtherIncomeMonthlyLightEditComponent,
-    CreatePeriodComponent, DecimalPipe,
+    DecimalPipe,
     OtherIncomeInvoicePeriodComponent,
     OtherIncomeReciptPeriodComponent
   ],
@@ -26,12 +26,7 @@ export class LightSingleComponent {
   data = this.lightServ.singleRecord
   invalidValue = computed(() => this.data().length !== 1)
   currentResult = computed(() => this.data()[0])
-  lightId = computed(() => this.currentResult().lightId)
-  eventDetail = computed(() => {
-    const cur = this.currentResult()
-    const { totalAmount, totalBranch } = cur
-    return { totalAmount, totalBranch }
-  })
+
   branchList = computed(() => this.currentResult().branchList)
   incomeList = computed(() => this.currentResult().incomeList)
   periodList = computed(() => this.currentResult().periodList)

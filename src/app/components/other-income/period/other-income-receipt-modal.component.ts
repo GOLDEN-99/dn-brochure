@@ -3,10 +3,11 @@ import { PeriodService } from '../../../service/other-income/period.service';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { DateInputComponent } from "../../date-input/date-input.component";
 import { FormsModule } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-other-income-receipt-modal',
-  imports: [DateInputComponent, FormsModule],
+  imports: [DateInputComponent, FormsModule, DecimalPipe],
   template: `
     <div class="modal-header">
       <h4 class="modal-title">เพิ่มใบเสร็จ</h4>
@@ -19,6 +20,18 @@ import { FormsModule } from '@angular/forms';
     </div>
     <div class="modal-body">
       <app-date-input [(date)]="receiptDate" label="วันที่ใบเสร็จรับเงิน" />
+            <div class="row mb-3">
+        <div class="col">ยอดใบแจ้งหนี้บันทึก</div>
+        <div class="col">{{ invAmount() | number : "1.2-2" }}</div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">ยอดใบเสร็จรับเงินที่บันทึกแล้ว</div>
+        <div class="col">{{ receAmount() | number : "1.2-2" }}</div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">ส่วนต่าง</div>
+        <div class="col">{{ remainAmount() | number : "1.2-2" }}</div>
+      </div>
       <div class="app-form-field-inline">
         <div style="flex: 1">
           <label for="rece-numb">เลขที่ใบเสร็จรับเงิน</label>
@@ -58,7 +71,7 @@ import { FormsModule } from '@angular/forms';
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary w-100" (click)="onInsertRece()">บันทึก</button>
+      <button class="btn btn-primary w-100" (click)="onInsertRece()" [disabled]="disabled()">บันทึก</button>
     </div>
   `,
   styles: ''
@@ -66,6 +79,9 @@ import { FormsModule } from '@angular/forms';
 export class OtherIncomeReceiptModalComponent {
 
   periodId = input.required<number>()
+  invAmount = input.required<number>()
+  receAmount = input.required<number>()
+  remainAmount = computed(() => this.invAmount() - this.receAmount())
   success = output<string>()
   fail = output<string>()
   close = output<void>()
@@ -79,8 +95,11 @@ export class OtherIncomeReceiptModalComponent {
   receiptDate = signal(this.today)
   reciptInv = signal(0)
   receiptAmount = signal(0)
+  invalidReceiptAmount = computed(() => this.receiptAmount() <= 0)
   receiptNumb = signal("")
+  invalidReceNumb = computed(() => this.receiptNumb() === "")
   receiptRemark = signal("")
+  disabled = computed(() => this.invalidReceNumb() || this.invalidReceiptAmount() || this.invalidPeriodId())
 
   resetReceState(periodId = 0) {
     this.receiptDate.set(this.today);

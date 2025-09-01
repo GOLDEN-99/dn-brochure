@@ -8,10 +8,18 @@
   </div>
   <div class="row">
     <div class="col">จำนวนสาขาทั้งหมด</div>
-    <div class="col">{{ curEvent.totalBranch }}</div>
+    <div class="col">
+      {{ branchText() }}
+    </div>
   </div>
   <div class="row">
     <div class="col">จำนวนเงินทั้งหมด</div>
-    <div class="col">{{ curEvent.totalAmount }}</div>
+    <div class="col">
+      {{
+        (totalIncome() | number : "1.2-2") +
+          "/" +
+          (curEvent.totalAmount | number : "1.2-2")
+      }}
+    </div>
   </div>
 </div>

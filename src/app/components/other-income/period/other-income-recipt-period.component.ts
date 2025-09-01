@@ -44,6 +44,8 @@ import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.c
     <ng-template #receiptModal let-modal>
       <app-other-income-receipt-modal
         [periodId]="periodId()"
+        [invAmount]="invAmount()"
+        [receAmount]="receAmount()"
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
         (close)="modal.dismiss()"
@@ -55,7 +57,8 @@ import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.c
 export class OtherIncomeReciptPeriodComponent {
   receiptList = input.required<TReceiptItemDto[]>()
   periodId = input.required<number>()
-
+  invAmount = input.required<number>()
+  receAmount = input.required<number>()
   success = output<string>()
   fail = output<string>()
 

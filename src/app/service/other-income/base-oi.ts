@@ -96,8 +96,11 @@ export type TPeriodResult = {
     invAmount: number
     invDate: string | null
     orderAmount: number
+    orderDate: string | null
     receAmount: number
     receDate: string | null
+    creditAmount: number
+    creditDate: string | null
 }
 
 export type TOrderItemDto = {
@@ -114,6 +117,7 @@ export type TInviceItemDto = {
     invNumb: string
     invAmount: number
     invDate: string
+    invRemark: string
     checkDate: string | null
 }
 
@@ -122,6 +126,7 @@ export type TCreditNoteDto = {
     creditNumb: string
     creditAmount: number
     creditDate: string
+    creditRemark: string
     checkDate: string | null
 }
 
@@ -138,6 +143,7 @@ export type TPopulatedPeriodResult = {
     orderList: TOrderItemDto[]
     invoiceList: TInviceItemDto[]
     receiptList: TReceiptItemDto[]
+    creditList: TCreditNoteDto[]
 } & TPeriodResult
 
 export type NotLightSingle = {
@@ -172,30 +178,23 @@ export type TBranchItem = {
     openDate: string
 }
 
-export type TLightSummary = {
+export type TContactLight = {
     id: number
-    lightId: number
-    period: number
-    startDate: string
-    endDate: string
     totalBranch: number
     totalAmount: number
+    currentBranch: number
+}
+
+export type TLightSummary = {
+    head: TContactHead
+    light: TContactLight
     company: TOIComp
     event: TEvent,
-    accAmount: number,
-    amountDate: string | null,
-    accIncome: number
-    incomeDate: string | null
-    receAmount: number
-    invAmount: number
+    income: TIncome,
 }
 
 
 export type TDetailLight = {
-    head: TContactHead
-    company: TOIComp
-    event: TEvent,
-    income: TIncome,
     incomeList: TIncomeItem[]
     branchList: TBranchItem[]
     periodList: TPopulatedPeriodResult[]

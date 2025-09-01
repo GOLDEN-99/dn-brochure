@@ -14,6 +14,7 @@ import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.com
             <tr>
               <th style="width: 20%;">ใบลดหนี้</th>
               <th style="width: 20%;">ยอดใบลดหนี้</th>
+              <th style="width: 20%;">หมายเหตุ</th>
               <th style="width: 20%;">วันที่ใบลดหนี้</th>
               <th style="width: 20%;">
                 <button
@@ -29,6 +30,7 @@ import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.com
             <tr>
               <td>{{ credit.creditNumb }}</td>
               <td>{{ credit.creditAmount| number : "1.2-2" }}</td>
+              <td>{{ credit.creditRemark }}</td>
               <td colspan="2">{{ credit.creditDate }}</td>
             </tr>
             }
@@ -37,7 +39,13 @@ import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.com
       </div>
           
     <ng-template #creditModal let-modal>
-      <app-other-income-credit-modal [periodId]="periodId()"  />
+      <app-other-income-credit-modal 
+      [periodId]="periodId()" 
+      [incomeAmount]="incomeAmount()" 
+      [addedAmount]="addedAmount()"         
+      (success)="onSuccess($event)"
+      (fail)="onFail($event)"
+      (close)="modal.dismiss()" />
     </ng-template>
   `,
   styles: ''
@@ -45,8 +53,8 @@ import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.com
 export class OtherIncomeCreditPeriodComponent {
   creditList = input.required<TCreditNoteDto[]>()
   periodId = input.required<number>()
-  exIncome = input.required<number>()
-  discount = input.required<number>()
+  incomeAmount = input.required<number>()
+  addedAmount = input.required<number>()
 
   success = output<string>()
   fail = output<string>()

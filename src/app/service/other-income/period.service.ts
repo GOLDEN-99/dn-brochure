@@ -52,8 +52,7 @@ type TPeriodInvReq = {
   invNumb: string
   invDate: string
   invAmount: number
-  exIncome: number
-  withholding: number
+  invRemark: string
 }
 
 type TPeriodReceReq = {
