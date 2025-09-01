@@ -54,7 +54,7 @@ export class PurchaseIncomeFormComponent implements OnInit, OnDestroy {
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   isLight = signal(-1)
-  isInce = computed(() => this.isLight() === 2)
+  isInce = computed(() => this.isLight() === 3)
   productList = this.baseFormService.productList
   onSubmit = () => {
     const comp = this.comp()
