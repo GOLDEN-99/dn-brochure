@@ -52,11 +52,7 @@ import { PeriodNotLightService } from '../../../service/other-income/period-not-
 export class AccountNotLightProductComponent {
   private periodNotLight = inject(PeriodNotLightService)
   parma = this.periodNotLight.params
-  data = this.periodNotLight.modProPeriod
-  term = this.periodNotLight.term
-  field = this.periodNotLight.mode
-  status = this.periodNotLight.filter
-  comp = this.periodNotLight.comp
+  data = this.periodNotLight.modPeriod
 
   private router = inject(Router)
   private route = inject(ActivatedRoute)

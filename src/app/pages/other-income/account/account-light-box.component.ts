@@ -21,8 +21,6 @@ import { PeriodLightService } from '../../../service/other-income/period-light.s
             <th>เริ่ม</th>
             <th>จบ</th>
             <th>ชื่อซัพพลายเออร์</th>
-            <th>จำนวนสาขา</th>
-            <th>ยอดสูงสุด</th>
             <th>สถานะ</th>
             <th>รายละเอียด</th>
           </tr>
@@ -34,8 +32,6 @@ import { PeriodLightService } from '../../../service/other-income/period-light.s
             <td>{{ item.startDate | date }}</td>
             <td>{{ item.endDate | date }}</td>
             <td>{{ item.company.compName }}</td>
-            <td>{{ item.totalBranch }}</td>
-            <td>{{ item.totalAmount }}</td>
             <td>{{ item.status }}</td>
             <td><a [routerLink]="genUrl(item.company.compCode, item.company.compType, item.id)">ดู</a></td>
           </tr>
@@ -54,10 +50,7 @@ import { PeriodLightService } from '../../../service/other-income/period-light.s
 export class AccountLightBoxComponent {
   private periodLight = inject(PeriodLightService)
   data = this.periodLight.modPeriod
-  term = this.periodLight.term
-  status = this.periodLight.filter
-  comp = this.periodLight.comp
-  param = this.periodLight.params2
+  param = this.periodLight.params
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   genUrl(compCode: string, compType: string, id: number) {

@@ -41,9 +41,9 @@ import { PeriodNotLightService } from '../../../service/other-income/period-not-
             <td>{{ item.startDate | date }}</td>
             <td>{{ item.endDate | date }}</td>
             <td>{{ item.company.compName }}</td>
-            <td>{{ item.remark }}</td>
+            <td>{{ item.periodName }}</td>
             <td>{{ item.status }}</td>
-            <td><a [routerLink]="genUrl(item.company.compCode, item.company.compType, item.id)">ดู</a></td>
+            <td><a [routerLink]="genUrl(item.company.compCode, item.company.compType, item.id)">รายละเอียด</a></td>
           </tr>
           }
         </tbody>
@@ -55,7 +55,7 @@ import { PeriodNotLightService } from '../../../service/other-income/period-not-
 export class AccountNotLightInvoiceComponent {
   private periodNotLight = inject(PeriodNotLightService)
   parmas = this.periodNotLight.params
-  data = this.periodNotLight.modInvPeriod
+  data = this.periodNotLight.modPeriod
 
 
 
