@@ -2,13 +2,10 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MonthlyService } from '../../../../service/other-income/monthly.service';
-import { ToastService } from '../../../../service/toast/toast.service';
-import { OiNotLightService } from '../../../../service/other-income/oi-not-light.service';
 import { MonthSelectComponent } from "../../../date-input/month-select.component";
 import { YearSelectComponent } from "../../../date-input/year-select.component";
 import { DecimalPipe } from '@angular/common';
 import { TOIStepItem } from '../../../../types';
-import { TIncomeItem } from '../../../../service/other-income/base-oi';
 import { calFlat, calSemi, calStep } from './lib';
 
 @Component({
@@ -75,8 +72,10 @@ export class OtherIncomeMonthlyEditComponent {
     if (comp !== 'DN' && comp !== 'HU') return
     this.monthService.calIncome(comp, id)
   }
-
+  disableOnclick = signal(false)
   onSubmit() {
+    if (this.disableOnclick()) return
+    this.disableOnclick.set(true)
     const id = this.id()
     const startDate = this.isoDate()
     const reason = this.reason()
@@ -93,7 +92,15 @@ export class OtherIncomeMonthlyEditComponent {
       },
       error: (err) => {
         this.fail.emit(err.message)
-      }
+      },
+      complete: () => this.resetForm()
     })
+  }
+
+  resetForm = () => {
+    this.cn.set(0)
+    this.reason.set('')
+    this.actualAmount.set(0)
+    this.disableOnclick.set(false)
   }
 }

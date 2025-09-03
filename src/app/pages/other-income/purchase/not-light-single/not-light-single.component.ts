@@ -9,7 +9,6 @@ import { OtherIncomeMonthlyEditComponent } from "../../../../components/other-in
 import { CreatePeriodComponent } from "../../../../components/other-income/create/create-period/create-period.component";
 import { OtherIncomeOrderPeriodComponent } from '../../../../components/other-income/period/other-income-order-period.component';
 import { ToastService } from '../../../../service/toast/toast.service';
-import { DecimalPipe } from '@angular/common';
 import { OtherIncomeInvoicePeriodComponent } from '../../../../components/other-income/period/other-income-invoice-period.component';
 import { OtherIncomeReciptPeriodComponent } from '../../../../components/other-income/period/other-income-recipt-period.component';
 import { OtherIncomeGoodOrderPeriodComponent } from "../../../../components/other-income/period/other-income-good-order-period.component";
@@ -47,10 +46,6 @@ export class NotLightSingleComponent {
   invalidValue = computed(() => this.data().length !== 1)
   currentResult = computed(() => this.data()[0])
 
-  acc = computed(() => {
-    const { head: { accAmount, accIncome } } = this.currentResult()
-    return { accAmount, accIncome }
-  })
   incomeList = computed(() => this.currentResult().incomeList)
 
   criteria = computed(() => {
@@ -94,6 +89,7 @@ export class NotLightSingleComponent {
   ]
 
   private _genSelector = (incomeType: number) => {
+    console.log(incomeType)
     switch (incomeType) {
       case 1:
         return this.periodOrderSelector

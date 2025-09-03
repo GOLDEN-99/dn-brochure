@@ -35,6 +35,7 @@
     </div>
   </div>
   <app-other-income-invoice-period
+    [canEdit]="!isPurchase"
     [invoiceList]="period.invoiceList"
     [periodId]="period.id"
     [incomeAmount]="period.totalIncome"
@@ -43,6 +44,7 @@
     (fail)="onFail($event)"
   />
   <app-other-income-recipt-period
+    [canEdit]="!isPurchase"
     [receiptList]="period.receiptList"
     [periodId]="period.id"
     [invAmount]="period.invAmount"

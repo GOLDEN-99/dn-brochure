@@ -35,7 +35,7 @@ import { PeriodNotLightService } from '../../../service/other-income/period-not-
           </tr>
         </thead>
         <tbody>
-          @for (item of data(); track item.id) {
+          @for (item of data(); track item.periodId) {
           <tr>
             <td>{{ item.event.eventName }}</td>
             <td>{{ item.startDate | date }}</td>

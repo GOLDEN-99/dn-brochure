@@ -32,7 +32,7 @@ export const calStep: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | nu
             return [remain - range, result + cur]
         }, [validAmount, 0]
     )
-    const calIncome = cal[2] / 100
+    const calIncome = cal[1] / 100
     return calIncome - accIncome
 }
 
@@ -62,7 +62,7 @@ export const calSemi: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | nu
 
         }, [validAmount, 0, 0]
     )
-    const calIncome = cal[2] / 100
+    const calIncome = cal[1] / 100
     return calIncome - accIncome
 }
 

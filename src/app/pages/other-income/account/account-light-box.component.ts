@@ -26,7 +26,7 @@ import { PeriodLightService } from '../../../service/other-income/period-light.s
           </tr>
         </thead>
         <tbody>
-          @for (item of data(); track $index) {
+          @for (item of data(); track item.periodId) {
           <tr>
             <td>{{ item.event.eventName }}</td>
             <td>{{ item.startDate | date }}</td>

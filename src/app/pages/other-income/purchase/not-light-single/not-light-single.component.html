@@ -17,7 +17,6 @@
 
   @if(e.event.eventType === 1){
   <!---->
-  @let a = acc();
   <app-other-income-not-light-edit
     [steps]="e.stepList"
     [notLight]="e.notLight"
@@ -27,8 +26,8 @@
     [eventType]="e.event.eventType"
     [id]="h.id"
     [compType]="e.company.compType"
-    [accAmount]="a.accAmount"
-    [accIncome]="a.accIncome"
+    [accAmount]="e.head.accAmount"
+    [accIncome]="e.head.accIncome"
     [stepType]="e.notLight.stepType"
     [stepList]="e.stepList"
     [capAmount]="e.notLight.capAmount"
@@ -37,7 +36,7 @@
     (fail)="onFail($event)"
   />
   <app-other-income-monthly-list
-    [isDc]="[1, 2].includes(e.income.incomeType)"
+    [isDc]="[1, 2].includes(e.event.eventType)"
     [incomeList]="e.incomeList"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
@@ -76,10 +75,10 @@
         }
       </div>
       <div class="row">
-        @for (period of periods; track $index) { @for (fn of currentMapper();let
-        j = $index; track j) {
+        <!---->
+        @for (fn of currentMapper();track $index) {
         <div class="col">{{ fn(period) }}</div>
-        } }
+        }
       </div>
     </div>
     <div style="overflow-x: auto; max-width: 100%">

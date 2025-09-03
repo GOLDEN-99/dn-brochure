@@ -55,7 +55,7 @@ export class OtherIncomeMonthlyListComponent {
   private _notDcSelector: TFieldSelector<TIncomeItem>[] = [
     { label: 'เริ่ม', fn: v => this._formatDate(v.startDate) },
     { label: 'จบ', fn: v => this._formatDate(v.endDate) },
-    { label: 'หมายเหตุ', fn: v => v.cn },
+    { label: 'หมายเหตุ', fn: v => v.reason },
     { label: 'รายได้', fn: v => v.incomeAmount }
   ]
   isDc = input.required<boolean>()

@@ -86,6 +86,12 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-primary w-100" (click)="onSubmit()">บันทึก</button>
+    <button
+      class="btn btn-primary w-100"
+      (click)="onSubmit()"
+      [disabled]="disableOnclick()"
+    >
+      บันทึก
+    </button>
   </div>
 </ng-template>
