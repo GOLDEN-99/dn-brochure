@@ -1,14 +1,12 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CUSTOM_FIELD_SEARCH_TOKEN, OTHER_INCOME_NL_SEARCH } from '../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
-import { OiNotLightService } from '../../../service/other-income/oi-not-light.service';
 import { OtherIncomeAccountQueryTabComponent } from "./other-income-account-query-tab.component";
 import { PeriodNotLightService } from '../../../service/other-income/period-not-light.service';
 
 @Component({
   selector: 'app-account-not-light-invoice',
-  imports: [RouterLink, DatePipe, OtherIncomeAccountQueryTabComponent],
+  imports: [RouterLink, OtherIncomeAccountQueryTabComponent],
   providers: [
     {
       provide: CUSTOM_FIELD_SEARCH_TOKEN,
@@ -26,10 +24,9 @@ import { PeriodNotLightService } from '../../../service/other-income/period-not-
         <thead>
           <tr>
             <th>กิจกรรม</th>
-            <th>เริ่ม</th>
-            <th>จบ</th>
+            <th>ชื่อเรียก</th>
             <th>ชื่อซัพพลายเออร์</th>
-            <th>ชื่อเรียกเก็บ period</th>
+            <th>ชื่อ period</th>
             <th>สถานะ</th>
             <th>รายละเอียด</th>
           </tr>
@@ -38,8 +35,7 @@ import { PeriodNotLightService } from '../../../service/other-income/period-not-
           @for (item of data(); track item.periodId) {
           <tr>
             <td>{{ item.event.eventName }}</td>
-            <td>{{ item.startDate | date }}</td>
-            <td>{{ item.endDate | date }}</td>
+            <td>{{ item.displayName }}</td>
             <td>{{ item.company.compName }}</td>
             <td>{{ item.periodName }}</td>
             <td>{{ item.status }}</td>
@@ -56,8 +52,6 @@ export class AccountNotLightInvoiceComponent {
   private periodNotLight = inject(PeriodNotLightService)
   parmas = this.periodNotLight.params
   data = this.periodNotLight.modPeriod
-
-
 
   private router = inject(Router)
   private route = inject(ActivatedRoute)

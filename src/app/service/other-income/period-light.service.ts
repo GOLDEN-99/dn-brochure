@@ -68,9 +68,9 @@ export class PeriodLightService {
 
 type TPeriodSummaryLight = {
   id: number
-  totalBranch: number,
-  totalAmount: number,
+  displayName: string
   periodId: number
+  periodName: string
   remark: string
   event: TEvent
   company: TOIComp
