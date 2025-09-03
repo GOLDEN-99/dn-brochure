@@ -17,12 +17,14 @@ import { DecimalPipe } from '@angular/common';
               <th style="width: 20%;">ใบแจ้งหนี้ซัพ</th>
               <th style="width: 20%;">ใบเสร็จรับเงิน</th>
               <th style="width: 20%;">        
-                <button
+                @if(canEdit()){
+                  <button
                   class="btn btn-sm btn-primary me-1"
                   (click)="openPo()"
                   >
                   เพิ่ม po
                 </button>
+              }
               </th>
             </tr>
           </thead>
@@ -56,6 +58,7 @@ export class OtherIncomeGoodOrderPeriodComponent {
   orderList = input.required<TOrderItemDto[]>()
   periodId = input.required<number>()
   actualAmount = input.required<number>()
+  canEdit = input(false)
   success = output<string>()
   fail = output<string>()
   selectPeriodId = signal(0)

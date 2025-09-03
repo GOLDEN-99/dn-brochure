@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { BaseOiService, TDetailLight, TLightSummary } from './base-oi';
+import { BaseOiService, ManyContactLightResponse, TDetailLight } from './base-oi';
 import { environment } from '../../../environments/environment';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, shareReplay, Subject, switchMap } from 'rxjs';
@@ -22,7 +22,7 @@ export class OiLightService extends BaseOiService {
       map(([mode, term, compType]) => ({ compType, query: { mode, term } }))
     )
   getAll({ compType, query }: { compType: string, query: {} }) {
-    return this.api.get<TLightSummary[]>(`${this.url}/other-income/contact/light/${compType}`, { params: query })
+    return this.api.get<ManyContactLightResponse[]>(`${this.url}/other-income/contact/light/${compType}`, { params: query })
       .pipe(catchError(err => { console.log(err); return of([]) }))
   }
   private lightList$ = this.queryParam$.pipe(switchMap((search) => this.getAll(search)))

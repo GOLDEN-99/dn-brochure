@@ -11,7 +11,6 @@ export class OiProductService {
 
   constructor() {
     this.product$
-      .pipe(map(products => products.map(this.mapCheckToProduct)))
       .subscribe(res => this.product.set(res))
   }
   private api = inject(ApiService)
@@ -41,11 +40,14 @@ export class OiProductService {
   selectAll = (isCheck: boolean) => this.product.update(prev => prev.map(p => ({ ...p, check: isCheck })))
 
 
-  private mapCheckToProduct = (product: TSearchProductResult) => {
-    // const hasCheck = this.checked.has(product.goodCode)
-    return { ...product, check: false }
+  private mapCheckToProduct = ({ barCode, goodCode, goodName }: TSearchProductResult): TAppSearchProductResult => {
+    return { goodCode, goodName: `(${barCode}) ${goodName}`, check: false }
   }
 }
 
-type TSearchProductResult = { goodCode: string, goodName: string }
-type TAppSearchProductResult = { check: boolean } & TSearchProductResult
+type TSearchProductResult = {
+  goodCode: string
+  goodName: string
+  barCode: string
+}
+type TAppSearchProductResult = { check: boolean } & Omit<TSearchProductResult, 'barCode'>

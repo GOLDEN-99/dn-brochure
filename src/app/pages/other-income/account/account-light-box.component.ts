@@ -13,7 +13,7 @@ import { PeriodLightService } from '../../../service/other-income/period-light.s
   template: `
     <div>
       <h1 class="text-center">รายการรายได้อื่น</h1>
-      <app-other-income-account-query-tab [(compType)]="comp" [field]="1" [(status)]="status" [(term)]="term" [disbleMode]="true" />
+      <app-other-income-account-query-tab [(param)]="param" [disbleMode]="true" eventFilter="light" />
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
@@ -57,7 +57,7 @@ export class AccountLightBoxComponent {
   term = this.periodLight.term
   status = this.periodLight.filter
   comp = this.periodLight.comp
-
+  param = this.periodLight.params2
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   genUrl(compCode: string, compType: string, id: number) {

@@ -1,5 +1,4 @@
 <div class="mb-3">
-  @let incomes = incomeList();
   <div class="row" style="justify-content: space-between">
     <h2 class="col-auto">รายการรับรู้รายเดือน</h2>
     @if (canEdit()) {
@@ -10,45 +9,6 @@
     </div>
     }
   </div>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>งวด</th>
-        <th>ยอดคำนวน</th>
-        <th>cn</th>
-        <th>ยอดจริง</th>
-        <th>ส่วนต่าง</th>
-        <th>สาเหตุ</th>
-        <th>รายได้</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (income of incomes; track $index) {
-      <tr>
-        <td>{{ formatMonth(income.startDate) }}</td>
-        <td>{{ income.calAmount | number : "1.2-2" }}</td>
-        <td>{{ income.cn | number : "1.2-2" }}</td>
-        <td>{{ income.actualAmount | number : "1.2-2" }}</td>
-        <td>
-          {{
-            income.calAmount - income.cn - income.actualAmount
-              | number : "1.2-2"
-          }}
-        </td>
-        <td>{{ income.reason }}</td>
-        <td>{{ income.incomeAmount | number : "1.2-2" }}</td>
-        <td>
-          @if (incomes.length -1 === $index && income.checkDate === null) {
-          <button class="btn btn-danger" (click)="onDelete(income.id)">
-            <i class="bi bi-trash"></i>
-          </button>
-          }
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
 </div>
 
 <ng-template #monthlyModal let-modal>

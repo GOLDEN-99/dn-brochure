@@ -18,13 +18,15 @@ import { OtherIncomeOrderModalComponent } from './other-income-order-modal/other
               <th style="width: 20%;">รายได้บันทึก</th>
               <th style="width: 20%;">ใบแจ้งหนี้ซัพ</th>
               <th style="width: 20%;">ใบเสร็จรับเงิน</th>
-              <th style="width: 20%;">        
+              <th style="width: 20%;">   
+                @if(canEdit()){
                 <button
                   class="btn btn-sm btn-primary me-1"
                   (click)="openPo()"
                   >
                   เพิ่ม po
                 </button>
+              }     
               </th>
             </tr>
           </thead>
@@ -59,6 +61,7 @@ export class OtherIncomeOrderPeriodComponent {
   orderList = input.required<TOrderItemDto[]>()
   periodId = input.required<number>()
   actualAmount = input.required<number>()
+  canEdit = input(false)
   success = output<string>()
   fail = output<string>()
   selectPeriodId = signal(0)

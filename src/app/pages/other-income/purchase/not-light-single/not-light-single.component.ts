@@ -16,6 +16,10 @@ import { OtherIncomeGoodOrderPeriodComponent } from "../../../../components/othe
 import { TPopulatedPeriodResult } from '../../../../service/other-income/base-oi';
 import { OtherIncomeMonthlyIncentiveEditComponent } from "../../../../components/other-income/edit/other-income-monthly-incentive-edit/other-income-monthly-incentive-edit.component";
 import { OtherIncomeCreditPeriodComponent } from "../../../../components/other-income/period/other-income-credit-period.component";
+import { OtherIncomeMonthlyListComponent } from "../../../../components/other-income/template/other-income-monthly-list.component";
+import { formatLocalNumber } from '../../../../lib/formatter';
+import { TFieldSelector } from '../../../../types';
+import { OTHER_INCOME_PAGE_TOKEN } from '../../../../lib';
 
 @Component({
   selector: 'app-not-light-single',
@@ -25,17 +29,19 @@ import { OtherIncomeCreditPeriodComponent } from "../../../../components/other-i
     OtherIncomeMonthlyEditComponent, CreatePeriodComponent,
     OtherIncomeOrderPeriodComponent,
     OtherIncomeReciptPeriodComponent, OtherIncomeInvoicePeriodComponent,
-    NgbDatepickerModule, FormsModule, DecimalPipe,
+    NgbDatepickerModule, FormsModule,
     OtherIncomeGoodOrderPeriodComponent,
     OtherIncomeMonthlyIncentiveEditComponent,
-    OtherIncomeCreditPeriodComponent
+    OtherIncomeCreditPeriodComponent,
+    OtherIncomeMonthlyListComponent
   ],
   templateUrl: './not-light-single.component.html',
   styleUrl: './not-light-single.component.scss'
 })
 export class NotLightSingleComponent {
   private toastService = inject(ToastService)
-
+  private _pageToken = inject(OTHER_INCOME_PAGE_TOKEN)
+  isPurchase = this._pageToken.isPurchase
   private notLightServ = inject(OiNotLightService)
   data = this.notLightServ.singleRecord
   invalidValue = computed(() => this.data().length !== 1)
@@ -74,48 +80,36 @@ export class NotLightSingleComponent {
 
   periodReceSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
     { label: 'ชื่อ', fn: v => v.periodName },
-    { label: 'ยอดซื้อ', fn: v => v.totalAmount },
-    { label: 'รายได้', fn: v => v.totalIncome },
-    { label: 'ยอดใบแจ้งหนี้', fn: v => v.invAmount },
-    { label: 'ยอดใบเสร็จ', fn: v => v.receAmount },
+    { label: 'ยอดซื้อ', fn: v => this._localFormatNumber(v.totalAmount) },
+    { label: 'รายได้', fn: v => this._localFormatNumber(v.totalIncome) },
+    { label: 'ยอดใบแจ้งหนี้', fn: v => this._localFormatNumber(v.invAmount) },
+    { label: 'ยอดใบเสร็จ', fn: v => this._localFormatNumber(v.receAmount) },
   ]
 
   periodCreditSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
     { label: 'ชื่อ', fn: v => v.periodName },
-    { label: 'ยอดซื้อ', fn: v => v.totalAmount },
-    { label: 'รายได้', fn: v => v.totalIncome },
-    { label: 'ยอดใบลดหนี้', fn: v => v.invAmount },
+    { label: 'ยอดซื้อ', fn: v => this._localFormatNumber(v.totalAmount) },
+    { label: 'รายได้', fn: v => this._localFormatNumber(v.totalIncome) },
+    { label: 'ยอดใบลดหนี้', fn: v => this._localFormatNumber(v.creditAmount) },
   ]
 
-  genPeriodHeader = (eventType: number) => {
-    switch (eventType) {
+  private _genSelector = (incomeType: number) => {
+    switch (incomeType) {
       case 1:
-        return this.periodOrderSelector.map(({ label }) => label)
+        return this.periodOrderSelector
       case 2:
-        return this.periodReceSelector.map(({ label }) => label)
+        return this.periodOrderSelector
       case 3:
-        return this.periodCreditSelector.map(({ label }) => label)
+        return this.periodReceSelector
+      case 4:
+        return this.periodCreditSelector
       default: return []
     }
   }
 
-  formatPeriodValue = (eventType: number) => (value: TPopulatedPeriodResult) => {
-    switch (eventType) {
-      case 1:
-        return this.periodOrderSelector.map(({ fn }) => fn(value))
-      case 2:
-        return this.periodReceSelector.map(({ fn }) => fn(value))
-      case 3:
-        return this.periodCreditSelector.map(({ fn }) => fn(value))
-      default: return []
-    }
-  }
+  private _currentSelector = computed(() => this._genSelector(this.currentResult().income.incomeType))
+  currentHeader = computed(() => this._currentSelector().map(({ label }) => label))
+  currentMapper = computed(() => this._currentSelector().map(({ fn }) => fn))
 
-  private _localFormatNumber = (value: number) => value.toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  })
+  private _localFormatNumber = formatLocalNumber
 }
-type TObj = Record<string, unknown>
-type TSelectFn<T extends TObj> = (v: T) => T[keyof T]
-type TFieldSelector<T extends TObj> = { label: string, fn: TSelectFn<T> }

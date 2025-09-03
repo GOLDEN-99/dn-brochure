@@ -28,6 +28,7 @@ export interface ISharedHead {
 
 export type ManyContactResponse = {
     id: number
+    displayName: string
     startDate: string,
     endDate: string,
     compCode: string,
@@ -35,7 +36,11 @@ export type ManyContactResponse = {
     eventName: string
     eventType: number
     compType: string
+    incomeName: string
+    incomeType: number
 }
+
+export type ManyContactLightResponse = { totalBranch: number; totalAmount: number } & ManyContactResponse
 
 export type NotLightSummary = {
     id: number

@@ -3,7 +3,7 @@ import { SearchPageComponent } from './pages/brochure-project/search-page/search
 import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
 import { NotfoundComponent } from './pages/notfound/notfound.component';
-import { BROCHURE_PRICE_TYPE_TOKEN, BROCHURE_TOKEN } from './lib';
+import { BROCHURE_PRICE_TYPE_TOKEN, BROCHURE_TOKEN, OTHER_INCOME_PAGE_TOKEN } from './lib';
 import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
 import { cnResolver } from './resolvers/cn/cn.resolver';
 import { BaseBrochureComponent } from './pages/brochure-project/base-brochure/base-brochure.component';
@@ -298,6 +298,10 @@ export const routes: Routes = [
                     {
                         provide: LABEL_TOKEN,
                         useValue: { label: "รายได้อื่นๆ light box" }
+                    },
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: true }
                     }
                 ],
                 children: [
@@ -314,11 +318,23 @@ export const routes: Routes = [
             {
                 path: 'purchase/light/:headId',
                 resolve: { single: getOtherIncomeLightIdResolver },
+                providers: [
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: true }
+                    }
+                ],
                 component: LightSingleComponent
             },
             {
                 path: 'purchase/not-light/:headId',
                 resolve: { single: getOtherIncomeNotLightIdResolver },
+                providers: [
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: true }
+                    }
+                ],
                 component: NotLightSingleComponent
             },
             {
@@ -328,6 +344,10 @@ export const routes: Routes = [
                     {
                         provide: TAB_TOKEN,
                         useValue: ACCOUNT_TAB_TOKEN
+                    },
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: false }
                     }
                 ],
                 children: [
@@ -352,18 +372,30 @@ export const routes: Routes = [
             {
                 path: 'account/light/:headId',
                 resolve: { single: getOtherIncomeLightIdResolver },
+                providers: [
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: false }
+                    }
+                ],
                 component: LightSingleComponent
             },
             {
                 path: 'account/not-light/:headId',
                 resolve: { single: getOtherIncomeNotLightIdResolver },
+                providers: [
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: false }
+                    }
+                ],
                 component: NotLightSingleComponent
             },
-            {
-                path: 'account/not-light-product/:headId',
-                resolve: { single: getOtherIncomeNotLightIdResolver },
-                component: NotLightSingleComponent
-            },
+            // {
+            //     path: 'account/not-light-product/:headId',
+            //     resolve: { single: getOtherIncomeNotLightIdResolver },
+            //     component: NotLightSingleComponent
+            // },
             {
                 path: "account/:id",
                 component: PurchaseTemplateComponent

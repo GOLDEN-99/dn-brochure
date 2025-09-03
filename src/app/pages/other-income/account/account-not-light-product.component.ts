@@ -18,7 +18,7 @@ import { PeriodNotLightService } from '../../../service/other-income/period-not-
   template: `
     <div>
       <h1 class="text-center">รายการรายได้อื่น</h1>
-      <app-other-income-account-query-tab [(compType)]="comp" [(field)]="field" [(status)]="status" [(term)]="term" />
+      <app-other-income-account-query-tab [(param)]="parma" eventFilter="not-light" />
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
@@ -51,6 +51,7 @@ import { PeriodNotLightService } from '../../../service/other-income/period-not-
 })
 export class AccountNotLightProductComponent {
   private periodNotLight = inject(PeriodNotLightService)
+  parma = this.periodNotLight.params
   data = this.periodNotLight.modProPeriod
   term = this.periodNotLight.term
   field = this.periodNotLight.mode

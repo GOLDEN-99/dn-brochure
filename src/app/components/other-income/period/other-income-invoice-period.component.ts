@@ -19,12 +19,15 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
               <th style="width: 20%;">หมายเหตุ</th>
               <th style="width: 20%;">วันที่ใบแจ้งหนี้</th>
               <th style="width: 20%;">
-                <button
+                @if(canEdit()){
+                  <button
                   class="btn btn-sm btn-primary me-1"
                   (click)="openInvoice()"
-                >
+                  >
                   เพิ่มใบแจ้งหนี้
-                </button></th>
+                </button>
+                }
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -53,6 +56,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   `,
 })
 export class OtherIncomeInvoicePeriodComponent {
+  canEdit = input(false)
   invoiceList = input.required<TInviceItemDto[]>()
   periodId = input.required<number>()
   incomeAmount = input.required<number>()

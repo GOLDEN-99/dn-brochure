@@ -19,12 +19,14 @@ import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.c
               <th style="width: 20%;">หมายเหตุ</th>
               <th style="width: 20%;">วันที่ใบเสร็จ</th>
               <th style="width: 20%;">
-                <button
+                @if(canEdit()){
+                  <button
                   class="btn btn-sm btn-secondary"
                   (click)="openReceipt()"
-                >
+                  >
                   เพิ่มใบเสร็จรับเงิน
                 </button>
+              }
               </th>
             </tr>
           </thead>
@@ -59,6 +61,7 @@ export class OtherIncomeReciptPeriodComponent {
   periodId = input.required<number>()
   invAmount = input.required<number>()
   receAmount = input.required<number>()
+  canEdit = input(false)
   success = output<string>()
   fail = output<string>()
 

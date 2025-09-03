@@ -18,7 +18,6 @@ import { calFlat, calSemi, calStep } from './lib';
   styleUrl: './other-income-monthly-edit.component.scss'
 })
 export class OtherIncomeMonthlyEditComponent {
-  incomeList = input.required<TIncomeItem[]>()
   success = output<string>()
   fail = output<string>()
   eventType = input.required<number>()
@@ -94,22 +93,6 @@ export class OtherIncomeMonthlyEditComponent {
       },
       error: (err) => {
         this.fail.emit(err.message)
-      }
-    })
-  }
-
-  formatMonth(iso: string) {
-    const [yy, mm, dd] = iso.split('T')[0].split('-')
-    return `${mm}/${yy}`
-  }
-
-  onDelete(incId: number) {
-    this.monthService.deleteMonthly(incId).subscribe({
-      next: () => {
-        this.success.emit('ลบสำเร็จ')
-      },
-      error: (err) => {
-        this.fail.emit(err.message);
       }
     })
   }

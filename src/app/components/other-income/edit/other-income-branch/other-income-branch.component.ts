@@ -26,6 +26,7 @@ export class OtherIncomeBranchComponent implements OnInit, OnDestroy {
   refetch = output<void>()
   lightId = input.required<number>()
   branchList = input<TBranchItem[]>([])
+  canEdit = input(false)
   private toastServ = inject(ToastService)
   private branchModal = viewChild('branchModal')
   private modalService = inject(NgbModal)

@@ -17,12 +17,15 @@ import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.com
               <th style="width: 20%;">หมายเหตุ</th>
               <th style="width: 20%;">วันที่ใบลดหนี้</th>
               <th style="width: 20%;">
-                <button
+                @if(canEdit()){
+                  <button
                   class="btn btn-sm btn-primary me-1"
                   (click)="openCredit()"
-                >
+                  >
                   เพิ่มใบลดหนี้
-                </button></th>
+                </button>
+              }
+            </th>
             </tr>
           </thead>
           <tbody>
@@ -51,6 +54,7 @@ import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.com
   styles: ''
 })
 export class OtherIncomeCreditPeriodComponent {
+  canEdit = input(false)
   creditList = input.required<TCreditNoteDto[]>()
   periodId = input.required<number>()
   incomeAmount = input.required<number>()

@@ -5,6 +5,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { combineLatest, filter, Observable, switchMap } from 'rxjs';
 import { TEvent } from './event.service';
 import { TOIComp } from './company.service';
+import { TAccountQueryReqState } from './period-not-light.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class PeriodLightService {
 
   private url = environment.oi
   private api = inject(ApiService)
+  params2 = signal<TAccountQueryReqState>({ filter: 3, compType: 1, mode: 1, eventId: 0, term: '', goodCode: '', compCode: '' })
 
   term = signal("")
   private term$ = toObservable(this.term).pipe(filter(t => t !== ''))

@@ -198,3 +198,8 @@ export type TInsertMonthlyIncomeState = {
     reason: string
     createDate: NgbDateStruct
 }
+
+
+export interface IOtherIncomePageToke {
+    isPurchase: boolean
+}

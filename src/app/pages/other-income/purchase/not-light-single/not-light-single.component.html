@@ -25,7 +25,6 @@
   />
   <app-other-income-monthly-edit
     [eventType]="e.event.eventType"
-    [incomeList]="incomes"
     [id]="h.id"
     [compType]="e.company.compType"
     [accAmount]="a.accAmount"
@@ -34,6 +33,12 @@
     [stepList]="e.stepList"
     [capAmount]="e.notLight.capAmount"
     [canEdit]="true"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  <app-other-income-monthly-list
+    [isDc]="[1, 2].includes(e.income.incomeType)"
+    [incomeList]="e.incomeList"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
@@ -49,6 +54,8 @@
     (fail)="onFail($event)"
   />
   }
+  <!---->
+  @if (isPurchase) {
   <app-create-period
     [eventType]="e.event.eventType"
     [incomeList]="incomes"
@@ -58,33 +65,21 @@
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
-
+  }
   <!---->
   @for (period of periods; track period.id) {
   <div class="mb-3">
     <div class="row bg-success bg-opacity-10">
       <div class="row">
-        @for (header of genPeriodHeader(e.income.incomeType); track $index) {
+        @for (header of currentHeader(); track $index) {
         <div class="col">{{ header }}</div>
         }
-        <!-- <div class="col">ชื่อเรียกเก็บ</div>
-        <div class="col">ยอดซื้อ</div>
-        <div class="col">รายได้คำนวณ</div>
-        <div class="col">ยอด PO</div>
-        <div class="col">ยอดใบแจ้งหนี้</div>
-        <div class="col">ยอดใบเสร็จ</div> -->
       </div>
       <div class="row">
-        @for (periodValue of formatPeriodValue(e.income.incomeType)(period);
-        track $index) {
-        <div class="col">{{ periodValue }}</div>
-        }
-        <!-- <div class="col">{{ period.periodName }}</div>
-        <div class="col">{{ period.totalAmount | number : "1.2-2" }}</div>
-        <div class="col">{{ period.totalIncome | number : "1.2-2" }}</div>
-        <div class="col">{{ period.orderAmount | number : "1.2-2" }}</div>
-        <div class="col">{{ period.invAmount | number : "1.2-2" }}</div>
-        <div class="col">{{ period.receAmount | number : "1.2-2" }}</div> -->
+        @for (period of periods; track $index) { @for (fn of currentMapper();let
+        j = $index; track j) {
+        <div class="col">{{ fn(period) }}</div>
+        } }
       </div>
     </div>
     <div style="overflow-x: auto; max-width: 100%">
@@ -92,6 +87,7 @@
       @if (e.income.incomeType === 1) {
       <div style="min-width: 100%" tabindex="0">
         <app-other-income-order-period
+          [canEdit]="isPurchase"
           [actualAmount]="period.totalIncome"
           [orderList]="period.orderList"
           [periodId]="period.id"
@@ -106,6 +102,7 @@
       @if (e.income.incomeType === 2) {
       <div style="min-width: 100%">
         <app-other-income-good-order-period
+          [canEdit]="isPurchase"
           [actualAmount]="period.totalIncome"
           [orderList]="period.orderList"
           [periodId]="period.id"
@@ -120,6 +117,7 @@
       @if (e.income.incomeType === 3) {
       <div style="min-width: 100%">
         <app-other-income-invoice-period
+          [canEdit]="!isPurchase"
           [invoiceList]="period.invoiceList"
           [periodId]="period.id"
           [incomeAmount]="period.totalIncome"
@@ -130,6 +128,7 @@
       </div>
       <div style="min-width: 100%">
         <app-other-income-recipt-period
+          [canEdit]="!isPurchase"
           [receiptList]="period.receiptList"
           [invAmount]="period.invAmount"
           [receAmount]="period.receAmount"
@@ -143,6 +142,7 @@
       @if (e.income.incomeType === 4) {
       <div style="min-width: 100%">
         <app-other-income-credit-period
+          [canEdit]="!isPurchase"
           [periodId]="period.id"
           [incomeAmount]="period.totalIncome"
           [addedAmount]="period.creditAmount"
@@ -153,7 +153,6 @@
       </div>
       }
     </div>
-    <!---->
   </div>
   } }
 </section>

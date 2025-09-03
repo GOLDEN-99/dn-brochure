@@ -1,8 +1,8 @@
 <section class="app-container">
   @if (invalidValue()) {
   <div>ไม่พบเอกสาร</div>
-  } @else { @let e = currentResult();@let branches = e.branchList;@let incomes =
-  e.incomeList;@let periods = e.periodList;
+  } @else { @let e = currentResult();@let branches = e.branchList;@let periods =
+  e.periodList;
   <app-other-income-head-edit
     [head]="e.head"
     [comp]="e.company"
@@ -15,32 +15,23 @@
     [totalIncome]="e.head.accIncome"
   />
   <app-other-income-branch
+    [canEdit]="isPurchase"
     [lightId]="e.light.id"
     [branchList]="branches"
     (refetch)="onRefetch()"
-  />
-  <app-other-income-monthly-light-edit
-    [incomeList]="incomes"
-    [id]="e.head.id"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
   />
 
   @for (period of periods; track period.id) {
   <div class="row bg-success bg-opacity-10">
     <div class="row">
-      <div class="col">ชื่อเรียกเก็บ</div>
-      <div class="col">รายได้บันทึก</div>
-      <div class="col">ยอด PO</div>
-      <div class="col">ยอดใบแจ้งหนี้</div>
-      <div class="col">ยอดใบเสร็จ</div>
+      @for (head of currentHeader(); track $index) {
+      <div class="col">{{ head }}</div>
+      }
     </div>
     <div class="row">
-      <div class="col">{{ period.periodName }}</div>
-      <div class="col">{{ period.totalIncome | number : "1.2-2" }}</div>
-      <div class="col">{{ period.orderAmount | number : "1.2-2" }}</div>
-      <div class="col">{{ period.invAmount | number : "1.2-2" }}</div>
-      <div class="col">{{ period.receAmount | number : "1.2-2" }}</div>
+      @for (fn of currentMapper(); track $index) {
+      <div class="col">{{ fn(period) }}</div>
+      }
     </div>
   </div>
   <app-other-income-invoice-period
