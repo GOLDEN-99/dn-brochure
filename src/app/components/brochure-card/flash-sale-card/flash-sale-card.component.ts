@@ -33,4 +33,17 @@ export class FlashSaleCardComponent {
   priceTextClass = computed(() => this.isStatic() ? 'price-text static text-white' : 'price-text text-white')
 
   goodCodeClass = computed(() => this.isStatic() ? 'goodcode static' : 'goodcode')
+
+  headerContainer = computed(() => this.isStatic() ? 'height:35%;' : 'height:25%;')
+
+  handleOnLoad(e: any) {
+    const containerRatio = 0.8
+    const img = e.target as HTMLImageElement
+    const ratio = img.naturalWidth / img.naturalHeight
+    if (ratio < containerRatio) {
+      img.style.height = '730px'
+    } else {
+      img.style.width = '590px'
+    }
+  }
 }
