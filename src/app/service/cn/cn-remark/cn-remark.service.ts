@@ -11,12 +11,7 @@ import { environment } from '../../../../environments/environment';
 export class CnRemarkService {
 
   constructor() {
-    const eff = effect(() => {
-      const curRemark = this.remarkOpt()
-      if (curRemark.id === '0') return
-      this.prob.set({ id: '-1', result: 'กรุณาเลือก' })
-      this.cnType.update(() => null)
-    })
+
   }
 
   private api = inject(ApiService)
@@ -40,14 +35,26 @@ export class CnRemarkService {
   probOption = computed(() => this.handleRemark(this.remarkOpt().id))
   showProbOption = computed(() => this.probOption().length !== 0)
   showCn = computed(() => this.handleShowCn(this.remarkOpt().id))
-  remarkOpt = signal<TReamrk>({ id: "0", remark: "กรุณาเลือก" })
-  invalidRemarkOpt = computed(() => this.remarkOpt().id === '0')
+  remarkOpt = signal<TReamrk>({ id: "0", remark: "กรุณาเลือกสาเหตุ" })
+  invalidRemarkOpt = computed(() => {
+    const { id, remark } = this.remarkOpt();
+    return id === '0' || remark === "กรุณาเลือกสาเหตุ"
+  })
   prob = signal<TResult>({ id: '-1', result: "กรุณาเลือก" })
-  invalidProb = computed(() => this.prob().id === '-1')
+  invalidProb = computed(() => {
+    const { id, result } = this.prob()
+    return id === '-1' || result === "กรุณาเลือก"
+  })
   cnType = signal<TCnType>(null)
 
 
-  setRemarkOption = (value: TReamrk) => this.remarkOpt.set(value)
+  setRemarkOption = ({ id, remark }: TReamrk) => {
+    this.remarkOpt.set({ id, remark })
+    // do side effect
+    if (id === '0') return
+    this.prob.set({ id: '-1', result: 'กรุณาเลือก' })
+    this.cnType.update(() => null)
+  }
   setProb = (value: TResult) => this.prob.set(value)
   setCnType = (value: TCnType) => this.cnType.set(value)
 
@@ -80,7 +87,7 @@ export class CnRemarkService {
       default: return true
     }
   }
-  private default: TReamrk[] = [{ id: "0", remark: "กรุณาเลือก" }]
+  private default: TReamrk[] = [{ id: "0", remark: "กรุณาเลือกสาเหตุ" }]
 
   calDisable() {
     const showProb = this.showProbOption()
