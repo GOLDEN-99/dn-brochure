@@ -60,3 +60,12 @@
   }
 </div>
 <app-other-income-order-report [year]="date().year" />
+<h4>รายงานเพื่อออกใบแจ้งหนี้</h4>
+<div>
+  <button class="btn btn-primary w-100" (click)="exportDnInvoice()">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success w-100" (click)="exportHuInvoice()">
+    รายงาน HN
+  </button>
+</div>

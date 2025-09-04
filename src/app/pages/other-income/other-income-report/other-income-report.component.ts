@@ -3,6 +3,7 @@ import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { SupplierReportService } from '../../../service/other-income/supplier-report.service';
 import { FormsModule } from '@angular/forms';
 import { OtherIncomeOrderReportComponent } from "../../../components/other-income/report/other-income-order-report/other-income-order-report.component";
+import { OiAccountReportService } from '../../../service/other-income/oi-account-report.service';
 
 @Component({
   selector: 'app-other-income-report',
@@ -37,6 +38,13 @@ export class OtherIncomeReportComponent {
   disable1 = computed(() => !this.compCode())
   private reportServ = inject(SupplierReportService)
   yearDis = this.reportServ.displayYear
+  private accReport = inject(OiAccountReportService)
+  exportDnInvoice() {
+    this.accReport.exportInvoiceReport(1)
+  }
+  exportHuInvoice() {
+    this.accReport.exportInvoiceReport(2)
+  }
   exportAnnualDN() {
     const date = this.date()
     const compCode = this.compCode()
