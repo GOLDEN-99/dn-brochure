@@ -45,7 +45,9 @@ type TCreatPeriodReq = {
 
 type TOrderList = {
   orderNumb: string
+  receNumb: string
   actualAmount: number
+  remark: string
 }
 
 type TPeriodInvReq = {

@@ -59,6 +59,7 @@ type TSmallProduct = {
 }
 
 export type TOiOrder = {
+  remark: string
   orderNumb: string
   discount: number
 }
@@ -69,6 +70,7 @@ export type TOiBill = {
 
 export type TOiGood = {
   productList: TSmallProduct[]
+  remark: string
 } & TOiOrder
 
 
