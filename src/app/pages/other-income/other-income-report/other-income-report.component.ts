@@ -1,18 +1,16 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { SupplierReportService } from '../../../service/other-income/supplier-report.service';
 import { FormsModule } from '@angular/forms';
-import { OtherIncomeOrderReportComponent } from "../../../components/other-income/report/other-income-order-report/other-income-order-report.component";
 import { OiAccountReportService } from '../../../service/other-income/oi-account-report.service';
 import { ToastService } from '../../../service/toast/toast.service';
-import * as XLSX from "xlsx"
 import { convertToIso } from '../../../lib';
 import { LoadingService } from '../../../service/loading/loading.service';
 import { toXlxs } from '../../../lib/utli';
-
+import { DateInputComponent } from "../../../components/date-input/date-input.component";
 @Component({
   selector: 'app-other-income-report',
-  imports: [FormsModule, OtherIncomeOrderReportComponent],
+  imports: [FormsModule, DateInputComponent],
   templateUrl: './other-income-report.component.html',
   styleUrl: './other-income-report.component.scss'
 })
@@ -26,6 +24,11 @@ export class OtherIncomeReportComponent {
     day: this.today.day,
     month: this.today.month,
     year: this.today.year
+  })
+  endDate = signal({
+    day: this.today.day,
+    month: this.today.month,
+    year: this.today.year + 1
   })
   private _iso = convertToIso(this.today)
   private _invName = `รายงานออกใบแจ้งหนี้วันที่-${this._iso}.xlsx`
@@ -103,27 +106,71 @@ export class OtherIncomeReportComponent {
       complete: () => this.loading.endLoad()
     })
   }
-  exportAnnualDN() {
-    this.loading.startLoad()
-    const date = this.date()
-    const compCode = this.compCode()
-    const compType = 'DN'
-    this.compType.set('DN')
-    this.reportServ.fetchYear(date, compCode, compType)
-  }
-  exportAnnualHU() {
-    this.loading.startLoad()
-    const date = this.date()
-    const compCode = this.compCode()
-    const compType = 'HU'
-    this.compType.set('HU')
-    this.reportServ.fetchYear(date, compCode, compType)
-  }
 
-  async toAnnualExcel() {
+  exportRangeBill(compType: number) {
     this.loading.startLoad()
-    await this.reportServ.annualExport();
+    const start = this.date()
+    const end = this.endDate()
+    this.accReport.exportBillReport(compType, start, end).subscribe({
+      next: async res => await this.toXlsx(`รายการส่วนลดท้ายบิล_${start.month}-${start.year}_${end.month}-${end.year}.xlsx`, `${start.month}-${start.year} ถึง ${end.month}-${end.year}`, res),
+      error: (err) => this.toast.danger(err?.message),
+      complete: () => this.loading.endLoad()
+    })
+  }
+  exportRangeProduct(compType: number) {
+    this.loading.startLoad()
+    const start = this.date()
+    const end = this.endDate()
+    this.accReport.exportProductReport(compType, start, end).subscribe({
+      next: async res => await this.toXlsx(`รายการสินค้า_${start.month}-${start.year}_${end.month}-${end.year}.xlsx`, `${start.month}-${start.year} ถึง ${end.month}-${end.year}`, res),
+      error: (err) => this.toast.danger(err?.message),
+      complete: () => this.loading.endLoad()
+    })
+  }
+  exportRangeInvRece(compType: number) {
+    this.loading.startLoad()
+    const start = this.date()
+    const end = this.endDate()
+    this.accReport.exportInvReceReport(compType, start, end).subscribe({
+      next: async res => await this.toXlsx(`รายการใบแจ้งหนี้_${start.month}-${start.year}_${end.month}-${end.year}.xlsx`, `${start.month}-${start.year} ถึง ${end.month}-${end.year}`, res),
+      error: (err) => this.toast.danger(err?.message),
+      complete: () => this.loading.endLoad()
+    })
+  }
+  exportRangeCredit(compType: number) {
+    this.loading.startLoad()
+    const start = this.date()
+    const end = this.endDate()
+    this.accReport.exportCreditReport(compType, start, end).subscribe({
+      next: async res => await this.toXlsx(`รายการใบลดหนี้_${start.month}-${start.year}_${end.month}-${end.year}.xlsx`, `${start.month}-${start.year} ถึง ${end.month}-${end.year}`, res),
+      error: (err) => this.toast.danger(err?.message),
+      complete: () => this.loading.endLoad()
+    })
   }
 
   private toXlsx = toXlxs
+
+  exportSupplierAnnual(compType: number) {
+    const compCode = this.compCode()
+    const { year } = this.date()
+    this.loading.startLoad()
+    this.reportServ.exportSupplierAnnualReport(compType, compCode, { year, month: 1, day: 1 })
+      .subscribe({
+        next: async (res) => {
+          if (res.length === 0) {
+            this.toast.danger('ไม่มีข้อมูล')
+            this.loading.endLoad()
+            return
+          }
+          const date = new Date()
+          const fileName = date.getDate() + '-annual'
+          await this.reportServ.exportManySheet(res, fileName)
+          this.toast.success('สำเร็จ')
+          this.loading.endLoad()
+        }, error: (err) => {
+          this.toast.danger(err);
+          this.loading.endLoad();
+        }
+      })
+  }
 }

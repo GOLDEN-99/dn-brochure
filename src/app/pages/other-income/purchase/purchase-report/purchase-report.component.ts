@@ -2,6 +2,8 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { SupplierReportService } from '../../../../service/other-income/supplier-report.service';
+import { ToastService } from '../../../../service/toast/toast.service';
+import { LoadingService } from '../../../../service/loading/loading.service';
 
 @Component({
   selector: 'app-purchase-report',
@@ -35,41 +37,52 @@ export class PurchaseReportComponent {
   compType = signal("")
   disable1 = computed(() => !this.compCode())
   private reportServ = inject(SupplierReportService)
-  monthDis = this.reportServ.displayMonth
-  yearDis = this.reportServ.displayYear
-  exportMonthDN() {
-    const date = this.date()
+
+  private toast = inject(ToastService)
+  private loading = inject(LoadingService)
+  exportSupplierMonth(compType: number) {
     const compCode = this.compCode()
-    const compType = 'DN'
-    this.compType.set('DN')
-    this.reportServ.fetchMonth(date, compCode, compType)
-  }
-  exportMonthHU() {
-    const date = this.date()
-    const compCode = this.compCode()
-    const compType = 'HU'
-    this.compType.set('HU')
-    this.reportServ.fetchMonth(date, compCode, compType)
-  }
-  exportAnnualDN() {
-    const date = this.date()
-    const compCode = this.compCode()
-    const compType = 'DN'
-    this.compType.set('DN')
-    this.reportServ.fetchYear(date, compCode, compType)
-  }
-  exportAnnualHU() {
-    const date = this.date()
-    const compCode = this.compCode()
-    const compType = 'HU'
-    this.compType.set('HU')
-    this.reportServ.fetchYear(date, compCode, compType)
-  }
-  async toExcel() {
-    await this.reportServ.exportTo()
+    const { month, year } = this.date()
+    this.loading.startLoad()
+    this.reportServ.exportSupplierMonthReport(compType, compCode, { year, month, day: 1 })
+      .subscribe({
+        next: async (res) => {
+          if (res.length === 0) {
+            this.toast.danger('ไม่มีข้อมูล')
+            this.loading.endLoad()
+            return
+          }
+          await this.reportServ.exportManySheet(res)
+          this.toast.success('สำเร็จ')
+          this.loading.endLoad()
+        }, error: (err) => {
+          this.toast.danger(err);
+          this.loading.endLoad();
+        }
+      })
   }
 
-  async toAnnualExcel() {
-    await this.reportServ.annualExport();
+  exportSupplierAnnual(compType: number) {
+    const compCode = this.compCode()
+    const { year } = this.date()
+    this.loading.startLoad()
+    this.reportServ.exportSupplierAnnualReport(compType, compCode, { year, month: 1, day: 1 })
+      .subscribe({
+        next: async (res) => {
+          if (res.length === 0) {
+            this.toast.danger('ไม่มีข้อมูล')
+            this.loading.endLoad()
+            return
+          }
+          const date = new Date()
+          const fileName = date.getDate() + '-annual'
+          await this.reportServ.exportManySheet(res, fileName)
+          this.toast.success('สำเร็จ')
+          this.loading.endLoad()
+        }, error: (err) => {
+          this.toast.danger(err);
+          this.loading.endLoad();
+        }
+      })
   }
 }

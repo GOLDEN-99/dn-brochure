@@ -35,64 +35,44 @@
   <button
     class="btn btn-primary w-100 mb-3"
     [disabled]="disable1()"
-    (click)="exportAnnualDN()"
+    (click)="exportSupplierAnnual(1)"
   >
     รายงานซัพพลายเออร์ DN รายปี
   </button>
   <button
     class="btn btn-success w-100 mb-3"
     [disabled]="disable1()"
-    (click)="exportAnnualHU()"
+    (click)="exportSupplierAnnual(2)"
   >
     รายงานซัพพลายเออร์ HU รายปี
   </button>
-  <div class="row">
-    <div class="col">ซัพ {{ compType() }}</div>
-    <div class="col"></div>
-  </div>
-  @for (item of yearDis(); track item.id) {
-  <div class="row">
-    <div class="col">{{ item.comp }}</div>
-    <div class="col">
-      <button class="btn btn-primary" (click)="toAnnualExcel()">excel</button>
-    </div>
-  </div>
-  }
 </div>
-<app-other-income-order-report [year]="date().year" />
+<!-- <app-other-income-order-report [year]="date().year" /> -->
 <h4>รายงานเพื่อออกใบแจ้งหนี้</h4>
 <div class="row mb-3 px-3" style="gap: 1rem">
   <button class="btn btn-primary col" (click)="exportInvoice(1)">
     รายงาน DN
   </button>
   <button class="btn btn-success col" (click)="exportInvoice(2)">
-    รายงาน HN
+    รายงาน HU
   </button>
 </div>
 <h4>รายงานเพื่อออกใบเสร็จ</h4>
 <div class="row mb-3 px-3" style="gap: 1rem">
   <button class="btn btn-primary col" (click)="exportRece(1)">รายงาน DN</button>
-  <button class="btn btn-success col" (click)="exportRece(2)">รายงาน HN</button>
+  <button class="btn btn-success col" (click)="exportRece(2)">รายงาน HU</button>
 </div>
-<h4>สรุป light box</h4>
-<div class="row mb-3 px-3" style="gap: 1rem">
-  <button class="btn btn-primary col" (click)="exportLight(1)">
-    รายงาน DN
-  </button>
-  <button class="btn btn-success col" (click)="exportLight(2)">
-    รายงาน HN
-  </button>
-</div>
+
 <h4>สรุปรายได้รายปี</h4>
 <div class="row mb-3 px-3" style="gap: 1rem">
   <button class="btn btn-primary col" (click)="exportAnnualIncomeReport(1)">
     รายงาน DN
   </button>
   <button class="btn btn-success col" (click)="exportAnnualIncomeReport(2)">
-    รายงาน HN
+    รายงาน HU
   </button>
 </div>
-<h4>รายละเอียดยอดซื้อรายเดือน</h4>
+<h2>รายงานที่มารายได้</h2>
 <div class="row">
   <div class="app-form-select col">
     <label for="month-month-buy">เดือน</label>
@@ -121,6 +101,7 @@
     </select>
   </div>
 </div>
+<h4>รายละเอียดยอดซื้อรายเดือน</h4>
 <div class="row mb-3 px-3" style="gap: 1rem">
   <button class="btn btn-primary col" (click)="exportMonthBuy(1)">
     รายงาน DN
@@ -135,6 +116,60 @@
     รายงาน DN
   </button>
   <button class="btn btn-success col" (click)="exportMonthInce(2)">
+    รายงาน HU
+  </button>
+</div>
+<h4>รายละเอียดสาขารายปี</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportLight(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportLight(2)">
+    รายงาน HU
+  </button>
+</div>
+<h2>รายงานรับรู้</h2>
+<div class="row">
+  <div class="col">
+    <app-date-input label="ตั้งแต่" [(date)]="date" />
+  </div>
+  <div class="col">
+    <app-date-input label="ถึง" [(date)]="endDate" />
+  </div>
+</div>
+<h4>รายได้จากสินค้า</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportRangeProduct(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportRangeProduct(2)">
+    รายงาน HU
+  </button>
+</div>
+<h4>รายได้จากส่วนลดท้ายบิล</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportRangeBill(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportRangeBill(2)">
+    รายงาน HU
+  </button>
+</div>
+<h4>รายได้จากใบแจ้งหนี้</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportRangeInvRece(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportRangeInvRece(2)">
+    รายงาน HU
+  </button>
+</div>
+<h4>รายได้จากใบลดหนี้</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportRangeCredit(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportRangeCredit(2)">
     รายงาน HU
   </button>
 </div>

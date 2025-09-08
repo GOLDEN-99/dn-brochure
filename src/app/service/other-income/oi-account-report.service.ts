@@ -6,6 +6,8 @@ import { ApiService } from '../api/api.service';
 import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TFieldSelector, TObj } from '../../types';
+import { formatAnnualIncome, formatRangeInvRece, formatInvoice, formatLight, formatMonthbuy, formatMonthince, formatRangeBill, formatRangeCredit, formatReceipt } from '../../lib/other_income/other-income';
+import { TAccountReportQuery, TAnnualIncomeReport, TAnnualReport, TInvocieReport, TLightBoxReport, TMonthBuyReport, TMonthInceReport, TQueryWithMonth, TQueryWithRange, TQueryWithYear, TRangeBillReport, TRangeCreditReport, TRangeInvReceReport, TReceiptReport } from '../../lib/other_income/other-income.type';
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +55,11 @@ export class OiAccountReportService {
   private _getAnnualIncomeReport = ({ compType, year }: TQueryWithYear) => this._api.get<TAnnualIncomeReport[]>(`${this.basePath}/${compType}/annual`, { params: { year } })
   private _getMonthBuyReport = ({ compType, month }: TQueryWithMonth) => this._api.get<TMonthBuyReport[]>(`${this.basePath}/${compType}/month/buy-list`, { params: { month } })
   private _getMonthInceReport = ({ compType, month }: TQueryWithMonth) => this._api.get<TMonthInceReport[]>(`${this.basePath}/${compType}/month/ince`, { params: { month } })
+  private _getRangeBillReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeBillReport[]>(`${this.basePath}/${compType}/range/bill`, { params: { startDate, endDate } })
+  private _getRangeProductReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeBillReport[]>(`${this.basePath}/${compType}/range/product`, { params: { startDate, endDate } })
+  private _getRangeInvReceReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeInvReceReport[]>(`${this.basePath}/${compType}/range/inv-rece`, { params: { startDate, endDate } })
+  private _getRangeCreditReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeCreditReport[]>(`${this.basePath}/${compType}/range/credit`, { params: { startDate, endDate } })
+
   private invoice$ = this._baseQuery$.pipe(
     switchMap(({ compType }) => this._getInvoiceReport(compType)),
     this._catchSilent<TAnnualReport[]>([])
@@ -70,282 +77,63 @@ export class OiAccountReportService {
   annual = toSignal(this.annual$, { initialValue: [] })
   private _mapToAoa = <T extends TObj>(mapper: TFieldSelector<T>[]) =>
     (data: T[]) => [mapper.map(({ label }) => label), ...data.map(d => mapper.map(({ fn }) => fn(d)))]
-  private _invocieMapper: TFieldSelector<TInvocieReport>[] = [
-    { label: 'id', fn: v => v.id },
-    { label: 'period id', fn: v => v.periodId },
-    { label: 'ชื่อ', fn: v => v.displayName },
-    { label: 'กิจกรรม', fn: v => v.eventName },
-    { label: 'รหัสซัพ', fn: v => v.compCode },
-    { label: 'ชื่อซัพ', fn: v => v.compName },
-    { label: 'เริ่ม', fn: v => v.periodStart.split('T')[0] },
-    { label: 'จบ', fn: v => v.periodEnd.split('T')[0] },
-    { label: 'ยอดซื้อ', fn: v => v.totalAmount },
-    { label: 'รายได้เรียกเก็บ', fn: v => v.totalIncome }
-  ]
-  private _receiptMapper: TFieldSelector<TReceiptReport>[] = [
-    { label: 'id', fn: v => v.id },
-    { label: 'period id', fn: v => v.periodId },
-    { label: 'ชื่อ', fn: v => v.displayName },
-    { label: 'กิจกรรม', fn: v => v.eventName },
-    { label: 'รหัสซัพ', fn: v => v.compCode },
-    { label: 'ชื่อซัพ', fn: v => v.compName },
-    { label: 'เริ่ม', fn: v => v.periodStart.split('T')[0] },
-    { label: 'จบ', fn: v => v.periodEnd.split('T')[0] },
-    { label: 'ยอดซื้อ', fn: v => v.totalAmount },
-    { label: 'รายได้เรียกเก็บ', fn: v => v.totalIncome },
-    { label: 'เลขที่ใบแจ้งหนี้', fn: v => v.invNumb },
-    { label: 'วันที่ใบแจ้งหนี้', fn: v => v.invDate.split('T')[0] },
-    { label: 'ยอดใบแจ้งหนี้', fn: v => v.invAmount },
-    { label: 'หมายเหตุ', fn: v => v.invRemark },
-  ]
-  private _lightboxMapper: TFieldSelector<TLightBoxReport>[] = [
-    { label: 'ชื่อ', fn: v => v.displayName },
-    { label: 'กิจกรรม', fn: v => v.eventName },
-    { label: 'รหัสซัพ', fn: v => v.compCode },
-    { label: 'ชื่อซัพ', fn: v => v.compName },
-    { label: 'เริ่ม', fn: v => v.periodStart.split('T')[0] },
-    { label: 'จบ', fn: v => v.periodEnd.split('T')[0] },
-    { label: 'รหัสสาขา', fn: v => v.branchCode },
-    { label: 'ชื่อสาขา', fn: v => v.branchName },
-    { label: 'รายได้เรียกเก็บ', fn: v => v.totalIncome }
-  ]
-  private _annualIncomeMapper: TFieldSelector<TAnnualIncomeReport>[] = [
-    { label: 'ชื่อ', fn: v => v.displayName },
-    { label: 'กิจกรรม', fn: v => v.eventName },
-    { label: 'รหัสซัพ', fn: v => v.compCode },
-    { label: 'ชื่อซัพ', fn: v => v.compName },
-    { label: 'รับรู้เป็น', fn: v => v.incomeName },
-    { label: 'เริ่ม', fn: v => v.startDate.split('T')[0] },
-    { label: 'จบ', fn: v => v.endDate.split('T')[0] },
-    { label: 'ยอดซื้อ q1', fn: v => v.q1.totalAmount },
-    { label: 'รายได้ q1', fn: v => v.q1.totalIncome },
-    { label: 'ยอดสินค้า/ท้ายบิล q1', fn: v => v.q1.orderAmount },
-    { label: 'ยอดใบลดหนี้ q1', fn: v => v.q1.creditAmount },
-    { label: 'ยอดใบแจ้งหนี้ q1', fn: v => v.q1.invAmount },
-    { label: 'ยอดใบเสร็จ q1', fn: v => v.q1.receAmount },
-    { label: 'ยอดซื้อ q2', fn: v => v.q2.totalAmount },
-    { label: 'รายได้ q2', fn: v => v.q2.totalIncome },
-    { label: 'ยอดสินค้า/ท้ายบิล q2', fn: v => v.q2.orderAmount },
-    { label: 'ยอดใบลดหนี้ q2', fn: v => v.q2.creditAmount },
-    { label: 'ยอดใบแจ้งหนี้ q2', fn: v => v.q2.invAmount },
-    { label: 'ยอดใบเสร็จ q2', fn: v => v.q2.receAmount },
-    { label: 'ยอดซื้อ h1', fn: v => v.h1.totalAmount },
-    { label: 'รายได้ h1', fn: v => v.h1.totalIncome },
-    { label: 'ยอดสินค้า/ท้ายบิล h1', fn: v => v.h1.orderAmount },
-    { label: 'ยอดใบลดหนี้ h1', fn: v => v.h1.creditAmount },
-    { label: 'ยอดใบแจ้งหนี้ h1', fn: v => v.h1.invAmount },
-    { label: 'ยอดใบเสร็จ h1', fn: v => v.h1.receAmount },
-    { label: 'ยอดซื้อ q3', fn: v => v.q3.totalAmount },
-    { label: 'รายได้ q3', fn: v => v.q3.totalIncome },
-    { label: 'ยอดสินค้า/ท้ายบิล q3', fn: v => v.q3.orderAmount },
-    { label: 'ยอดใบลดหนี้ q3', fn: v => v.q3.creditAmount },
-    { label: 'ยอดใบแจ้งหนี้ q3', fn: v => v.q3.invAmount },
-    { label: 'ยอดใบเสร็จ q3', fn: v => v.q3.receAmount },
-    { label: 'ยอดซื้อ q4', fn: v => v.q4.totalAmount },
-    { label: 'รายได้ q4', fn: v => v.q4.totalIncome },
-    { label: 'ยอดสินค้า/ท้ายบิล q4', fn: v => v.q4.orderAmount },
-    { label: 'ยอดใบลดหนี้ q4', fn: v => v.q4.creditAmount },
-    { label: 'ยอดใบแจ้งหนี้ q4', fn: v => v.q4.invAmount },
-    { label: 'ยอดใบเสร็จ q4', fn: v => v.q4.receAmount },
-    { label: 'ยอดซื้อ h2', fn: v => v.h2.totalAmount },
-    { label: 'รายได้ h2', fn: v => v.h2.totalIncome },
-    { label: 'ยอดสินค้า/ท้ายบิล h2', fn: v => v.h2.orderAmount },
-    { label: 'ยอดใบลดหนี้ h2', fn: v => v.h2.creditAmount },
-    { label: 'ยอดใบแจ้งหนี้ h2', fn: v => v.h2.invAmount },
-    { label: 'ยอดใบเสร็จ h2', fn: v => v.h2.receAmount },
-    { label: 'ยอดซื้อ', fn: v => v.y.totalAmount },
-    { label: 'รายได้', fn: v => v.y.totalIncome },
-    { label: 'ยอดสินค้า/ท้ายบิล', fn: v => v.y.orderAmount },
-    { label: 'ยอดใบลดหนี้', fn: v => v.y.creditAmount },
-    { label: 'ยอดใบแจ้งหนี้', fn: v => v.y.invAmount },
-    { label: 'ยอดใบเสร็จ', fn: v => v.y.receAmount },
-  ]
-  private _monthbuyMapper: TFieldSelector<TMonthBuyReport>[] = [
-    { label: 'ชื่อ', fn: v => v.displayName },
-    { label: 'กิจกรรม', fn: v => v.eventName },
-    { label: 'รหัสซัพ', fn: v => v.compCode },
-    { label: 'ชื่อซัพ', fn: v => v.compName },
-    { label: 'รับรู้เป็น', fn: v => v.incomeName },
-    { label: 'หัก dc', fn: v => this.formatDisc(v.isDc) },
-    { label: 'หัก rebate', fn: v => this.formatDisc(v.isRebate) },
-    { label: 'หัก compensate', fn: v => this.formatDisc(v.isComp) },
-    { label: 'หัก incentive', fn: v => this.formatDisc(v.isInce) },
-    { label: 'หัก vat', fn: v => this.formatDisc(!v.incVat) },
-    { label: 'เลข rece', fn: v => v.receNumb },
-    { label: 'วันที่ rece', fn: v => v.receDate.split('T')[0] },
-    { label: 'เลขที่บิล', fn: v => v.billNumb },
-    { label: 'วันที่บิล', fn: v => v.billDate.split('T')[0] },
-    { label: 'ยอด rece', fn: v => v.totalCost },
-    { label: 'dc', fn: v => v.dcDisc },
-    { label: 'rebate', fn: v => v.rebateDisc },
-    { label: 'compensate', fn: v => v.compDisc },
-    { label: 'incentive', fn: v => v.inceDisc },
-    { label: 'vat', fn: v => v.totalVat },
-    { label: 'subtotal', fn: v => v.subtotal },
-    { label: 'ยอดซื้อคำนวน', fn: v => v.calAmount },
-    { label: 'ยอด cn', fn: v => v.cn },
-    { label: 'ยอดบันทึก', fn: v => v.actualAmount },
-    { label: 'เหตุผล', fn: v => v.reason },
-    { label: 'รายได้', fn: v => v.incomeAmount }
-  ]
-  private _monthinceMapper: TFieldSelector<TMonthInceReport>[] = [
-    { label: 'ชื่อ', fn: v => v.displayName },
-    { label: 'กิจกรรม', fn: v => v.eventName },
-    { label: 'รหัสซัพ', fn: v => v.compCode },
-    { label: 'ชื่อซัพ', fn: v => v.compName },
-    { label: 'รับรู้เป็น', fn: v => v.incomeName },
-    { label: 'เริ่ม', fn: v => v.startDate.split('T')[0] },
-    { label: 'จบ', fn: v => v.endDate.split('T')[0] },
-    { label: 'หมายเหตุ', fn: v => v.incomeRemark },
-    { label: 'รายได้', fn: v => v.incomeAmount }
 
-  ]
-  private formatInvoice = this._mapToAoa(this._invocieMapper)
-  private formatReceipt = this._mapToAoa(this._receiptMapper)
-  private formatLight = this._mapToAoa(this._lightboxMapper)
-  private formatAnnualIncome = this._mapToAoa(this._annualIncomeMapper)
-  private formatMonthbuy = this._mapToAoa(this._monthbuyMapper)
-  private formatMonthince = this._mapToAoa(this._monthinceMapper)
   exportInvoiceReport(compType: number) {
     const comp = this._formatCompType(compType)
-    return this._getInvoiceReport(comp).pipe(map(this.formatInvoice))
+    return this._getInvoiceReport(comp).pipe(map(formatInvoice))
   }
   exportReceiptReport(compType: number) {
     const comp = this._formatCompType(compType)
-    return this._getReceiptReport(comp).pipe(map(this.formatReceipt))
+    return this._getReceiptReport(comp).pipe(map(formatReceipt))
   }
   exportLightReport(compType: number, date: TDate) {
     const comp = this._formatCompType(compType)
     const year = this._getIso({ year: date.year, month: 1, day: 1 })
-    return this._getLighyBoxReport({ compType: comp, year }).pipe(map(this.formatLight))
+    return this._getLighyBoxReport({ compType: comp, year }).pipe(map(formatLight))
   }
   exportAnnualIncomeReport(compType: number, date: TDate) {
     const comp = this._formatCompType(compType)
     const year = this._getIso({ year: date.year, month: 1, day: 1 })
-    return this._getAnnualIncomeReport({ compType: comp, year }).pipe(map(this.formatAnnualIncome))
+    return this._getAnnualIncomeReport({ compType: comp, year }).pipe(map(formatAnnualIncome))
   }
   exportMonthbuyReport(compType: number, date: TDate) {
     const comp = this._formatCompType(compType)
     const month = this._getIso({ year: date.year, month: date.month, day: 1 })
-    return this._getMonthBuyReport({ compType: comp, month }).pipe(map(this.formatMonthbuy))
+    return this._getMonthBuyReport({ compType: comp, month }).pipe(map(formatMonthbuy))
   }
-  private formatDisc = (v: boolean) => v ? 'ไม่หัก' : 'หัก'
 
   exportInceReport(compType: number, date: TDate) {
     const comp = this._formatCompType(compType)
     const month = this._getIso({ year: date.year, month: date.month, day: 1 })
-    return this._getMonthInceReport({ compType: comp, month }).pipe(map(this.formatMonthince))
+    return this._getMonthInceReport({ compType: comp, month }).pipe(map(formatMonthince))
+  }
+
+  exportBillReport(compType: number, start: TDate, end: TDate) {
+    const comp = this._formatCompType(compType)
+    const startDate = this._getIso({ year: start.year, month: start.month, day: 1 })
+    const endDate = this._getIso({ year: end.year, month: end.month, day: 1 })
+    return this._getRangeBillReport({ compType: comp, startDate, endDate }).pipe(map(formatRangeBill))
+  }
+
+  exportProductReport(compType: number, start: TDate, end: TDate) {
+    const comp = this._formatCompType(compType)
+    const startDate = this._getIso({ year: start.year, month: start.month, day: 1 })
+    const endDate = this._getIso({ year: end.year, month: end.month, day: 1 })
+    return this._getRangeProductReport({ compType: comp, startDate, endDate }).pipe(map(formatRangeBill))
+  }
+
+  exportInvReceReport(compType: number, start: TDate, end: TDate) {
+    const comp = this._formatCompType(compType)
+    const startDate = this._getIso({ year: start.year, month: start.month, day: 1 })
+    const endDate = this._getIso({ year: end.year, month: end.month, day: 1 })
+    return this._getRangeInvReceReport({ compType: comp, startDate, endDate }).pipe(map(formatRangeInvRece))
+  }
+
+  exportCreditReport(compType: number, start: TDate, end: TDate) {
+    const comp = this._formatCompType(compType)
+    const startDate = this._getIso({ year: start.year, month: start.month, day: 1 })
+    const endDate = this._getIso({ year: end.year, month: end.month, day: 1 })
+    return this._getRangeCreditReport({ compType: comp, startDate, endDate }).pipe(map(formatRangeCredit))
   }
 }
 
-type TAccountReportQuery = {
-  compType: number
-  day: number
-  month: number
-  year: number
-}
-
-type TBaseQuery = {
-  compType: string
-}
-
-type TQueryWithYear = { year: string } & TBaseQuery
-type TQueryWithMonth = { month: string } & TBaseQuery
-
-type TBaseReport = {
-  displayName: string
-  compCode: string
-  compType: string
-  compName: string
-  eventName: string
-  incomeName: string
-}
-
-type TInvocieReport = {
-  id: number
-  periodId: number
-  periodName: string
-  periodStart: string
-  periodEnd: string
-  totalAmount: number
-  totalIncome: number
-} & TBaseReport
-
-type TReceiptReport = {
-  invNumb: string
-  invAmount: number
-  invDate: string
-  invRemark: string
-} & TInvocieReport
-
-type TAnnualReport = {}
-
-type TLightBoxReport = {
-  displayName: string
-  compCode: string
-  compName: string
-  compType: string
-  branchCode: string
-  branchName: string
-  incomeName: string
-  eventName: string
-  periodName: string
-  periodStart: string
-  periodEnd: string
-  totalAmount: number
-  totalIncome: number
-}
-
-type TAnnaulReportItem = {
-  totalAmount: number
-  totalIncome: number
-  orderAmount: number
-  creditAmount: number
-  invAmount: number
-  receAmount: number
-}
-
-type TAnnualIncomeReport = {
-  id: number
-  period: number
-  startDate: string
-  endDate: string
-  q1: TAnnaulReportItem
-  q2: TAnnaulReportItem
-  q3: TAnnaulReportItem
-  q4: TAnnaulReportItem
-  h1: TAnnaulReportItem
-  h2: TAnnaulReportItem
-  y: TAnnaulReportItem
-} & TBaseReport
-
-type TMonthBuyReport = {
-  incVat: boolean
-  isDc: boolean
-  isRebate: boolean
-  isInce: boolean
-  isComp: boolean
-  receNumb: string
-  receDate: string
-  billNumb: string
-  billDate: string
-  totalCost: number
-  totalVat: number
-  dcDisc: number
-  rebateDisc: number
-  inceDisc: number
-  compDisc: number
-  subtotal: number
-  calAmount: number
-  cn: number
-  actualAmount: number
-  reason: string
-  incomeAmount: number
-} & TBaseReport
-
-type TMonthInceReport = {
-  incomeRemark: string
-  incomeAmount: number
-  startDate: string
-  endDate: string
-} & TBaseReport
