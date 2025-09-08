@@ -126,10 +126,13 @@ type TPurchaseReceItem = {
 }
 
 type TInsertReq = {
+  eventType: number
   calAmount: number
   actualAmount: number
-  createDate: string
+  startDate: string
   reason: string
   incomeAmount: number
+  cn: number
   receList: TPurchaseReceItem[]
+  endDate?: string
 }

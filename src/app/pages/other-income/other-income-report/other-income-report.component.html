@@ -1,45 +1,175 @@
-<p>other-income-report works!</p>
-<div>{{ year() }}</div>
-<div style="overflow-x: scroll">
-  <table class="table">
-    <thead>
-      <tr>
-        <td colspan="6"></td>
-        @for (month of monthList; track $index) {
-        <td colspan="3">{{ month }}</td>
+<h4>รายปี</h4>
+<div class="mb-3">
+  <div class="row">
+    <div class="app-form-select col">
+      <label for="month">เดือน</label>
+      <select
+        name="month"
+        id="month"
+        [ngModel]="date().month"
+        (ngModelChange)="changeMonth($event)"
+      >
+        @for (month of monthArray; track month) {
+        <option [ngValue]="month">{{ month }}</option>
         }
-      </tr>
-      <tr>
-        <td></td>
-        <td>ชื่อบริษัท</td>
-        <td>ชื่อกิจกรรม</td>
-        <td>ชื่อส่วนลด</td>
-        <td>วันที่เริ่ม</td>
-        <td>วันที่จบ</td>
+      </select>
+    </div>
+    <div class="app-form-select col">
+      <label for="year">ปี</label>
+      <select
+        name="year"
+        id="year"
+        [ngModel]="date().year"
+        (ngModelChange)="changeYear($event)"
+      >
+        @for (year of yearArray; track year) {
+        <option [ngValue]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+    <div class="app-form-field col">
+      <label for="code">รหัสซัพ</label>
+      <input type="text" id="code" name="code" [(ngModel)]="compCode" />
+    </div>
+  </div>
+  <button
+    class="btn btn-primary w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportSupplierAnnual(1)"
+  >
+    รายงานซัพพลายเออร์ DN รายปี
+  </button>
+  <button
+    class="btn btn-success w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportSupplierAnnual(2)"
+  >
+    รายงานซัพพลายเออร์ HU รายปี
+  </button>
+</div>
+<!-- <app-other-income-order-report [year]="date().year" /> -->
+<h4>รายงานเพื่อออกใบแจ้งหนี้</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportInvoice(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportInvoice(2)">
+    รายงาน HU
+  </button>
+</div>
+<h4>รายงานเพื่อออกใบเสร็จ</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportRece(1)">รายงาน DN</button>
+  <button class="btn btn-success col" (click)="exportRece(2)">รายงาน HU</button>
+</div>
 
-        @for (month of monthList; track $index) {
-        <td>ส่วนลด</td>
-        <td>ยอดใบแจ้งหนี้</td>
-        <td>ยอดใบเสร็จ</td>
-        }
-      </tr>
-    </thead>
-    <tbody>
-      @for (oi of otherIncomeList; track $index){
-      <tr>
-        <td>{{ oi.id }}</td>
-        <td style="min-width: 120px">{{ oi.comp }}</td>
-        <td style="min-width: 120px">{{ oi.eventName }}</td>
-        <td style="min-width: 120px">{{ oi.discountName }}</td>
-        <td style="min-width: 120px">{{ oi.startDate }}</td>
-        <td style="min-width: 120px">{{ oi.endDate }}</td>
-        @for (month of monthList; track $index) {
-        <td style="min-width: 80px">{{ getSale(oi.id, month) }}</td>
-        <td style="min-width: 120px">{{ getInv(oi.id, month) }}</td>
-        <td style="min-width: 120px">{{ getInv(oi.id, month) }}</td>
-        }
-      </tr>
+<h4>สรุปรายได้รายปี</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportAnnualIncomeReport(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportAnnualIncomeReport(2)">
+    รายงาน HU
+  </button>
+</div>
+<h2>รายงานที่มารายได้</h2>
+<div class="row">
+  <div class="app-form-select col">
+    <label for="month-month-buy">เดือน</label>
+    <select
+      name="month-month-buy"
+      id="month-month-buy"
+      [ngModel]="date().month"
+      (ngModelChange)="changeMonth($event)"
+    >
+      @for (month of monthArray; track month) {
+      <option [ngValue]="month">{{ month }}</option>
       }
-    </tbody>
-  </table>
+    </select>
+  </div>
+  <div class="app-form-select col">
+    <label for="year-month-buy">ปี</label>
+    <select
+      name="year-month-buy"
+      id="year-month-buy"
+      [ngModel]="date().year"
+      (ngModelChange)="changeYear($event)"
+    >
+      @for (year of yearArray; track year) {
+      <option [ngValue]="year">{{ year }}</option>
+      }
+    </select>
+  </div>
+</div>
+<h4>รายละเอียดยอดซื้อรายเดือน</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportMonthBuy(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportMonthBuy(2)">
+    รายงาน HU
+  </button>
+</div>
+<h4>รายละเอียดรายได้อื่นๆอื่นๆรายเดือน</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportMonthInce(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportMonthInce(2)">
+    รายงาน HU
+  </button>
+</div>
+<h4>รายละเอียดสาขารายปี</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportLight(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportLight(2)">
+    รายงาน HU
+  </button>
+</div>
+<h2>รายงานรับรู้</h2>
+<div class="row">
+  <div class="col">
+    <app-date-input label="ตั้งแต่" [(date)]="date" />
+  </div>
+  <div class="col">
+    <app-date-input label="ถึง" [(date)]="endDate" />
+  </div>
+</div>
+<h4>รายได้จากสินค้า</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportRangeProduct(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportRangeProduct(2)">
+    รายงาน HU
+  </button>
+</div>
+<h4>รายได้จากส่วนลดท้ายบิล</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportRangeBill(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportRangeBill(2)">
+    รายงาน HU
+  </button>
+</div>
+<h4>รายได้จากใบแจ้งหนี้</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportRangeInvRece(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportRangeInvRece(2)">
+    รายงาน HU
+  </button>
+</div>
+<h4>รายได้จากใบลดหนี้</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-primary col" (click)="exportRangeCredit(1)">
+    รายงาน DN
+  </button>
+  <button class="btn btn-success col" (click)="exportRangeCredit(2)">
+    รายงาน HU
+  </button>
 </div>

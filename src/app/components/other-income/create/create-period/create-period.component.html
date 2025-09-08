@@ -18,11 +18,12 @@
   </div>
   <div class="modal-body">
     <div class="app-form-field-inline">
-      <div><label for="remark">หมายเหตุ</label></div>
+      <div><label for="remark">ชื่อ period</label></div>
       <div>
-        <input type="text" name="remar" id="remark" [(ngModel)]="remark" />
+        <input type="text" name="remark" id="remark" [(ngModel)]="remark" />
       </div>
     </div>
+    @let curEve = eventType(); @if (curEve === 1) {
     <table class="table">
       <thead>
         <th>งวด</th>
@@ -37,14 +38,14 @@
             <div class="app-form-check m-0">
               <input
                 type="checkbox"
-                [name]="inc.createDate + '-check'"
+                [name]="inc.startDate + '-check'"
                 [id]="inc.checkDate + '-check'"
                 [ngModel]="inc.check"
                 (ngModelChange)="checkItem(inc.id)"
               />
             </div>
           </td>
-          <td>{{ formateDate(inc.createDate) }}</td>
+          <td>{{ formateDate(inc.startDate) }}</td>
           <td>{{ inc.actualAmount }}</td>
           <td>{{ inc.incomeAmount }}</td>
         </tr>
@@ -56,6 +57,40 @@
         </tr>
       </tbody>
     </table>
+    }@else if (curEve === 3) {
+    <table class="table">
+      <thead>
+        <th>งวด</th>
+        <th>หมายเหตุ</th>
+        <th></th>
+      </thead>
+      <tbody>
+        @for (inc of incomeState(); track inc.id) {
+        <tr>
+          <td>
+            <div class="app-form-check m-0">
+              <input
+                type="checkbox"
+                [name]="inc.startDate + '-check'"
+                [id]="inc.checkDate + '-check'"
+                [ngModel]="inc.check"
+                (ngModelChange)="checkItem(inc.id)"
+              />
+            </div>
+          </td>
+          <td>{{ inc.reason }}</td>
+          <td>{{ inc.incomeAmount }}</td>
+        </tr>
+        } @let summary = sum();
+        <tr>
+          <td colspan="2">รวม</td>
+          <td>{{ summary.totalIncome }}</td>
+        </tr>
+      </tbody>
+    </table>
+    }@else {
+    <div>มีข้อผิดพลาด</div>
+    }
   </div>
   <div class="modal-footer">
     <button class="btn btn-primary w-100" (click)="onAddPeriod()">

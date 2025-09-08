@@ -1,9 +1,11 @@
 <div class="mb-3">
   <div class="row" style="justify-content: space-between">
     <h2 class="col-auto">รายชื่อสาขา</h2>
+    @if(canEdit()){
     <div class="col-auto">
       <button class="btn btn-primary" (click)="openModal()">เพิ่ม</button>
     </div>
+    }
   </div>
   <div style="max-height: 200px; overflow-y: auto">
     @let branches = branchList();

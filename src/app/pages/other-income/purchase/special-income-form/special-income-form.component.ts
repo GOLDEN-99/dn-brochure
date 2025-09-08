@@ -16,7 +16,7 @@ import { ToastService } from '../../../../service/toast/toast.service';
         <i class="bi bi-floppy"></i>
         <span> บันทึก </span>
       </button>
-      <a routerLink="/other-income/purchase" class="btn btn-outline-danger">
+      <a routerLink="../" class="btn btn-outline-danger">
         ย้อนกลับ
       </a>
     </div>

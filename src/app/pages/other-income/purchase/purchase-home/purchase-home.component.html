@@ -28,24 +28,18 @@
         <th>เริ่ม</th>
         <th>จบ</th>
         <th>ชื่อซัพพลายเออร์</th>
-        <th>cn</th>
-        <th>ชื่อเรียกเก็บ</th>
-        <th></th>
+        <th style="min-width: 84px"></th>
       </tr>
     </thead>
     <tbody>
       @for (item of data(); track $index) {
       <tr>
-        <td>{{ item.event.eventName }}</td>
+        <td>{{ item.eventName }}</td>
         <td>{{ item.startDate | date }}</td>
         <td>{{ item.endDate | date }}</td>
-        <td>{{ item.company.compName }}</td>
-        <td>{{ item.cn }}</td>
-        <td>{{ item.displayName }}</td>
+        <td>{{ item.compName }}</td>
         <td>
-          <a [routerLink]="genUrl(item.id, item.company.compType)"
-            >รายละเอียด</a
-          >
+          <a [routerLink]="genUrl(item.id, item.compType)">รายละเอียด</a>
         </td>
       </tr>
       }

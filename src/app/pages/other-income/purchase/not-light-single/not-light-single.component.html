@@ -4,78 +4,154 @@
   }@else{
   <!---->
   @let e = currentResult(); @let comp = e.company;@let incomes =
-  e.incomeList;@let periods = e.periodList;
-  <app-other-income-head-edit [value]="head()" [canEdit]="true" />
+  e.incomeList;@let periods = e.periodList;@let h = e.head;
+  <app-other-income-head-edit
+    [head]="e.head"
+    [event]="e.event"
+    [income]="e.income"
+    [comp]="e.company"
+    [canEdit]="false"
+  />
+  <!---->
+  <app-other-income-product-edit [productList]="e.productList" />
+
+  @if(e.event.eventType === 1){
+  <!---->
   <app-other-income-not-light-edit
-    [eventDetail]="eventDetail()"
-    [canEdit]="true"
+    [steps]="e.stepList"
+    [notLight]="e.notLight"
+    [canEdit]="false"
   />
-  <app-other-income-product-edit [value]="productDetail()" />
-  @let a = acc(); @let s = stepInfo();
   <app-other-income-monthly-edit
-    [incomeList]="incomes"
-    [id]="e.id"
-    [compType]="comp.compType"
-    [accAmount]="a.accAmount"
-    [accIncome]="a.accIncome"
-    [isStep]="s.isStep"
-    [stepList]="s.stepList"
-    [capAmount]="e.capAmount"
+    [eventType]="e.event.eventType"
+    [id]="h.id"
+    [compType]="e.company.compType"
+    [accAmount]="e.head.accAmount"
+    [accIncome]="e.head.accIncome"
+    [stepType]="e.notLight.stepType"
+    [stepList]="e.stepList"
+    [capAmount]="e.notLight.capAmount"
     [canEdit]="true"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
-  <app-create-period
-    [incomeList]="incomes"
-    [headId]="e.id"
-    [compCode]="comp.compCode"
-    [compType]="comp.compType"
+  <app-other-income-monthly-list
+    [isDc]="[1, 2].includes(e.event.eventType)"
+    [incomeList]="e.incomeList"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
-  @for (period of periods; track period.id) {
-  <div class="row bg-success bg-opacity-10">
-    <div class="row">
-      <div class="col">ชื่อเรียกเก็บ</div>
-      <div class="col">ยอดซื้อ</div>
-      <div class="col">รายได้บันทึก</div>
-      <div class="col">ยอด PO</div>
-      <div class="col">ยอดใบแจ้งหนี้</div>
-      <div class="col">ยอดใบเสร็จ</div>
-    </div>
-    <div class="row">
-      <div class="col">{{ period.remark }}</div>
-      <div class="col">{{ period.totalAmount | number : "1.2-2" }}</div>
-      <div class="col">{{ period.totalIncome | number : "1.2-2" }}</div>
-      <div class="col">{{ period.orderAmount | number : "1.2-2" }}</div>
-      <div class="col">{{ period.invAmount | number : "1.2-2" }}</div>
-      <div class="col">{{ period.receAmount | number : "1.2-2" }}</div>
-    </div>
-  </div>
-  @if (isProduct()) {
-  <app-other-income-order-period
-    [actualAmount]="period.totalIncome"
-    [orderList]="period.orderList"
-    [periodId]="period.id"
+  }
+  <!--add incentive income here-->
+  @if (e.event.eventType === 3) {
+  <app-other-income-monthly-incentive-edit
+    [canEdit]="true"
+    [id]="e.head.id"
+    [eventType]="e.event.eventType"
+    [incomeList]="e.incomeList"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  }
+  <!---->
+  @if (isPurchase) {
+  <app-create-period
+    [eventType]="e.event.eventType"
+    [incomeList]="incomes"
+    [headId]="e.head.id"
     [compCode]="comp.compCode"
     [compType]="comp.compType"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
   }
-  <app-other-income-invoice-period
-    [invoiceList]="period.invoiceList"
-    [periodId]="period.id"
-    [exIncome]="period.totalIncome"
-    [discount]="period.invAmount"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-  />
-  <app-other-income-recipt-period
-    [receiptList]="period.receiptList"
-    [periodId]="period.id"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-  />
+  <!---->
+  @for (period of periods; track period.id) {
+  <div class="mb-3">
+    <div class="row bg-success bg-opacity-10">
+      <div class="row">
+        @for (header of currentHeader(); track $index) {
+        <div class="col">{{ header }}</div>
+        }
+      </div>
+      <div class="row">
+        <!---->
+        @for (fn of currentMapper();track $index) {
+        <div class="col">{{ fn(period) }}</div>
+        }
+      </div>
+    </div>
+    <div style="overflow-x: auto; max-width: 100%">
+      <!--ท้ายบิล-->
+      @if (e.income.incomeType === 1) {
+      <div style="min-width: 100%" tabindex="0">
+        <app-other-income-order-period
+          [canEdit]="isPurchase"
+          [actualAmount]="period.totalIncome"
+          [orderList]="period.orderList"
+          [periodId]="period.id"
+          [compCode]="comp.compCode"
+          [compType]="comp.compType"
+          (success)="onSuccess($event)"
+          (fail)="onFail($event)"
+        />
+      </div>
+      }
+      <!--สินค้า-->
+      @if (e.income.incomeType === 2) {
+      <div style="min-width: 100%">
+        <app-other-income-good-order-period
+          [canEdit]="isPurchase"
+          [actualAmount]="period.totalIncome"
+          [orderList]="period.orderList"
+          [periodId]="period.id"
+          [compCode]="comp.compCode"
+          [compType]="comp.compType"
+          (success)="onSuccess($event)"
+          (fail)="onFail($event)"
+        />
+      </div>
+      }
+      <!--invoice-->
+      @if (e.income.incomeType === 3) {
+      <div style="min-width: 100%">
+        <app-other-income-invoice-period
+          [canEdit]="!isPurchase"
+          [invoiceList]="period.invoiceList"
+          [periodId]="period.id"
+          [incomeAmount]="period.totalIncome"
+          [addedAmount]="period.invAmount"
+          (success)="onSuccess($event)"
+          (fail)="onFail($event)"
+        />
+      </div>
+      <div style="min-width: 100%">
+        <app-other-income-recipt-period
+          [canEdit]="!isPurchase"
+          [receiptList]="period.receiptList"
+          [invAmount]="period.invAmount"
+          [receAmount]="period.receAmount"
+          [periodId]="period.id"
+          (success)="onSuccess($event)"
+          (fail)="onFail($event)"
+        />
+      </div>
+      }
+      <!--credit note-->
+      @if (e.income.incomeType === 4) {
+      <div style="min-width: 100%">
+        <app-other-income-credit-period
+          [canEdit]="!isPurchase"
+          [periodId]="period.id"
+          [incomeAmount]="period.totalIncome"
+          [addedAmount]="period.creditAmount"
+          [creditList]="period.creditList"
+          (success)="onSuccess($event)"
+          (fail)="onFail($event)"
+        />
+      </div>
+      }
+    </div>
+  </div>
   } }
 </section>

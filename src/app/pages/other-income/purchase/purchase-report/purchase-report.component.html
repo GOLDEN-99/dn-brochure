@@ -35,56 +35,32 @@
   <button
     class="btn btn-primary w-100 mb-3"
     [disabled]="disable1()"
-    (click)="exportMonthDN()"
+    (click)="exportSupplierMonth(1)"
   >
     รายงานซัพพลายเออร์ DN รายเดือน
   </button>
   <button
     class="btn btn-success w-100 mb-3"
     [disabled]="disable1()"
-    (click)="exportMonthHU()"
+    (click)="exportSupplierMonth(2)"
   >
     รายงานซัพพลายเออร์ HU รายเดือน
   </button>
-  <div class="row">
-    <div class="col">ซัพ {{ compType() }}</div>
-    <div class="col"></div>
-  </div>
-  @for (item of monthDis(); track item.id) {
-  <div class="row">
-    <div class="col">{{ item.comp }}</div>
-    <div class="col">
-      <button class="btn btn-primary" (click)="toExcel()">excel</button>
-    </div>
-  </div>
-  }
 </div>
 <h4>รายปี</h4>
 <div class="mb-3">
   <button
     class="btn btn-primary w-100 mb-3"
     [disabled]="disable1()"
-    (click)="exportAnnualDN()"
+    (click)="exportSupplierAnnual(1)"
   >
     รายงานซัพพลายเออร์ DN รายปี
   </button>
   <button
     class="btn btn-success w-100 mb-3"
     [disabled]="disable1()"
-    (click)="exportAnnualHU()"
+    (click)="exportSupplierAnnual(2)"
   >
     รายงานซัพพลายเออร์ HU รายปี
   </button>
-  <div class="row">
-    <div class="col">ซัพ {{ compType() }}</div>
-    <div class="col"></div>
-  </div>
-  @for (item of yearDis(); track item.id) {
-  <div class="row">
-    <div class="col">{{ item.comp }}</div>
-    <div class="col">
-      <button class="btn btn-primary" (click)="toAnnualExcel()">excel</button>
-    </div>
-  </div>
-  }
 </div>

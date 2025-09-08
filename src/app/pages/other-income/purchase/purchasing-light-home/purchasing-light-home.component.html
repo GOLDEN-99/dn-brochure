@@ -38,16 +38,14 @@
     <tbody>
       @for (item of data(); track $index) {
       <tr>
-        <td>{{ item.event.eventName }}</td>
+        <td>{{ item.eventName }}</td>
         <td>{{ item.startDate | date }}</td>
         <td>{{ item.endDate | date }}</td>
-        <td>{{ item.company.compName }}</td>
-        <td>{{ item.totalBranch }}</td>
-        <td>{{ item.totalAmount }}</td>
+        <td>{{ item.compName }}</td>
+        <td>{{ item?.totalBranch }}</td>
+        <td>{{ item?.totalAmount }}</td>
         <td>
-          <a [routerLink]="genUrl(item.id, item.company.compType)"
-            >รายละเอียด</a
-          >
+          <a [routerLink]="genUrl(item.id, item.compType)">รายละเอียด</a>
         </td>
       </tr>
       }

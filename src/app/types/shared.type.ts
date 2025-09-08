@@ -24,3 +24,6 @@ export type TSupplierItem = {
 }
 
 export type TCsBool = '0' | '1'
+
+export type TSelectFn<T extends TObj> = (v: T) => T[keyof T]
+export type TFieldSelector<T extends TObj> = { label: string, fn: TSelectFn<T> }

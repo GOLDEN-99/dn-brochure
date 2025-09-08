@@ -1,6 +1,6 @@
 import { inject, Injectable, Signal, signal } from '@angular/core';
 import { TInsertMonthlyIncome, TOIStepItem } from '../../types';
-import { BaseOiService, NotLightSingle, NotLightSummary } from './base-oi';
+import { BaseOiService, ManyContactResponse, NotLightSingle, NotLightSummary } from './base-oi';
 import { environment } from '../../../environments/environment';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, shareReplay, Subject, switchMap, tap } from 'rxjs';
@@ -16,8 +16,8 @@ interface IOiHead {
 })
 export class OiNotLightService extends BaseOiService implements IRefetchable, IOiHead {
 
-  getAll({ compType, query }: { compType: string, query: {} }): Observable<NotLightSummary[]> {
-    return this.api.get<NotLightSummary[]>(`${this.url}/other-income/contact/not-light/${compType}`, { params: query })
+  getAll({ compType, query }: { compType: string, query: {} }): Observable<ManyContactResponse[]> {
+    return this.api.get<ManyContactResponse[]>(`${this.url}/other-income/contact/not-light/${compType}`, { params: query })
       .pipe(catchError(err => of([])))
   }
   private term$ = new Subject<string>()

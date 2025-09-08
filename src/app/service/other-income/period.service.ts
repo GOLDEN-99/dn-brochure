@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
+import { TIncomeItem } from './base-oi';
 
 @Injectable({
   providedIn: 'root'
@@ -27,26 +28,33 @@ export class PeriodService {
   insertRece(periodId: number, req: TPeriodReceReq) {
     return this.api.post<any>(`${this.url}/period/${periodId}/receipt`, req)
   }
+
+  insertCredit(periodId: number, req: TPeriodCreditReq) {
+    return this.api.post<any>(`${this.url}/period/${periodId}/credit`, req)
+  }
 }
 
+type TMonth = Pick<TIncomeItem, 'startDate' | 'endDate' | 'id'>
+
 type TCreatPeriodReq = {
-  remark: string
+  periodName: string
   totalAmount: number
   totalIncome: number
-  monthlyList: number[]
+  monthlyList: TMonth[]
 }
 
 type TOrderList = {
   orderNumb: string
+  receNumb: string
   actualAmount: number
+  remark: string
 }
 
 type TPeriodInvReq = {
   invNumb: string
   invDate: string
   invAmount: number
-  exIncome: number
-  withholding: number
+  invRemark: string
 }
 
 type TPeriodReceReq = {
@@ -54,4 +62,11 @@ type TPeriodReceReq = {
   receDate: string
   receAmount: number
   receRemark: string
+}
+
+type TPeriodCreditReq = {
+  creditNumb: string
+  creditDate: string
+  creditAmount: number
+  creditRemark: string
 }

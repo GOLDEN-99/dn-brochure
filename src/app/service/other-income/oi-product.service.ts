@@ -11,7 +11,6 @@ export class OiProductService {
 
   constructor() {
     this.product$
-      .pipe(map(products => products.map(this.mapCheckToProduct)))
       .subscribe(res => this.product.set(res))
   }
   private api = inject(ApiService)
@@ -27,7 +26,7 @@ export class OiProductService {
     debounceTime(300)
   )
   private params$ = combineLatest([this.compCode$, this.compType$, this.term$])
-  private getProduct = (compCode: string, compType: string, name: string) => this.api.get<TSearchProductResult[]>(`${this.url}/${compType}`, { params: { name, compCode } })
+  private getProduct = (compCode: string, compType: string, name: string) => this.api.get<TSearchProductResult[]>(`${this.url}/${compType}`, { params: { compCode } })
   private product$: Observable<TAppSearchProductResult[]> = this.params$
     .pipe(switchMap(([compCode, compType, term]) => this.getProduct(compCode, compType, term)))
     .pipe(
@@ -41,11 +40,14 @@ export class OiProductService {
   selectAll = (isCheck: boolean) => this.product.update(prev => prev.map(p => ({ ...p, check: isCheck })))
 
 
-  private mapCheckToProduct = (product: TSearchProductResult) => {
-    // const hasCheck = this.checked.has(product.goodCode)
-    return { ...product, check: false }
+  private mapCheckToProduct = ({ barCode, goodCode, goodName }: TSearchProductResult): TAppSearchProductResult => {
+    return { goodCode, goodName: `(${barCode}) ${goodName}`, check: false }
   }
 }
 
-type TSearchProductResult = { goodCode: string, goodName: string }
-type TAppSearchProductResult = { check: boolean } & TSearchProductResult
+type TSearchProductResult = {
+  goodCode: string
+  goodName: string
+  barCode: string
+}
+type TAppSearchProductResult = { check: boolean } & Omit<TSearchProductResult, 'barCode'>

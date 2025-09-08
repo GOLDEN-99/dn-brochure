@@ -1,31 +1,4 @@
 <div class="row">
-  <div class="app-form-field-inline col-md">
-    <div>
-      <label for="cn">CN</label>
-    </div>
-    <div>
-      <input type="text" name="cn" id="cn" [(ngModel)]="cn" />
-    </div>
-  </div>
-  <div class="app-form-field-inline col-md">
-    <div>
-      <label for="displayName">ชื่อเรียกเก็บ</label>
-    </div>
-    <div>
-      <input
-        type="text"
-        name="displayName"
-        id="displayName"
-        [(ngModel)]="displayName"
-      />
-    </div>
-  </div>
-</div>
-<app-income-select
-  [(incomeId)]="incomeId"
-  (isProductChange)="isProduct.set($event)"
-/>
-<div class="row">
   <div class="col-md-3">VAT</div>
   <div class="col-md">
     <div class="app-form-check">
@@ -162,7 +135,7 @@
 </div>
 
 <div class="row">
-  <div class="col-md-3">จ่ายไม่เกินกำหนด</div>
+  <div class="col-md-3">เพดาน</div>
   <div class="col-md">
     <div class="app-form-check">
       <input
@@ -171,7 +144,7 @@
         id="cap-null"
         [value]="false"
         [ngModel]="isNullCap()"
-        (input)="capAmount.set(0)"
+        (input)="setCapZero()"
       />
       <label for="cap-null">กำหนด (บาท)</label>
     </div>
@@ -190,22 +163,12 @@
         id="cap-true"
         [value]="true"
         [ngModel]="isNullCap()"
-        (input)="capAmount.set(null)"
+        (input)="setCapNull()"
       />
-      <label for="cap-true">ไม่กำหนด</label>
+      <label for="cap-true">ไม่กำหนดเพดาน</label>
     </div>
   </div>
 </div>
-@let comp = compData(); @if (comp === null) {
-<div class="mb-3 bg-danger">มีข้อผิดพลาดไม่พบข้อมมูลซัพ</div>
-}@else {
-<app-search-product-subform
-  [comp]="comp"
-  [selectProducts]="productsList()"
-  (onAdd)="handleAdd($event)"
-  (onDelete)="handleDelete($event)"
-/>
-}
 
 <app-target-subform [(target)]="stepType" [(step)]="stepList" />
 <div class="d-flex justify-content-center" style="gap: 1rem">

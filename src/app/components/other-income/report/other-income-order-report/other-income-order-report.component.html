@@ -1,0 +1,29 @@
+<h4>รับรู้รายได้จาก po</h4>
+<div class="mb-3">
+  <button class="btn btn-primary w-100 mb-3" (click)="fetchDN()">
+    ซัพพลายเออร์ dn
+  </button>
+  <button class="btn btn-success w-100 mb-3" (click)="fetchHU()">
+    ซัพพลายเออร์ hu
+  </button>
+  <div class="mb-3">
+    <div class="row">
+      <div class="col">ซัพพลายเออร์ {{ compType() }}</div>
+      <div class="col">จำนวน po</div>
+    </div>
+    @for (c of formatHead(); track $index) {
+    <div class="row">
+      <div class="col">{{ c.head.comp }}</div>
+      <div class="col">{{ c.report.length }}</div>
+    </div>
+    }
+  </div>
+  <button
+    class="btn btn-info w-100"
+    [disabled]="disable()"
+    (click)="toExcel()"
+    [disabled]="cannotExport()"
+  >
+    export
+  </button>
+</div>

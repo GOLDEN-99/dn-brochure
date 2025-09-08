@@ -95,18 +95,19 @@ type TDate<T extends TFormat> = T extends 'app' ? NgbDateStruct : string //iso s
 export type TCompType = 'DN' | 'HU'
 export type TBaseOIHead<T extends TFormat> = {
     id: number
+    incomeId: number
     eventId: number
     compCode: string
     compName: string
     compType: TCompType
     period: number
-    // incVat: boolean
+    displayName: string
     startDate: TDate<T>
     endDate: TDate<T>
     timestamp: string //iso
 }
 
-export type TBaseOiInsert<T extends TFormat> = Pick<TBaseOIHead<T>, 'eventId' | 'compCode' | 'compName' | 'compType' | 'period' | 'startDate' | 'endDate'>
+export type TBaseOiInsert<T extends TFormat> = Pick<TBaseOIHead<T>, 'eventId' | 'incomeId' | 'displayName' | 'compCode' | 'compName' | 'compType' | 'period' | 'startDate' | 'endDate'>
 
 export interface IBaseOiHeadDTO {
     id?: number
@@ -196,4 +197,9 @@ export type TInsertMonthlyIncomeState = {
     actualAmou: number
     reason: string
     createDate: NgbDateStruct
+}
+
+
+export interface IOtherIncomePageToke {
+    isPurchase: boolean
 }

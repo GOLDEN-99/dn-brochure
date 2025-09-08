@@ -16,15 +16,18 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
             <tr>
               <th style="width: 20%;">ใบแจ้งหนี้</th>
               <th style="width: 20%;">ยอดใบแจ้งหนี้</th>
-              <th style="width: 20%;">หัก ณ ที่จ่าย</th>
+              <th style="width: 20%;">หมายเหตุ</th>
               <th style="width: 20%;">วันที่ใบแจ้งหนี้</th>
               <th style="width: 20%;">
-                <button
+                @if(canEdit()){
+                  <button
                   class="btn btn-sm btn-primary me-1"
                   (click)="openInvoice()"
-                >
+                  >
                   เพิ่มใบแจ้งหนี้
-                </button></th>
+                </button>
+                }
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -32,7 +35,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
             <tr>
               <td>{{ inv.invNumb }}</td>
               <td>{{ inv.invAmount| number : "1.2-2" }}</td>
-              <td>{{ inv.withholding | number : "1.2-2" }}</td>
+              <td>{{ inv.invRemark }}</td>
               <td colspan="2">{{ inv.invDate }}</td>
             </tr>
             }
@@ -43,8 +46,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
     <ng-template #invoiceModal let-modal>
       <app-other-income-invoice-modal
         [periodId]="periodId()"
-        [exIncome]="exIncome()"
-        [paidAmount]="discount()"
+        [incomeAmount]="incomeAmount()"
+        [addedAmount]="addedAmount()"
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
         (close)="modal.dismiss()"
@@ -53,10 +56,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   `,
 })
 export class OtherIncomeInvoicePeriodComponent {
+  canEdit = input(false)
   invoiceList = input.required<TInviceItemDto[]>()
   periodId = input.required<number>()
-  exIncome = input.required<number>()
-  discount = input.required<number>()
+  incomeAmount = input.required<number>()
+  addedAmount = input.required<number>()
+
 
   success = output<string>()
   fail = output<string>()

@@ -1,74 +1,81 @@
-import { Component, computed, inject, input, OnDestroy, OnInit, output, signal } from '@angular/core';
-import { TPeriodResult } from '../../../../service/other-income/base-oi';
-import { OrderService, TAppOIOrder, TOiOrder } from '../../../../service/other-income/order.service';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { OrderService, TOiBill, TOiOrder } from '../../../../service/other-income/order.service';
 import { PeriodService } from '../../../../service/other-income/period.service';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { combineLatest, filter, Subject, takeUntil } from 'rxjs';
+import { DiscountSelectComponent } from "../../form/discount-select/discount-select.component";
 
 @Component({
   selector: 'app-other-income-order-modal',
-  imports: [FormsModule, DecimalPipe],
+  imports: [FormsModule, DecimalPipe, DiscountSelectComponent],
   templateUrl: './other-income-order-modal.component.html',
   styleUrl: './other-income-order-modal.component.scss'
 })
-export class OtherIncomeOrderModalComponent implements OnInit, OnDestroy {
+export class OtherIncomeOrderModalComponent {
+  //search po set up
+  private orderServ = inject(OrderService)
+  orderList = this.orderServ.billDiscount
   compType = input.required<string | undefined>()
   compCode = input.required<string | undefined>()
+  term = signal("")
+  discType = signal(0)
+  touch = signal(false)
+  disabled = computed(() => this.compCode() === undefined || this.compType() === undefined || this.discType() === 0)
+
   periodId = input.required<number>()
 
-  private predicateEmpty = (value: unknown): value is string => {
-    return typeof value === 'string' && value !== ''
-  }
-  private compType$ = toObservable(this.compType).pipe(filter(this.predicateEmpty))
-  private compCode$ = toObservable(this.compCode).pipe(filter(this.predicateEmpty))
-  private compCriteria$ = combineLatest([this.compType$, this.compCode$])
-  private unsub$ = new Subject<void>()
-
-  ngOnInit(): void {
-    this.compCriteria$.pipe(takeUntil(this.unsub$)).subscribe(([type, code]) => this.poService.setComp(code, type))
-  }
-  ngOnDestroy(): void {
-    this.unsub$.next();
-    this.unsub$.complete();
+  onSearch() {
+    const compCode = this.compCode()
+    const compType = this.compType()
+    const discType = this.discType()
+    const order = this.term()
+    if (compCode === undefined || compType === undefined) return
+    this.touch.set(true)
+    this.orderServ.onSerach({
+      compCode, compType, discType, order
+    })
   }
 
   success = output<string>()
   fail = output<string>()
   close = output<void>()
 
-  private poService = inject(OrderService)
   private periodService = inject(PeriodService)
-  term = this.poService.term
-  orderList = this.poService.queryOrder
-  selectOrder = signal<TAppOIOrder[]>([])
-  sum = computed(() => this.selectOrder().reduce((acc, { actualAmount }) => acc + actualAmount, 0))
+  selectOrder = signal<Array<TOiOrder & { receNumb: string, remark: string }>>([])
+  invalidOrder = computed(() => this.selectOrder().some(({ orderNumb }) => orderNumb === ''))
+  sum = computed(() => this.selectOrder().reduce((acc, { discount }) => acc + discount, 0))
   periodAmount = input.required<number>()
-  private orderSet = new Set()
-  addOrder = (order: TOiOrder) => {
-    const hasValue = this.orderSet.has(order.orderNumb)
-    if (hasValue) {
-      this.fail.emit("po ซ้ำ");
-      return
+  addOrder = () => {
+    const currentOrder = this.selectOrder().map(({ orderNumb }) => orderNumb)
+    const polist = this.orderList()
+    const modPoList = polist.flatMap(({ orderNumb, discount, receList, remark }) => currentOrder.includes(orderNumb)
+      ? []
+      : [{ orderNumb, discount, receNumb: receList[0].receNumb, remark }])
+    this.selectOrder.update(prev => [...prev, ...modPoList])
+  }
+  addSingleOrder = ({ orderNumb, discount, receList, remark }: TOiBill) => {
+    const current = this.selectOrder()
+    const occuranceIndex = current.findIndex(c => c.orderNumb === orderNumb)
+    if (occuranceIndex === -1) {
+      this.selectOrder.update((prev) => [...prev, { orderNumb, discount, receNumb: receList[0].receNumb, remark }])
     }
-    this.orderSet.add(order.orderNumb)
-    this.selectOrder.update(prev => [...prev, { ...order, actualAmount: 0 }])
   }
   deleteOrder(orderNumb: string) {
-    this.orderSet.delete(orderNumb);
-    this.selectOrder.update(prev => prev.filter(p => p.orderNumb !== orderNumb))
+    this.selectOrder.update(prev => prev.filter((order) => order.orderNumb !== orderNumb))
   }
-  updateAmount(orderNumb: string, value: number) {
-    this.selectOrder.update(prev => prev.map(p => p.orderNumb === orderNumb ? ({ ...p, actualAmount: value }) : p))
+  updateAmount(idx: number, value: number) {
+    this.selectOrder.update(prev => prev.map((p, i) => i === idx ? ({ ...p, actualAmount: value }) : p))
+  }
+
+  updateOrder(idx: number, order: string) {
+    this.selectOrder.update(prev => prev.map((p, i) => i === idx ? ({ ...p, orderNumb: order }) : p))
   }
 
   onSubmit() {
     const periodId = this.periodId()
-    const poList = this.selectOrder().map(({ actualAmount, orderNumb }) => ({ actualAmount, orderNumb }))
+    const poList = this.selectOrder().map(({ discount, orderNumb, receNumb, remark }) => ({ actualAmount: discount, orderNumb, receNumb, remark }))
     this.periodService.insertPo(periodId, poList).subscribe({
       next: (res) => {
-        console.log(res);
         this.success.emit('เพิ่ม po สำเร็จ');
       },
       error: (err) => {

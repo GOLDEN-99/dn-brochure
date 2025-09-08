@@ -18,7 +18,7 @@ import { PeriodNotLightService } from '../../../service/other-income/period-not-
   template: `
     <div>
       <h1 class="text-center">รายการรายได้อื่น</h1>
-      <app-other-income-account-query-tab [(compType)]="comp" [(field)]="field" [(status)]="status" [(term)]="term" />
+      <app-other-income-account-query-tab [(param)]="parma" eventFilter="not-light" />
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
@@ -32,7 +32,7 @@ import { PeriodNotLightService } from '../../../service/other-income/period-not-
           </tr>
         </thead>
         <tbody>
-          @for (item of data(); track item.id) {
+          @for (item of data(); track item.periodId) {
           <tr>
             <td>{{ item.event.eventName }}</td>
             <td>{{ item.startDate | date }}</td>
@@ -51,11 +51,8 @@ import { PeriodNotLightService } from '../../../service/other-income/period-not-
 })
 export class AccountNotLightProductComponent {
   private periodNotLight = inject(PeriodNotLightService)
-  data = this.periodNotLight.modProPeriod
-  term = this.periodNotLight.term
-  field = this.periodNotLight.mode
-  status = this.periodNotLight.filter
-  comp = this.periodNotLight.comp
+  parma = this.periodNotLight.params
+  data = this.periodNotLight.modPeriod
 
   private router = inject(Router)
   private route = inject(ActivatedRoute)

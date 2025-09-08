@@ -2,13 +2,10 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MonthlyService } from '../../../../service/other-income/monthly.service';
-import { ToastService } from '../../../../service/toast/toast.service';
-import { OiNotLightService } from '../../../../service/other-income/oi-not-light.service';
 import { MonthSelectComponent } from "../../../date-input/month-select.component";
 import { YearSelectComponent } from "../../../date-input/year-select.component";
 import { DecimalPipe } from '@angular/common';
 import { TOIStepItem } from '../../../../types';
-import { TIncomeItem } from '../../../../service/other-income/base-oi';
 import { calFlat, calSemi, calStep } from './lib';
 
 @Component({
@@ -18,22 +15,18 @@ import { calFlat, calSemi, calStep } from './lib';
   styleUrl: './other-income-monthly-edit.component.scss'
 })
 export class OtherIncomeMonthlyEditComponent {
-  incomeList = input.required<TIncomeItem[]>()
   success = output<string>()
   fail = output<string>()
-
-  isStep = input.required<boolean>()
+  eventType = input.required<number>()
+  stepType = input.required<number>()
   stepList = input.required<TOIStepItem[]>()
   calFunc = computed(() => {
-    const isStep = this.isStep()
-    const stepList = this.stepList()
-    if (isStep) {
-      return calStep(stepList)
+    const steps = this.stepList()
+    switch (this.stepType()) {
+      case 1: return calFlat(steps)
+      case 2: return calSemi(steps)
+      default: return calStep(steps)
     }
-    if (stepList.length === 1) {
-      return calFlat(stepList)
-    }
-    return calSemi(stepList)
   })
   accIncome = input.required<number>()
   accAmount = input.required<number>()
@@ -71,6 +64,7 @@ export class OtherIncomeMonthlyEditComponent {
 
   dif = computed(() => this.summary() - this.actualAmount())
   reason = signal('')
+  cn = signal(0)
 
   onSearch() {
     const comp = this.compType()
@@ -78,47 +72,35 @@ export class OtherIncomeMonthlyEditComponent {
     if (comp !== 'DN' && comp !== 'HU') return
     this.monthService.calIncome(comp, id)
   }
-
+  disableOnclick = signal(false)
   onSubmit() {
+    if (this.disableOnclick()) return
+    this.disableOnclick.set(true)
     const id = this.id()
-    const createDate = this.isoDate()
+    const startDate = this.isoDate()
     const reason = this.reason()
     const receList = this.calIncome().map(({ calAmount, receNumb }) => ({ calAmount, receNumb }))
     const calAmount = this.summary()
     const actualAmount = this.actualAmount()
     const incomeAmount = this.incomeAmount()
-    this.monthService.insertNlMonth(id, { calAmount, actualAmount, createDate, reason, incomeAmount, receList }).subscribe({
+    const cn = this.cn()
+    const eventType = this.eventType()
+    this.monthService.insertNlMonth(id, { calAmount, actualAmount, startDate, reason, incomeAmount, receList, cn, eventType }).subscribe({
       next: (res) => {
         this.success.emit('เพิ่มรับรู้รายเดือนสำเร็จ')
         this.modalService.dismissAll()
       },
       error: (err) => {
         this.fail.emit(err.message)
-      }
-    })
-  }
-
-  formatMonth(iso: string) {
-    const [yy, mm, dd] = iso.split('T')[0].split('-')
-    return `${mm}/${yy}`
-  }
-
-  onDelete(incId: number) {
-    this.monthService.deleteMonthly(incId).subscribe({
-      next: () => {
-        this.success.emit('ลบสำเร็จ')
       },
-      error: (err) => {
-        this.fail.emit(err.message);
-      }
+      complete: () => this.resetForm()
     })
   }
-}
 
-type TCriteria = {
-  isRebate: boolean
-  isDc: boolean
-  isComp: boolean
-  isInce: boolean
-  incVat: boolean
+  resetForm = () => {
+    this.cn.set(0)
+    this.reason.set('')
+    this.actualAmount.set(0)
+    this.disableOnclick.set(false)
+  }
 }

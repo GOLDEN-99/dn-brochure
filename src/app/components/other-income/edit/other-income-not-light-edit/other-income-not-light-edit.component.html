@@ -1,5 +1,5 @@
 <div class="mb-3">
-  @let curEvent = eventDetail();
+  @let curEvent = notLight();
   <div class="row" style="justify-content: space-between">
     <h2 class="col-auto">รายละเอียดกิจกรรม</h2>
     @if (canEdit()) {
@@ -7,16 +7,6 @@
       <button class="btn btn-primary" (click)="openModal()">แก้ไข</button>
     </div>
     }
-  </div>
-  <div class="row">
-    <div class="col">cn</div>
-    <div class="col">{{ curEvent.cn }}</div>
-  </div>
-  <div class="row">
-    <div class="col">ชื่อเรียกเก็บ</div>
-    <div class="col">
-      {{ curEvent.displayName === "" ? "ไมระบุ" : curEvent.displayName }}
-    </div>
   </div>
   <div class="row">
     <div class="col">VAT</div>
@@ -39,9 +29,24 @@
     <div class="col">{{ curEvent.isInce ? "ลด" : "ไม่ลด" }}</div>
   </div>
   <div class="row">
-    <div class="col">จ่ายไม่เกินกำหนด</div>
+    <div class="col">เพดาน</div>
     <div class="col">
-      {{ curEvent.capAmount === null ? 'ไม่กำหนด' : `${curEvent.capAmount} บาท` }}
+      {{ curEvent.capAmount === null ? 'ไม่กำหนดเพดาน' : `${curEvent.capAmount} บาท` }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">target: {{ curStepLabel() }}</div>
+    <div class="col" style="display: flex; flex-direction: column">
+      @let stepLists = steps();
+      <!---->
+      @if (currentStepType() === 1) {
+      <div>{{ stepLists[0].rate }} %</div>
+      }@else { @for (st of stepLists; track $index) {
+      <div style="display: flex; gap: 1rem">
+        <div>ตั้งแต่ {{ st.min }}</div>
+        <div>คิด {{ st.rate }}%</div>
+      </div>
+      } }
     </div>
   </div>
 </div>
@@ -57,32 +62,6 @@
     ></button>
   </div>
   <div class="modal-body">
-    <div class="app-form-field">
-      <div>
-        <label class="mt-0" for="cn">CN</label>
-      </div>
-      <div>
-        <input type="text" name="cn" id="cn" [(ngModel)]="cn" />
-      </div>
-    </div>
-    <div class="app-form-field">
-      <div>
-        <label for="displayName">ชื่อเรียกเก็บ</label>
-      </div>
-      <div>
-        <input
-          type="text"
-          name="displayName"
-          id="displayName"
-          [(ngModel)]="displayName"
-        />
-      </div>
-    </div>
-    <app-income-select
-      [(incomeId)]="incomeId"
-      (isProductChange)="isProduct.set($event)"
-    />
-
     <div class="row">
       <div class="col-md-3">VAT</div>
       <div class="col-md">

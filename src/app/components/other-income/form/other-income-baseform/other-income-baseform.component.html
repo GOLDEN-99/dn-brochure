@@ -1,8 +1,27 @@
 @let formData = state();
+<div class="app-form-field-inline">
+  <div>
+    <label for="displayName">ชื่อสัญญา (ถ้ามี)</label>
+  </div>
+  <div>
+    <input
+      type="text"
+      name="displayName"
+      id="displayName"
+      [ngModel]="formData.displayName"
+      (ngModelChange)="updateName($event)"
+    />
+  </div>
+</div>
 <app-event-select
   [eventId]="formData.eventId"
   (eventIdChange)="updateEvent($event)"
   [filter]="mode()"
+  (isLightChange)="isLightChange.emit($event)"
+/>
+<app-income-select
+  [incomeId]="formData.incomeId"
+  (incomeIdChange)="updateIncome($event)"
 />
 <!-- period -->
 <div class="mb-3">
@@ -46,3 +65,12 @@
   [compName]="formData.compName"
   (compNameChange)="updateCompName($event)"
 />
+@let products = productList(); @if (products !== null && formData.compCode !==
+'') {
+<app-search-product-subform
+  [comp]="{ compCode: formData.compCode, compType: formData.compType }"
+  [selectProducts]="products"
+  (onAdd)="handleAdd($event)"
+  (onDelete)="handleDelete($event)"
+/>
+}

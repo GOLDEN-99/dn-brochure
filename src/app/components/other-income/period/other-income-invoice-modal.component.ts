@@ -1,9 +1,9 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { DateInputComponent } from "../../date-input/date-input.component";
 import { FormsModule } from '@angular/forms';
-import { DecimalPipe } from '@angular/common';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { PeriodService } from '../../../service/other-income/period.service';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-other-income-invoice-modal',
@@ -21,11 +21,15 @@ import { PeriodService } from '../../../service/other-income/period.service';
     <div class="modal-body">
       <app-date-input [(date)]="invoiceDate" label="วันที่ใบแจ้งหนี้" />
       <div class="row mb-3">
-        <div class="col">ยอดรายได้</div>
-        <div class="col">{{ exIncome() | number : "1.2-2" }}</div>
+        <div class="col">รายได้บันทึก</div>
+        <div class="col">{{ incomeAmount() | number : "1.2-2" }}</div>
       </div>
       <div class="row mb-3">
-        <div class="col">รายได้คงค้าง</div>
+        <div class="col">ยอดใบแจ้งหนี้ที่เพิ่มแล้ว</div>
+        <div class="col">{{ addedAmount() | number : "1.2-2" }}</div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">ส่วนต่าง</div>
         <div class="col">{{ remainAmount() | number : "1.2-2" }}</div>
       </div>
       <div class="app-form-field-inline">
@@ -50,17 +54,18 @@ import { PeriodService } from '../../../service/other-income/period.service';
           />
         </div>
       </div>
-      <div class="app-form-field-inline">
-        <div style="flex: 1"><label for="inv-whd">หัก ณ ที่จ่าย</label></div>
+            <div class="app-form-field-inline">
+        <div style="flex: 1"><label for="inv-rema">หมายเหตุ</label></div>
         <div style="flex: 1">
           <input
             type="text"
-            id="inv-whd"
-            name="inv-whd"
-            [(ngModel)]="withholding"
+            id="inv-rema"
+            name="inv-rema"
+            [(ngModel)]="invoiceRemark"
           />
         </div>
       </div>
+
     </div>
     <div class="modal-footer">
       <button
@@ -76,13 +81,13 @@ import { PeriodService } from '../../../service/other-income/period.service';
 })
 export class OtherIncomeInvoiceModalComponent {
   periodId = input.required<number>()
-  exIncome = input.required<number>()
-  paidAmount = input.required<number>()
+  incomeAmount = input.required<number>()
+  addedAmount = input.required<number>()
+  remainAmount = computed(() => this.incomeAmount() - this.addedAmount())
   success = output<string>()
   fail = output<string>()
   close = output<void>()
 
-  remainAmount = computed(() => this.exIncome() - this.paidAmount())
   invalidPeriodId = computed(() => this.periodId() <= 0)
 
   private periodService = inject(PeriodService)
@@ -98,25 +103,23 @@ export class OtherIncomeInvoiceModalComponent {
   })
   invoiceAmount = signal(0)
   invalidInvAmou = computed(() => this.invoiceAmount() <= 0)
-  withholding = signal(0)
-  invalidWhd = computed(() => this.withholding() < 0)
-  invoiceDisable = computed(() => this.invalidInvNumb() || this.invalidInvAmou() || this.invalidWhd() || this.invalidPeriodId())
+  invoiceDisable = computed(() => this.invalidInvNumb() || this.invalidInvAmou() || this.invalidPeriodId())
+  invoiceRemark = signal("")
 
   resetInvState() {
     this.invoiceDate.set(this.today);
     this.invoiceNumb.set("");
     this.invoiceAmount.set(0);
-    this.withholding.set(0)
+    this.invoiceRemark.set("")
   }
   get invReq() {
     const { day, month, year } = this.invoiceDate()
     const invDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     const invAmount = this.invoiceAmount()
-    const withholding = this.withholding()
     const invNumb = this.invoiceNumb()
-    const exIncome = this.exIncome()
+    const invRemark = this.invoiceRemark()
     return {
-      invDate, invNumb, invAmount, withholding, exIncome
+      invDate, invNumb, invAmount, invRemark
     }
   }
 

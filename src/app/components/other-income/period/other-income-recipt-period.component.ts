@@ -19,12 +19,14 @@ import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.c
               <th style="width: 20%;">หมายเหตุ</th>
               <th style="width: 20%;">วันที่ใบเสร็จ</th>
               <th style="width: 20%;">
-                <button
+                @if(canEdit()){
+                  <button
                   class="btn btn-sm btn-secondary"
                   (click)="openReceipt()"
-                >
+                  >
                   เพิ่มใบเสร็จรับเงิน
                 </button>
+              }
               </th>
             </tr>
           </thead>
@@ -44,6 +46,8 @@ import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.c
     <ng-template #receiptModal let-modal>
       <app-other-income-receipt-modal
         [periodId]="periodId()"
+        [invAmount]="invAmount()"
+        [receAmount]="receAmount()"
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
         (close)="modal.dismiss()"
@@ -55,7 +59,9 @@ import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.c
 export class OtherIncomeReciptPeriodComponent {
   receiptList = input.required<TReceiptItemDto[]>()
   periodId = input.required<number>()
-
+  invAmount = input.required<number>()
+  receAmount = input.required<number>()
+  canEdit = input(false)
   success = output<string>()
   fail = output<string>()
 

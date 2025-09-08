@@ -1,0 +1,10 @@
+@let curComp = comp(); @if (curComp === null) {
+<div class="mb-3 bg-danger">มีข้อผิดพลาดไม่พบข้อมมูลซัพ</div>
+}@else {
+<app-search-product-subform
+  [comp]="curComp"
+  [selectProducts]="productsList()"
+  (onAdd)="handleAdd($event)"
+  (onDelete)="handleDelete($event)"
+/>
+}
