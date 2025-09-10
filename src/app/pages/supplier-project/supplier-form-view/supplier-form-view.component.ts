@@ -10,9 +10,7 @@ import { AuthPageComponent } from '../auth-page/auth-page.component';
   styleUrl: './supplier-form-view.component.scss'
 })
 export class SupplierFormViewComponent {
-  constructor() {
-    const eff = effect(() => console.log(this.comp()))
-  }
+
   private dataService = inject(SUPPLIER_TOKEN)
   comp = this.dataService.compBase
 }
