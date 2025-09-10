@@ -1,4 +1,4 @@
-import { catchError, pipe, throwError } from "rxjs";
+import { catchError, Observable, of, pipe, throwError } from "rxjs";
 import * as XLSX from "xlsx"
 
 export const catchErrorAndRethrow = () => catchError((err) => throwError(() => err))
@@ -36,3 +36,8 @@ export const toManyXlxs = async (filename: string, sheetList: string[], data: an
     }
     await XLSX.writeFileXLSX(wb, filename)
 }
+
+export const getOrElse = <T>(fallback: T) => catchError<T, Observable<T>>((err) => {
+    console.log(err);
+    return of(fallback)
+})

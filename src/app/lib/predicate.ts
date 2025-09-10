@@ -32,3 +32,8 @@ export const predicateZone = (value: unknown): value is TZone => {
     const strValue = String(value)
     return strValue === 'BKK' || strValue === 'UPC'
 }
+
+export const predicateCompType = (value: unknown): value is string => {
+    const strValue = String(value).toLowerCase();
+    return strValue === 'hu' || strValue === 'dn'
+}

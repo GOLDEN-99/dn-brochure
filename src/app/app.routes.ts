@@ -53,6 +53,7 @@ import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sa
 import { OtherIncomeInceFormComponent } from './components/other-income/form/other-income-ince-form/other-income-ince-form.component';
 import { supplierCompResolver } from './resolvers/Ibob/supplier-comp.resolver';
 import { SupplierFormViewComponent } from './pages/supplier-project/supplier-form-view/supplier-form-view.component';
+import { compTypeResolver } from './resolvers/Ibob/comp-type.resolver';
 
 export const routes: Routes = [
     {
@@ -131,8 +132,9 @@ export const routes: Routes = [
             .then(r => r.SupplierProductPageComponent)
     },
     {
-        path: 'supplier/form',
+        path: 'supplier/form/:compType',
         component: SupplierLayoutComponent,
+        resolve: { comp: compTypeResolver },
         children: [
             {
                 path: '',
@@ -255,6 +257,25 @@ export const routes: Routes = [
         title: 'HU Inhouse',
         providers: [
             { provide: SUPPLIER_TOKEN, useExisting: SupplierHuService }
+        ],
+        children: [
+            {
+                path: '',
+                loadComponent: () =>
+                    import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
+                        .then(r => r.SupplierInhouseComponent),
+            },
+            {
+                path: ':compCode',
+                component: SupplierLayoutComponent,
+                resolve: [supplierCompResolver],
+                children: [
+                    {
+                        path: '',
+                        component: SupplierFormViewComponent
+                    }
+                ]
+            }
         ]
     },
     //รายได้อื่นๆ

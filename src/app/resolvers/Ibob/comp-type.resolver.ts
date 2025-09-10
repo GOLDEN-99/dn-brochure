@@ -1,0 +1,18 @@
+import { inject } from '@angular/core';
+import { RedirectCommand, ResolveFn, Router } from '@angular/router';
+import { IbobCompService } from '../../service/supplier/ibob-comp.service';
+import { compTypeHandler } from '../../lib/paramsHandler';
+
+export const compTypeResolver: ResolveFn<boolean | RedirectCommand> = (route, state) => {
+
+  const compService = inject(IbobCompService)
+  try {
+    const compType = compTypeHandler(route)
+    compService.setCompType(compType)
+    return true;
+  } catch (err) {
+    console.log(err)
+    const router = inject(Router)
+    return new RedirectCommand(router.parseUrl("notfound"))
+  }
+};
