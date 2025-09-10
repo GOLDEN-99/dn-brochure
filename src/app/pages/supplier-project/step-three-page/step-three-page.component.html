@@ -1,12 +1,15 @@
 <form [formGroup]="stepThree">
   <div class="app-form-field">
-    <label for="supplier">กลุ่มผู้ขาย</label>
-    <input
-      type="text"
-      id="supplier"
-      name="supplier"
-      formControlName="supplier"
-    />
+    <div class="app-form-select">
+      <label for="groupCode">กลุ่มผู้ขาย</label>
+      <select id="groupCode" name="groupCode" formControlName="supplier">
+        @for (group of compGroup(); track group.compGroupCode) {
+        <option [value]="group.compGroupCode">
+          {{ group.compGroupDesc }}
+        </option>
+        }
+      </select>
+    </div>
   </div>
   <div class="row align-items-end">
     <div class="app-form-field col-4 col-md-2">

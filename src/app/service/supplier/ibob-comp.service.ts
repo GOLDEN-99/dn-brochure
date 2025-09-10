@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
 import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, filter, map, of, switchMap } from 'rxjs';
 import { getOrElse } from '../../lib/utli';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +44,8 @@ export class IbobCompService {
   setCompType(compType: string) {
     this.compType$.next(compType)
   }
+
+  compGroup = toSignal(this.compGroup$, { initialValue: [] })
 }
 
 type TCompGroup = {

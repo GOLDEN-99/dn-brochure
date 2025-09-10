@@ -1,8 +1,8 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
 import { TCompDetailRes, TCompProduct, TDNComp, TGeneratedCompCode, THUComp } from '../../types/ibob-supplier.type';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, catchError, combineLatest, map, Subject, switchMap, tap, throwError } from 'rxjs';
 
 @Injectable({
@@ -18,6 +18,15 @@ export class SupplierApiService {
   private generatedCode$ = this.api.get<TGeneratedCompCode>(`${this.url}/GetCompInfoCreate`)
 
   generatedCode = toSignal(this.generatedCode$, { initialValue: null })
+  selectedCode = computed(() => {
+    const cur = this.generatedCode()
+    if (!cur) return 'มีข้อผิดพลาด'
+    switch (this.compType()) {
+      case 'DN': return cur.dnCompCode
+      case 'HU': return cur.compCode
+      default: return 'มีข้อผิดพลาด'
+    }
+  })
 
   createSupplier = (req: TCreateSupplierReq) => this.api.post(`${this.url}/CreateCompInfo`, req, {})
 
@@ -25,11 +34,16 @@ export class SupplierApiService {
 
   private compCode$ = new Subject<string>()
 
-  private compMode$ = new Subject<'DN' | 'HU'>()
+  compType = signal('DN')
+  compType$ = toObservable(this.compType)
+
+  setCompType(value: string) {
+    this.compType.set(value.toUpperCase())
+  }
 
   private params$ = combineLatest({
     compCode: this.compCode$,
-    compMode: this.compMode$
+    compMode: this.compType$
   })
 
   private main$ = this.fetch$.pipe(
@@ -37,7 +51,7 @@ export class SupplierApiService {
       () => this.params$
         .pipe(
           switchMap(
-            ({ compCode, compMode }) => compMode === 'DN'
+            ({ compCode, compMode }) => compMode.toUpperCase() === 'DN'
               ? this.getDNByCompCode(compCode)
               : this.getHUByCompCode(compCode)
           ),

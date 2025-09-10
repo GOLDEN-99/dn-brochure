@@ -69,7 +69,7 @@ export class SupplierFromService {
 
 
   private stepThreeForm: TStep3Form = this.fb.nonNullable.group({
-    supplier: this.fb.nonNullable.control("", Validators.required),
+    supplier: this.fb.nonNullable.control("0", Validators.required),
     comp: this.fb.nonNullable.group<TMapForm<TComp>>({
       compGroupCode: this.fb.nonNullable.control("", [Validators.required]),
       compName: this.fb.nonNullable.control("", Validators.required)

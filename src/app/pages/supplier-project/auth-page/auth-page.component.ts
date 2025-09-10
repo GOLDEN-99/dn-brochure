@@ -22,7 +22,7 @@ export class AuthPageComponent extends BaseSupplierForm implements OnInit, OnDes
 
   private supplierApiServ = inject(SupplierApiService)
 
-  comp = this.supplierApiServ.generatedCode
+  compCode = this.supplierApiServ.selectedCode
 
   initialValue = input<TCompAuth | null>()
   private initialValue$ = toObservable(this.initialValue)

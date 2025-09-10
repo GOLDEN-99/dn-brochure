@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { ModalLayoutComponent } from "../../../components/modal/modal-layout/modal-layout.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SearchSupplierComponent } from "../../../components/inbound-outbound/search-supplier/search-supplier.component";
+import { IbobCompService } from '../../../service/supplier/ibob-comp.service';
 
 @Component({
   selector: 'app-step-three-page',
@@ -20,4 +21,7 @@ export class StepThreePageComponent extends BaseSupplierForm {
   openModal(modal: TemplateRef<any>) {
     this.modalService.open(modal)
   }
+  private compService = inject(IbobCompService)
+  compGroup = this.compService.compGroup
+
 }
