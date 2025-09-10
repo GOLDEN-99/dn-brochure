@@ -1,0 +1,76 @@
+@let formData = state();
+<div class="app-form-field-inline">
+  <div>
+    <label for="displayName">ชื่อสัญญา (ถ้ามี)</label>
+  </div>
+  <div>
+    <input
+      type="text"
+      name="displayName"
+      id="displayName"
+      [ngModel]="formData.displayName"
+      (ngModelChange)="updateName($event)"
+    />
+  </div>
+</div>
+<app-event-select
+  [eventId]="formData.eventId"
+  (eventIdChange)="updateEvent($event)"
+  [filter]="mode()"
+  (isLightChange)="isLightChange.emit($event)"
+/>
+<app-income-select
+  [incomeId]="formData.incomeId"
+  (incomeIdChange)="updateIncome($event)"
+/>
+<!-- period -->
+<div class="mb-3">
+  <label for="period" class="form-label">ระยะเวลาเก็บเงิน</label>
+  <select
+    name="period"
+    id="period"
+    class="form-select"
+    [ngModel]="formData.period"
+    (ngModelChange)="updatePeriod($event)"
+  >
+    <option [ngValue]="0" disabled>กรุณาเลือก</option>
+    <option [ngValue]="1">1 เดือน</option>
+    <option [ngValue]="3">3 เดือน</option>
+    <option [ngValue]="6">6 เดือน</option>
+    <option [ngValue]="12">12 เดือน</option>
+  </select>
+</div>
+<!-- date picker -->
+<div class="row">
+  <div class="col">
+    <app-date-input
+      label="วันที่เริ่ม"
+      [date]="formData.startDate"
+      (dateChange)="updateStartDate($event)"
+    />
+  </div>
+  <div class="col">
+    <app-date-input
+      label="วันที่สิ้นสุด"
+      [date]="formData.endDate"
+      (dateChange)="updateEndDate($event)"
+    />
+  </div>
+</div>
+<app-search-comp-subform
+  [compType]="formData.compType"
+  (compTypeChange)="updateCompType($event)"
+  [compCode]="formData.compCode"
+  (compCodeChange)="updateCompCode($event)"
+  [compName]="formData.compName"
+  (compNameChange)="updateCompName($event)"
+/>
+@let products = productList(); @if (products !== null && formData.compCode !==
+'') {
+<app-search-product-subform
+  [comp]="{ compCode: formData.compCode, compType: formData.compType }"
+  [selectProducts]="products"
+  (onAdd)="handleAdd($event)"
+  (onDelete)="handleDelete($event)"
+/>
+}

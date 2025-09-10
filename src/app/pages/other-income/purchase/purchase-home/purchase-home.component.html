@@ -2,20 +2,6 @@
   <h1 class="text-center">รายการรายได้อื่น</h1>
   <div class="d-flex justify-content-end mb-3" style="gap: 16px">
     <a
-      routerLink="./create-special"
-      class="btn btn-info"
-      style="
-        display: flex;
-        justify-content: center;
-        gap: 16px;
-        align-items: center;
-      "
-    >
-      <i class="bi bi-plus"></i>
-      <span> เพิ่มรายการรายได้อื่นๆ </span>
-      <span style="color: red"> กรณี live box </span>
-    </a>
-    <a
       routerLink="./create"
       class="btn btn-success"
       style="
@@ -29,23 +15,12 @@
       <span> เพิ่มรายการรายได้อื่นๆ </span>
     </a>
   </div>
-  <div class="row">
-    <div class="col">
-      <div class="app-form-field">
-        <label for="supplierSearch">ซัพพลายเออร์</label>
-        <input type="text" name="supplierSearch" id="supplierSearch" />
-      </div>
-    </div>
-    <div class="col">
-      <div class="app-form-field">
-        <label for="goodSearch">สินค้า</label>
-        <input type="text" name="goodSearch" id="goodSearch" />
-      </div>
-    </div>
-    <div class="col-auto d-flex">
-      <button class="btn btn-warning my-auto">ค้นหา</button>
-    </div>
-  </div>
+  <app-other-income-purchasing-query-tab
+    [(term)]="term"
+    [(compType)]="compType"
+    [(field)]="mode"
+    (click)="onSearch()"
+  />
   <table class="table table-striped table-bordered">
     <thead>
       <tr>
@@ -53,13 +28,20 @@
         <th>เริ่ม</th>
         <th>จบ</th>
         <th>ชื่อซัพพลายเออร์</th>
-        <th>ชื่อสินค้า</th>
-        <th>เป้าหมาย</th>
+        <th style="min-width: 84px"></th>
       </tr>
     </thead>
     <tbody>
       @for (item of data(); track $index) {
-      <tr></tr>
+      <tr>
+        <td>{{ item.eventName }}</td>
+        <td>{{ item.startDate | date }}</td>
+        <td>{{ item.endDate | date }}</td>
+        <td>{{ item.compName }}</td>
+        <td>
+          <a [routerLink]="genUrl(item.id, item.compType)">รายละเอียด</a>
+        </td>
+      </tr>
       }
     </tbody>
   </table>

@@ -1,0 +1,182 @@
+<div class="row">
+  <div class="col-md-3">VAT</div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="vat"
+        id="include"
+        [value]="true"
+        [(ngModel)]="incVat"
+      />
+      <label for="include">รวม vat</label>
+    </div>
+  </div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="vat"
+        id="exclude"
+        [value]="false"
+        [(ngModel)]="incVat"
+      />
+      <label for="exclude">ไม่รวม vat</label>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">rebate</div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="rebate"
+        id="reba-inc"
+        [value]="true"
+        [(ngModel)]="isRebate"
+      />
+      <label for="reba-inc">ลด</label>
+    </div>
+  </div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="rebate"
+        id="reba-ext"
+        [value]="false"
+        [(ngModel)]="isRebate"
+      />
+      <label for="reba-ext">ไม่ลด</label>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">dc</div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="dc"
+        id="dc-inc"
+        [value]="true"
+        [(ngModel)]="isDc"
+      />
+      <label for="dc-inc">ลด</label>
+    </div>
+  </div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="dc"
+        id="dc-ext"
+        [value]="false"
+        [(ngModel)]="isDc"
+      />
+      <label for="dc-ext">ไม่ลด</label>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">incentive</div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="ince"
+        id="ince-inc"
+        [value]="true"
+        [(ngModel)]="isInce"
+      />
+      <label for="ince-inc">ลด</label>
+    </div>
+  </div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="ince"
+        id="ince-ext"
+        [value]="false"
+        [(ngModel)]="isInce"
+      />
+      <label for="ince-ext">ไม่ลด</label>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">Compensate</div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="comp"
+        id="comp-inc"
+        [value]="true"
+        [(ngModel)]="isComp"
+      />
+      <label for="comp-inc">ลด</label>
+    </div>
+  </div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="comp"
+        id="comp-ext"
+        [value]="false"
+        [(ngModel)]="isComp"
+      />
+      <label for="comp-ext">ไม่ลด</label>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-3">เพดาน</div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="cap"
+        id="cap-null"
+        [value]="false"
+        [ngModel]="isNullCap()"
+        (input)="setCapZero()"
+      />
+      <label for="cap-null">กำหนด (บาท)</label>
+    </div>
+    @if (!isNullCap()) {
+    <div class="app-form-field">
+      <label for="capAmount">ระบุ (บาท)</label>
+      <input type="number" [(ngModel)]="capAmount" id="capAmount" />
+    </div>
+    }
+  </div>
+  <div class="col-md">
+    <div class="app-form-check">
+      <input
+        type="radio"
+        name="cap"
+        id="cap-true"
+        [value]="true"
+        [ngModel]="isNullCap()"
+        (input)="setCapNull()"
+      />
+      <label for="cap-true">ไม่กำหนดเพดาน</label>
+    </div>
+  </div>
+</div>
+
+<app-target-subform [(target)]="stepType" [(step)]="stepList" />
+<div class="d-flex justify-content-center" style="gap: 1rem">
+  <button class="btn btn-success" (click)="onSubmit()" [disabled]="disable()">
+    <i class="bi bi-floppy"></i>
+    <span> บันทึก </span>
+  </button>
+  <a routerLink="/other-income/purchase" class="btn btn-outline-danger"
+    >ย้อนกลับ</a
+  >
+</div>

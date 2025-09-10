@@ -89,3 +89,12 @@ $font-family-base: $font-family-sans-serif;
 .bg-lightgray {
   background-color: #f5f5f5;
 }
+
+.app-container {
+  margin: auto;
+  padding: 1rem;
+  width: 100%;
+  @media (min-width: 992px) {
+    width: 920px;
+  }
+}

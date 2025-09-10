@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">ค้นหาสินค้า</h4>
+  <h4 class="modal-title">ค้นหาซัพพลายเออร์</h4>
   <button
     type="button"
     class="btn-close"
@@ -8,6 +8,64 @@
   ></button>
 </div>
 <div class="modal-body">
+  <div class="row">
+    <div class="col-md-3">บริษัท</div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="dn"
+          id="dn-true"
+          [value]="true"
+          [ngModel]="isDn()"
+          (ngModelChange)="changeDn($event)"
+        />
+        <label for="dn-true">DN</label>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="dn"
+          id="dn-false"
+          [value]="false"
+          [ngModel]="isDn()"
+          (ngModelChange)="changeDn($event)"
+        />
+        <label for="dn-false">HUG</label>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">ค้นจาก</div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="field"
+          id="field-name"
+          [value]="true"
+          [ngModel]="isName()"
+          (ngModelChange)="changeName($event)"
+        />
+        <label for="dn-true">ชื่อบริษัท</label>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="app-form-check">
+        <input
+          type="radio"
+          name="field"
+          id="field-code"
+          [value]="false"
+          [ngModel]="isName()"
+          (ngModelChange)="changeName($event)"
+        />
+        <label for="field-code">รหัสบริษัท</label>
+      </div>
+    </div>
+  </div>
   <div class="app-form-field">
     <label for="search-term-input">ชื่อบริษัท</label>
     <input
@@ -17,9 +75,9 @@
       [(ngModel)]="term"
     />
   </div>
-  @let compList = result();
+  @let comp = compList();
   <!---->
-  @if (compList.length !== 0) {
+  @if (comp.length !== 0) {
   <!---->
   <div class="row">
     <div class="col">รหัสบริษัท</div>
@@ -35,7 +93,7 @@
       gap: 1rem;
     "
   >
-    @for (comp of compList; track $index) {
+    @for (comp of comp; track $index) {
     <li class="row" style="list-style: none">
       <div class="col">{{ comp.compCode }}</div>
       <div class="col">{{ comp.compName }}</div>

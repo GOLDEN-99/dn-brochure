@@ -1,5 +1,6 @@
 import { Signal } from "@angular/core"
 import { NgbDate, NgbDateStruct } from "@ng-bootstrap/ng-bootstrap"
+import { TCsBool } from "./shared.type"
 
 export type TDiscount = {
     discount: boolean
@@ -81,7 +82,124 @@ export type TProduct = {
     productName: string
 }
 
+export type TOIProduct = { goodCode: string, goodName: string }
+
 export type TCommonIncome = {
     cn: string,
-    productList: TProduct[]
+    productList: TOIProduct[]
 } & TBaseFormData & TSupplierComp & TCommonTarget & TLimit
+
+type TFormat = 'app' | 'api'
+type TDate<T extends TFormat> = T extends 'app' ? NgbDateStruct : string //iso string
+
+export type TCompType = 'DN' | 'HU'
+export type TBaseOIHead<T extends TFormat> = {
+    id: number
+    incomeId: number
+    eventId: number
+    compCode: string
+    compName: string
+    compType: TCompType
+    period: number
+    displayName: string
+    startDate: TDate<T>
+    endDate: TDate<T>
+    timestamp: string //iso
+}
+
+export type TBaseOiInsert<T extends TFormat> = Pick<TBaseOIHead<T>, 'eventId' | 'incomeId' | 'displayName' | 'compCode' | 'compName' | 'compType' | 'period' | 'startDate' | 'endDate'>
+
+export interface IBaseOiHeadDTO {
+    id?: number
+    eventId: number
+    compCode: string
+    compType: TCompType
+    period: number
+    startDate: string // iso
+    endDate: string // iso
+    timestamp?: string //iso
+}
+
+export type TNotLightHead = {
+    incomeId: number
+    discountId: number
+    cn: string
+    stepId: number
+    capAmou: number
+    incVat: boolean
+}
+
+export type TInsertOINotLight = {
+    eventId: number
+    compCode: string
+    compType: TCompType
+    period: number
+    startDate: string // iso
+    endDate: string // iso
+} & TNotLightHead
+
+export type TLightHead = {
+    totalBranch: number
+    totalAmou: number
+}
+
+export type TInsertOILight = {
+    eventId: number
+    compCode: string
+    compType: TCompType
+    period: number
+    startDate: string // iso
+    endDate: string // iso
+} & TLightHead
+
+export type TInsertOILightState = {
+    eventId: number
+    compCode: string
+    compType: TCompType
+    period: number
+    startDate: NgbDateStruct
+    endDate: NgbDateStruct
+} & TLightHead
+
+
+export type TOIStepItem = {
+    min: number
+    max: number | null
+    rate: number
+}
+
+export type TOIStep = {
+    stepName: string // flat step1 step2
+    isStep: TCsBool
+}
+
+export type TInsertOIStep = { steps: TOIStepItem[] } & TOIStep
+
+export type TBranch = {
+    branchCode: string
+    openDate: string //iso 
+}
+
+export type TBranchState = {
+    branchCode: string
+    openDate: NgbDateStruct
+}
+
+export type TInsertMonthlyIncome = {
+    calAmou: number
+    actualAmou: number
+    reason: string
+    createDate: string //iso
+}
+
+export type TInsertMonthlyIncomeState = {
+    calAmou: number
+    actualAmou: number
+    reason: string
+    createDate: NgbDateStruct
+}
+
+
+export interface IOtherIncomePageToke {
+    isPurchase: boolean
+}

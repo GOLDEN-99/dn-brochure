@@ -47,6 +47,7 @@ export type TGoodItem = {
     unitCode: string // "6",
     unitDesc: string // "กล่อง",
     subTotal: number // 192,
+    useItem: number
     lot: TLotItem[]
 }
 
@@ -93,4 +94,4 @@ export type TPrependOrder = {
     goodList: TGoodItemReq[]
 }
 
-export type TCreateReq = TPrepenCnApi & TPrependRemark & TPrependImage & TPrependOrder
+export type TCreateReq = TPrepenCnApi & TPrependRemark & TPrependImage & TPrependOrder & { isWRR: string }

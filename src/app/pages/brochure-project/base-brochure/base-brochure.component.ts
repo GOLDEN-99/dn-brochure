@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ProchureComponent } from '../../../components/brochure-component/prochure/prochure.component';
 import { PromotionPipe } from '../../../pipe/promotion/promotion-pipe.pipe';
 import { NavigateBtnComponent } from '../../../components/navigate-btn/navigate-btn.component';
-import { BROCHURE_TOKEN, exporter } from '../../../lib';
+import { BROCHURE_PRICE_TYPE_TOKEN, BROCHURE_TOKEN, exporter } from '../../../lib';
 import { TItem } from '../../../types';
 import { ToastService } from '../../../service/toast/toast.service';
 
@@ -17,6 +17,7 @@ import { ToastService } from '../../../service/toast/toast.service';
 export class BaseBrochureComponent implements OnInit {
   private route = inject(ActivatedRoute)
   private brochureSerrv = inject(BROCHURE_TOKEN)
+  priceType = inject(BROCHURE_PRICE_TYPE_TOKEN)
   color = this.brochureSerrv.color
   head = this.brochureSerrv.head
   content = this.brochureSerrv.content

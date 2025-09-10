@@ -20,8 +20,12 @@ export class CnApiService {
 
   paramsSignal = signal<TMaybe<TCNQueryParams>>(null)
 
-  getWholeItem = ({ wholeCode, saleCode, wholeNumb }: TCNQueryParams) => {
+  isWRR = signal('')
+
+  getWholeItem = ({ wholeCode, saleCode, wholeNumb, isWRR }: TCNQueryParams & { isWRR: string }) => {
     this.paramsSignal.update(() => ({ wholeCode, wholeNumb, saleCode }))
+    console.log('set wrr side effect ', isWRR)
+    this.isWRR.set(isWRR === '0' ? '' : isWRR)
     return this.api.get<TWholeItem>(`${this.url}/GetWhole`, {
       params: {
         SaleCode: saleCode, WholeCode: wholeCode, WholeNumb: wholeNumb

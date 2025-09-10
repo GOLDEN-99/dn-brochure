@@ -1,0 +1,56 @@
+<section class="app-container">
+  @if (invalidValue()) {
+  <div>ไม่พบเอกสาร</div>
+  } @else { @let e = currentResult();@let branches = e.branchList;@let periods =
+  e.periodList;
+  <app-other-income-head-edit
+    [head]="e.head"
+    [comp]="e.company"
+    [event]="e.event"
+    [income]="e.income"
+    [canEdit]="false"
+  />
+  <app-other-income-light-edit
+    [eventDetail]="e.light"
+    [totalIncome]="e.head.accIncome"
+  />
+  <app-other-income-branch
+    [canEdit]="isPurchase"
+    [lightId]="e.light.id"
+    [branchList]="branches"
+    (refetch)="onRefetch()"
+  />
+
+  @for (period of periods; track period.id) {
+  <div class="row bg-success bg-opacity-10">
+    <div class="row">
+      @for (head of currentHeader(); track $index) {
+      <div class="col">{{ head }}</div>
+      }
+    </div>
+    <div class="row">
+      @for (fn of currentMapper(); track $index) {
+      <div class="col">{{ fn(period) }}</div>
+      }
+    </div>
+  </div>
+  <app-other-income-invoice-period
+    [canEdit]="!isPurchase"
+    [invoiceList]="period.invoiceList"
+    [periodId]="period.id"
+    [incomeAmount]="period.totalIncome"
+    [addedAmount]="period.invAmount"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  <app-other-income-recipt-period
+    [canEdit]="!isPurchase"
+    [receiptList]="period.receiptList"
+    [periodId]="period.id"
+    [invAmount]="period.invAmount"
+    [receAmount]="period.receAmount"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  } }
+</section>

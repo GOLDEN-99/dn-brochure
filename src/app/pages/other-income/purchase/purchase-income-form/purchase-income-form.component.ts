@@ -1,75 +1,77 @@
-import { Component, computed, inject, viewChild } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { DateInputComponent } from "../../../../components/date-input/date-input.component";
-import { DiscountSubformComponent } from "../../../../components/other-income/form/discount-subform/discount-subform.component";
-import { TargetSubformComponent } from "../../../../components/other-income/form/target-subform/target-subform.component";
-import { OtherIncomeFormService } from '../../../../service/other-income/other-income-form.service';
-import { SearchProductModalComponent } from "../../../../components/other-income/search-product-modal/search-product-modal.component";
-import { OtherSearchSupplierModalComponent } from "../../../../components/other-income/other-search-supplier-modal/other-search-supplier-modal.component";
-import { TProduct } from '../../../../types';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { OtherIncomeBaseformComponent } from "../../../../components/other-income/form/other-income-baseform/other-income-baseform.component";
+import { OiBaseformService } from '../../../../service/other-income/oi-baseform.service';
 @Component({
   selector: 'app-purchase-income-form',
-  imports: [FormsModule, NgbDatepickerModule, RouterLink, DateInputComponent, DiscountSubformComponent, TargetSubformComponent, SearchProductModalComponent, OtherSearchSupplierModalComponent],
-  templateUrl: './purchase-income-form.component.html',
-  styleUrl: './purchase-income-form.component.scss'
+  imports: [FormsModule, NgbDatepickerModule, RouterLink, OtherIncomeBaseformComponent],
+  template: `
+  <app-other-income-baseform mode="not-light" (isLightChange)="isLight.set($event)" />
+  <div class="d-flex justify-content-center" style="gap: 1rem">
+    <button class="btn btn-success" (click)="onSubmit()">
+      <i class="bi bi-floppy"></i>
+      <span> บันทึก </span>
+    </button>
+    <a routerLink="../" class="btn btn-outline-danger"
+      >ย้อนกลับ</a
+    >
+  </div>
+  `,
+  styles: `
+      .layout {
+      margin: auto;
+      padding: 1rem;
+      width: 100%;
+      @media (min-width: 992px) {
+        width: 920px;
+      }
+    }
+    .step-item {
+      list-style: none;
+      background-color: #f5f5f5;
+      padding: 0 8px;
+      &:first-child {
+        padding-top: 16px;
+      }
+    }
+    .bg-lightgray {
+      background-color: #f5f5f5;
+    }
+`
 })
-export class PurchaseIncomeFormComponent {
-
-  private formServ = inject(OtherIncomeFormService)
-  formState = this.formServ.state
-  update = this.formServ.updator
-
-  private modalService = inject(NgbModal)
-  private searchProductModal = viewChild('searchProductModal')
-  openSearchProduct() {
-    const ref = this.modalService.open(this.searchProductModal())
+export class PurchaseIncomeFormComponent implements OnInit, OnDestroy {
+  ngOnInit(): void {
+    this.productList.set([])
   }
-  currentProduct = computed(() => this.formState().productList)
-  private setProductList = this.update('productList')
-  private productIdSet = new Set<string>()
-  onSelectProduct(products: TProduct[]) {
-    console.table(products)
-    const validProduct = products.flatMap((p) => {
-      const hasValue = this.productIdSet.has(p.id)
-      if (hasValue) return []
-      this.productIdSet.add(p.id)
-      return [p]
-    })
-    const currentProduct = this.currentProduct()
-    const newProduct = [...currentProduct, ...validProduct]
-    this.setProductList(newProduct)
-    this.modalService.dismissAll()
-  }
-  onRemoveProduct(id: string) {
-    const currentProduct = this.currentProduct()
-    const newProduct = currentProduct.filter((p) => p.id !== id)
-    this.setProductList(newProduct)
-    this.productIdSet.delete(id)
+  ngOnDestroy(): void {
+    this.baseFormService.resetForm();
   }
 
-  private searchSupplierModal = viewChild('searchSupplierModal')
-  openSearchSupplier() {
-    const ref = this.modalService.open(this.searchSupplierModal())
+  private baseFormService = inject(OiBaseformService)
+  private comp = this.baseFormService.compData
+  private router = inject(Router)
+  private route = inject(ActivatedRoute)
+  isLight = signal(-1)
+  isInce = computed(() => this.isLight() === 3)
+  productList = this.baseFormService.productList
+  onSubmit = () => {
+    const comp = this.comp()
+    this.baseFormService.createHead().subscribe(
+      {
+        next: ({ id }) => {
+          this.baseFormService.resetForm()
+          if (this.isInce()) {
+            this.router.navigate(['../'], { relativeTo: this.route })
+          } else {
+            this.router.navigate([id], { relativeTo: this.route })
+          }
+        },
+        error: (err) => {
+          console.log(err)
+        },
+      }
+    )
   }
-  selectComp({ compCode, compName }: TComp) {
-    this.setProductList([])
-    this.formServ.updateMany({ compCode, compName })
-    this.modalService.dismissAll()
-  }
-  notSelectComp = this.formServ.notSelectComp
-
-  // endPoint = computed(() => this.event() !== 0 ? '/other-income/purchase/create-1' : '/other-income/purchase')
-  // endPointDisable = computed(() => this.invalidEvent() || this.invalidDiscountType() || this.invalidPeriod() ? 'btn btn-success disabled' : 'btn btn-success')
-}
-
-type TStepItem = {
-  start: number
-  percent: number
-}
-
-type TComp = {
-  compCode: string
-  compName: string
 }

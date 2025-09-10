@@ -1,0 +1,93 @@
+<div class="mb-3">
+  @let incomes = incomeList();
+  <div class="row" style="justify-content: space-between">
+    <h2 class="col-auto">รายการรับรู้รายเดือน</h2>
+    @if (canEdit()) {
+    <div class="col-auto">
+      <button class="btn btn-primary" (click)="openModal(monthlyModal)">
+        เพิ่มรายได้รายเดือน
+      </button>
+    </div>
+    }
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>งวด</th>
+        <th>ยอดคำนวน</th>
+        <th>cn</th>
+        <th>ยอดจริง</th>
+        <th>ส่วนต่าง</th>
+        <th>สาเหตุ</th>
+        <th>รายได้</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (income of incomes; track $index) {
+      <tr>
+        <td>{{ formatMonth(income.startDate) }}</td>
+        <td>{{ income.calAmount | number : "1.2-2" }}</td>
+        <td>{{ income.cn | number : "1.2-2" }}</td>
+        <td>{{ income.actualAmount | number : "1.2-2" }}</td>
+        <td>
+          {{
+            income.calAmount - income.cn - income.actualAmount
+              | number : "1.2-2"
+          }}
+        </td>
+        <td>{{ income.reason }}</td>
+        <td>{{ income.incomeAmount | number : "1.2-2" }}</td>
+        <td>
+          @if (incomes.length -1 === $index && income.checkDate === null) {
+          <button class="btn btn-danger" (click)="onDelete(income.id)">
+            <i class="bi bi-trash"></i>
+          </button>
+          }
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<ng-template #monthlyModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">รับรู้รายเดือน</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col">
+        <app-date-input label="วันที่เริ่ม" [(date)]="startDate" />
+      </div>
+      <div class="col">
+        <app-date-input label="วันที่สิ้นสุด" [(date)]="endDate" />
+      </div>
+    </div>
+    <div class="app-form-field-inline" style="justify-content: space-between">
+      <div>
+        <label for="reason">หมายเหตุ</label>
+      </div>
+      <div>
+        <input type="text" id="reason" [(ngModel)]="reason" />
+      </div>
+    </div>
+    <div class="app-form-field-inline" style="justify-content: space-between">
+      <div>
+        <label for="income">รายได้</label>
+      </div>
+      <div>
+        <input type="number" id="income" [(ngModel)]="incomeAmount" />
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary w-100" (click)="onSubmit()">บันทึก</button>
+  </div>
+</ng-template>
