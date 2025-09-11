@@ -5,11 +5,12 @@ import { IBOBRESERVE_TOKEN } from '../../../service/ibob/ibobToken';
 import { IbobAddService } from '../../../service/ibob/ibob-add.service';
 import { TMaybe } from '../../../types';
 import { TDoor } from '../../../types/ibob-supplier.type';
-import { Router, RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin, map, tap } from 'rxjs';
 import { DoorService } from '../../../service/ibob/door.service';
 import { WarehouseService } from '../../../service/ibob/warehouse.service';
 import { ToastService } from '../../../service/toast/toast.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-supplier-reserve-add',
@@ -21,6 +22,11 @@ import { ToastService } from '../../../service/toast/toast.service';
   styleUrl: './supplier-reserve-add.component.scss'
 })
 export class SupplierReserveAddComponent {
+  private serv = inject(IBOBRESERVE_TOKEN)
+  private route = inject(ActivatedRoute)
+  private query$ = this.route.queryParamMap.pipe(map(q => q.get('from') ?? 'reserve'))
+  queryString = toSignal(this.query$, { initialValue: 'reserve' })
+  backLink = computed(() => `/supplier/${this.queryString()}`)
   warehouse = input<string>()
   private warehouseServ = inject(WarehouseService)
   pageLabel = this.warehouseServ.currentWarehouseName
@@ -29,8 +35,8 @@ export class SupplierReserveAddComponent {
 
   private doorService = inject(DoorService)
 
-  today = inject(NgbCalendar).getToday();
-  activeDate = signal<TMaybe<NgbDate>>(null)
+
+  activeDate = this.serv.selectDate
   activeSlot = signal<string[]>([])
   lowerBound = computed(() => {
     const slots = this.activeSlot()
@@ -84,28 +90,26 @@ export class SupplierReserveAddComponent {
     }
   }
 
-  private serv = inject(IBOBRESERVE_TOKEN)
 
   btnClass = (cur: string) => this.activeSlot().some(a => a === cur) ? 'btn btn-success' : 'btn btn-outline-secondary'
 
-  activeDoor = signal<TMaybe<string>>(null)
+  activeDoor = this.serv.gate
   minBox = signal(0)
   maxBox = signal(0)
   useTime = signal(0)
 
   onChangeGate(arg: TDoor) {
-    this.activeDoor.set(arg.doorId)
-    this.serv.changeGate(arg.doorId)
     this.isMultiple.set(arg.multiple)
     this.activeSlot.set([])
     this.minBox.set(arg.minBox)
     this.maxBox.set(arg.maxBox)
     this.useTime.set(arg.timeUse)
+    this.activeDoor.set(arg.doorId)
   }
 
   onChangeDate(date: NgbDate) {
     this.activeDate.set(date)
-    this.serv.changeDate(date)
+    this.activeSlot.set([])
   }
 
   comp = this.serv.currentComp

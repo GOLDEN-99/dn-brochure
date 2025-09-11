@@ -1,13 +1,14 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, combineLatest, map, of, Subject, switchMap, tap } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { catchError, combineLatest, filter, map, of, Subject, switchMap, tap } from 'rxjs';
 import { IIbObLogin, IIbObReserve } from './ibobToken';
 import { TAppOrder, TCreateReservationReq, TEditableResavation, TGetIbObRes, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot } from '../../types/ibob-supplier.type';
-import { TDate } from '../../lib';
+import { convertToIso, TDate } from '../../lib';
 import { TMaybe } from '../../types';
 import { LocalService } from '../local/local.service';
+import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 
 @Injectable({
   providedIn: 'root'
@@ -74,9 +75,13 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
     }
     return this.api.post(`${this.baseurl}/CreateReservation`, reqBody)
   }
-
-  private gate$ = new Subject<string>()
-  private selectDate$ = new Subject<string>()
+  gate = signal<TMaybe<string>>(null)
+  private gate$ = toObservable(this.gate).pipe(filter(g => g !== null))
+  private cal = inject(NgbCalendar)
+  private today = this.cal.getToday()
+  selectDate = signal(this.today)
+  private isoSelectDate = computed(() => convertToIso(this.selectDate()))
+  private selectDate$ = toObservable(this.isoSelectDate)
   private params$ = combineLatest([this.gate$, this.selectDate$])
   private getTimeSlot = (gate: string, iso: string) => this.api
     .get<TGetIbObRes>(`${this.baseurl}/GetInBound/${gate}/${iso}`)
@@ -85,13 +90,6 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
       catchError((err) => { console.log(err); return of([] as TTimeSlot[]); })
     )
 
-  changeGate(gate: string) {
-    this.gate$.next(gate)
-  }
-  changeDate({ day, month, year }: TDate) {
-    const isoDate = `${year}-${month}-${day}`
-    this.selectDate$.next(isoDate)
-  }
   private posibleSlot$ = this.params$
     .pipe(
       switchMap(([gate, date]) => this.getTimeSlot(gate, date)),
