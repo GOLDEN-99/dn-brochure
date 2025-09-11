@@ -1,9 +1,10 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
 import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, filter, map, of, switchMap } from 'rxjs';
 import { getOrElse } from '../../lib/utli';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { TOIComp } from '../other-income/company.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,27 +29,29 @@ export class IbobCompService {
       switchMap(c => this.getCompGroup(c)),
       getOrElse<TCompGroup[]>([])
     )
-  private term$ = new BehaviorSubject('')
+  term = signal("")
+  private term$ = toObservable(this.term)
   private debounceTerm$ = this.term$.pipe(
     distinctUntilChanged(),
     debounceTime(300)
   )
-  private groupCode$ = new BehaviorSubject('')
-  private compParam$ = combineLatest([this.compType$, this.groupCode$, this.debounceTerm$])
+  groupCode = signal("")
+  private groupCode$ = toObservable(this.groupCode)
+  private compList$ = combineLatest([this.compType$, this.groupCode$, this.debounceTerm$])
     .pipe(
       filter(([compType]) => compType !== ''),
       map(([compType, groupCode, term]) => ({ compType, groupCode, term })),
-      switchMap(({ compType, groupCode, term }) => this.api.get(`${this.baseUrl}/${compType}`, { params: { groupCode, term } }))
+      switchMap(({ compType, groupCode, term }) => this.api.get<TOIComp[]>(`${this.baseUrl}/${compType}`, { params: { groupCode, term } }))
     )
-
   setCompType(compType: string) {
     this.compType$.next(compType)
   }
 
   compGroup = toSignal(this.compGroup$, { initialValue: [] })
+  compList = toSignal(this.compList$, { initialValue: [] })
 }
 
-type TCompGroup = {
+export type TCompGroup = {
   compGroupCode: string
   compGroupDesc: string
 }

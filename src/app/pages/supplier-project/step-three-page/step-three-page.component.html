@@ -3,6 +3,7 @@
     <div class="app-form-select">
       <label for="groupCode">กลุ่มผู้ขาย</label>
       <select id="groupCode" name="groupCode" formControlName="supplier">
+        <option value="" disabled>กรุณาเลือก</option>
         @for (group of compGroup(); track group.compGroupCode) {
         <option [value]="group.compGroupCode">
           {{ group.compGroupDesc }}
@@ -11,28 +12,32 @@
       </select>
     </div>
   </div>
-  <div class="row align-items-end">
-    <div class="app-form-field col-4 col-md-2">
-      <label for="compCode">สังกัดบริษัท</label>
-      <input
-        type="text"
-        name="compCode"
-        id="compCode"
-        readonly
-        (click)="searchBtn.click()"
-      />
-    </div>
-    <div class="app-form-field col-6 col-md-4">
-      <label for="comp"></label>
-      <input
-        type="text"
-        name="comp"
-        id="comp"
-        readonly
-        (click)="searchBtn.click()"
-      />
-    </div>
-    <div class="col-2 col-md mb-3">
+  <div class="row align-items-end mb-3">
+    <form class="col-10 row align-items-end" formGroupName="comp">
+      <div class="app-form-field col">
+        <label for="compCode">สังกัดบริษัท</label>
+        <input
+          type="text"
+          name="compCode"
+          id="compCode"
+          formControlName="compCode"
+          readonly
+          (click)="searchBtn.click()"
+        />
+      </div>
+      <div class="app-form-field col">
+        <label for="comp"></label>
+        <input
+          type="text"
+          name="comp"
+          id="comp"
+          formControlName="compName"
+          readonly
+          (click)="searchBtn.click()"
+        />
+      </div>
+    </form>
+    <div class="col-2 mb-3">
       <button
         class="btn btn-outline"
         #searchBtn
@@ -192,7 +197,7 @@
     (crossClick)="modal.dismiss('Cross click')"
   >
     <div modalBody>
-      <app-search-supplier />
+      <app-search-supplier (selectedSuplier)="onSelectParentComp($event)" />
     </div>
     <div modalFooter>
       <button class="btn btn-secondary" (click)="modal.close('Close modal')">

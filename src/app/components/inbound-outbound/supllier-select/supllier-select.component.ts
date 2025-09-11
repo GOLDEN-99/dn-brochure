@@ -1,5 +1,6 @@
-import { Component, input, model, signal } from '@angular/core';
+import { Component, computed, inject, input, model, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { IbobCompService, TCompGroup } from '../../../service/supplier/ibob-comp.service';
 
 @Component({
   selector: 'app-supllier-select',
@@ -8,13 +9,10 @@ import { FormsModule } from '@angular/forms';
   styles: ''
 })
 export class SupllierSelectComponent {
-  selectedOption = model<IOption | null>(null)
-  optionsList = signal<IOption[]>([
-    { id: 0, label: 'กรุณาเลือก' },
-    { id: 1, label: 'supplier 1' },
-    { id: 2, label: 'supplier 2' }
-  ])
-  compareFunc = input<TCompareFunction>((o1, o2) => o1 && o2 ? o1.id === o2.id : o1 === o2)
+  private compService = inject(IbobCompService)
+  compGroupCode = model.required<string>()
+  optionsList = this.compService.compGroup
+  compareFunc = input<TCompareFunction<TCompGroup>>((o1, o2) => o1 && o2 ? o1.compGroupCode === o2.compGroupCode : o1 === o2)
 }
 
 export interface IOption {
@@ -22,4 +20,4 @@ export interface IOption {
   label: string
 }
 
-type TCompareFunction = (o1: IOption, o2: IOption) => boolean
+type TCompareFunction<T> = (o1: T | null | undefined, o2: T | null | undefined) => boolean

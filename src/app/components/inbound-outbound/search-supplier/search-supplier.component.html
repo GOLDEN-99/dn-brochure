@@ -1,31 +1,36 @@
 <div>
-  <app-supllier-select [(selectedOption)]="sup" />
+  <app-supllier-select [(compGroupCode)]="groupCode" />
   <div class="app-form-field">
     <label for="term">ค้นหา</label>
     <input type="text" name="term" id="term" [(ngModel)]="term" />
   </div>
-  <table class="table">
-    <thead>
-      <tr>
-        <td>ชื่อบริษัท(อังกฤษ)</td>
-        <td>ชื่อบริษัท(ไทย)</td>
-        <td>รหัส</td>
-        <td></td>
-      </tr>
-    </thead>
-    <tbody>
-      @for (item of items(); track $index) {
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>
-          <button class="btn btn-success" (click)="selectedSuplier.emit(item)">
-            เลือก
-          </button>
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
+  <div style="max-height: 40vh; overflow-y: scroll">
+    <table class="table">
+      <thead>
+        <tr>
+          <td style="width: 170px">ชื่อบริษัท(อังกฤษ)</td>
+          <td style="width: 170px">ชื่อบริษัท(ไทย)</td>
+          <td style="width: 48px">รหัส</td>
+          <td></td>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.compCode) {
+        <tr>
+          <td>{{ item.compName }}</td>
+          <td>{{ item.compName2 }}</td>
+          <td>{{ item.compCode }}</td>
+          <td>
+            <button
+              class="btn btn-success"
+              (click)="selectedSuplier.emit(item)"
+            >
+              เลือก
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -13,13 +13,6 @@ import { TReturnForm } from '../../../service/supplier/supplier-from.service';
 })
 export class ConditionPageComponent extends BaseSupplierForm {
 
-  constructor() {
-    super()
-    this.form.valueChanges.subscribe({
-      next: () => console.log(this.formService.getCondi())
-    })
-  }
-
   active = signal(1)
 
   form = this.formService.form.controls.condi

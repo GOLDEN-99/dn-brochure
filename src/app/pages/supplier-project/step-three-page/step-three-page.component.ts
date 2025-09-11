@@ -6,6 +6,8 @@ import { ModalLayoutComponent } from "../../../components/modal/modal-layout/mod
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SearchSupplierComponent } from "../../../components/inbound-outbound/search-supplier/search-supplier.component";
 import { IbobCompService } from '../../../service/supplier/ibob-comp.service';
+import { TComp } from '../../../types/ibob-supplier.type';
+import { TOIComp } from '../../../service/other-income/company.service';
 
 @Component({
   selector: 'app-step-three-page',
@@ -23,5 +25,8 @@ export class StepThreePageComponent extends BaseSupplierForm {
   }
   private compService = inject(IbobCompService)
   compGroup = this.compService.compGroup
-
+  onSelectParentComp({ compCode, compName }: TOIComp & { compGroupCode: string }) {
+    this.stepThree.patchValue({ comp: { compCode, compName } })
+    this.modalService.dismissAll()
+  }
 }
