@@ -22,7 +22,7 @@
         </div>
       </div>
     </div> -->
-    <app-ibob-query-tab label="รายชื่อซัพ" />
+    <app-ibob-query-tab label="รายชื่อซัพ" (search)="onSearch($event)" />
     <table class="table table-striped table-bordered" style="min-width: 1024px">
       <thead>
         <tr>
@@ -35,7 +35,7 @@
         </tr>
       </thead>
       <tbody>
-        <!-- @for (comp of items; track $index) {}
+        @for (comp of compList(); track $index) {
         <tr tabindex="0" style="cursor: pointer" (click)="goTo(comp.compCode)">
           <td scope="row">{{ comp.username }}</td>
           <td>{{ comp.userpass }}</td>
@@ -43,7 +43,8 @@
           <td>{{ comp.compPhone }}</td>
           <td>{{ comp.compEmail }}</td>
           <td>{{ comp.compAddr }}</td>
-        </tr> -->
+        </tr>
+        }
       </tbody>
     </table>
 

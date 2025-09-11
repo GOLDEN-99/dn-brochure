@@ -2,7 +2,7 @@
   <div class="app-form-field">
     <div class="app-form-select">
       <label for="groupCode">กลุ่มผู้ขาย</label>
-      <select id="groupCode" name="groupCode" formControlName="supplier">
+      <select id="groupCode" name="groupCode" formControlName="compGroupCode">
         <option value="" disabled>กรุณาเลือก</option>
         @for (group of compGroup(); track group.compGroupCode) {
         <option [value]="group.compGroupCode">
@@ -13,7 +13,7 @@
     </div>
   </div>
   <div class="row align-items-end mb-3">
-    <form class="col-10 row align-items-end" formGroupName="comp">
+    <form class="col-10 row align-items-end" formGroupName="parentComp">
       <div class="app-form-field col">
         <label for="compCode">สังกัดบริษัท</label>
         <input
@@ -154,26 +154,29 @@
       >
         <input
           type="checkbox"
-          id="vat1"
-          name="tax1"
+          id="vat2"
+          name="tax2"
           style="height: 24px; width: 24px"
-          formControlName="tax1"
+          formControlName="vatRegistered"
         />
-        <label for="vat1">จดทะเบียน VAT</label>
+        <label for="vat2">สินค้ารวม VAT</label>
       </div>
+      @if (compType() === 'HU') {
+
       <div
         class="app-form-check"
         style="display: flex; gap: 16px; align-items: center"
       >
         <input
           type="checkbox"
-          id="vat2"
-          name="tax2"
+          id="vat1"
+          name="tax1"
           style="height: 24px; width: 24px"
-          formControlName="tax2"
+          formControlName="billIncludeVat"
         />
-        <label for="vat2">สินค้ารวม VAT</label>
+        <label for="vat1">จดทะเบียน VAT</label>
       </div>
+
       <div
         class="app-form-check"
         style="display: flex; gap: 16px; align-items: center"
@@ -183,10 +186,11 @@
           id="vat3"
           name="tax3"
           style="height: 24px; width: 24px"
-          formControlName="tax3"
+          formControlName="fixedPrice"
         />
         <label for="vat3">ควบคุมราคาขายปลีก</label>
       </div>
+      }
     </form>
   </div>
 </form>

@@ -1,11 +1,12 @@
 import { inject, Injectable, Signal, signal } from '@angular/core';
 import { TSupplierItem } from '../../types';
 import { ApiService } from '../api/api.service';
-import { ISupplierList } from './supplier.token';
-import { distinctUntilChanged, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import { ISupplierList, TExtendedComp } from './supplier.token';
+import { combineLatest, debounceTime, distinctUntilChanged, filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { TCompProduct, THUComp, THUCompRes } from '../../types/ibob-supplier.type';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { getOrElse } from '../../lib/utli';
 
 @Injectable({
   providedIn: 'root'
@@ -21,11 +22,27 @@ export class SupplierHuService implements ISupplierList {
 
   private url = environment.ibob
 
-  private compCode$ = new Subject<string>()
-
+  term = signal('')
+  compCode = signal('')
+  private term$ = toObservable(this.term)
+    .pipe(
+      distinctUntilChanged(),
+      debounceTime(300)
+    )
+  private searchCompCode$ = toObservable(this.compCode)
+    .pipe(
+      distinctUntilChanged(),
+      debounceTime(300)
+    )
+  private searchMany$ = combineLatest([this.term$, this.searchCompCode$])
+    .pipe(
+      map(([term, compCode]) => ({ term, compCode })),
+      filter(({ compCode, term }) => compCode !== '' || term !== '')
+    )
   searchCompCode = (compCode: string) => this.compCode$.next(compCode)
-
   private fetchFn = (compCode: string) => this.api.get<THUCompRes>(`${this.url}/GetCompSubRes/${compCode}/HU`)
+
+  compCode$ = new Subject<string>()
 
   private compData$ = this.compCode$.pipe(distinctUntilChanged(), switchMap(this.fetchFn))
 
@@ -48,4 +65,10 @@ export class SupplierHuService implements ISupplierList {
     tel: '0888888888'
   }])
   pageLabel: Signal<'DN' | 'HU'> = signal('HU')
+  compList$ = this.searchMany$.pipe(
+    switchMap(params => this.api.get<TExtendedComp[]>(`${environment.oi}/comp/hu`, { params })),
+    getOrElse<TExtendedComp[]>([])
+  )
+  compList: Signal<TExtendedComp[]> = toSignal(this.compList$, { initialValue: [] })
+
 }

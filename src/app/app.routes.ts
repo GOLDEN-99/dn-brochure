@@ -154,6 +154,12 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./pages/supplier-project/condition-page/condition-page.component')
                         .then(r => r.ConditionPageComponent)
+            },
+            {
+                path: 'complete',
+                loadComponent: () =>
+                    import('./pages/supplier-project/supplier-complete/supplier-complete.component')
+                        .then(r => r.SupplierCompleteComponent)
             }
         ]
     },

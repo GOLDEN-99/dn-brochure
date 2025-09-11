@@ -12,6 +12,7 @@ export class SupplierFromService {
 
   private fb = inject(FormBuilder)
 
+
   private authForm = this.fb.nonNullable.group({
     username: this.fb.nonNullable.control('', Validators.required),
     userpass: this.fb.nonNullable.control('', Validators.required)
@@ -28,6 +29,23 @@ export class SupplierFromService {
       emplEmail: this.fb.nonNullable.control("")
     })
   )
+
+  createGeneralContactForm = ({ emplName, emplPhone, emplEmail }: { emplName: string, emplPhone: string, emplEmail: string }): TContacListForm => {
+    return this.fb.nonNullable.group({
+      emplName: this.fb.nonNullable.control(emplName, Validators.required),
+      emplPhone: this.fb.nonNullable.control(emplPhone, Validators.required),
+      emplEmail: this.fb.nonNullable.control(emplEmail)
+    })
+  }
+
+  setContactForm = (arr: { emplName: string, emplPhone: string, emplEmail: string }[]) => {
+    const temp = this.fb.nonNullable.array<TContacListForm>([])
+    arr.forEach(a => {
+      const form = this.createGeneralContactForm(a)
+      temp.push(form)
+    })
+    this.generalForm.controls.contact = temp
+  }
 
   removeGenralContactForm = (idx: number) =>
     this.form.controls.general.controls.contact.removeAt(idx)
@@ -81,9 +99,9 @@ export class SupplierFromService {
     // emplList: this.emplListForm,
     payment: this.paymentForm,
     tax: this.fb.nonNullable.group({
-      tax1: this.fb.nonNullable.control(false),
-      tax2: this.fb.nonNullable.control(false),
-      tax3: this.fb.nonNullable.control(false)
+      vatRegistered: this.fb.nonNullable.control(false),
+      billIncludeVat: this.fb.nonNullable.control(false),
+      fixedPrice: this.fb.nonNullable.control(false)
     })
   })
 
@@ -96,7 +114,7 @@ export class SupplierFromService {
 
   private condiForm: TCondiForm = this.fb.nonNullable.group({})
 
-  addCondi = (key: 'sup' | 'branch') => () => {
+  addCondi = (key: 'sup' | 'stk') => () => {
     const f: TReturnForm = this.fb.nonNullable.group({
       before: this.fb.nonNullable.control(0, Validators.required),
       after: this.fb.nonNullable.control(0, Validators.required),
@@ -107,7 +125,7 @@ export class SupplierFromService {
     this.form.controls.condi.addControl(key, f)
   }
 
-  removeCondi = (key: 'sup' | 'branch') => () => {
+  removeCondi = (key: 'sup' | 'stk') => () => {
     this.form.controls.condi.removeControl(key)
   }
 
@@ -155,7 +173,7 @@ export class SupplierFromService {
       monthBeforExp: 0,
       monthAfterExp: 0
     }
-    const sup = this.form.controls.condi.get('branch') as TReturnForm | undefined
+    const sup = this.form.controls.condi.get('stk') as TReturnForm | undefined
 
     if (!sup) {
       return {
@@ -203,7 +221,7 @@ export class SupplierFromService {
       tradePerDisc: stepThree.payment.tradePerDisc,
       dcPerDisc: stepThree.payment.dcPerDisc,
       cashPerDisc: stepThree.payment.cashPerDisc,
-      billIncludeVAT: stepThree.tax.tax1 ? '1' : '0',
+      billIncludeVAT: stepThree.tax.billIncludeVat ? '1' : '0',
       orderFileType: '', // '' for dn
       timeStamp: null,
       updateDate: null,
@@ -213,17 +231,17 @@ export class SupplierFromService {
   }
 
   get HUReq(): Omit<THUCreate, 'compCode'> {
-    const { auth, general, stepThree, condi: { sup, branch } } = this.form.getRawValue()
+    const { auth, general, stepThree, condi: { sup, stk } } = this.form.getRawValue()
     const supReturn = sup ? '1' : '0'
     const supFullBox = sup?.lot ? '1' : '0'
     const supSameLot = sup?.lot ? '1' : '0'
     const supMonthBeforeExp = sup?.before ?? 0
     const supMonthAfterExp = sup?.after ?? 0
-    const stkReturn = branch ? '1' : '0'
-    const stkFullBox = branch?.lot ? '1' : '0'
-    const stkSameLot = branch?.lot ? '1' : '0'
-    const stkMonthBeforeExp = branch?.before ?? 0
-    const stkMonthAfterExp = branch?.after ?? 0
+    const stkReturn = stk ? '1' : '0'
+    const stkFullBox = stk?.lot ? '1' : '0'
+    const stkSameLot = stk?.lot ? '1' : '0'
+    const stkMonthBeforeExp = stk?.before ?? 0
+    const stkMonthAfterExp = stk?.after ?? 0
     return {
       compName: general.compName,
       compName2: general.compName2,
@@ -239,16 +257,16 @@ export class SupplierFromService {
       tradePerDisc: stepThree.payment.tradePerDisc,
       dcPerDisc: stepThree.payment.dcPerDisc,
       cashPerDisc: stepThree.payment.cashPerDisc,
-      billIncludeVAT: stepThree.tax.tax1 ? '1' : '0',
-      orderFileType: '', // '' for dn
+      billIncludeVAT: stepThree.tax.billIncludeVat ? '1' : '0',
+      orderFileType: 'Pdf', // '' for dn
       timeStamp: null,
       updateDate: null,
       sapUpdateDate: null,
       // same as dn
-      fixedPrice: stepThree.tax.tax3 ? '1' : '0',
-      registered: stepThree.tax.tax2 ? '1' : '0',
+      fixedPrice: stepThree.tax.fixedPrice ? '1' : '0',
+      registered: stepThree.tax.vatRegistered ? '1' : '0',
       shipTo: stepThree.shipTo,
-      saleName: general.contact.map(c => `${c.emplName} /${c.emplPhone} /${c.emplEmail} `).join('\\'),
+      saleName: general.contact.flatMap(c => c.emplName !== "" ? [`${c.emplName} /${c.emplPhone} /${c.emplEmail} `] : []).join('|'),
       supReturn, supFullBox, supSameLot, supMonthBeforeExp, supMonthAfterExp,
       stkReturn, stkFullBox, stkSameLot, stkMonthBeforeExp, stkMonthAfterExp,
       ...auth,
@@ -301,9 +319,9 @@ type TPaymentForm = FormGroup<TMapForm<TSupplierPayment>>
 type TTax = 1 | 2 | 3
 
 type TTaxForm = FormGroup<TMapForm<{
-  tax1: boolean
-  tax2: boolean
-  tax3: boolean
+  vatRegistered: boolean
+  billIncludeVat: boolean
+  fixedPrice: boolean
 }>>
 
 type TStep3Form = FormGroup<{
@@ -327,7 +345,7 @@ export type TReturnForm = FormGroup<TMapForm<TReturnDetail>>
 
 export type TCondiForm = FormGroup<{
   sup?: TReturnForm
-  branch?: TReturnForm
+  stk?: TReturnForm
 }>
 
 export type TForm = FormGroup<{

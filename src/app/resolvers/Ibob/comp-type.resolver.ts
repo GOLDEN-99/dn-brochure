@@ -10,7 +10,7 @@ export const compTypeResolver: ResolveFn<boolean | RedirectCommand> = (route, st
   try {
     const compType = compTypeHandler(route)
     const ibobApi = inject(SupplierApiService)
-    compService.setCompType(compType)
+    // compService.setCompType(compType)
     ibobApi.setCompType(compType)
     return true;
   } catch (err) {

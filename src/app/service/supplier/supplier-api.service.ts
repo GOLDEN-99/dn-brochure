@@ -3,7 +3,9 @@ import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
 import { TCompDetailRes, TCompProduct, TDNComp, TGeneratedCompCode, THUComp } from '../../types/ibob-supplier.type';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, catchError, combineLatest, map, Subject, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, of, Subject, switchMap, tap, throwError } from 'rxjs';
+import { getOrElse } from '../../lib/utli';
+import { TOIComp } from '../other-income/company.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +30,26 @@ export class SupplierApiService {
     }
   })
 
-  createSupplier = (req: TCreateSupplierReq) => this.api.post(`${this.url}/CreateCompInfo`, req, {})
+  createSupplier = (hu: Omit<THUCreate, 'compCode'>, dn: Omit<TDNCreate, 'compCode'>, item: TItem[]) => {
+    const genComp = this.generatedCode()
+    if (!genComp) throw new Error('cannot get comp code')
+    const { dnCompCode, compCode } = genComp
+    return this.api.post(`${this.url}/CreateCompInfo`, { hu: { ...hu, compCode }, dn: { ...dn, compCode: dnCompCode }, item }, {})
+  }
+
+  createDnSupplier = (req: Omit<TDNCreate, 'compCode'>, item: TItem[]) => {
+    const genComp = this.generatedCode()
+    if (!genComp) throw new Error('cannot get comp code')
+    const { dnCompCode } = genComp
+    return this.api.post(`${this.url}/CreateCompInfo`, { hu: null, dn: { ...req, compCode: dnCompCode }, item }, {})
+  }
+
+  createHuSupplier = (req: Omit<THUCreate, 'compCode'>, item: TItem[]) => {
+    const genComp = this.generatedCode()
+    if (!genComp) throw new Error('cannot get comp code')
+    const { compCode } = genComp
+    return this.api.post(`${this.url}/CreateCompInfo`, { dn: null, hu: { ...req, compCode }, item }, {})
+  }
 
   private fetch$ = new BehaviorSubject('1')
 
@@ -84,7 +105,9 @@ export class SupplierApiService {
 
   private huComp = signal<THUComp | null>(null)
   private huProduct = signal<TCompProduct[]>([])
+
 }
+
 
 type TBaseSupplier = {
   compCode: string;

@@ -21,13 +21,19 @@ export class SupplierInhouseComponent {
   pageHeader = this.dataService.pageLabel
   private router = inject(Router)
   private route = inject(ActivatedRoute)
+  compCode = this.dataService.compCode
+  term = this.dataService.term
   goTo(idx: string) {
     this.router.navigate([idx], { relativeTo: this.route })
   }
   onSearch({ field, term }: { field: string, term: string }) {
     if (field === 'compCode') {
-      this.dataService.searchCompCode(term)
-      return
+      this.compCode.set(term)
+      this.term.set('')
+    } else {
+      this.compCode.set('')
+      this.term.set(term)
     }
   }
+  compList = this.dataService.compList
 }

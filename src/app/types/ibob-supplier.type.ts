@@ -282,7 +282,8 @@ export interface ICompBase {
     tradePerDisc: 0,
     dcPerDisc: 0,
     username: string,
-    userpass: string
+    userpass: string,
+    saleName?: string
 }
 
 export type THUComp = {
