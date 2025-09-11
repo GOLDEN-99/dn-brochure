@@ -19,7 +19,6 @@ export class GeneralPageComponent extends BaseSupplierForm implements OnInit, On
   addContact = this.formService.addGeneralContacForm
   createFormItem = this.formService.createGeneralContactForm
   removeContact = this.formService.removeGenralContactForm
-  private sub$ = new Subject<void>()
 
   ngOnInit(): void {
     this.init$.pipe(takeUntil(this.sub$)).subscribe({
@@ -41,8 +40,7 @@ export class GeneralPageComponent extends BaseSupplierForm implements OnInit, On
   }
 
   ngOnDestroy(): void {
-    this.sub$.next()
-    this.sub$.complete()
+    this.unsub()
   }
 }
 

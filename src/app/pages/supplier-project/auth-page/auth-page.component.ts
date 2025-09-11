@@ -26,7 +26,6 @@ export class AuthPageComponent extends BaseSupplierForm implements OnInit, OnDes
 
   initialValue = input<TCompAuth | null>()
   private initialValue$ = toObservable(this.initialValue)
-  private sub$ = new Subject<void>()
   private comparedFn = (prev: TCompAuth, cur: TCompAuth) => prev.username === cur.username && prev.userpass === cur.userpass
   ngOnInit(): void {
     this.initialValue$
@@ -38,8 +37,7 @@ export class AuthPageComponent extends BaseSupplierForm implements OnInit, OnDes
       .subscribe(this.patchForm)
   }
   ngOnDestroy(): void {
-    this.sub$.next()
-    this.sub$.complete()
+    this.unsub()
   }
 }
 
