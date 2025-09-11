@@ -1,6 +1,6 @@
 @if (isAdmin()) {
 <div style="display: flex; justify-content: end">
-  <a href="" class="btn btn-danger mb-3">เพิ่มการจอง</a>
+  <a [routerLink]="createLink()" class="btn btn-danger mb-3">เพิ่มการจอง</a>
 </div>
 }
 <div class="row">

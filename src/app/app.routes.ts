@@ -127,12 +127,7 @@ export const routes: Routes = [
     },
     // inbound out bound
     {
-        path: 'supplier/form/product',
-        loadComponent: () => import('./pages/supplier-project/supplier-product-page/supplier-product-page.component')
-            .then(r => r.SupplierProductPageComponent)
-    },
-    {
-        path: 'supplier/form/:compType',
+        path: 'supplier/:compType/form',
         component: SupplierLayoutComponent,
         resolve: { comp: compTypeResolver },
         children: [
@@ -141,17 +136,22 @@ export const routes: Routes = [
                 component: RegisterPageComponent
             },
             {
-                path: 'general',
-                loadComponent: () =>
-                    import('./pages/supplier-project/general-page/general-page.component')
-                        .then(r => r.GeneralPageComponent)
+                path: 'product',
+                loadComponent: () => import('./pages/supplier-project/supplier-product-page/supplier-product-page.component')
+                    .then(r => r.SupplierProductPageComponent)
             },
-            {
-                path: 'final',
-                loadComponent: () =>
-                    import('./pages/supplier-project/step-three-page/step-three-page.component')
-                        .then(r => r.StepThreePageComponent)
-            },
+            // {
+            //     path: 'general',
+            //     loadComponent: () =>
+            //         import('./pages/supplier-project/general-page/general-page.component')
+            //             .then(r => r.GeneralPageComponent)
+            // },
+            // {
+            //     path: 'final',
+            //     loadComponent: () =>
+            //         import('./pages/supplier-project/step-three-page/step-three-page.component')
+            //             .then(r => r.StepThreePageComponent)
+            // },
             {
                 path: 'condition',
                 loadComponent: () =>
