@@ -28,8 +28,39 @@
       formControlName="compAddr"
     ></textarea>
   </div>
+  <div class="row">
+    <div class="app-form-field col-md">
+      <label for="compPhone">โทรศัพท์</label>
+      <input
+        type="tel"
+        name="compPhone"
+        id="compPhone"
+        formControlName="compPhone"
+      />
+    </div>
+    <div class="app-form-field col-md">
+      <label for="compFax">โทรสาร</label>
+      <input
+        type="text"
+        name="compFax"
+        id="compFax"
+        formControlName="compFax"
+      />
+    </div>
+    <div class="app-form-field col-md">
+      <label for="compEmail">E-mail</label>
+      <input
+        type="email"
+        name="compEmail"
+        id="compEmail"
+        formControlName="compEmail"
+        autocomplete="compEmail"
+      />
+    </div>
+  </div>
   @let contactForm = stepTwoForm.controls.contact.controls;
   <!---->
+  <h5>sale</h5>
   @for (c of contactForm; track $index) {
   <div class="row align-items-end px-3 px-sm-0">
     <div class="app-form-field col-sm">
@@ -75,25 +106,4 @@
     </div>
   </div>
   }
-  <div class="row">
-    <div class="app-form-field col-md">
-      <label for="compFax">โทรสาร</label>
-      <input
-        type="text"
-        name="compFax"
-        id="compFax"
-        formControlName="compFax"
-      />
-    </div>
-    <div class="app-form-field col-md">
-      <label for="compEmail">E-mail</label>
-      <input
-        type="email"
-        name="compEmail"
-        id="compEmail"
-        formControlName="compEmail"
-        autocomplete="compEmail"
-      />
-    </div>
-  </div>
 </form>

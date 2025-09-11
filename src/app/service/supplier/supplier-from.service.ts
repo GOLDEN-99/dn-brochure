@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { TMapForm } from '../../types';
 import { TCompAuth, TCondiBranch, TcondiReq, TCondiSup } from '../../types/ibob-supplier.type';
+import { TDNCreate, THUCreate } from './supplier-api.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -22,8 +23,8 @@ export class SupplierFromService {
 
   addGeneralContacForm = () => this.form.controls.general.controls.contact.push(
     this.fb.nonNullable.group({
-      emplPhone: this.fb.nonNullable.control('', Validators.required),
       emplName: this.fb.nonNullable.control("", Validators.required),
+      emplPhone: this.fb.nonNullable.control("", Validators.required),
       emplEmail: this.fb.nonNullable.control("")
     })
   )
@@ -43,17 +44,18 @@ export class SupplierFromService {
     })], Validators.minLength(1)),
     compEmail: this.fb.nonNullable.control("", Validators.required),
     compFax: this.fb.nonNullable.control("", Validators.required),
+    compPhone: this.fb.nonNullable.control("", Validators.required),
 
   })
 
-  addEmplList = () => this.form.controls.stepThree.controls.emplList.controls.push(
-    this.fb.nonNullable.group({
-      emplName: this.fb.nonNullable.control("", Validators.required),
-      emplEmail: this.fb.nonNullable.control("", Validators.required)
-    })
-  )
+  // addEmplList = () => this.form.controls.stepThree.controls.emplList.controls.push(
+  //   this.fb.nonNullable.group({
+  //     emplName: this.fb.nonNullable.control("", Validators.required),
+  //     emplEmail: this.fb.nonNullable.control("", Validators.required)
+  //   })
+  // )
 
-  removeEmplList = (idx: number) => this.form.controls.stepThree.controls.emplList.removeAt(idx)
+  // removeEmplList = (idx: number) => this.form.controls.stepThree.controls.emplList.removeAt(idx)
 
   private emplListForm: TEmplListForm = this.fb.nonNullable.array([this.fb.nonNullable.group({
     emplName: this.fb.nonNullable.control("", Validators.required),
@@ -69,15 +71,14 @@ export class SupplierFromService {
 
 
   private stepThreeForm: TStep3Form = this.fb.nonNullable.group({
-    supplier: this.fb.nonNullable.control("", Validators.required),
-    comp: this.fb.nonNullable.group<TMapForm<TComp>>({
-      compGroupCode: this.fb.nonNullable.control(""),
+    compGroupCode: this.fb.nonNullable.control("", Validators.required),
+    parentComp: this.fb.nonNullable.group<TMapForm<TComp>>({
       compName: this.fb.nonNullable.control("", Validators.required),
       compCode: this.fb.nonNullable.control("", Validators.required)
     }),
     shipTo: this.fb.nonNullable.control("", Validators.required),
     orderRemark: this.fb.nonNullable.control("", Validators.required),
-    emplList: this.emplListForm,
+    // emplList: this.emplListForm,
     payment: this.paymentForm,
     tax: this.fb.nonNullable.group({
       tax1: this.fb.nonNullable.control(false),
@@ -183,6 +184,76 @@ export class SupplierFromService {
       ...stk,
     }
   }
+
+
+  get DNReq(): Omit<TDNCreate, 'compCode'> {
+    const { auth, general, stepThree, condi } = this.form.getRawValue()
+    return {
+      compName: general.compName,
+      compName2: general.compName2,
+      compAddr: general.compAddr,
+      compFax: general.compFax,
+      compEmail: general.compEmail,
+      compPhone: general.compPhone,
+      compGroupCode: stepThree.compGroupCode,
+      parentCompCode: stepThree.parentComp.compCode,
+      orderRemark: stepThree.orderRemark,
+      compStat: '1',
+      paymentTerms: stepThree.payment.paymentTerms,
+      tradePerDisc: stepThree.payment.tradePerDisc,
+      dcPerDisc: stepThree.payment.dcPerDisc,
+      cashPerDisc: stepThree.payment.cashPerDisc,
+      billIncludeVAT: stepThree.tax.tax1 ? '1' : '0',
+      orderFileType: '', // '' for dn
+      timeStamp: null,
+      updateDate: null,
+      sapUpdateDate: null,
+      ...auth,
+    }
+  }
+
+  get HUReq(): Omit<THUCreate, 'compCode'> {
+    const { auth, general, stepThree, condi: { sup, branch } } = this.form.getRawValue()
+    const supReturn = sup ? '1' : '0'
+    const supFullBox = sup?.lot ? '1' : '0'
+    const supSameLot = sup?.lot ? '1' : '0'
+    const supMonthBeforeExp = sup?.before ?? 0
+    const supMonthAfterExp = sup?.after ?? 0
+    const stkReturn = branch ? '1' : '0'
+    const stkFullBox = branch?.lot ? '1' : '0'
+    const stkSameLot = branch?.lot ? '1' : '0'
+    const stkMonthBeforeExp = branch?.before ?? 0
+    const stkMonthAfterExp = branch?.after ?? 0
+    return {
+      compName: general.compName,
+      compName2: general.compName2,
+      compAddr: general.compAddr,
+      compFax: general.compFax,
+      compEmail: general.compEmail,
+      compPhone: general.compPhone,
+      compGroupCode: stepThree.compGroupCode,
+      parentCompCode: stepThree.parentComp.compCode,
+      orderRemark: stepThree.orderRemark,
+      compStat: '1',
+      paymentTerms: stepThree.payment.paymentTerms,
+      tradePerDisc: stepThree.payment.tradePerDisc,
+      dcPerDisc: stepThree.payment.dcPerDisc,
+      cashPerDisc: stepThree.payment.cashPerDisc,
+      billIncludeVAT: stepThree.tax.tax1 ? '1' : '0',
+      orderFileType: '', // '' for dn
+      timeStamp: null,
+      updateDate: null,
+      sapUpdateDate: null,
+      // same as dn
+      fixedPrice: stepThree.tax.tax3 ? '1' : '0',
+      registered: stepThree.tax.tax2 ? '1' : '0',
+      shipTo: stepThree.shipTo,
+      saleName: general.contact.map(c => `${c.emplName} /${c.emplPhone} /${c.emplEmail} `).join('\\'),
+      supReturn, supFullBox, supSameLot, supMonthBeforeExp, supMonthAfterExp,
+      stkReturn, stkFullBox, stkSameLot, stkMonthBeforeExp, stkMonthAfterExp,
+      ...auth,
+    }
+  }
 }
 
 type TAuthForm = FormGroup<{
@@ -196,7 +267,7 @@ type TContacListForm = FormGroup<{
   emplEmail: FormControl<string>
 }>
 
-type TComp = { compGroupCode: string, compName: string, compCode: string }
+type TComp = { compName: string, compCode: string }
 
 type TCompForm = FormGroup<TMapForm<TComp>>
 
@@ -205,6 +276,7 @@ type TGeneralForm = FormGroup<{
   compName2: FormControl<string>
   compAddr: FormControl<string>
   contact: FormArray<TContacListForm>
+  compPhone: FormControl<string>
   compFax: FormControl<string>
   compEmail: FormControl<string>
 }>
@@ -235,11 +307,11 @@ type TTaxForm = FormGroup<TMapForm<{
 }>>
 
 type TStep3Form = FormGroup<{
-  supplier: FormControl<string>
-  comp: TCompForm
+  compGroupCode: FormControl<string>
+  parentComp: TCompForm
   orderRemark: FormControl<string>
   shipTo: FormControl<string>
-  emplList: TEmplListForm
+  // emplList: TEmplListForm
   payment: TPaymentForm
   tax: TTaxForm
 }>

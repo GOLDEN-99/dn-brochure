@@ -54,6 +54,7 @@ import { OtherIncomeInceFormComponent } from './components/other-income/form/oth
 import { supplierCompResolver } from './resolvers/Ibob/supplier-comp.resolver';
 import { SupplierFormViewComponent } from './pages/supplier-project/supplier-form-view/supplier-form-view.component';
 import { compTypeResolver } from './resolvers/Ibob/comp-type.resolver';
+import { compTypeHandler } from './lib/paramsHandler';
 
 export const routes: Routes = [
     {
@@ -128,6 +129,14 @@ export const routes: Routes = [
     // inbound out bound
     {
         path: 'supplier/:compType/form',
+        title: (route, _) => {
+            try {
+                const compType = compTypeHandler(route)
+                return `${compType.toUpperCase()} ซัพพลายเออร์ใหม่`
+            } catch (err) {
+                return 'ซัพพลายเออร์ใหม่'
+            }
+        },
         component: SupplierLayoutComponent,
         resolve: { comp: compTypeResolver },
         children: [
@@ -140,18 +149,6 @@ export const routes: Routes = [
                 loadComponent: () => import('./pages/supplier-project/supplier-product-page/supplier-product-page.component')
                     .then(r => r.SupplierProductPageComponent)
             },
-            // {
-            //     path: 'general',
-            //     loadComponent: () =>
-            //         import('./pages/supplier-project/general-page/general-page.component')
-            //             .then(r => r.GeneralPageComponent)
-            // },
-            // {
-            //     path: 'final',
-            //     loadComponent: () =>
-            //         import('./pages/supplier-project/step-three-page/step-three-page.component')
-            //             .then(r => r.StepThreePageComponent)
-            // },
             {
                 path: 'condition',
                 loadComponent: () =>
@@ -162,7 +159,7 @@ export const routes: Routes = [
     },
     {
         path: 'supplier/reserve',
-        title: 'DN SUPPLIER RESERVATION',
+        title: 'SUPPLIER RESERVATION',
         component: SupplierReserveLayoutComponent,
         children: [
             {
