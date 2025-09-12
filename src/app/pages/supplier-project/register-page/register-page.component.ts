@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { SupplierFromService } from '../../../service/supplier/supplier-from.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StepThreePageComponent } from "../step-three-page/step-three-page.component";
@@ -14,6 +14,13 @@ import { RouterLink } from '@angular/router';
 })
 export class RegisterPageComponent {
   private formService = inject(SupplierFromService)
+  formData = this.formService.formState
 
-  disable = () => this.formService.form.invalid || !this.formService.form.touched
+  disable = computed(() => {
+    const cur = this.formData()
+    // return cur.compGroupCode === '' || cur.compName === '' || cur.username === '' || cur.username === ''
+    return false
+  })
+
+  disableClass = computed(() => this.disable() ? "btn btn-primary w-100 disabled" : "btn btn-primary w-100")
 }

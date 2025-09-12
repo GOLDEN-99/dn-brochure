@@ -22,7 +22,9 @@ export class SupplierFromService {
     compEmail: '',
     compStat: '1',
     compGroupCode: '',
+    compGroupDesc: '',
     parentCompCode: '',
+    parentCompName: '',
     shipTo: '',
     orderRemark: '',
     orderFileType: '',
@@ -424,6 +426,7 @@ type TFormState = {
   compFax: string;
   compEmail: string;
   compGroupCode: string;
+  compGroupDesc: string
   orderRemark: string;
   orderFileType: string | null; // pdf ???
   compName2: string;
@@ -433,6 +436,7 @@ type TFormState = {
   updateDate: string | null; // ISO date string
   sapUpdateDate: string | null; // ISO date string
   parentCompCode: string;
+  parentCompName: string
   billIncludeVAT: boolean;
   cashPerDisc: number;
   tradePerDisc: number;

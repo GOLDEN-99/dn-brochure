@@ -1,11 +1,17 @@
-<form [formGroup]="stepThree">
+<div>
+  @let data = formData();
   <div class="app-form-field">
     <div class="app-form-select">
       <label for="groupCode">กลุ่มผู้ขาย</label>
-      <select id="groupCode" name="groupCode" formControlName="compGroupCode">
+      <select
+        id="groupCode"
+        name="groupCode"
+        [ngModel]="data.compGroupCode"
+        (ngModelChange)="updator('compGroupCode')($event)"
+      >
         <option value="" disabled>กรุณาเลือก</option>
         @for (group of compGroup(); track group.compGroupCode) {
-        <option [value]="group.compGroupCode">
+        <option [ngValue]="group.compGroupCode">
           {{ group.compGroupDesc }}
         </option>
         }
@@ -20,7 +26,7 @@
           type="text"
           name="compCode"
           id="compCode"
-          formControlName="compCode"
+          [ngModel]="data.parentCompCode"
           readonly
           (click)="searchBtn.click()"
         />
@@ -31,19 +37,24 @@
           type="text"
           name="comp"
           id="comp"
-          formControlName="compName"
+          [ngModel]="data.parentCompName"
           readonly
           (click)="searchBtn.click()"
         />
       </div>
     </form>
-    <div class="col-2 mb-3">
+    <div class="col-1 mb-3">
       <button
         class="btn btn-outline"
         #searchBtn
         (click)="openModal(searchModal)"
       >
         <i class="bi bi-search"></i>
+      </button>
+    </div>
+    <div class="col-1 mb-3">
+      <button class="btn btn-danger" (click)="clearParent()">
+        <i class="bi bi-trash"></i>
       </button>
     </div>
   </div>
@@ -53,63 +64,30 @@
       name="orderRemark"
       id="orderRemark"
       rows="3"
-      formControlName="orderRemark"
+      [ngModel]="data.orderRemark"
+      (ngModelChange)="updator('orderRemark')($event)"
     ></textarea>
   </div>
-
-  <!-- @let emplListForm = stepThree.controls.emplList.controls;
-  @for (item of emplListForm; track $index) {
-  <div class="row align-items-end">
-    <div class="col app-form-field">
-      <label [attr.for]="'empl-name' + $index">ชื่อพนักงาน</label>
-      <input
-        type="text"
-        name="empl-name"
-        [attr.id]="'empl-name' + $index"
-        [formControl]="item.controls.emplName"
-      />
-    </div>
-    <div class="col app-form-field">
-      <label [attr.for]="'empl-email' + $index">E-mail</label>
-      <input
-        type="email"
-        name="empl-email"
-        [attr.id]="'empl-email' + $index"
-        [formControl]="item.controls.emplEmail"
-      />
-    </div>
-
-    <div class="col-2 d-flex justify-content-between mb-3">
-      @if(emplListForm.length !== 1) {
-      <button class="btn btn-squre btn-danger" (click)="removeEmpl($index)">
-        <i class="bi bi-dash"></i>
-      </button>
-      }
-      @if ($index === emplListForm.length-1) {
-      <button class="btn btn-squre btn-success" (click)="addEmpl()">
-        <i class="bi bi-plus"></i>
-      </button>
-      }
-    </div>
-  </div>
-  } -->
   <div class="app-form-field">
     <label for="shipTo">Ship to</label>
-    <input type="text" id="shipTo" name="shipTo" formControlName="shipTo" />
+    <input
+      type="text"
+      id="shipTo"
+      name="shipTo"
+      [ngModel]="data.shipTo"
+      (ngModelChange)="updator('shipTo')($event)"
+    />
   </div>
   <div class="mb-3" style="display: flex; gap: 16px">
-    <form
-      class="px-3 pt-3 col"
-      style="background-color: #8080801f"
-      formGroupName="payment"
-    >
+    <div class="px-3 pt-3 col" style="background-color: #8080801f">
       <div class="app-form-field">
         <label for="paymentTerms">กำหนดชำระ (ระบุจำนวนวัน)</label>
         <input
           type="number"
           name="paymentTerms"
           id="paymentTerms"
-          formControlName="paymentTerms"
+          [ngModel]="data.paymentTerms"
+          (ngModelChange)="updator('paymentTerms')($event)"
           placeholder="ระบุจำนวนวัน"
         />
       </div>
@@ -121,7 +99,8 @@
           max="100"
           id="tradePerDisc"
           name="tradePerDisc"
-          formControlName="tradePerDisc"
+          [ngModel]="data.tradePerDisc"
+          (ngModelChange)="updator('tradePerDisc')($event)"
         />
       </div>
       <div class="app-form-field">
@@ -130,7 +109,8 @@
           type="number"
           id="cashPerDisc"
           name="cashPerDisc"
-          formControlName="cashPerDisc"
+          [ngModel]="data.cashPerDisc"
+          (ngModelChange)="updator('cashPerDisc')($event)"
         />
       </div>
       <div class="app-form-field">
@@ -139,11 +119,12 @@
           type="number"
           id="dcPerDisc"
           name="dcPerDisc"
-          formControlName="dcPerDisc"
+          [ngModel]="data.dcPerDisc"
+          (ngModelChange)="updator('dcPerDisc')($event)"
         />
       </div>
-    </form>
-    <form
+    </div>
+    <div
       class="px-3 pt-3 col"
       style="background-color: #8080801f"
       formGroupName="tax"
@@ -157,7 +138,8 @@
           id="vat2"
           name="tax2"
           style="height: 24px; width: 24px"
-          formControlName="vatRegistered"
+          [ngModel]="data.billIncludeVAT"
+          (ngModelChange)="updator('billIncludeVAT')($event)"
         />
         <label for="vat2">สินค้ารวม VAT</label>
       </div>
@@ -172,7 +154,8 @@
           id="vat1"
           name="tax1"
           style="height: 24px; width: 24px"
-          formControlName="billIncludeVat"
+          [ngModel]="data.registered"
+          (ngModelChange)="updator('registered')($event)"
         />
         <label for="vat1">จดทะเบียน VAT</label>
       </div>
@@ -186,14 +169,15 @@
           id="vat3"
           name="tax3"
           style="height: 24px; width: 24px"
-          formControlName="fixedPrice"
+          [ngModel]="data.fixedPrice"
+          (ngModelChange)="updator('fixedPrice')($event)"
         />
         <label for="vat3">ควบคุมราคาขายปลีก</label>
       </div>
       }
-    </form>
+    </div>
   </div>
-</form>
+</div>
 
 <ng-template #searchModal let-modal>
   <app-modal-layout

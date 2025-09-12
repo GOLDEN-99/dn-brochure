@@ -1,6 +1,6 @@
-import { Component, inject, input, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { Component, computed, inject, input, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ModalLayoutComponent } from "../../../components/modal/modal-layout/modal-layout.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -15,7 +15,7 @@ import { TDNCreate } from '../../../service/supplier/supplier-api.service';
 
 @Component({
   selector: 'app-step-three-page',
-  imports: [ReactiveFormsModule, ModalLayoutComponent, SearchSupplierComponent],
+  imports: [FormsModule, ModalLayoutComponent, SearchSupplierComponent],
   templateUrl: './step-three-page.component.html',
   styleUrl: './step-three-page.component.scss'
 })
@@ -42,12 +42,19 @@ export class StepThreePageComponent extends BaseSupplierForm implements OnInit, 
   openModal(modal: TemplateRef<any>) {
     this.modalService.open(modal)
   }
+
   private compService = inject(IbobCompService)
   compGroup = this.compService.compGroup
-  onSelectParentComp({ compCode, compName }: TOIComp & { compGroupCode: string }) {
-    this.stepThree.patchValue({ parentComp: { compCode, compName } })
+  updator = this.formService.updator
+  onSelectParentComp({ compCode, compName }: TOIComp) {
+    this.formData.update(prev => ({ ...prev, parentCompCode: compCode, parentCompName: compName }))
     this.modalService.dismissAll()
   }
+  clearParent() {
+    this.formData.update(prev => ({ ...prev, parentCompCode: '', parentCompName: '' }))
+  }
+
+  formData = this.formService.formState
 
   private mapStrToBool(value: any) {
     switch (value) {
@@ -56,6 +63,8 @@ export class StepThreePageComponent extends BaseSupplierForm implements OnInit, 
       default: return false
     }
   }
+
+  compareCompGroup = (o1: any, o2: any) => o1 && o2 ? o1.compGroupCode === o2.compGroupCode : o1 === o2;
 }
 
 type TInit = Pick<TDNCreate, 'billIncludeVAT' | 'dcPerDisc' | 'tradePerDisc' | 'cashPerDisc'>
