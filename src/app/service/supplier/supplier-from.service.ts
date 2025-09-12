@@ -62,6 +62,8 @@ export class SupplierFromService {
     .update(
       prev => prev.filter((_, i) => i !== index)
     )
+  updateEmpl = <K extends keyof TEmplState>(key: K) => (value: TEmplState[K], index: number) =>
+    this.emplList.update(prev => prev.map((p, i) => i === index ? ({ ...p, [key]: value }) : p))
 
   formState = signal(this.initialState)
   updator = <K extends keyof TFormState>(key: K) =>
