@@ -1,6 +1,5 @@
 <a class="btn btn-success mb-3" routerLink="../product">ราการจำหน่ายสินค้า</a>
-
-@if (compType() === 'HU') {
+@let data = formState(); @if (compType() === 'HU') {
 <ul
   ngbNav
   #nav="ngbNav"
@@ -19,16 +18,17 @@
             type="radio"
             name="return-sub"
             id="return-sup-check-return"
-            [checked]="form.contains('sup')"
-            (change)="addSup()"
+            [value]="true"
+            [ngModel]="data.supReturn"
+            (ngModelChange)="updator('supReturn')($event)"
           />
           <label class="form-check-label" for="return-sup-check-return">
             รับคืน
           </label>
         </div>
         <!---->
-        @if (supForm;as sup) {
-        <form [formGroup]="sup" style="padding: 0 24px">
+        @if (data.supReturn) {
+        <div style="padding: 0 24px">
           <div class="app-form-field-inline">
             <div>
               <label for="return-sup-before">ก่อนหมดอายุ</label>
@@ -38,7 +38,8 @@
                 type="number"
                 name="return-sup-before"
                 id="return-sup-before"
-                formControlName="before"
+                [ngModel]="data.supMonthBeforeExp"
+                (ngModelChange)="updator('supMonthBeforeExp')($event)"
                 [min]="0"
               />
             </div>
@@ -55,7 +56,8 @@
                 type="number"
                 name="return-sup-after"
                 id="return-sup-after"
-                formControlName="after"
+                [ngModel]="data.supMonthAfterExp"
+                (ngModelChange)="updator('supMonthAfterExp')($event)"
                 [min]="0"
               />
             </div>
@@ -71,7 +73,8 @@
               type="checkbox"
               id="return-sub-whole"
               name="return-sub-whole"
-              formControlName="whole"
+              [ngModel]="data.supFullBox"
+              (ngModelChange)="updator('supFullBox')($event)"
             />
             <label for="return-sub-whole">เต็มกล่อง</label>
           </div>
@@ -83,11 +86,12 @@
               type="checkbox"
               id="return-sub-lot"
               name="return-sub-lot"
-              formControlName="lot"
+              [ngModel]="data.supSameLot"
+              (ngModelChange)="updator('supSameLot')($event)"
             />
             <label for="return-sub-lot">ล็อตเดียวกัน</label>
           </div>
-        </form>
+        </div>
         }
         <!---->
         <div class="form-check">
@@ -96,8 +100,9 @@
             type="radio"
             name="return-sub"
             id="return-sup-check-not-return"
-            [checked]="!form.contains('sup')"
-            (change)="removeSup()"
+            [value]="false"
+            [ngModel]="data.stkReturn"
+            (ngModelChange)="noSupReturn()"
           />
           <label class="form-check-label" for="return-sup-check-not-return">
             ไม่รับคืน
@@ -116,16 +121,17 @@
             type="radio"
             name="return-branch"
             id="return-branch-check-return"
-            [checked]="form.contains('branch')"
-            (change)="addBranch()"
+            [value]="true"
+            [ngModel]="data.stkReturn"
+            (ngModelChange)="updator('stkReturn')($event)"
           />
           <label class="form-check-label" for="return-branch-check-return">
             รับคืน
           </label>
         </div>
         <!---->
-        @if (branchForm;as branch) {
-        <form [formGroup]="branch" style="padding: 0 24px">
+        @if (data.stkReturn) {
+        <div style="padding: 0 24px">
           <div class="app-form-field-inline">
             <div>
               <label for="return-branch-before">ก่อนหมดอายุ</label>
@@ -135,7 +141,8 @@
                 type="number"
                 name="return-branch-before"
                 id="return-branch-before"
-                formControlName="before"
+                [ngModel]="data.stkMonthBeforeExp"
+                (ngModelChange)="updator('stkMonthBeforeExp')($event)"
                 [min]="0"
               />
             </div>
@@ -152,7 +159,8 @@
                 type="number"
                 name="return-branch-after"
                 id="return-branch-after"
-                formControlName="after"
+                [ngModel]="data.stkMonthAfterExp"
+                (ngModelChange)="updator('stkMonthAfterExp')($event)"
                 [min]="0"
               />
             </div>
@@ -168,7 +176,8 @@
               type="checkbox"
               id="return-branch-whole"
               name="return-branch-whole"
-              formControlName="whole"
+              [ngModel]="data.stkFullBox"
+              (ngModelChange)="updator('stkFullBox')($event)"
             />
             <label for="return-branch-whole">เต็มกล่อง</label>
           </div>
@@ -180,11 +189,12 @@
               type="checkbox"
               id="return-branch-lot"
               name="return-branch-lot"
-              formControlName="lot"
+              [ngModel]="data.stkSameLot"
+              (ngModelChange)="updator('stkSameLot')($event)"
             />
             <label for="return-branch-lot">ล็อตเดียวกัน</label>
           </div>
-        </form>
+        </div>
         }
         <!---->
         <div class="form-check">
@@ -193,8 +203,9 @@
             type="radio"
             name="return-branch"
             id="return-branch-check-not-return"
-            [checked]="!form.contains('stk')"
-            (change)="removeBranch()"
+            [value]="false"
+            [ngModel]="data.stkReturn"
+            (ngModelChange)="noStkReturn()"
           />
           <label class="form-check-label" for="return-branch-check-not-return">
             ไม่รับคืน
