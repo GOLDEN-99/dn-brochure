@@ -59,8 +59,8 @@ export class SupplierProductPageComponent {
     if (occurence !== -1) return
     const cond = this.condition()
     this.itemList.update(prev => [...prev, { ...product, isShipTo: false, ...cond }])
-
   }
+
   onAddItem(product: TBaseProduct) {
     this.addItem(product)
     this.modalService.dismissAll()
