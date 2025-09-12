@@ -1,7 +1,13 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ModalLayoutComponent } from "../../../components/modal/modal-layout/modal-layout.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { combineLatest, debounceTime, distinctUntilChanged, filter, map, switchMap } from 'rxjs';
+import { ApiService } from '../../../service/api/api.service';
+import { environment } from '../../../../environments/environment';
+import { getOrElse } from '../../../lib/utli';
+import { SupplierFromService } from '../../../service/supplier/supplier-from.service';
 
 @Component({
   selector: 'app-supplier-product-page',
@@ -10,25 +16,73 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './supplier-product-page.component.scss'
 })
 export class SupplierProductPageComponent {
-  mock = signal<TMock[]>([{ name: 'test product 1', code: '1234', shipTo: true, cancelShipTo: false, supReturn: true, supLot: true, supBox: true, branchReturn: false, branchLot: false, branchBox: false }])
-
-  updateField = <K extends keyof TMock>(key: K, idx: number) => (value: TMock[K]) => this.mock.update((prev) => prev.map((p, i) => i === idx ? ({ ...p, [key]: value }) : p))
-
   private productModal = viewChild('productModal')
   private modalService = inject(NgbModal)
   openProductModal = () => this.modalService.open(this.productModal(), {})
 
+  goodName = signal("")
+  barcode = signal("")
+  goodName$ = toObservable(this.goodName).pipe(distinctUntilChanged(), debounceTime(300))
+  barcode$ = toObservable(this.barcode).pipe(distinctUntilChanged(), debounceTime(300))
+  private param$ = combineLatest([this.goodName$, this.barcode$])
+    .pipe(
+      map(([goodName, barcode]) => ({ goodName, barcode })),
+      filter(({ goodName, barcode }) => goodName !== '' || barcode !== '')
+    )
+  private api = inject(ApiService)
+  private url = `${environment.oi}/products`
+  private searchProduct = (params: { goodName: string, barcode: string }) =>
+    this.api.get<TBaseProduct[]>(this.url, { params }).pipe(getOrElse<TBaseProduct[]>([]))
+  private data$ = this.param$.pipe(
+    switchMap((params) => this.searchProduct(params)),
+    getOrElse<TBaseProduct[]>([]),
+  )
+  displayProduct = toSignal(this.data$, { initialValue: [] })
+
+  private formServ = inject(SupplierFromService)
+  itemList = this.formServ.item
+  updateItem = this.formServ.updateItem
+  formState = this.formServ.formState
+  condition = computed(() => {
+    const {
+      supReturn, supFullBox, supSameLot, supMonthAfterExp, supMonthBeforeExp,
+      stkReturn, stkFullBox, stkSameLot, stkMonthAfterExp, stkMonthBeforeExp,
+    } = this.formState()
+    return {
+      supReturn, supFullBox, supSameLot, supMonthAfterExp, supMonthBeforeExp,
+      stkReturn, stkFullBox, stkSameLot, stkMonthAfterExp, stkMonthBeforeExp,
+    }
+  })
+  addItem = (product: TBaseProduct) => {
+    const cond = this.condition()
+    this.itemList.update(prev => [...prev, { ...product, isShipTo: false, ...cond }])
+  }
+  onAddItem(product: TBaseProduct) {
+    this.addItem(product)
+    this.modalService.dismissAll()
+  }
 }
 
-type TMock = {
-  name: string
-  code: string
-  shipTo: boolean
-  cancelShipTo: boolean
-  supReturn: boolean
-  supLot: boolean
-  supBox: boolean
-  branchReturn: boolean
-  branchLot: boolean
-  branchBox: boolean
+type TBaseProduct = {
+  goodCode: string
+  goodName: string
+  barCode: string
+  goodStat: boolean
 }
+
+type AppProduct = {
+  "goodCode": "string",
+  "goodName": "string",
+  "goodStat": "string",
+  "isShipTo": "string",
+  "supReturn": "string",
+  "supMonthBeforeExp": "string",
+  "supMonthAfterExp": "string",
+  "supFullBox": "string",
+  "supSameLot": "string",
+  "stkReturn": "string",
+  "stkFullBox": "string",
+  "stkSameLot": "string",
+  "stkMonthBeforeExp": "string",
+  "stkMonthAfterExp": "string"
+} & TBaseProduct

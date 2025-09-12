@@ -1,14 +1,14 @@
 import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { SupplierApiService } from '../../../service/supplier/supplier-api.service';
-import { TCompAuth } from '../../../types/ibob-supplier.type';
+import { TAuthFormState } from '../../../types/ibob-supplier.type';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { distinctUntilChanged, filter, Subject, takeUntil } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, Observable, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-auth-page',
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './auth-page.component.html',
   styleUrl: './auth-page.component.scss'
 })
@@ -19,26 +19,39 @@ export class AuthPageComponent extends BaseSupplierForm implements OnInit, OnDes
   passwordType = signal<'text' | 'password'>('password')
 
   togglePassword = () => this.passwordType.update(prev => prev === 'password' ? 'text' : 'password')
-
+  formData = this.formService.formState
+  private updator = this.formService.updator
+  updateUsername = this.updator('username')
+  updatePassword = this.updator('userpass')
+  updateCompCode = this.updator('compCode')
+  //
   private supplierApiServ = inject(SupplierApiService)
-
   compCode = this.supplierApiServ.selectedCode
+  compCode$ = toObservable(this.compCode)
 
-  initialValue = input<TCompAuth | null>()
+  initialValue = input<TAuthFormState | null>(null)
   private initialValue$ = toObservable(this.initialValue)
-  private comparedFn = (prev: TCompAuth, cur: TCompAuth) => prev.username === cur.username && prev.userpass === cur.userpass
+  private merge$: Observable<Partial<TAuthFormState>> = combineLatest(
+    [this.compCode$, this.initialValue$]
+  ).pipe(
+    map(([compCode, init]) => init === null ? ({ compCode }) : init)
+  )
+  private comparedFn = (prev: Partial<TAuthFormState>, cur: Partial<TAuthFormState>) =>
+    prev?.username === cur?.username
+    && prev?.userpass === cur?.userpass
+    && prev?.compCode === cur?.compCode
+
   ngOnInit(): void {
-    this.initialValue$
+    this.merge$
       .pipe(
-        filter(v => !!v),
         distinctUntilChanged(this.comparedFn),
         takeUntil(this.sub$)
+      ).subscribe(
+        (init) => this.formData.update(prev => ({ ...prev, ...init }))
       )
-      .subscribe(this.patchForm)
   }
   ngOnDestroy(): void {
     this.unsub()
   }
 }
 
-type TInit = TCompAuth & { compCode: string }

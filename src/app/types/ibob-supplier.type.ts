@@ -233,6 +233,12 @@ export type TCompAuth = {
     userpass: string
 } //2
 
+export type TAuthFormState = {
+    username: string,
+    userpass: string,
+    compCode: string
+}
+
 type TCompBaseInfo = {
     compCode: string,
     compName: string,

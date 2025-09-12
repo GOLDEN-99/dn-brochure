@@ -1,8 +1,8 @@
-import { inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { TMapForm } from '../../types';
 import { TCompAuth, TCondiBranch, TcondiReq, TCondiSup } from '../../types/ibob-supplier.type';
-import { TDNCreate, THUCreate } from './supplier-api.service';
+import { TDNCreate, THUCreate, TItem } from './supplier-api.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -12,6 +12,64 @@ export class SupplierFromService {
 
   private fb = inject(FormBuilder)
 
+  private initialState: TFormState = {
+    compCode: '',
+    compName: '',
+    compName2: '',
+    compAddr: '',
+    compFax: '',
+    compPhone: '',
+    compEmail: '',
+    compStat: '1',
+    compGroupCode: '',
+    parentCompCode: '',
+    shipTo: '',
+    orderRemark: '',
+    orderFileType: '',
+    cashPerDisc: 0,
+    dcPerDisc: 0,
+    tradePerDisc: 0,
+    paymentTerms: 30,
+    billIncludeVAT: false,
+    fixedPrice: false,
+    registered: false,
+    supReturn: false,
+    supFullBox: false,
+    supSameLot: false,
+    supMonthAfterExp: 0,
+    supMonthBeforeExp: 0,
+    stkReturn: false,
+    stkFullBox: false,
+    stkSameLot: false,
+    stkMonthAfterExp: 0,
+    stkMonthBeforeExp: 0,
+    username: '',
+    userpass: '',
+    updateDate: null,
+    sapUpdateDate: null,
+    timeStamp: null
+  }
+
+  item = signal<TIbAppItem[]>([]);
+  updateItem = <K extends keyof TIbAppItem>(key: K) => (value: TIbAppItem[K], index: number) =>
+    this.item.update(prev => prev.map((p, i) => i === index ? ({ ...p, [key]: value }) : p))
+
+  inintialEmpl: TEmplState = { emplEmail: '', emplName: '', emplPhone: '' }
+  emplList = signal<TEmplState[]>([this.inintialEmpl])
+  addEmpl = () => this.emplList
+    .update(prev => [...prev, this.inintialEmpl])
+  removeEmpl = (index: number) => this.emplList
+    .update(
+      prev => prev.filter((_, i) => i !== index)
+    )
+
+  formState = signal(this.initialState)
+  updator = <K extends keyof TFormState>(key: K) =>
+    (value: TFormState[K]) => this.formState
+      .update(prev => ({ ...prev, [key]: value }))
+
+  setCompCode = (compCode: string) => this.formState
+    .update(prev => ({ ...prev, compCode }))
 
   private authForm = this.fb.nonNullable.group({
     username: this.fb.nonNullable.control('', Validators.required),
@@ -354,3 +412,68 @@ export type TForm = FormGroup<{
   stepThree: TStep3Form
   condi: TCondiForm
 }>
+
+
+type TFormState = {
+  compCode: string;
+  compName: string;
+  compAddr: string;
+  compPhone: string;
+  compFax: string;
+  compEmail: string;
+  compGroupCode: string;
+  orderRemark: string;
+  orderFileType: string | null; // pdf ???
+  compName2: string;
+  compStat: string; // '1'
+  paymentTerms: number;
+  timeStamp: string | null; // ISO date string
+  updateDate: string | null; // ISO date string
+  sapUpdateDate: string | null; // ISO date string
+  parentCompCode: string;
+  billIncludeVAT: boolean;
+  cashPerDisc: number;
+  tradePerDisc: number;
+  dcPerDisc: number;
+  username: string;
+  userpass: string;
+  // saleName: string;
+  shipTo: string;
+  fixedPrice: boolean;
+  registered: boolean;
+  supReturn: boolean;
+  stkReturn: boolean;
+  supFullBox: boolean;
+  stkFullBox: boolean;
+  supSameLot: boolean;
+  stkSameLot: boolean;
+  supMonthBeforeExp: number;
+  stkMonthBeforeExp: number;
+  supMonthAfterExp: number;
+  stkMonthAfterExp: number;
+}
+
+type TEmplState = {
+  emplName: string
+  emplPhone: string
+  emplEmail: string
+}
+
+
+type TIbAppItem = {
+  goodCode: string;
+  goodName: string;
+  barCode: string
+  goodStat: boolean;
+  isShipTo: boolean;
+  supReturn: boolean;
+  supMonthBeforeExp: number;
+  supMonthAfterExp: number;
+  supFullBox: boolean;
+  supSameLot: boolean;
+  stkReturn: boolean;
+  stkFullBox: boolean;
+  stkSameLot: boolean;
+  stkMonthBeforeExp: number;
+  stkMonthAfterExp: number;
+}

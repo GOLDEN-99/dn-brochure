@@ -1,3 +1,4 @@
+@let data = formData();
 <div class="app-form-field">
   <label for="supplierCode">รหัสซัพ</label>
   <input
@@ -5,21 +6,18 @@
     name="supplierCode"
     id="supplierCode"
     readonly
-    [ngModel]="compCode()"
+    [ngModel]="data.compCode"
   />
 </div>
-<form
-  [formGroup]="stepOneForm"
-  class="p-4 mb-3"
-  style="background-color: #e0e0e0"
->
+<div class="p-4 mb-3" style="background-color: #e0e0e0">
   <div class="app-form-field">
     <label for="username">Username</label>
     <input
       type="text"
       name="username"
       id="username"
-      formControlName="username"
+      [ngModel]="data.username"
+      (ngModelChange)="updateUsername($event)"
     />
   </div>
   <div class="app-form-field">
@@ -29,7 +27,8 @@
         [type]="passwordType()"
         name="userpass"
         id="userpass"
-        formControlName="userpass"
+        [ngModel]="data.userpass"
+        (ngModelChange)="updatePassword($event)"
       />
       <span
         class="input-group-text"
@@ -45,4 +44,4 @@
       </span>
     </div>
   </div>
-</form>
+</div>
