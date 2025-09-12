@@ -17,6 +17,9 @@ export class BaseSupplierForm {
         )
     protected urlList = toSignal(this.url$, { initialValue: [] })
     protected compType = computed(() => this.urlList()[2].toUpperCase())
+    protected isDn = computed(() => this.compType() === 'DN')
+    protected isHu = computed(() => this.compType() === 'HU')
+
     protected sub$ = new Subject<void>()
     protected unsub() {
         this.sub$.next()

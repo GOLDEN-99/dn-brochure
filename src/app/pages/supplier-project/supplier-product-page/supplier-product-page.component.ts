@@ -8,18 +8,19 @@ import { ApiService } from '../../../service/api/api.service';
 import { environment } from '../../../../environments/environment';
 import { getOrElse } from '../../../lib/utli';
 import { SupplierFromService } from '../../../service/supplier/supplier-from.service';
+import { RouterLink } from "@angular/router";
+import { BaseSupplierForm } from '../../../lib';
 
 @Component({
   selector: 'app-supplier-product-page',
-  imports: [FormsModule, ModalLayoutComponent],
+  imports: [FormsModule, ModalLayoutComponent, RouterLink],
   templateUrl: './supplier-product-page.component.html',
   styleUrl: './supplier-product-page.component.scss'
 })
-export class SupplierProductPageComponent {
+export class SupplierProductPageComponent extends BaseSupplierForm {
   private productModal = viewChild('productModal')
   private modalService = inject(NgbModal)
   openProductModal = () => this.modalService.open(this.productModal(), {})
-
   goodName = signal("")
   barcode = signal("")
   goodName$ = toObservable(this.goodName).pipe(distinctUntilChanged(), debounceTime(300))
@@ -58,12 +59,11 @@ export class SupplierProductPageComponent {
     const occurence = prev.findIndex(p => p.barCode === product.barCode)
     if (occurence !== -1) return
     const cond = this.condition()
-    this.itemList.update(prev => [...prev, { ...product, isShipTo: false, ...cond }])
+    this.itemList.update(prev => [...prev, { ...product, isShipTo: 0, ...cond }])
   }
 
   onAddItem(product: TBaseProduct) {
     this.addItem(product)
-    this.modalService.dismissAll()
   }
 
   onSetDefault() {

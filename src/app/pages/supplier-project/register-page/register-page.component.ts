@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register-page',
-  imports: [ReactiveFormsModule, FormsModule, StepThreePageComponent, GeneralPageComponent, AuthPageComponent, RouterLink],
+  imports: [FormsModule, StepThreePageComponent, GeneralPageComponent, AuthPageComponent, RouterLink],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss'
 })

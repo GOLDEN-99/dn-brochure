@@ -465,7 +465,7 @@ type TIbAppItem = {
   goodName: string;
   barCode: string
   goodStat: boolean;
-  isShipTo: boolean;
+  isShipTo: number;
   supReturn: boolean;
   supMonthBeforeExp: number;
   supMonthAfterExp: number;

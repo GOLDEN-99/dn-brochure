@@ -4,7 +4,11 @@
       <i class="bi bi-plus"></i>
       เพิ่มสินค้าจำหน่าย
     </button>
-    <button class="btn btn-outline-warning" (click)="onSetDefault()">
+    <button
+      class="btn btn-outline-warning"
+      (click)="onSetDefault()"
+      [disabled]="isDn()"
+    >
       <i class="bi bi-card-list"></i>
       กำหนดเงื่อนไขการคืนตามค่าเริ่มต้น
     </button>
@@ -12,11 +16,13 @@
       <i class="bi bi-trash"></i>
       ลบรายการสินค้ายกเลิก
     </button>
-    <a role="btn" class="btn btn-outline-secondary">กลับ</a>
-    <button class="btn btn-info">
+    <button class="btn btn-outline-info">
       <i class="bi bi-floppy"></i>
       บันทึก
     </button>
+    <a role="button" class="btn btn-outline-secondary" routerLink="../condition"
+      >กลับ</a
+    >
   </div>
   <table class="table table-bordered">
     <thead>
@@ -24,7 +30,6 @@
         <th>ราการสินค้า</th>
         <th>รหัส</th>
         <th>ship to</th>
-        <th>ระงับ ship to</th>
         <th>ซับรับคืน</th>
         <th>ซับรับคืนก่อน Exp(ด)</th>
         <th>ซับรับคืนหลัง Exp(ด)</th>
@@ -45,20 +50,17 @@
         <td [className]="getDangerStyle(p.goodStat)">{{ p.goodName }}</td>
         <td [className]="getDangerStyle(p.goodStat)">{{ p.barCode }}</td>
         <td class="table-danger">
-          <input
-            class="form-check"
-            type="checkbox"
+          <select
+            name="isShipTo"
+            id="isShiptTo"
             [ngModel]="p.isShipTo"
             (ngModelChange)="updateItem('isShipTo')($event, $index)"
-          />
-        </td>
-        <td class="table-danger">
-          <input
-            class="form-check"
-            type="checkbox"
-            [ngModel]="!p.isShipTo"
-            (ngModelChange)="updateItem('isShipTo')(!$event, $index)"
-          />
+            [disabled]="isDn()"
+          >
+            <option [ngValue]="0"></option>
+            <option [ngValue]="1">ship to</option>
+            <option [ngValue]="2">ระงับ ship to</option>
+          </select>
         </td>
         <td class="table-success">
           <input
@@ -66,6 +68,7 @@
             type="checkbox"
             [ngModel]="p.supReturn"
             (ngModelChange)="updateItem('supReturn')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
         <td class="table-success">{{ p.supMonthBeforeExp }}</td>
@@ -76,6 +79,7 @@
             type="checkbox"
             [ngModel]="p.supSameLot"
             (ngModelChange)="updateItem('supSameLot')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
         <td class="table-success">
@@ -84,6 +88,7 @@
             type="checkbox"
             [ngModel]="p.supFullBox"
             (ngModelChange)="updateItem('supFullBox')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
         <td class="table-info">
@@ -92,6 +97,7 @@
             type="checkbox"
             [ngModel]="p.stkReturn"
             (ngModelChange)="updateItem('stkReturn')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
         <td class="table-info">{{ p.stkMonthBeforeExp }}</td>
@@ -102,6 +108,7 @@
             type="checkbox"
             [ngModel]="p.stkSameLot"
             (ngModelChange)="updateItem('stkSameLot')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
         <td class="table-info">
@@ -110,6 +117,7 @@
             type="checkbox"
             [ngModel]="p.stkFullBox"
             (ngModelChange)="updateItem('stkFullBox')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
       </tr>
