@@ -54,12 +54,25 @@ export class SupplierProductPageComponent {
     }
   })
   addItem = (product: TBaseProduct) => {
+    const prev = this.itemList()
+    const occurence = prev.findIndex(p => p.barCode === product.barCode)
+    if (occurence !== -1) return
     const cond = this.condition()
     this.itemList.update(prev => [...prev, { ...product, isShipTo: false, ...cond }])
+
   }
   onAddItem(product: TBaseProduct) {
     this.addItem(product)
     this.modalService.dismissAll()
+  }
+
+  onSetDefault() {
+    const cond = this.condition()
+    this.itemList.update(prev => prev.map(p => ({ ...p, ...cond })))
+  }
+
+  getDangerStyle(goodStat: boolean) {
+    return goodStat ? '' : 'text-danger'
   }
 }
 

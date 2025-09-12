@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { TReturnForm } from '../../../service/supplier/supplier-from.service';
 import { SupplierApiService } from '../../../service/supplier/supplier-api.service';
 import { ToastService } from '../../../service/toast/toast.service';

@@ -4,7 +4,7 @@
       <i class="bi bi-plus"></i>
       เพิ่มสินค้าจำหน่าย
     </button>
-    <button class="btn btn-outline-warning">
+    <button class="btn btn-outline-warning" (click)="onSetDefault()">
       <i class="bi bi-card-list"></i>
       กำหนดเงื่อนไขการคืนตามค่าเริ่มต้น
     </button>
@@ -12,6 +12,7 @@
       <i class="bi bi-trash"></i>
       ลบรายการสินค้ายกเลิก
     </button>
+    <a role="btn" class="btn btn-outline-secondary">กลับ</a>
     <button class="btn btn-info">
       <i class="bi bi-floppy"></i>
       บันทึก
@@ -41,8 +42,8 @@
       <!---->
       @for (p of products; track $index) {
       <tr>
-        <td>{{ p.goodName }}</td>
-        <td>{{ p.barCode }}</td>
+        <td [className]="getDangerStyle(p.goodStat)">{{ p.goodName }}</td>
+        <td [className]="getDangerStyle(p.goodStat)">{{ p.barCode }}</td>
         <td class="table-danger">
           <input
             class="form-check"
