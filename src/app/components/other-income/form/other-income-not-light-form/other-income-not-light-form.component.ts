@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './other-income-not-light-form.component.scss'
 })
 export class OtherIncomeNotLightFormComponent {
+
   private route = inject(ActivatedRoute)
 
   headId = input<number>()
@@ -29,13 +30,19 @@ export class OtherIncomeNotLightFormComponent {
     return stepList.some(({ percent }) => percent === 0)
   })
   capAmount = signal<number | null>(null)
+  invalidCap = computed(() => {
+    const capAmount = this.capAmount()
+    if (capAmount === null) return false
+    const parseCap = Number(capAmount)
+    return isNaN(parseCap) || parseCap === 0
+  })
   setCapNull = () => this.capAmount.set(null)
   setCapZero = () => this.capAmount.set(0)
   isNullCap = computed(() => this.capAmount() === null)
 
   disable = computed(() => {
     const invalidStep = this.invalidStep()
-    const invalidCap = this.capAmount() === 0
+    const invalidCap = this.invalidCap()
     return invalidStep || invalidCap
   })
 
@@ -49,7 +56,7 @@ export class OtherIncomeNotLightFormComponent {
     const isComp = this.isComp()
     const isInce = this.isInce()
     const stepType = this.stepType()
-    const capAmount = this.capAmount()
+    const capAmount = Number(this.capAmount())
     const stepList = this.stepList().map((step, i, arr) => {
       const min = step.start
       const rate = step.percent
