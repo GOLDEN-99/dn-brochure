@@ -10,10 +10,13 @@ import { OiBaseformService } from '../../../../service/other-income/oi-baseform.
   template: `
   <app-other-income-baseform mode="not-light" (isLightChange)="isLight.set($event)" />
   <div class="d-flex justify-content-center" style="gap: 1rem">
-    <button class="btn btn-success" (click)="onSubmit()">
-      <i class="bi bi-floppy"></i>
-      <span> บันทึก </span>
-    </button>
+    @let btnLabel = displayText();
+    @if(btnLabel !== ''){
+      <button class="btn btn-success" (click)="onSubmit()">
+        <i class="bi bi-floppy"></i>
+        <span> {{btnLabel}} </span>
+      </button>
+    }
     <a routerLink="../" class="btn btn-outline-danger"
       >ย้อนกลับ</a
     >
@@ -55,6 +58,14 @@ export class PurchaseIncomeFormComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute)
   isLight = signal(-1)
   isInce = computed(() => this.isLight() === 3)
+  displayText = computed(() => {
+    const isLight = this.isLight()
+    switch (isLight) {
+      case -1: return ''
+      case 1: return 'ต่อไป'
+      default: return 'บันทึก'
+    }
+  })
   productList = this.baseFormService.productList
   onSubmit = () => {
     const comp = this.comp()
