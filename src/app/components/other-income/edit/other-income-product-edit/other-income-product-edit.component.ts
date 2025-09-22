@@ -14,5 +14,6 @@ export class OtherIncomeProductEditComponent {
 type TProductItem = {
   goodCode: string
   goodName: string
+  barCode: string
   id: number
 }
