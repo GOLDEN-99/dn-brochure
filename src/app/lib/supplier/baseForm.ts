@@ -6,6 +6,9 @@ import { toSignal } from "@angular/core/rxjs-interop";
 
 export class BaseSupplierForm {
     protected formService = inject(SupplierFromService)
+    protected itemList = this.formService.item
+    protected formState = this.formService.formState
+    protected emplList = this.formService.emplList
     protected route = inject(ActivatedRoute)
     // ['', 'supplier', ':compType', 'form']
     // ['', 'supplier', ':compType', 'form', 'product', ]
@@ -16,9 +19,9 @@ export class BaseSupplierForm {
             tap(console.log)
         )
     protected urlList = toSignal(this.url$, { initialValue: [] })
-    protected compType = computed(() => this.urlList()[2].toUpperCase())
-    protected isDn = computed(() => this.compType() === 'DN')
-    protected isHu = computed(() => this.compType() === 'HU')
+    protected compTypeSignal = computed(() => this.urlList()[2].toUpperCase())
+    protected isDn = computed(() => this.compTypeSignal() === 'DN')
+    protected isHu = computed(() => this.compTypeSignal() === 'HU')
 
     protected sub$ = new Subject<void>()
     protected unsub() {

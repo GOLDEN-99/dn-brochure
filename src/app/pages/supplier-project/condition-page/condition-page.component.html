@@ -1,5 +1,4 @@
-<a class="btn btn-success mb-3" routerLink="../product">ราการจำหน่ายสินค้า</a>
-@let data = formState(); @if (compType() === 'HU') {
+@let data = formState(); @if (compType === 'HU') {
 <ul
   ngbNav
   #nav="ngbNav"
@@ -21,6 +20,7 @@
             [value]="true"
             [ngModel]="data.supReturn"
             (ngModelChange)="updator('supReturn')($event)"
+            [disabled]="readonly()"
           />
           <label class="form-check-label" for="return-sup-check-return">
             รับคืน
@@ -40,6 +40,7 @@
                 id="return-sup-before"
                 [ngModel]="data.supMonthBeforeExp"
                 (ngModelChange)="updator('supMonthBeforeExp')($event)"
+                [readOnly]="readonly()"
                 [min]="0"
               />
             </div>
@@ -59,6 +60,7 @@
                 [ngModel]="data.supMonthAfterExp"
                 (ngModelChange)="updator('supMonthAfterExp')($event)"
                 [min]="0"
+                [readOnly]="readonly()"
               />
             </div>
             <div>
@@ -75,6 +77,7 @@
               name="return-sub-whole"
               [ngModel]="data.supFullBox"
               (ngModelChange)="updator('supFullBox')($event)"
+              [disabled]="readonly()"
             />
             <label for="return-sub-whole">เต็มกล่อง</label>
           </div>
@@ -88,6 +91,7 @@
               name="return-sub-lot"
               [ngModel]="data.supSameLot"
               (ngModelChange)="updator('supSameLot')($event)"
+              [disabled]="readonly()"
             />
             <label for="return-sub-lot">ล็อตเดียวกัน</label>
           </div>
@@ -103,6 +107,7 @@
             [value]="false"
             [ngModel]="data.stkReturn"
             (ngModelChange)="noSupReturn()"
+            [disabled]="readonly()"
           />
           <label class="form-check-label" for="return-sup-check-not-return">
             ไม่รับคืน
@@ -124,6 +129,7 @@
             [value]="true"
             [ngModel]="data.stkReturn"
             (ngModelChange)="updator('stkReturn')($event)"
+            [disabled]="readonly()"
           />
           <label class="form-check-label" for="return-branch-check-return">
             รับคืน
@@ -143,6 +149,7 @@
                 id="return-branch-before"
                 [ngModel]="data.stkMonthBeforeExp"
                 (ngModelChange)="updator('stkMonthBeforeExp')($event)"
+                [readOnly]="readonly()"
                 [min]="0"
               />
             </div>
@@ -161,6 +168,7 @@
                 id="return-branch-after"
                 [ngModel]="data.stkMonthAfterExp"
                 (ngModelChange)="updator('stkMonthAfterExp')($event)"
+                [readOnly]="readonly()"
                 [min]="0"
               />
             </div>
@@ -178,6 +186,7 @@
               name="return-branch-whole"
               [ngModel]="data.stkFullBox"
               (ngModelChange)="updator('stkFullBox')($event)"
+              [disabled]="readonly()"
             />
             <label for="return-branch-whole">เต็มกล่อง</label>
           </div>
@@ -191,6 +200,7 @@
               name="return-branch-lot"
               [ngModel]="data.stkSameLot"
               (ngModelChange)="updator('stkSameLot')($event)"
+              [disabled]="readonly()"
             />
             <label for="return-branch-lot">ล็อตเดียวกัน</label>
           </div>
@@ -206,6 +216,7 @@
             [value]="false"
             [ngModel]="data.stkReturn"
             (ngModelChange)="noStkReturn()"
+            [disabled]="readonly()"
           />
           <label class="form-check-label" for="return-branch-check-not-return">
             ไม่รับคืน
@@ -219,7 +230,3 @@
 }@else {
 <div class="mb-3">DN ไม่ระบุเงื่อนไขการคืน</div>
 }
-<div class="d-flex" style="gap: 16px">
-  <button class="btn btn-primary w-100" (click)="onSubmit()">ถัดไป</button>
-  <a class="btn btn-danger w-100" role="button" routerLink="../">ย้อนกลับ</a>
-</div>

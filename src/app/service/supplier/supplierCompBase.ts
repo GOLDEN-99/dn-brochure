@@ -1,19 +1,22 @@
-import { inject, Signal, signal } from "@angular/core"
+import { inject, Signal, signal, WritableSignal } from "@angular/core"
 import { TCompProduct, TDNComp, TDNCompRes, THUComp, THUCompRes } from "../../types/ibob-supplier.type"
 import { catchError, distinctUntilChanged, map, Observable, shareReplay, Subject, switchMap, tap, throwError } from "rxjs"
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop"
 import { ApiService } from "../api/api.service"
 import { environment } from "../../../environments/environment"
-import { ISupplierList } from "./supplier.token"
+import { ISupplierList, TExtendedComp } from "./supplier.token"
 
 export abstract class SupplierCompBase<T extends TCompCat> implements ISupplierList {
     constructor() {
         this.baseComp$.subscribe()
         this.product$.subscribe()
     }
+
     protected api = inject(ApiService)
     protected url = environment.ibob
-
+    abstract compCode: WritableSignal<string>
+    abstract term: WritableSignal<string>
+    abstract compList: Signal<TExtendedComp[]>
     abstract fetchFn(compCode: string): Observable<TCompRes<T>>
     abstract selector(comp: TCompRes<T>): TDetailComp<T>
     abstract pageLabel: Signal<"DN" | "HU">

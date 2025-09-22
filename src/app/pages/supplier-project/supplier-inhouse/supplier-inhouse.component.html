@@ -1,48 +1,40 @@
 <section class="p-3">
-  <h1 class="text-center mb-3">ข้อมูลซัพพลายเออร์ ({{ pageHeader() }})</h1>
+  <h1 class="text-center mb-3">ข้อมูลซัพพลายเออร์ ({{ pageHeader }})</h1>
 
   <div class="container-xl" style="overflow-x: auto">
     <a routerLink="./form" class="btn btn-success mb-3" role="button"
       ><i class="bi bi-plus"></i>เพิ่มซัพพลายเออร์</a
     >
-    <!-- <div class="row mb-3">
-      <div class="col-auto">
-        <div class="form-field">
-          <label for="" class="form-label">ค้นหาจาก</label>
-          <select name="" id="" class="form-select">
-            <option value="supCode">รหัสซัพ</option>
-            <option value="supName">ชื่อซัพ</option>
-          </select>
-        </div>
-      </div>
-      <div class="col-auto">
-        <div class="app-form-field">
-          <label for="">คำค้นหา</label>
-          <input type="text" />
-        </div>
-      </div>
-    </div> -->
     <app-ibob-query-tab label="รายชื่อซัพ" (search)="onSearch($event)" />
     <table class="table table-striped table-bordered" style="min-width: 1024px">
       <thead>
         <tr>
-          <th scope="col" style="min-width: 102px">Username</th>
-          <th scope="col" style="min-width: 102px">Password</th>
-          <th scope="col" style="min-width: 160px">ชื่อบริซัท/ซัพฯ</th>
-          <th scope="col" style="min-width: 122px">โทรศัพท์</th>
-          <th scope="col" style="min-width: 160px">E mail</th>
+          <th scope="col" style="min-width: 100px">Username</th>
+          <th scope="col" style="min-width: 100px">Password</th>
+          <th scope="col" style="min-width: 100px">ชื่อบริซัท/ซัพฯ</th>
+          <th scope="col" style="min-width: 100px">โทรศัพท์</th>
+          <th scope="col" style="min-width: 100px">E mail</th>
           <th scope="col">ที่อยู่</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         @for (comp of compList(); track $index) {
-        <tr tabindex="0" style="cursor: pointer" (click)="goTo(comp.compCode)">
+        <tr>
           <td scope="row">{{ comp.username }}</td>
           <td>{{ comp.userpass }}</td>
           <td>{{ comp.compName }}</td>
           <td>{{ comp.compPhone }}</td>
           <td>{{ comp.compEmail }}</td>
           <td>{{ comp.compAddr }}</td>
+          <td>
+            <button class="btn btn-success" (click)="toCompForm(comp.compCode)">
+              รายละเอียด
+            </button>
+            <!-- <button class="btn btn-info" (click)="toProductForm(comp.compCode)">
+              รายการสินค้า
+            </button> -->
+          </td>
         </tr>
         }
       </tbody>

@@ -1,5 +1,5 @@
 <div>
-  @let data = formData();
+  @let data = formState();
   <div class="app-form-field">
     <div class="app-form-select">
       <label for="groupCode">กลุ่มผู้ขาย</label>
@@ -8,6 +8,7 @@
         name="groupCode"
         [ngModel]="data.compGroupCode"
         (ngModelChange)="updator('compGroupCode')($event)"
+        [disabled]="readonly()"
       >
         <option value="" disabled>กรุณาเลือก</option>
         @for (group of compGroup(); track group.compGroupCode) {
@@ -29,6 +30,7 @@
           [ngModel]="data.parentCompCode"
           readonly
           (click)="searchBtn.click()"
+          [disabled]="readonly()"
         />
       </div>
       <div class="app-form-field col">
@@ -39,7 +41,7 @@
           id="comp"
           [ngModel]="data.parentCompName"
           readonly
-          (click)="searchBtn.click()"
+          [disabled]="readonly()"
         />
       </div>
     </form>
@@ -47,13 +49,18 @@
       <button
         class="btn btn-outline"
         #searchBtn
+        [disabled]="readonly()"
         (click)="openModal(searchModal)"
       >
         <i class="bi bi-search"></i>
       </button>
     </div>
     <div class="col-1 mb-3">
-      <button class="btn btn-danger" (click)="clearParent()">
+      <button
+        class="btn btn-danger"
+        [disabled]="readonly()"
+        (click)="clearParent()"
+      >
         <i class="bi bi-trash"></i>
       </button>
     </div>
@@ -66,6 +73,7 @@
       rows="3"
       [ngModel]="data.orderRemark"
       (ngModelChange)="updator('orderRemark')($event)"
+      [readOnly]="readonly()"
     ></textarea>
   </div>
   <div class="app-form-field">
@@ -76,6 +84,7 @@
       name="shipTo"
       [ngModel]="data.shipTo"
       (ngModelChange)="updator('shipTo')($event)"
+      [readOnly]="readonly()"
     />
   </div>
   <div class="mb-3" style="display: flex; gap: 16px">
@@ -89,6 +98,7 @@
           [ngModel]="data.paymentTerms"
           (ngModelChange)="updator('paymentTerms')($event)"
           placeholder="ระบุจำนวนวัน"
+          [readOnly]="readonly()"
         />
       </div>
       <div class="app-form-field">
@@ -101,6 +111,7 @@
           name="tradePerDisc"
           [ngModel]="data.tradePerDisc"
           (ngModelChange)="updator('tradePerDisc')($event)"
+          [readOnly]="readonly()"
         />
       </div>
       <div class="app-form-field">
@@ -111,6 +122,7 @@
           name="cashPerDisc"
           [ngModel]="data.cashPerDisc"
           (ngModelChange)="updator('cashPerDisc')($event)"
+          [readOnly]="readonly()"
         />
       </div>
       <div class="app-form-field">
@@ -121,6 +133,7 @@
           name="dcPerDisc"
           [ngModel]="data.dcPerDisc"
           (ngModelChange)="updator('dcPerDisc')($event)"
+          [readOnly]="readonly()"
         />
       </div>
     </div>
@@ -140,11 +153,11 @@
           style="height: 24px; width: 24px"
           [ngModel]="data.billIncludeVAT"
           (ngModelChange)="updator('billIncludeVAT')($event)"
+          [disabled]="readonly()"
         />
         <label for="vat2">สินค้ารวม VAT</label>
       </div>
-      @if (compType() === 'HU') {
-
+      @if (compType === 'HU') {
       <div
         class="app-form-check"
         style="display: flex; gap: 16px; align-items: center"
@@ -156,6 +169,7 @@
           style="height: 24px; width: 24px"
           [ngModel]="data.registered"
           (ngModelChange)="updator('registered')($event)"
+          [disabled]="readonly()"
         />
         <label for="vat1">จดทะเบียน VAT</label>
       </div>
@@ -171,6 +185,7 @@
           style="height: 24px; width: 24px"
           [ngModel]="data.fixedPrice"
           (ngModelChange)="updator('fixedPrice')($event)"
+          [disabled]="readonly()"
         />
         <label for="vat3">ควบคุมราคาขายปลีก</label>
       </div>

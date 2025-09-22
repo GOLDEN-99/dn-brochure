@@ -9,6 +9,7 @@
         name="compName"
         [ngModel]="data.compName"
         (ngModelChange)="updator('compName')($event)"
+        [readOnly]="readonly()"
       />
     </div>
     <div class="app-form-field col-md">
@@ -19,6 +20,7 @@
         name="compName2"
         [ngModel]="data.compName2"
         (ngModelChange)="updator('compName2')($event)"
+        [readOnly]="readonly()"
       />
     </div>
   </div>
@@ -30,6 +32,7 @@
       rows="3"
       [ngModel]="data.compAddr"
       (ngModelChange)="updator('compAddr')($event)"
+      [readOnly]="readonly()"
     ></textarea>
   </div>
   <div class="row">
@@ -41,6 +44,7 @@
         id="compPhone"
         [ngModel]="data.compPhone"
         (ngModelChange)="updator('compPhone')($event)"
+        [readOnly]="readonly()"
       />
     </div>
     <div class="app-form-field col-md">
@@ -51,6 +55,7 @@
         id="compFax"
         [ngModel]="data.compFax"
         (ngModelChange)="updator('compFax')($event)"
+        [readOnly]="readonly()"
       />
     </div>
     <div class="app-form-field col-md">
@@ -61,6 +66,7 @@
         id="compEmail"
         [ngModel]="data.compEmail"
         (ngModelChange)="updator('compEmail')($event)"
+        [readOnly]="readonly()"
       />
     </div>
   </div>
@@ -77,6 +83,7 @@
         [attr.id]="$index + 'emplName'"
         [ngModel]="c.emplName"
         (ngModelChange)="updateEmplName($event, $index)"
+        [readOnly]="readonly()"
       />
     </div>
     <div class="app-form-field col-sm">
@@ -87,6 +94,7 @@
         [attr.id]="$index + 'emplPhone'"
         [ngModel]="c.emplPhone"
         (ngModelChange)="updateEmplPhone($event, $index)"
+        [readOnly]="readonly()"
       />
     </div>
     <div class="app-form-field col-sm">
@@ -97,17 +105,26 @@
         [attr.id]="$index + 'emplEmail'"
         [ngModel]="c.emplEmail"
         (ngModelChange)="updateEmplEmail($event, $index)"
+        [readOnly]="readonly()"
       />
     </div>
     <div class="col-2 d-flex justify-content-between mb-3">
       @if(contactForm.length !== 1) {
-      <button class="btn btn-squre btn-danger" (click)="removeContact($index)">
+      <button
+        class="btn btn-squre btn-danger"
+        [disabled]="readonly()"
+        (click)="removeContact($index)"
+      >
         <i class="bi bi-dash"></i>
       </button>
       }
       <!---->
       @if ($index === contactForm.length-1) {
-      <button class="btn btn-squre btn-success" (click)="addContact()">
+      <button
+        class="btn btn-squre btn-success"
+        [disabled]="readonly()"
+        (click)="addContact()"
+      >
         <i class="bi bi-plus"></i>
       </button>
       }

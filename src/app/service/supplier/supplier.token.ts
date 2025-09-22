@@ -2,6 +2,7 @@ import { InjectionToken, Signal, WritableSignal } from "@angular/core"
 import { TSupplierItem } from "../../types"
 import { ICompBase } from "../../types/ibob-supplier.type"
 import { TOIComp } from "../other-income/company.service"
+import { IComp } from "./shared.type"
 
 export interface ISupplierList {
     pageLabel: Signal<'DN' | 'HU'>
@@ -22,3 +23,6 @@ export type TExtendedComp = {
     username: string
     userpass: string
 } & TOIComp
+
+
+export const IBOB_COMP_TYPE_TOKEN = new InjectionToken<IComp>('ibob_comp_type_token')

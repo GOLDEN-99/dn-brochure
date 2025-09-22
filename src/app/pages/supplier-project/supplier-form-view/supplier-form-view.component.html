@@ -1,26 +1,20 @@
-@let currentComp = comp();
-<!---->
-@if (!currentComp) {
-<div>ไม่พบข้อมูล</div>
-} @else {
-<app-auth-page
-  [initialValue]="{
-    username: currentComp.username,
-    userpass: currentComp.userpass,
-    compCode: currentComp.compCode,
-  }"
-/>
-<app-general-page
-  [initialValue]="{
-    compName: currentComp.compName,
-    compName2: currentComp.compName2,
-    compPhone: currentComp.compPhone,
-    compFax: currentComp.compFax,
-    compEmail: currentComp.compEmail,
-    compAddr: currentComp.compAddr,
-    saleName: currentComp?.saleName
-  }"
-/>
-
-<app-step-three-page />
-}
+<app-auth-page [readonly]="readonly()" />
+<app-general-page [readonly]="readonly()" />
+<app-step-three-page [readonly]="readonly()" />
+<app-condition-page [readonly]="readonly()" />
+<a class="btn btn-success w-100 mb-3" routerLink="./product"
+  >ราการจำหน่ายสินค้า</a
+>
+<button class="btn btn-primary w-100 mb-3" [disabled]="true">ถัดไป</button>
+<a class="btn btn-danger w-100 mb-3" role="button" routerLink="../">ย้อนกลับ</a>
+<button
+  class="btn btn-rounded btn-info"
+  style="z-index: 1000; position: fixed; right: 2rem; top: 2rem"
+  (click)="toggle()"
+>
+  @if (readonly()) {
+  <i class="bi bi-pen"></i>
+  }@else {
+  <i class="bi bi-eye"></i>
+  }
+</button>

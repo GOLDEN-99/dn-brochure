@@ -41,9 +41,9 @@ export class SupplierProductPageComponent extends BaseSupplierForm {
   displayProduct = toSignal(this.data$, { initialValue: [] })
 
   private formServ = inject(SupplierFromService)
-  itemList = this.formServ.item
+
   updateItem = this.formServ.updateItem
-  formState = this.formServ.formState
+
   condition = computed(() => {
     const {
       supReturn, supFullBox, supSameLot, supMonthAfterExp, supMonthBeforeExp,

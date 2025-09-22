@@ -12,10 +12,8 @@ import { combineLatest, distinctUntilChanged, map, Observable, takeUntil } from 
   templateUrl: './auth-page.component.html',
   styleUrl: './auth-page.component.scss'
 })
-export class AuthPageComponent extends BaseSupplierForm implements OnInit, OnDestroy {
-  stepOneForm = this.formService.form.controls.auth
-  patchForm = this.formService.patchAuth
-  disable = () => this.stepOneForm.invalid || !this.stepOneForm.touched
+export class AuthPageComponent extends BaseSupplierForm {
+  readonly = input(false)
   passwordType = signal<'text' | 'password'>('password')
 
   togglePassword = () => this.passwordType.update(prev => prev === 'password' ? 'text' : 'password')
@@ -29,29 +27,6 @@ export class AuthPageComponent extends BaseSupplierForm implements OnInit, OnDes
   compCode = this.supplierApiServ.selectedCode
   compCode$ = toObservable(this.compCode)
 
-  initialValue = input<TAuthFormState | null>(null)
-  private initialValue$ = toObservable(this.initialValue)
-  private merge$: Observable<Partial<TAuthFormState>> = combineLatest(
-    [this.compCode$, this.initialValue$]
-  ).pipe(
-    map(([compCode, init]) => init === null ? ({ compCode }) : init)
-  )
-  private comparedFn = (prev: Partial<TAuthFormState>, cur: Partial<TAuthFormState>) =>
-    prev?.username === cur?.username
-    && prev?.userpass === cur?.userpass
-    && prev?.compCode === cur?.compCode
 
-  ngOnInit(): void {
-    this.merge$
-      .pipe(
-        distinctUntilChanged(this.comparedFn),
-        takeUntil(this.sub$)
-      ).subscribe(
-        (init) => this.formData.update(prev => ({ ...prev, ...init }))
-      )
-  }
-  ngOnDestroy(): void {
-    this.unsub()
-  }
 }
 

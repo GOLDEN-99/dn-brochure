@@ -1,22 +1,19 @@
 import { inject, Injectable, Signal, signal } from '@angular/core';
-import { TSupplierItem } from '../../types';
 import { ApiService } from '../api/api.service';
 import { ISupplierList, TExtendedComp } from './supplier.token';
-import { TCompProduct, TDNComp, TDNCompRes } from '../../types/ibob-supplier.type';
+import { TCompDetailRes, TCompProduct, TDNComp, TDNCompRes, THUComp } from '../../types/ibob-supplier.type';
 import { environment } from '../../../environments/environment';
 import { combineLatest, debounceTime, distinctUntilChanged, filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { getOrElse } from '../../lib/utli';
+import { TEmplState, TFormState, TIbAppItem } from './shared.type';
+import { dnCompMapper, huCompMapper, itemMapper, toBoolAdapter, toIsShipAdapter, toNumberAdapter } from './lib-ibob';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupplierDnService implements ISupplierList {
 
-  constructor() {
-    this.compBase$.subscribe()
-    this.compProduct$.subscribe()
-  }
   term = signal('')
   compCode = signal('')
   private term$ = toObservable(this.term).pipe(distinctUntilChanged(), debounceTime(300))
@@ -32,32 +29,44 @@ export class SupplierDnService implements ISupplierList {
 
   searchCompCode = (compCode: string) => this.compCode$.next(compCode)
 
-  private fetchFn = (compCode: string) => this.api.get<TDNCompRes>(`${this.url}/GetCompSubRes/${compCode}/DN`)
+  private fetchFn = (compCode: string) => this.api.get<TCompDetailRes>(`${this.url}/GetCompSubRes/${compCode}/DN`)
   compCode$ = new Subject<string>()
   private compData$ = this.compCode$.pipe(switchMap(this.fetchFn))
+  private sharedComp$ = this.compData$.pipe(shareReplay(2))
 
-  private sharedComp$ = this.compData$.pipe(shareReplay(1))
-
-  private compBase$ = this.sharedComp$.pipe(map(({ dn }) => dn), tap(dn => this.compBase.update(() => dn)), takeUntilDestroyed())
-
+  private compInfo$ = this.sharedComp$.pipe(map<TCompDetailRes, Partial<TFormState>>(({ dn, hu }) => {
+    if (dn === null && hu !== null) {
+      return huCompMapper(hu);
+    }
+    if (dn !== null && hu === null) {
+      return dnCompMapper(dn);
+    }
+    throw new Error("invalid comp response")
+  }))
+  compRes = toSignal(this.compInfo$, { initialValue: {} })
+  private compItem$ = this.sharedComp$.pipe(map<TCompDetailRes, TIbAppItem[]>(
+    ({ item }) => item.map(i => itemMapper(i))))
   compBase = signal<TDNComp | null>(null)
-
+  compItem = toSignal(this.compItem$, { initialValue: [] })
+  private saleName$ = this.sharedComp$.pipe(map(({ dn, hu }) => {
+    if (dn === null && hu !== null) {
+      return hu.saleName
+    }
+    if (dn !== null && hu === null) {
+      return ''
+    }
+    throw new Error("invalid comp response")
+  }))
+  saleName = toSignal(this.saleName$, { initialValue: '' })
   private compProduct$ = this.sharedComp$.pipe(map(({ item }) => item), tap(products => this.product.update(() => products)), takeUntilDestroyed())
 
   product = signal<TCompProduct[]>([])
 
-  data = signal<TSupplierItem[]>([{
-    username: 'test',
-    password: 'test',
-    supName: 'sup A',
-    email: 'supA@test.com',
-    address: 'อาคารสำนักงานใหญ่ เลขที่ 26/56-57 ซอย, 62/2 King Kaeo Rd, Racha Thewa, Bang Phli District, Samut Prakan 10540',
-    tel: '0888888888'
-  }])
   pageLabel: Signal<'DN' | 'HU'> = signal('DN')
   compList$ = this.searchMany$.pipe(
     switchMap(params => this.api.get<TExtendedComp[]>(`${environment.oi}/comp/dn`, { params })),
     getOrElse<TExtendedComp[]>([])
   )
   compList: Signal<TExtendedComp[]> = toSignal(this.compList$, { initialValue: [] })
+
 }
