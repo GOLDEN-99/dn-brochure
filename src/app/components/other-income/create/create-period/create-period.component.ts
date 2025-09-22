@@ -3,10 +3,11 @@ import { TIncomeItem } from '../../../../service/other-income/base-oi';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PeriodService } from '../../../../service/other-income/period.service';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-create-period',
-  imports: [FormsModule],
+  imports: [FormsModule, DecimalPipe],
   templateUrl: './create-period.component.html',
   styleUrl: './create-period.component.scss'
 })
