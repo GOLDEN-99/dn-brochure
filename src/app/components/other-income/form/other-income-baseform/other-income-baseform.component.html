@@ -68,7 +68,7 @@
 @let products = productList(); @if (products !== null && formData.compCode !==
 '') {
 <app-search-product-subform
-  [comp]="{ compCode: formData.compCode, compType: formData.compType }"
+  [comp]="searchProductParam()"
   [selectProducts]="products"
   (onAdd)="handleAdd($event)"
   (onDelete)="handleDelete($event)"

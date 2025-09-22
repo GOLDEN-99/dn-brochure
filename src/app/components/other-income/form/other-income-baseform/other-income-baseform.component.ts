@@ -17,6 +17,7 @@ import { IncomeSelectComponent } from "../income-select/income-select.component"
 export class OtherIncomeBaseformComponent {
   private baseFormService = inject(OiBaseformService)
   state = this.baseFormService.baseformState
+  searchProductParam = this.baseFormService.searchProductParam
   private updator = this.baseFormService.updateOneField
   updateCompCode = this.updator('compCode')
   updateCompName = this.updator('compName')

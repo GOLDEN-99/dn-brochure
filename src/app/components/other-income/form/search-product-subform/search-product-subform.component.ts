@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OiProductService } from '../../../../service/other-income/oi-product.service';
 import { TOIProduct } from '../../../../types';
@@ -15,7 +15,6 @@ export class SearchProductSubformComponent {
   comp = input.required<{ compCode: string, compType: string }>()
   term = this.productService.term
   result = this.productService.product
-
   isSelectAllItem = computed(() => this.result().every(({ check }) => check))
   selectAll = this.productService.selectAll
 
@@ -27,6 +26,7 @@ export class SearchProductSubformComponent {
 
   delete(goodCode: string) {
     this.onDelete.emit(goodCode)
+    this.productService.uncheckProduct(goodCode)
   }
 
   submit() {
