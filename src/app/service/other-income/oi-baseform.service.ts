@@ -3,6 +3,9 @@ import { NgbCalendar, NgbDate, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap'
 import { TBaseOIHead, TBaseOiInsert, TOIProduct } from '../../types';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { distinctUntilChanged, filter } from 'rxjs';
+import { OiProductService } from './oi-product.service';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +36,17 @@ export class OiBaseformService {
   productList = signal<TOIProduct[] | null>(null)
 
   baseformState = signal(this.defaultValue)
-
+  searchProductParam = computed(() => {
+    const { compCode, compType } = this.baseformState()
+    return { compCode, compType }
+  })
+  searchProduct$ = toObservable(this.searchProductParam).pipe(
+    filter(({ compCode }) => compCode !== ''),
+    distinctUntilChanged((prev, cur) => {
+      if (prev.compType !== cur.compType) return false
+      return prev.compCode === cur.compCode
+    }),
+  )
   updateOneField = <K extends keyof TAppBaseformInsert>(key: K) => (value: TAppBaseformInsert[K]) => {
     this.baseformState.update(prev => ({ ...prev, [key]: value }))
   }

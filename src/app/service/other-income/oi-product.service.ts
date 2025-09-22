@@ -28,14 +28,21 @@ export class OiProductService {
   private params$ = combineLatest([this.compCode$, this.compType$, this.term$])
   private getProduct = (compCode: string, compType: string, name: string) => this.api.get<TSearchProductResult[]>(`${this.url}/${compType}`, { params: { compCode } })
   private product$: Observable<TAppSearchProductResult[]> = this.params$
-    .pipe(switchMap(([compCode, compType, term]) => this.getProduct(compCode, compType, term)))
     .pipe(
+      filter(([compCode]) => compCode !== ''),
+      distinctUntilChanged((prev, cur) => {
+        if (prev[1] !== cur[1]) return false
+        return prev[0] === cur[0]
+      }),
+      switchMap(([compCode, compType, term]) => this.getProduct(compCode, compType, term)),
       map((products) => products.map(this.mapCheckToProduct))
     )
   product = signal<TAppSearchProductResult[]>([])
   toggleProduct = (goodCode: string) => {
     this.product.update(prev => prev.map(product => product.goodCode === goodCode ? ({ ...product, check: !product.check }) : product))
   }
+
+  uncheckProduct = (goodCode: string) => this.product.update(prev => prev.map(p => p.goodCode === goodCode ? ({ ...p, check: false }) : p))
 
   selectAll = (isCheck: boolean) => this.product.update(prev => prev.map(p => ({ ...p, check: isCheck })))
 
