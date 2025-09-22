@@ -82,7 +82,7 @@ import { FormsModule } from '@angular/forms';
           </button>
         </div>
       </div>
-      } @else {
+      } @else if(targetValue === 1) {
       <!--case stepType = 0,1-->
       <div class="bg-lightgray" style="padding: 0 8px">
         <div class="app-form-field-inline">
