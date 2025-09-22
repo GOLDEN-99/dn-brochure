@@ -59,9 +59,9 @@
 </div>
 <app-search-comp-subform
   [compType]="formData.compType"
-  (compTypeChange)="updateCompType($event)"
+  (compTypeChange)="onCompTypeChange($event)"
   [compCode]="formData.compCode"
-  (compCodeChange)="updateCompCode($event)"
+  (compCodeChange)="onCompCodeChange($event)"
   [compName]="formData.compName"
   (compNameChange)="updateCompName($event)"
 />

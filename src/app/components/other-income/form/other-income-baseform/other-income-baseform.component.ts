@@ -5,7 +5,7 @@ import { OiBaseformService } from '../../../../service/other-income/oi-baseform.
 import { SearchCompSubformComponent } from "../search-comp-subform/search-comp-subform.component";
 import { EventSelectComponent } from "../event-select/event-select.component";
 import { SearchProductSubformComponent } from "../search-product-subform/search-product-subform.component";
-import { TOIProduct } from '../../../../types';
+import { TCompType, TOIProduct } from '../../../../types';
 import { IncomeSelectComponent } from "../income-select/income-select.component";
 
 @Component({
@@ -20,8 +20,18 @@ export class OtherIncomeBaseformComponent {
   searchProductParam = this.baseFormService.searchProductParam
   private updator = this.baseFormService.updateOneField
   updateCompCode = this.updator('compCode')
+  onCompCodeChange(compCode: string) {
+    this.productList.set([])
+    this.goodCodeSet.clear()
+    this.updateCompCode(compCode)
+  }
   updateCompName = this.updator('compName')
   updateCompType = this.updator('compType')
+  onCompTypeChange(compType: TCompType) {
+    this.productList.set([])
+    this.goodCodeSet.clear()
+    this.updateCompType(compType)
+  }
   updateEvent = this.updator('eventId')
   updateIncome = this.updator('incomeId')
   updateName = this.updator('displayName')
