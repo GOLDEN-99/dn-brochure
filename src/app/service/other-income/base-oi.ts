@@ -155,7 +155,7 @@ export type NotLightSingle = {
     head: TContactHead
     notLight: TContactNotLight
     stepList: TOIStepItem[]
-    productList: { id: number, goodCode: string, goodName: string }[]
+    productList: { id: number, goodCode: string, goodName: string, barCode: string }[]
     incomeList: TIncomeItem[]
     periodList: TPopulatedPeriodResult[]
     company: TOIComp

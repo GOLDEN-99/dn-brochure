@@ -59,16 +59,16 @@
 </div>
 <app-search-comp-subform
   [compType]="formData.compType"
-  (compTypeChange)="updateCompType($event)"
+  (compTypeChange)="onCompTypeChange($event)"
   [compCode]="formData.compCode"
-  (compCodeChange)="updateCompCode($event)"
+  (compCodeChange)="onCompCodeChange($event)"
   [compName]="formData.compName"
   (compNameChange)="updateCompName($event)"
 />
 @let products = productList(); @if (products !== null && formData.compCode !==
 '') {
 <app-search-product-subform
-  [comp]="{ compCode: formData.compCode, compType: formData.compType }"
+  [comp]="searchProductParam()"
   [selectProducts]="products"
   (onAdd)="handleAdd($event)"
   (onDelete)="handleDelete($event)"

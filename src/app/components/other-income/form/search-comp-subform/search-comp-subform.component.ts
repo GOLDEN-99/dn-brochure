@@ -13,11 +13,12 @@ import { CompanyService } from '../../../../service/other-income/company.service
 export class SearchCompSubformComponent {
   compType = input<TCompType>("DN")
   compTypeChange = output<TCompType>()
-
-  compName = input<string>("")
-  compNameChange = output<string>()
   compCode = input<string>("")
   compCodeChange = output<string>()
+
+  compName = input<string>("")
+  // side efffect value
+  compNameChange = output<string>()
 
   hasSelectComp = computed(() => this.compName() !== '' && this.compCode() !== '')
 

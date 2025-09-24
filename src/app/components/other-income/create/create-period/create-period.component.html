@@ -46,14 +46,14 @@
             </div>
           </td>
           <td>{{ formateDate(inc.startDate) }}</td>
-          <td>{{ inc.actualAmount }}</td>
-          <td>{{ inc.incomeAmount }}</td>
+          <td>{{ inc.actualAmount | number : "1.2-2" }}</td>
+          <td>{{ inc.incomeAmount | number : "1.2-2" }}</td>
         </tr>
         } @let summary = sum();
         <tr>
           <td colspan="2">รวม</td>
-          <td>{{ summary.totalAmount }}</td>
-          <td>{{ summary.totalIncome }}</td>
+          <td>{{ summary.totalAmount | number : "1.2-2" }}</td>
+          <td>{{ summary.totalIncome | number : "1.2-2" }}</td>
         </tr>
       </tbody>
     </table>
