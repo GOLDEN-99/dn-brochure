@@ -1,0 +1,47 @@
+.calander-warpper {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 16px;
+  column-gap: 16px;
+  .custom-dp {
+    margin: 0 auto;
+    font-size: 1.5rem;
+    ::ng-deep {
+      .ngb-dp-week {
+        align-items: center;
+
+        .ngb-dp-day {
+          &:last-child {
+            color: red;
+          }
+          > div {
+            margin: auto;
+          }
+        }
+      }
+
+      .ngb-dp-day,
+      .ngb-dp-weekday,
+      .ngb-dp-arrow {
+        width: 3rem;
+        height: 3rem;
+        text-align: center;
+      }
+
+      select {
+        font-size: 1.25rem;
+        height: auto;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 720px) {
+  .calander-warpper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.reserve-form {
+  background-color: #8080801f;
+}

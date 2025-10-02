@@ -3,7 +3,17 @@
 <app-general-page />
 <!---->
 <app-step-three-page />
-
-<a class="btn btn-primary w-100" role="button" routerLink="./condition"
-  >ถัดไป</a
+<!---->
+<app-condition-page />
+<!---->
+<a class="btn btn-success w-100 mb-3" routerLink="./product"
+  >ราการจำหน่ายสินค้า</a
 >
+<button
+  class="btn btn-primary w-100 mb-3"
+  [disabled]="disableSubmit()"
+  (click)="onSubmit()"
+>
+  ถัดไป
+</button>
+<a class="btn btn-danger w-100 mb-3" role="button" routerLink="../">ย้อนกลับ</a>

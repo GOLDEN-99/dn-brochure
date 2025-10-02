@@ -5,11 +5,12 @@ import { IBOBRESERVE_TOKEN } from '../../../service/ibob/ibobToken';
 import { IbobAddService } from '../../../service/ibob/ibob-add.service';
 import { TMaybe } from '../../../types';
 import { TDoor } from '../../../types/ibob-supplier.type';
-import { Router, RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin, map, tap } from 'rxjs';
 import { DoorService } from '../../../service/ibob/door.service';
 import { WarehouseService } from '../../../service/ibob/warehouse.service';
 import { ToastService } from '../../../service/toast/toast.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-supplier-reserve-add',
@@ -21,16 +22,23 @@ import { ToastService } from '../../../service/toast/toast.service';
   styleUrl: './supplier-reserve-add.component.scss'
 })
 export class SupplierReserveAddComponent {
+  private serv = inject(IBOBRESERVE_TOKEN)
+  private route = inject(ActivatedRoute)
+  private router = inject(Router)
+  createBackLink() {
+    const snap = this.route.snapshot
+    const compCode = snap.queryParamMap.getAll('compCode')
+    return this.router.createUrlTree(['supplier', 'reserve'], { queryParams: { compCode } })
+  }
   warehouse = input<string>()
   private warehouseServ = inject(WarehouseService)
   pageLabel = this.warehouseServ.currentWarehouseName
-  private router = inject(Router)
   private toastServ = inject(ToastService)
 
   private doorService = inject(DoorService)
 
-  today = inject(NgbCalendar).getToday();
-  activeDate = signal<TMaybe<NgbDate>>(null)
+
+  activeDate = this.serv.selectDate
   activeSlot = signal<string[]>([])
   lowerBound = computed(() => {
     const slots = this.activeSlot()
@@ -84,28 +92,26 @@ export class SupplierReserveAddComponent {
     }
   }
 
-  private serv = inject(IBOBRESERVE_TOKEN)
 
   btnClass = (cur: string) => this.activeSlot().some(a => a === cur) ? 'btn btn-success' : 'btn btn-outline-secondary'
 
-  activeDoor = signal<TMaybe<string>>(null)
+  activeDoor = this.serv.gate
   minBox = signal(0)
   maxBox = signal(0)
   useTime = signal(0)
 
   onChangeGate(arg: TDoor) {
-    this.activeDoor.set(arg.doorId)
-    this.serv.changeGate(arg.doorId)
     this.isMultiple.set(arg.multiple)
     this.activeSlot.set([])
     this.minBox.set(arg.minBox)
     this.maxBox.set(arg.maxBox)
     this.useTime.set(arg.timeUse)
+    this.activeDoor.set(arg.doorId)
   }
 
   onChangeDate(date: NgbDate) {
     this.activeDate.set(date)
-    this.serv.changeDate(date)
+    this.activeSlot.set([])
   }
 
   comp = this.serv.currentComp
@@ -160,15 +166,24 @@ export class SupplierReserveAddComponent {
     return total === 0 || this.tooLow() || this.tooHigh()
   })
 
+  contactName = signal('')
+  phoneNumber = signal('')
   note = signal('')
+  truckLicensePlate = signal('')
+  truckType = signal('')
+  truckTypeList = ['4 ล้อ', '6 ล้อ', '10 ล้อ']
   handleSubmit = () => {
     const date = this.activeDate()
     if (!date) throw new Error('no current date')
     const reservationDate = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
     const doorId = this.activeDoor()
     const note = this.note()
+    const truckType = this.truckType()
+    const contactName = this.contactName()
+    const phoneNumber = this.phoneNumber()
+    const truckLicensePlate = this.truckLicensePlate()
     if (!doorId) throw new Error('no current door')
-    const partialAppliedReservation = (reservationTime: string) => this.serv.createReservation({ reservationDate, reservationTime, doorId, note })
+    const partialAppliedReservation = (reservationTime: string) => this.serv.createReservation({ reservationDate, reservationTime, doorId, note, truckLicensePlate, truckType, contactName, phoneNumber })
     const timeSlot = this.activeSlot()
     const cmdList = timeSlot.map(partialAppliedReservation)
     forkJoin(cmdList).subscribe({

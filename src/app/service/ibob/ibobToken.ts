@@ -1,11 +1,12 @@
-import { InjectionToken, Signal } from "@angular/core"
+import { InjectionToken, Signal, WritableSignal } from "@angular/core"
 import { Observable } from "rxjs"
-import { TAppOrder, TComp, TCreateReservationReq, TDoor, TDoorMap, TEditableResavation, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot, TWarehouse } from "../../types/ibob-supplier.type"
+import { TAppOrder, TComp, TCreateReservationReq, TDoor, TDoorMap, TEditableResavation, TFormattedLoginResponse, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot, TWarehouse } from "../../types/ibob-supplier.type"
 import { TDate } from "../../lib"
 import { TMaybe } from "../../types"
+import { NgbDate } from "@ng-bootstrap/ng-bootstrap"
 
 export interface IIbObLogin {
-    login: (req: TLoginReq) => Observable<TLoginRes>
+    login: (req: TLoginReq) => Observable<TFormattedLoginResponse>
 }
 
 export interface IIbObComp {
@@ -20,8 +21,8 @@ interface IIbObFormState {
 }
 
 export interface IIbObReserve extends IIbObFormState {
-    changeGate: (gate: string) => void
-    changeDate: (date: TDate) => void
+    gate: WritableSignal<TMaybe<string>>
+    selectDate: WritableSignal<NgbDate>
     possibleSlot: Signal<TTimeSlot[]>
     createReservation: (req: TEditableResavation) => Observable<any>
 }

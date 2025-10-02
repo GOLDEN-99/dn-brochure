@@ -1,4 +1,5 @@
-<form [formGroup]="stepTwoForm">
+<div>
+  @let data = formState();
   <div class="row">
     <div class="app-form-field col-md">
       <label for="compName">ชื่อบริษัท (ภาษาอังกฤษ)</label>
@@ -6,7 +7,9 @@
         type="text"
         id="compName"
         name="compName"
-        formControlName="compName"
+        [ngModel]="data.compName"
+        (ngModelChange)="updator('compName')($event)"
+        [readOnly]="readonly()"
       />
     </div>
     <div class="app-form-field col-md">
@@ -15,7 +18,9 @@
         type="text"
         id="compName2"
         name="compName2"
-        formControlName="compName2"
+        [ngModel]="data.compName2"
+        (ngModelChange)="updator('compName2')($event)"
+        [readOnly]="readonly()"
       />
     </div>
   </div>
@@ -25,64 +30,32 @@
       name="compAddr"
       id="compAddr"
       rows="3"
-      formControlName="compAddr"
+      [ngModel]="data.compAddr"
+      (ngModelChange)="updator('compAddr')($event)"
+      [readOnly]="readonly()"
     ></textarea>
   </div>
-  @let contactForm = stepTwoForm.controls.contact.controls;
-  <!---->
-  @for (c of contactForm; track $index) {
-  <div class="row align-items-end px-3 px-sm-0">
-    <div class="app-form-field col-sm">
-      <label [attr.for]="$index + 'emplName'">ชื่อ</label>
-      <input
-        type="text"
-        name="emplName"
-        [attr.id]="$index + 'emplName'"
-        [formControl]="c.controls.emplName"
-      />
-    </div>
-    <div class="app-form-field col-sm">
-      <label [attr.for]="$index + 'emplPhone'">โทรศัพท์</label>
+  <div class="row">
+    <div class="app-form-field col-md">
+      <label for="compPhone">โทรศัพท์</label>
       <input
         type="tel"
-        name="emplPhone"
-        [attr.id]="$index + 'emplPhone'"
-        [formControl]="c.controls.emplPhone"
+        name="compPhone"
+        id="compPhone"
+        [ngModel]="data.compPhone"
+        (ngModelChange)="updator('compPhone')($event)"
+        [readOnly]="readonly()"
       />
     </div>
-    <div class="app-form-field col-sm">
-      <label [attr.for]="$index + 'emplEmail'">Email</label>
-      <input
-        type="email"
-        name="emplEmail"
-        [attr.id]="$index + 'emplEmail'"
-        [formControl]="c.controls.emplEmail"
-      />
-    </div>
-    <div class="col-2 d-flex justify-content-between mb-3">
-      @if(contactForm.length !== 1) {
-      <button class="btn btn-squre btn-danger" (click)="removeContact($index)">
-        <i class="bi bi-dash"></i>
-      </button>
-      }
-      <!---->
-      @if ($index === contactForm.length-1) {
-      <button class="btn btn-squre btn-success" (click)="addContact()">
-        <i class="bi bi-plus"></i>
-      </button>
-      }
-      <!---->
-    </div>
-  </div>
-  }
-  <div class="row">
     <div class="app-form-field col-md">
       <label for="compFax">โทรสาร</label>
       <input
         type="text"
         name="compFax"
         id="compFax"
-        formControlName="compFax"
+        [ngModel]="data.compFax"
+        (ngModelChange)="updator('compFax')($event)"
+        [readOnly]="readonly()"
       />
     </div>
     <div class="app-form-field col-md">
@@ -91,9 +64,72 @@
         type="email"
         name="compEmail"
         id="compEmail"
-        formControlName="compEmail"
-        autocomplete="compEmail"
+        [ngModel]="data.compEmail"
+        (ngModelChange)="updator('compEmail')($event)"
+        [readOnly]="readonly()"
       />
     </div>
   </div>
-</form>
+  @let contactForm = emplList();
+  <!---->
+  <h5>sale</h5>
+  @for (c of contactForm; track $index) {
+  <div class="row align-items-end px-3 px-sm-0">
+    <div class="app-form-field col-sm">
+      <label [attr.for]="$index + 'emplName'">ชื่อ</label>
+      <input
+        type="text"
+        name="emplName"
+        [attr.id]="$index + 'emplName'"
+        [ngModel]="c.emplName"
+        (ngModelChange)="updateEmplName($event, $index)"
+        [readOnly]="readonly()"
+      />
+    </div>
+    <div class="app-form-field col-sm">
+      <label [attr.for]="$index + 'emplPhone'">โทรศัพท์</label>
+      <input
+        type="tel"
+        name="emplPhone"
+        [attr.id]="$index + 'emplPhone'"
+        [ngModel]="c.emplPhone"
+        (ngModelChange)="updateEmplPhone($event, $index)"
+        [readOnly]="readonly()"
+      />
+    </div>
+    <div class="app-form-field col-sm">
+      <label [attr.for]="$index + 'emplEmail'">Email</label>
+      <input
+        type="email"
+        name="emplEmail"
+        [attr.id]="$index + 'emplEmail'"
+        [ngModel]="c.emplEmail"
+        (ngModelChange)="updateEmplEmail($event, $index)"
+        [readOnly]="readonly()"
+      />
+    </div>
+    <div class="col-2 d-flex justify-content-between mb-3">
+      @if(contactForm.length !== 1) {
+      <button
+        class="btn btn-squre btn-danger"
+        [disabled]="readonly()"
+        (click)="removeContact($index)"
+      >
+        <i class="bi bi-dash"></i>
+      </button>
+      }
+      <!---->
+      @if ($index === contactForm.length-1) {
+      <button
+        class="btn btn-squre btn-success"
+        [disabled]="readonly()"
+        (click)="addContact()"
+      >
+        <i class="bi bi-plus"></i>
+      </button>
+      }
+      <!---->
+    </div>
+  </div>
+  }
+</div>

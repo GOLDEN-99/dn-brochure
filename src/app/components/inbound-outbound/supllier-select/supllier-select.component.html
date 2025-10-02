@@ -3,12 +3,12 @@
   <select
     name="supplier-select"
     id="supplier-select"
-    [(ngModel)]="selectedOption"
+    [(ngModel)]="compGroupCode"
     class="form-select"
-    [compareWith]="compareFunc()"
   >
+    <option value="">ทั้งหมด</option>
     @for (item of optionsList(); track $index) {
-    <option [ngValue]="item">{{ item.label }}</option>
+    <option [ngValue]="item.compGroupCode">{{ item.compGroupDesc }}</option>
     }
   </select>
 </div>

@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, RedirectCommand, RouterStateSnapshot, Routes } from '@angular/router';
 import { SearchPageComponent } from './pages/brochure-project/search-page/search-page.component';
 import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
@@ -26,7 +26,7 @@ import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
 import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-add.component';
 import { InOutDetailComponent } from './pages/supplier-project/in-out-detail/in-out-detail.component';
 import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.resolver';
-import { SUPPLIER_TOKEN } from './service/supplier/supplier.token';
+import { IBOB_COMP_TYPE_TOKEN, SUPPLIER_TOKEN } from './service/supplier/supplier.token';
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
@@ -51,6 +51,16 @@ import { AccountNotLightProductComponent } from './pages/other-income/account/ac
 import { AccountLightBoxComponent } from './pages/other-income/account/account-light-box.component';
 import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
 import { OtherIncomeInceFormComponent } from './components/other-income/form/other-income-ince-form/other-income-ince-form.component';
+import { supplierCompResolver } from './resolvers/Ibob/supplier-comp.resolver';
+import { SupplierFormViewComponent } from './pages/supplier-project/supplier-form-view/supplier-form-view.component';
+import { compTypeResolver } from './resolvers/Ibob/comp-type.resolver';
+import { compTypeHandler } from './lib/paramsHandler';
+import { SupplierApiService } from './service/supplier/supplier-api.service';
+import { inject } from '@angular/core';
+import { inboundApiServiceFactory } from './factory/inbound/supplier.service.provider';
+import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
+import { ibobLoginGuardGuard } from './guard/ibob-login-guard.guard';
+import { ibobLocalCompResolver } from './resolvers/Ibob/ibob-local-comp.resolver';
 
 export const routes: Routes = [
     {
@@ -123,51 +133,49 @@ export const routes: Routes = [
         ]
     },
     // inbound out bound
-    {
-        path: 'supplier/form/product',
-        loadComponent: () => import('./pages/supplier-project/supplier-product-page/supplier-product-page.component')
-            .then(r => r.SupplierProductPageComponent)
-    },
-    {
-        path: 'supplier/form',
-        component: SupplierLayoutComponent,
-        children: [
-            {
-                path: '',
-                component: RegisterPageComponent
-            },
-            {
-                path: 'general',
-                loadComponent: () =>
-                    import('./pages/supplier-project/general-page/general-page.component')
-                        .then(r => r.GeneralPageComponent)
-            },
-            {
-                path: 'final',
-                loadComponent: () =>
-                    import('./pages/supplier-project/step-three-page/step-three-page.component')
-                        .then(r => r.StepThreePageComponent)
-            },
-            {
-                path: 'condition',
-                loadComponent: () =>
-                    import('./pages/supplier-project/condition-page/condition-page.component')
-                        .then(r => r.ConditionPageComponent)
-            }
-        ]
-    },
+    // {
+    //     path: 'v1/supplier/:compType/form',
+
+    //     component: SupplierLayoutComponent,
+    //     resolve: { comp: compTypeResolver },
+    //     children: [
+    //         {
+    //             path: '',
+    //             component: RegisterPageComponent
+    //         },
+    //         {
+    //             path: 'product',
+    //             loadComponent: () => import('./pages/supplier-project/supplier-product-page/supplier-product-page.component')
+    //                 .then(r => r.SupplierProductPageComponent)
+    //         },
+    //         {
+    //             path: 'condition',
+    //             loadComponent: () =>
+    //                 import('./pages/supplier-project/condition-page/condition-page.component')
+    //                     .then(r => r.ConditionPageComponent)
+    //         },
+    //         {
+    //             path: 'complete',
+    //             loadComponent: () =>
+    //                 import('./pages/supplier-project/supplier-complete/supplier-complete.component')
+    //                     .then(r => r.SupplierCompleteComponent)
+    //         }
+    //     ]
+    // },
     {
         path: 'supplier/reserve',
-        title: 'DN SUPPLIER RESERVATION',
+        title: 'SUPPLIER RESERVATION',
         component: SupplierReserveLayoutComponent,
         children: [
             {
                 path: "",
+                canActivate: [ibobLoginGuardGuard],
                 component: SupplierReserveComponent
             },
             {
                 path: "add/:warehouse",
                 resolve: [getByWarehouseResolver],
+                canActivate: [ibobLoginGuardGuard],
                 loadComponent: () => import('./pages/supplier-project/supplier-reserve-add/supplier-reserve-add.component')
                     .then(r => r.SupplierReserveAddComponent)
             },
@@ -217,31 +225,51 @@ export const routes: Routes = [
                     {
                         path: 'query',
                         component: InOutQueryComponent
+                    },
+                    {
+                        path: 'add',
+                        loadComponent: () => import("./pages/supplier-project/ibob-admin-add/ibob-admin-add.component")
+                            .then(r => r.IbobAdminAddComponent)
+                            .catch((err) => NotfoundComponent),
+                    },
+                    {
+                        path: ':reserveId',
+                        loadComponent: () => import("./pages/supplier-project/ibob-admin-edit/ibob-admin-edit.component")
+                            .then(r => r.IbobAdminEditComponent)
+                            .catch((err) => NotfoundComponent),
                     }
                 ]
             }
         ]
     },
-    {
-        path: 'supplier/dn',
-        title: 'DN Inhouse',
-        loadComponent: () =>
-            import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
-                .then(r => r.SupplierInhouseComponent),
-        providers: [
-            { provide: SUPPLIER_TOKEN, useExisting: SupplierDnService }
-        ]
-    },
-    {
-        path: 'supplier/hu',
-        title: 'HU Inhouse',
-        loadComponent: () =>
-            import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
-                .then(r => r.SupplierInhouseComponent),
-        providers: [
-            { provide: SUPPLIER_TOKEN, useExisting: SupplierHuService }
-        ]
-    },
+    ...DN_INBOUND_ROUTE,
+    ...HU_INBOUND_ROUTE,
+    // {
+    //     path: 'supplier/hu',
+    //     title: 'HU Inhouse',
+    //     providers: [
+    //         { provide: SUPPLIER_TOKEN, useExisting: SupplierHuService }
+    //     ],
+    //     children: [
+    //         {
+    //             path: '',
+    //             loadComponent: () =>
+    //                 import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
+    //                     .then(r => r.SupplierInhouseComponent),
+    //         },
+    //         {
+    //             path: ':compCode',
+    //             component: SupplierLayoutComponent,
+    //             resolve: [supplierCompResolver],
+    //             children: [
+    //                 {
+    //                     path: '',
+    //                     component: SupplierFormViewComponent
+    //                 }
+    //             ]
+    //         }
+    //     ]
+    // },
     //รายได้อื่นๆ
     {
         path: 'other-income',

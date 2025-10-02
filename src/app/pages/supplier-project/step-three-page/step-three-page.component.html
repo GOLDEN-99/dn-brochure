@@ -1,29 +1,67 @@
-<form [formGroup]="stepThree">
+<div>
+  @let data = formState();
   <div class="app-form-field">
-    <label for="supplier">กลุ่มผู้ขาย</label>
-    <input
-      type="text"
-      id="supplier"
-      name="supplier"
-      formControlName="supplier"
-    />
+    <div class="app-form-select">
+      <label for="groupCode">กลุ่มผู้ขาย</label>
+      <select
+        id="groupCode"
+        name="groupCode"
+        [ngModel]="data.compGroupCode"
+        (ngModelChange)="updator('compGroupCode')($event)"
+        [disabled]="readonly()"
+      >
+        <option value="" disabled>กรุณาเลือก</option>
+        @for (group of compGroup(); track group.compGroupCode) {
+        <option [ngValue]="group.compGroupCode">
+          {{ group.compGroupDesc }}
+        </option>
+        }
+      </select>
+    </div>
   </div>
-  <div class="row align-items-end">
-    <div class="app-form-field col-4 col-md-2">
-      <label for="compCode">สังกัดบริษัท</label>
-      <input type="text" name="compCode" id="compCode" disabled />
-    </div>
-    <div class="app-form-field col-6 col-md-4">
-      <label for="comp"> </label>
-      <input type="text" name="comp" id="comp" (click)="searchBtn.click()" />
-    </div>
-    <div class="col-2 col-md mb-3">
+  <div class="row align-items-end mb-3">
+    <form class="col-10 row align-items-end" formGroupName="parentComp">
+      <div class="app-form-field col">
+        <label for="compCode">สังกัดบริษัท</label>
+        <input
+          type="text"
+          name="compCode"
+          id="compCode"
+          [ngModel]="data.parentCompCode"
+          readonly
+          (click)="searchBtn.click()"
+          [disabled]="readonly()"
+        />
+      </div>
+      <div class="app-form-field col">
+        <label for="comp"></label>
+        <input
+          type="text"
+          name="comp"
+          id="comp"
+          [ngModel]="data.parentCompName"
+          readonly
+          [disabled]="readonly()"
+        />
+      </div>
+    </form>
+    <div class="col-1 mb-3">
       <button
         class="btn btn-outline"
         #searchBtn
+        [disabled]="readonly()"
         (click)="openModal(searchModal)"
       >
         <i class="bi bi-search"></i>
+      </button>
+    </div>
+    <div class="col-1 mb-3">
+      <button
+        class="btn btn-danger"
+        [disabled]="readonly()"
+        (click)="clearParent()"
+      >
+        <i class="bi bi-trash"></i>
       </button>
     </div>
   </div>
@@ -33,64 +71,34 @@
       name="orderRemark"
       id="orderRemark"
       rows="3"
-      formControlName="orderRemark"
+      [ngModel]="data.orderRemark"
+      (ngModelChange)="updator('orderRemark')($event)"
+      [readOnly]="readonly()"
     ></textarea>
   </div>
-
-  <!-- @let emplListForm = stepThree.controls.emplList.controls;
-  @for (item of emplListForm; track $index) {
-  <div class="row align-items-end">
-    <div class="col app-form-field">
-      <label [attr.for]="'empl-name' + $index">ชื่อพนักงาน</label>
-      <input
-        type="text"
-        name="empl-name"
-        [attr.id]="'empl-name' + $index"
-        [formControl]="item.controls.emplName"
-      />
-    </div>
-    <div class="col app-form-field">
-      <label [attr.for]="'empl-email' + $index">E-mail</label>
-      <input
-        type="email"
-        name="empl-email"
-        [attr.id]="'empl-email' + $index"
-        [formControl]="item.controls.emplEmail"
-      />
-    </div>
-
-    <div class="col-2 d-flex justify-content-between mb-3">
-      @if(emplListForm.length !== 1) {
-      <button class="btn btn-squre btn-danger" (click)="removeEmpl($index)">
-        <i class="bi bi-dash"></i>
-      </button>
-      }
-      @if ($index === emplListForm.length-1) {
-      <button class="btn btn-squre btn-success" (click)="addEmpl()">
-        <i class="bi bi-plus"></i>
-      </button>
-      }
-    </div>
-  </div>
-  } -->
   <div class="app-form-field">
     <label for="shipTo">Ship to</label>
-    <input type="text" id="shipTo" name="shipTo" formControlName="shipTo" />
+    <input
+      type="text"
+      id="shipTo"
+      name="shipTo"
+      [ngModel]="data.shipTo"
+      (ngModelChange)="updator('shipTo')($event)"
+      [readOnly]="readonly()"
+    />
   </div>
   <div class="mb-3" style="display: flex; gap: 16px">
-    <form
-      class="px-3 pt-3 col"
-      style="background-color: #8080801f"
-      formGroupName="payment"
-    >
+    <div class="px-3 pt-3 col" style="background-color: #8080801f">
       <div class="app-form-field">
         <label for="paymentTerms">กำหนดชำระ (ระบุจำนวนวัน)</label>
         <input
           type="number"
           name="paymentTerms"
           id="paymentTerms"
-          formControlName="paymentTerms"
+          [ngModel]="data.paymentTerms"
+          (ngModelChange)="updator('paymentTerms')($event)"
           placeholder="ระบุจำนวนวัน"
+          [readOnly]="readonly()"
         />
       </div>
       <div class="app-form-field">
@@ -101,7 +109,9 @@
           max="100"
           id="tradePerDisc"
           name="tradePerDisc"
-          formControlName="tradePerDisc"
+          [ngModel]="data.tradePerDisc"
+          (ngModelChange)="updator('tradePerDisc')($event)"
+          [readOnly]="readonly()"
         />
       </div>
       <div class="app-form-field">
@@ -110,7 +120,9 @@
           type="number"
           id="cashPerDisc"
           name="cashPerDisc"
-          formControlName="cashPerDisc"
+          [ngModel]="data.cashPerDisc"
+          (ngModelChange)="updator('cashPerDisc')($event)"
+          [readOnly]="readonly()"
         />
       </div>
       <div class="app-form-field">
@@ -119,11 +131,13 @@
           type="number"
           id="dcPerDisc"
           name="dcPerDisc"
-          formControlName="dcPerDisc"
+          [ngModel]="data.dcPerDisc"
+          (ngModelChange)="updator('dcPerDisc')($event)"
+          [readOnly]="readonly()"
         />
       </div>
-    </form>
-    <form
+    </div>
+    <div
       class="px-3 pt-3 col"
       style="background-color: #8080801f"
       formGroupName="tax"
@@ -134,26 +148,32 @@
       >
         <input
           type="checkbox"
-          id="vat1"
-          name="tax1"
+          id="vat2"
+          name="tax2"
           style="height: 24px; width: 24px"
-          formControlName="tax1"
+          [ngModel]="data.billIncludeVAT"
+          (ngModelChange)="updator('billIncludeVAT')($event)"
+          [disabled]="readonly()"
         />
-        <label for="vat1">จดทะเบียน VAT</label>
+        <label for="vat2">สินค้ารวม VAT</label>
       </div>
+      @if (compType === 'HU') {
       <div
         class="app-form-check"
         style="display: flex; gap: 16px; align-items: center"
       >
         <input
           type="checkbox"
-          id="vat2"
-          name="tax2"
+          id="vat1"
+          name="tax1"
           style="height: 24px; width: 24px"
-          formControlName="tax2"
+          [ngModel]="data.registered"
+          (ngModelChange)="updator('registered')($event)"
+          [disabled]="readonly()"
         />
-        <label for="vat2">สินค้ารวม VAT</label>
+        <label for="vat1">จดทะเบียน VAT</label>
       </div>
+
       <div
         class="app-form-check"
         style="display: flex; gap: 16px; align-items: center"
@@ -163,13 +183,16 @@
           id="vat3"
           name="tax3"
           style="height: 24px; width: 24px"
-          formControlName="tax3"
+          [ngModel]="data.fixedPrice"
+          (ngModelChange)="updator('fixedPrice')($event)"
+          [disabled]="readonly()"
         />
         <label for="vat3">ควบคุมราคาขายปลีก</label>
       </div>
-    </form>
+      }
+    </div>
   </div>
-</form>
+</div>
 
 <ng-template #searchModal let-modal>
   <app-modal-layout
@@ -177,7 +200,7 @@
     (crossClick)="modal.dismiss('Cross click')"
   >
     <div modalBody>
-      <app-search-supplier />
+      <app-search-supplier (selectedSuplier)="onSelectParentComp($event)" />
     </div>
     <div modalFooter>
       <button class="btn btn-secondary" (click)="modal.close('Close modal')">
