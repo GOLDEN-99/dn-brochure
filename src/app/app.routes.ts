@@ -234,14 +234,6 @@ export const routes: Routes = [
                     },
                     {
                         path: ':reserveId',
-                        resolve: [
-                            (route: ActivatedRouteSnapshot, _: RouterStateSnapshot) => {
-                                const reserveId = route.paramMap.get("reserveId")
-                                if (!reserveId) return false
-                                console.log(reserveId)
-                                return true
-                            }
-                        ],
                         loadComponent: () => import("./pages/supplier-project/ibob-admin-edit/ibob-admin-edit.component")
                             .then(r => r.IbobAdminEditComponent)
                             .catch((err) => NotfoundComponent),

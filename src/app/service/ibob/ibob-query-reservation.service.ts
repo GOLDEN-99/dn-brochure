@@ -6,7 +6,8 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { combineLatest, filter, map, switchMap } from 'rxjs';
 import { getOrElse } from '../../lib/utli';
 import { DateRangeService } from './date-range-service.service';
-import { TAppDoorProp } from '../../types/ibob-supplier.type';
+import { TAppDoorProp, TAppOrder, TGetIbObRes, TLoginOrder, TTimeSlot } from '../../types/ibob-supplier.type';
+import { TExtendedComp } from '../supplier/supplier.token';
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +37,32 @@ export class IbobQueryReservationService {
 
   deleteReservation = (reservationId: number) => this.api.delete(`${environment.oi}/ib-ob/reservation/${reservationId}`)
 
+  changeReservationData = (id: number, req: TPatchReservationReq) => this.api.patch(`${environment.oi}/ib-ob/reservation/${id}`, req)
+
+  searchOrder = ({ compType, compCode }: { compType: string, compCode: string }) =>
+    this.api.get<TLoginOrder[]>(`${environment.oi}/ib-ob/active-order/${compType}/${compCode}`)
+      .pipe(
+        map<TLoginOrder[], TAppOrder[]>(orderList => orderList.map(order => ({ ...order, check: false, box: 0 })))
+        , getOrElse<TAppOrder[], TAppOrder[]>([])
+      )
+
+  searchTimeSlot = (doorId: string, date: string) =>
+    this.api.get<TGetIbObRes>(`${environment.ibob}/GetInBound/${doorId}/${date}`)
+      .pipe(
+        map(({ slots }) => slots),
+        getOrElse<TTimeSlot[], TTimeSlot[]>([])
+      );
+
+  searchComp = (compType: string, term: string) =>
+    this.api.get<TExtendedComp[]>(`${environment.oi}/comp/${compType}`, { params: { term } })
+      .pipe(getOrElse<TExtendedComp[], TExtendedComp[]>([])
+      )
+
+  changeOrder = (reservationId: number, orderNumb: string, box: number) =>
+    this.api.patch(`${environment.oi}/ib-ob/reservation/${reservationId}/${orderNumb}`, { box })
+
+  deleteReservationOrder = (reservationId: number, orderNumb: string) =>
+    this.api.delete(`${environment.oi}/ib-ob/reservation/${reservationId}/${orderNumb}`)
 }
 
 export type TQueryReservation = {
@@ -90,3 +117,13 @@ export type TSingleReservation = {
   compEmail: string
   compPhone: string
 } & TReservationDetail
+
+type TPatchReservationReq = {
+  reservationDate?: string
+  reservationTime?: string
+  doorId?: string
+  contactName?: string
+  phoneNumber?: string
+  truckType?: string
+  truckLicensePlate?: string
+}

@@ -2,16 +2,13 @@ import { Component, computed, effect, inject, signal, TemplateRef, viewChild, vi
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { combineLatest, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs';
 import { getOrElse } from '../../../lib/utli';
-import { TAppDoorProp, TAppOrder, TGetIbObRes, TLoginOrder, TTimeSlot } from '../../../types/ibob-supplier.type';
-import { environment } from '../../../../environments/environment';
+import { TAppDoorProp, TAppOrder, TTimeSlot } from '../../../types/ibob-supplier.type';
 import { NgbCalendar, NgbDate, NgbDatepicker, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ApiService } from '../../../service/api/api.service';
-import { TExtendedComp } from '../../../service/supplier/supplier.token';
 import { IbobAddService } from '../../../service/ibob/ibob-add.service';
 import { SelectDoorOptionComponent } from "../../../components/inbound-outbound/select-door-option/select-door-option.component";
 import { FormsModule } from '@angular/forms';
 import { TMaybe } from '../../../types';
-import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IbobQueryReservationService } from '../../../service/ibob/ibob-query-reservation.service';
 import { selectActiveDoor, selectComp, selectDriver, selectIsoDate, selectOrder, selectShortComp, selectSlot, selectTimeslotParams, TDriverData } from './lib';
 import { convertToIso } from '../../../lib';
@@ -37,7 +34,6 @@ export class IbobAdminEditComponent {
   private isAdmin$ = this.query$.pipe(map(q => q.get("adminCode") === '123456'), getOrElse(false))
   isAdmin = toSignal(this.isAdmin$, { initialValue: false })
 
-
   private urlParma$ = this.route.paramMap
     .pipe(
       map(p => p.get("reserveId")),
@@ -47,7 +43,10 @@ export class IbobAdminEditComponent {
     .pipe(map(([_, id]) => id))
   private ibobQuery = inject(IbobQueryReservationService)
   private getById = this.ibobQuery.getSingleReservation
-
+  private changeReservationData = this.ibobQuery.changeReservationData
+  private searchTimeSlot = this.ibobQuery.searchTimeSlot
+  private searchComp = this.ibobQuery.searchComp
+  private searchOrder = this.ibobQuery.searchOrder
   private reservation$ = this.reservationId$.pipe(
     tap(() => this.isLoading.set(true)),
     switchMap(id => this.getById(id)),
@@ -88,30 +87,12 @@ export class IbobAdminEditComponent {
   // changeBox = (orderNumb: string) => (box: number) => this.orderList.update(prev => prev.map(p => p.orderNumb === orderNumb ? ({ ...p, box }) : p))
   totalBox = computed(() => this.orderList().reduce((acc, cur) => acc + cur.box, 0))
 
-  private api = inject(ApiService)
   compType = computed(() => this.comp().compType)
   private compType$ = toObservable(this.compType).pipe(filter(c => c !== ''))
   term = signal("")
   private term$ = toObservable(this.term).pipe(filter(t => t !== ''), distinctUntilChanged(), debounceTime(300))
   private searchCompParam$ = combineLatest([this.compType$, this.term$])
-  private searchComp = (compType: string, term: string) =>
-    this.api.get<TExtendedComp[]>(`${environment.oi}/comp/${compType}`, { params: { term } })
-      .pipe(getOrElse<TExtendedComp[], TExtendedComp[]>([])
-      )
 
-  private searchOrder = ({ compType, compCode }: { compType: string, compCode: string }) =>
-    this.api.get<TLoginOrder[]>(`${environment.oi}/ib-ob/active-order/${compType}/${compCode}`)
-      .pipe(
-        map<TLoginOrder[], TAppOrder[]>(orderList => orderList.map(order => ({ ...order, check: false, box: 0 })))
-        , getOrElse<TAppOrder[], TAppOrder[]>([])
-      )
-
-  private searchTimeSlot = (doorId: string, date: string) =>
-    this.api.get<TGetIbObRes>(`${environment.ibob}/GetInBound/${doorId}/${date}`)
-      .pipe(
-        map(({ slots }) => slots),
-        getOrElse<TTimeSlot[], TTimeSlot[]>([])
-      );
   private timeslot$ = this.searchTimeslotParam$
     .pipe(
       switchMap(p => this.searchTimeSlot(...p))
@@ -172,7 +153,6 @@ export class IbobAdminEditComponent {
     this.cloneActiveSlot.set(this.activeSlot()[0])
     this.modalService.open(ref, { size: 'xl' })
     this.picker()?.focusDate(date)
-    console.log(this.cloneActiveSlot())
   }
   closeDateTimeModal = () => {
     this.modalService.dismissAll()
@@ -183,8 +163,6 @@ export class IbobAdminEditComponent {
     this.cloneActiveSlot.set(null)
   }
   btnEditClass = (cur: string) => this.cloneActiveSlot() === cur ? 'btn btn-success' : 'btn btn-outline-secondary'
-
-  private changeReservationData = (id: number, req: TPatchReservationReq) => this.api.patch(`${environment.oi}/ib-ob/reservation/${id}`, req)
 
   changeReservationDate = () => {
     const cur = this.reservationData()
@@ -243,14 +221,53 @@ export class IbobAdminEditComponent {
       }
     })
   }
-}
 
-type TPatchReservationReq = {
-  reservationDate?: string
-  reservationTime?: string
-  doorId?: string
-  contactName?: string
-  phoneNumber?: string
-  truckType?: string
-  truckLicensePlate?: string
+  cloneOrder = signal("")
+  cloneBox = signal(0)
+  private resetCloneOrder = () => {
+    this.cloneOrder.set("")
+    this.cloneBox.set(0)
+  }
+  openOrderModal = ({ orderNumb, box }: Pick<TAppOrder, "orderNumb" | "box">, ref: any) => {
+    this.cloneOrder.set(orderNumb)
+    this.cloneBox.set(box)
+    this.modalService.open(ref)
+  }
+  closeOrderModal = () => {
+    this.resetCloneOrder()
+    this.modalService.dismissAll()
+  }
+  onDeleteOrder = (orderNumb: string) => {
+    const data = this.reservationData()
+    if (data === null) return
+    const id = data.id
+    this.ibobQuery.deleteReservationOrder(id, orderNumb).subscribe({
+      next: () => {
+        this.refetch()
+        this.closeOrderModal()
+      },
+      error: (err) => {
+        alert("มีข้อผิดพลาด")
+        console.error(err)
+      }
+    })
+  }
+
+  changeReservationOrder = () => {
+    const data = this.reservationData()
+    if (data === null) return
+    const id = data.id
+    const orderNumb = this.cloneOrder()
+    const box = this.cloneBox()
+    this.ibobQuery.changeOrder(id, orderNumb, box).subscribe({
+      next: () => {
+        this.refetch()
+        this.closeOrderModal()
+      },
+      error: (err) => {
+        alert("มีข้อผิดพลาด")
+        console.error(err)
+      }
+    })
+  }
 }
