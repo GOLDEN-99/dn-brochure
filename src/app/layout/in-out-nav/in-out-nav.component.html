@@ -3,6 +3,7 @@
     @for (warehouse of warehouseList(); track $index) {
     <a
       [routerLink]="warehouse.id"
+      queryParamsHandling="preserve"
       routerLinkActive="active"
       class="btn btn-outline-success"
       style="flex: 1 1 auto"

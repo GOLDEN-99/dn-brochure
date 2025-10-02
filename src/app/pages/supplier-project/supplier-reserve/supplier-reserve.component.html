@@ -1,8 +1,11 @@
-<h1 class="text-center">รายการการจอง</h1>
+@if (compCode() === null || compInfo() === null) {
+<div>มีข้อผิดพลาด</div>
+}@else { @let comp = compInfo();
+<h1 class="text-center">รายการการจอง {{ comp?.shipto }}</h1>
 <div style="display: flex; gap: 16px; margin-bottom: 16px">
   @for (warehouse of warehouseList(); track $index) {
   <a
-    [routerLink]="'add/' + warehouse.id"
+    [routerLink]="createUrl(warehouse.id)"
     class="btn btn-outline-success"
     style="flex: 1 1 auto"
     role="button"
@@ -10,29 +13,46 @@
   >
   }
 </div>
+<div class="mb-3">
+  <div class="row">
+    <div class="col-2">บริษัท</div>
+    <div class="col-2">{{ comp?.compCode }}</div>
+    <div class="col">{{ comp?.compName }}</div>
+    <div class="col">{{ comp?.compName2 }}</div>
+  </div>
+</div>
+<app-date-input [(date)]="fromDate" label="ตั้งแต่" />
+<app-date-input [(date)]="toDate" label="ถึง" />
 <table class="table table-bordered table-striped">
   <thead>
     <tr>
-      <th scope="col" style="min-width: 100px">วันที่</th>
-      <th scope="col" style="min-width: 100px">เวลา</th>
+      <th scope="col">วันที่</th>
+      <th scope="col">เวลา</th>
+      <th scope="col">คลัง</th>
+      <th scope="col">ประตู</th>
       <th scope="col">เลข PO</th>
-      <th scope="col" style="width: 140px">จำนวนลัง (รวม)</th>
+      <th scope="col">จำนวนลัง (รวม)</th>
       <th scope="col">ที่อยู่จัดส่ง</th>
+      <th scope="col">หมายเหตุ</th>
     </tr>
   </thead>
   <tbody>
-    @for (d of data; track $index) {
+    @for (reservation of reservationList(); track reservation.id) {
     <tr>
-      <td scope="row">{{ d.date }}</td>
-      <td>{{ d.time }}</td>
+      <td scope="row">{{ reservation.reservationDate | date }}</td>
+      <td>{{ reservation.reservationTime }}</td>
+      <td>{{ reservation.warehouseName }}</td>
+      <td>{{ reservation.doorName }}</td>
       <td>
-        @for (p of d.list; track $index) {
-        <div>{{ p }}</div>
+        @for (order of reservation.orderList; track $index) {
+        <div>{{ order.orderNumb }}</div>
         }
       </td>
-      <td>{{ d.total }}</td>
-      <td>{{ d.address }}</td>
+      <td>{{ reservation.total }}</td>
+      <td>{{ reservation.location }}</td>
+      <td>{{ reservation.note }}</td>
     </tr>
     }
   </tbody>
 </table>
+}

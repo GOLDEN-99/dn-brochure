@@ -12,7 +12,6 @@ export const fetchDoorDetailResolver: ResolveFn<boolean> = (route, state) => {
     if (!doorId) {
       const temp = route.parent?.paramMap.get('doorId')
       if (!temp) {
-
         toast.danger('cannot get door id from resolver')
         router.navigateByUrl('/supplier/in-out')
         return false

@@ -35,11 +35,13 @@ export type TAppDoor = {
     check: boolean
 } & TDoor
 
+export type TAppDoorProp = Pick<TAppDoor, "doorId" | "timeUse" | "multiple" | "minBox" | "maxBox" | "name">
+
 export type TDoorMap = {
     [key in string]?: TDoor[];
 }
 
-export type TOrder = {
+export type TLoginOrder = {
     orderNumb: string
     orderDate: string
 }
@@ -47,15 +49,22 @@ export type TOrder = {
 export type TAppOrder = {
     box: number
     check: boolean
-} & TOrder
+} & TLoginOrder
 
 export type TLoginRes = {
     comp: TComp
-    door: TDoor[]
+    // door: TDoor[]
     shipto: string
     expireIn: number
     token: string
-    order: TOrder[]
+    order: TLoginOrder[]
+}
+
+export type TFormattedLoginResponse = {
+    comp: TModifiedComp
+    expireIn: number
+    token: string
+    order: TLoginOrder[]
 }
 
 export type TCompListRes = {}
@@ -78,7 +87,7 @@ export type TCreateReservationReq = {
     shipto: string
 }
 
-export type TEditableResavation = Pick<TCreateReservationReq, 'doorId' | 'reservationDate' | 'reservationTime' | 'note'>
+export type TEditableResavation = Pick<TCreateReservationReq, 'doorId' | 'reservationDate' | 'reservationTime' | 'note' | 'truckType' | 'truckLicensePlate' | 'contactName' | 'phoneNumber'>
 
 export type TCreateReserveRes = {}
 

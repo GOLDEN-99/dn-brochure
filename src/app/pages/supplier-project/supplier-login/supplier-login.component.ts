@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../../service/toast/toast.service';
 import { LOGINABLE_TOKEN } from '../../../service/ibob/ibobToken';
 import { IbobAddService } from '../../../service/ibob/ibob-add.service';
@@ -20,6 +20,7 @@ export class SupplierLoginComponent {
 
   private nnfb = inject(NonNullableFormBuilder)
   private router = inject(Router)
+  private route = inject(ActivatedRoute)
   private toast = inject(ToastService)
   private loginService = inject(LOGINABLE_TOKEN)
   loginForm = this.nnfb.group({
@@ -32,10 +33,12 @@ export class SupplierLoginComponent {
   togglePassword = () => this.passwordType.update(prev => prev === 'password' ? 'text' : 'password')
 
   handleLogin = () => {
+    const redirect = this.route.snapshot.queryParamMap.getAll('redirect')
     const formData = this.loginForm.getRawValue()
     this.loginService.login(formData).subscribe({
-      next: ({ comp: { compCode } }) => {
-        this.router.navigateByUrl('/supplier/reserve')
+      next: (_) => {
+        this.router.navigate(['supplier', 'reserve', ...redirect], { queryParams: { compCode: formData.user } })
+        // this.router.navigateByUrl('/supplier/reserve')
       },
       error: (err) => {
         this.toast.danger('ล็อคอินผิดพลาด')

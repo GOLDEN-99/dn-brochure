@@ -20,14 +20,14 @@ export class IbobCompService {
     this.api
       .get<TCompGroup[]>(`${this.baseUrl}/${compType}/group`)
       .pipe(
-        getOrElse<TCompGroup[]>([])
+        getOrElse<TCompGroup[], TCompGroup[]>([])
       )
   private compType$ = new BehaviorSubject('')
   private compGroup$ = this.compType$
     .pipe(
       filter(c => c !== ''),
       switchMap(c => this.getCompGroup(c)),
-      getOrElse<TCompGroup[]>([])
+      getOrElse<TCompGroup[], TCompGroup[]>([])
     )
   term = signal("")
   private term$ = toObservable(this.term)

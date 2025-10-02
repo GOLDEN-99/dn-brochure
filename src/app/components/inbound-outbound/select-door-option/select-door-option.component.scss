@@ -1,0 +1,12 @@
+ul.option-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: 16px;
+  column-gap: 16px;
+  list-style: none;
+  padding: 0;
+
+  li.option-item {
+    text-decoration: none;
+  }
+}

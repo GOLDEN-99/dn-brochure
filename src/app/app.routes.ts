@@ -1,4 +1,4 @@
-import { ActivatedRoute, RedirectCommand, Routes } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, RedirectCommand, RouterStateSnapshot, Routes } from '@angular/router';
 import { SearchPageComponent } from './pages/brochure-project/search-page/search-page.component';
 import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
@@ -59,6 +59,8 @@ import { SupplierApiService } from './service/supplier/supplier-api.service';
 import { inject } from '@angular/core';
 import { inboundApiServiceFactory } from './factory/inbound/supplier.service.provider';
 import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
+import { ibobLoginGuardGuard } from './guard/ibob-login-guard.guard';
+import { ibobLocalCompResolver } from './resolvers/Ibob/ibob-local-comp.resolver';
 
 export const routes: Routes = [
     {
@@ -167,11 +169,13 @@ export const routes: Routes = [
         children: [
             {
                 path: "",
+                canActivate: [ibobLoginGuardGuard],
                 component: SupplierReserveComponent
             },
             {
                 path: "add/:warehouse",
                 resolve: [getByWarehouseResolver],
+                canActivate: [ibobLoginGuardGuard],
                 loadComponent: () => import('./pages/supplier-project/supplier-reserve-add/supplier-reserve-add.component')
                     .then(r => r.SupplierReserveAddComponent)
             },
@@ -221,6 +225,26 @@ export const routes: Routes = [
                     {
                         path: 'query',
                         component: InOutQueryComponent
+                    },
+                    {
+                        path: 'add',
+                        loadComponent: () => import("./pages/supplier-project/ibob-admin-add/ibob-admin-add.component")
+                            .then(r => r.IbobAdminAddComponent)
+                            .catch((err) => NotfoundComponent),
+                    },
+                    {
+                        path: ':reserveId',
+                        resolve: [
+                            (route: ActivatedRouteSnapshot, _: RouterStateSnapshot) => {
+                                const reserveId = route.paramMap.get("reserveId")
+                                if (!reserveId) return false
+                                console.log(reserveId)
+                                return true
+                            }
+                        ],
+                        loadComponent: () => import("./pages/supplier-project/ibob-admin-edit/ibob-admin-edit.component")
+                            .then(r => r.IbobAdminEditComponent)
+                            .catch((err) => NotfoundComponent),
                     }
                 ]
             }

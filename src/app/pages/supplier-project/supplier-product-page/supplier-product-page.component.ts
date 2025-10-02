@@ -33,10 +33,10 @@ export class SupplierProductPageComponent extends BaseSupplierForm {
   private api = inject(ApiService)
   private url = `${environment.oi}/products`
   private searchProduct = (params: { goodName: string, barcode: string }) =>
-    this.api.get<TBaseProduct[]>(this.url, { params }).pipe(getOrElse<TBaseProduct[]>([]))
+    this.api.get<TBaseProduct[]>(this.url, { params }).pipe(getOrElse<TBaseProduct[], TBaseProduct[]>([]))
   private data$ = this.param$.pipe(
     switchMap((params) => this.searchProduct(params)),
-    getOrElse<TBaseProduct[]>([]),
+    getOrElse<TBaseProduct[], TBaseProduct[]>([]),
   )
   displayProduct = toSignal(this.data$, { initialValue: [] })
 

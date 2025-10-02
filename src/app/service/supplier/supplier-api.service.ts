@@ -92,7 +92,7 @@ export class SupplierApiService {
           `${environment.oi}/comp/${this.compType}`,
           { params: { term, compCode } }
         )),
-      getOrElse<TExtendedComp[]>([])
+      getOrElse<TExtendedComp[], TExtendedComp[]>([])
     )
   compList = toSignal(this.compList$, { initialValue: [] })
 }

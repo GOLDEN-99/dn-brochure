@@ -1,0 +1,326 @@
+<div class="bg-white p-3">
+  @if (isLoading()) {
+  <div>loading ...</div>
+  }@else { @if (success()) {
+
+  <app-select-door-option [readOnly]="true" [activeDoor]="activeDoor()" />
+  <div class="calander-warpper mb-3">
+    <div class="mb-3">
+      <div class="input-group">
+        <div class="form-floating">
+          <input
+            id="date-input-"
+            #dpFromDate
+            class="form-control"
+            [value]="thaiDate()"
+            name="dpFromDate"
+            readonly
+          />
+          <label class="form-label" for="date-input-"> วันที่จอง </label>
+        </div>
+        <button
+          class="btn btn-outline-secondary bi bi-calendar3"
+          type="button"
+        ></button>
+      </div>
+      @if (isAdmin()) {
+      <button
+        class="btn btn-warning w-100 my-3"
+        (click)="openDateTimeModal(changeDate)"
+      >
+        แก้ไขประตู วัน เวลา
+      </button>
+      }
+    </div>
+
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 8px;
+        column-gap: 8px;
+        width: 344px;
+        margin: 0 auto;
+      "
+    >
+      @for (slot of timeslot(); track $index) {
+      <button [className]="btnClass(slot.time)" disabled>
+        {{ slot.time + (disableTime(slot) ? " (เต็ม)" : "") }}
+      </button>
+      }
+    </div>
+  </div>
+
+  <div class="reserve-form p-3 rounded">
+    <button
+      class="btn btn-warning w-100 mb-3"
+      (click)="onpenDriverModal(changeDriver)"
+    >
+      แก้ไขข้อมูลคนขับ
+    </button>
+    @let c = comp();
+    <!---->
+    @if (c) {
+    <div class="app-form-field">
+      <label for="name">ชื่อบริษัท</label>
+      <input type="text" name="name" id="name" disabled [value]="c.compName" />
+    </div>
+    <div class="app-form-field">
+      <label for="email">E-mail</label>
+      <input
+        type="email"
+        name="email"
+        id="email"
+        disabled
+        [value]="c.compEmail"
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="tel">โทรศัพท์</label>
+      <input type="tel" name="tel" id="tel" [value]="c.compPhone" disabled />
+    </div>
+    } @let driver = driverForm();
+    <div class="app-form-field">
+      <label for="contact-name">ชื่อผู้ติดต่อ</label>
+      <input
+        type="text"
+        name="contact-name"
+        id="contact-name"
+        [ngModel]="driver.contactName"
+        readonly
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="contact-phone">เบอร์ติดต่อ</label>
+      <input
+        type="tel"
+        name="contact-phone"
+        id="contact-phone"
+        readonly
+        [ngModel]="driver.phoneNumber"
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="truck-plate">ทะเบียน</label>
+      <input
+        type="text"
+        name="truck-plate"
+        id="truck-plate"
+        readonly
+        [ngModel]="driver.truckLicensePlate"
+      />
+    </div>
+    <div class="app-form-select">
+      <label for="truck-type">ประเภทรถ</label>
+      <select
+        name="truck-type"
+        id="truck-type"
+        [ngModel]="driver.truckType"
+        disabled
+      >
+        <option value="" disabled>กรุณาเลือก</option>
+        @for (tt of truckTypeList; track $index) {
+        <option [ngValue]="tt">{{ tt }}</option>
+        }
+      </select>
+    </div>
+    <div class="app-form-field">
+      <label for="remark">หมายเหตุ</label>
+      <textarea
+        name="remark"
+        id="remark"
+        rows="3"
+        readOnly
+        [ngModel]="driver.note"
+      ></textarea>
+    </div>
+
+    <div>เลขที่ใบสั่งซื้อ (PO)</div>
+    <div class="ps-3">
+      @for (order of orderList(); track $index) {
+      <div>
+        <div class="form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            [name]="order.orderNumb + '-check'"
+            [attr.id]="order.orderNumb + '-check'"
+            [ngModel]="order.check"
+            disabled
+          />
+          <label [attr.for]="order.orderNumb + '-check'">{{
+            order.orderNumb
+          }}</label>
+        </div>
+        <!---->
+        @if(order.check){
+        <div class="mb-3 ps-4">
+          <label class="form-label" [attr.for]="order.orderNumb + '-box'"
+            >ระบุจำนวนลัง</label
+          >
+          <input
+            class="form-control"
+            type="number"
+            [name]="order.orderNumb + '-box'"
+            [attr.id]="order.orderNumb + '-box'"
+            min="1"
+            [ngModel]="order.box"
+            readonly
+          />
+        </div>
+        }
+      </div>
+      }
+      <!---->
+      <div>รวม {{ totalBox() }} ลัง</div>
+    </div>
+
+    <a [routerLink]="backLink" role="button" class="btn btn-danger w-100"
+      >กลับ</a
+    >
+  </div>
+  }@else {
+  <div>มีข้อผิดพลาด</div>
+  } }
+</div>
+
+<ng-template #changeDate let-modal>
+  <div class="modal-header">
+    <h4>เปลี่ยนเวลาจอง</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeDateTimeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-select-door-option
+      [activeDoor]="cloneActiveDoor()"
+      (activeDoorChange)="onDoorChange($event)"
+    />
+    <div class="calander-warpper mb-3">
+      <ngb-datepicker
+        #dp
+        class="custom-dp"
+        [ngModel]="selectDate()"
+        (ngModelChange)="onChangeDate($event)"
+      />
+      <div
+        style="
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          row-gap: 8px;
+          column-gap: 8px;
+          width: 344px;
+          margin: 0 auto;
+        "
+      >
+        @for (slot of timeslot(); track $index) {
+        <button
+          [className]="btnEditClass(slot.time)"
+          (click)="updateActiveSlot(slot.time)"
+          [disabled]="slot.isReserved"
+        >
+          {{ slot.time + (slot.isReserved ? " (เต็ม)" : "") }}
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="w-100">
+      <div class="row">
+        <div class="col">ประตู</div>
+        <div class="col">{{ cloneActiveDoor()?.name }}</div>
+      </div>
+      <div class="row">
+        <div class="col">วันที่</div>
+        <div class="col">{{ cloneThaiDate() }}</div>
+      </div>
+      <div class="row">
+        <div class="col">เวลา</div>
+        <div class="col">{{ cloneActiveSlot() }}</div>
+      </div>
+    </div>
+    <button class="btn btn-success w-100" (click)="changeReservationDate()">
+      แก้ไขเวลา
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #changeDriver let-modal>
+  <div class="modal-header">
+    <h4>ข้อมูลคนขับ</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeDriverModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    @let clonedv = cloneDriver(); @if(clonedv){
+    <div class="app-form-field">
+      <label for="contact-name-e">ชื่อผู้ติดต่อ</label>
+      <input
+        type="text"
+        name="contact-name-e"
+        id="contact-name-e"
+        [ngModel]="clonedv.contactName"
+        (ngModelChange)="updateCloneName($event)"
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="contact-phone-e">เบอร์ติดต่อ</label>
+      <input
+        type="tel"
+        name="contact-phone-e"
+        id="contact-phone-e"
+        [ngModel]="clonedv.phoneNumber"
+        (ngModelChange)="updateClonePhone($event)"
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="truck-plate-e">ทะเบียน</label>
+      <input
+        type="text"
+        name="truck-plate-e"
+        id="truck-plate-e"
+        [ngModel]="clonedv.truckLicensePlate"
+        (ngModelChange)="updateClonePlate($event)"
+      />
+    </div>
+
+    <div class="app-form-select">
+      <label for="truck-type-e">ประเภทรถ</label>
+      <select
+        name="truck-type-e"
+        id="truck-type-e"
+        [ngModel]="clonedv.truckType"
+        (ngModelChange)="updateCloneTruckT($event)"
+      >
+        <option value="" disabled>กรุณาเลือก</option>
+        @for (tt of truckTypeList; track $index) {
+        <option [ngValue]="tt">{{ tt }}</option>
+        }
+      </select>
+    </div>
+    <div class="app-form-field">
+      <label for="remark-e">หมายเหตุ</label>
+      <textarea
+        name="remark-e"
+        id="remark-e"
+        rows="3"
+        [ngModel]="clonedv.note"
+        (ngModelChange)="updateNote($event)"
+      ></textarea>
+    </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success w-100" (click)="changeReservationDriver()">
+      แก้ข้อมูลคนขับ
+    </button>
+  </div>
+</ng-template>

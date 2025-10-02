@@ -1,0 +1,193 @@
+<div class="bg-white p-3">
+  <app-select-door-option
+    [activeDoor]="activeDoor()"
+    (activeDoorChange)="onDoorChange($event)"
+  />
+  <div class="calander-warpper mb-3">
+    <ngb-datepicker
+      class="custom-dp"
+      [ngModel]="selectDate()"
+      (ngModelChange)="onChangeDate($event)"
+    />
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 8px;
+        column-gap: 8px;
+        width: 344px;
+        margin: 0 auto;
+      "
+    >
+      @for (slot of timeslot(); track $index) {
+      <button
+        [className]="btnClass(slot.time)"
+        (click)="updateActiveSlot(slot.time)"
+        [disabled]="slot.isReserved"
+      >
+        {{ slot.time + (slot.isReserved ? " (เต็ม)" : "") }}
+      </button>
+      }
+    </div>
+  </div>
+
+  <button class="btn btn-info w-100" (click)="openModal(searchComp)">
+    ค้นหาซัพ
+  </button>
+  <div class="reserve-form p-3 rounded">
+    @let c = comp ();
+    <!---->
+    @if (c) {
+    <div class="app-form-field">
+      <label for="name">ชื่อบริษัท</label>
+      <input type="text" name="name" id="name" disabled [value]="c.compName" />
+    </div>
+    <div class="app-form-field">
+      <label for="email">E-mail</label>
+      <input
+        type="email"
+        name="email"
+        id="email"
+        disabled
+        [value]="c.compEmail"
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="tel">โทรศัพท์</label>
+      <input type="tel" name="tel" id="tel" [value]="c.compPhone" disabled />
+    </div>
+    }
+    <div class="app-form-field">
+      <label for="contact-name">ชื่อผู้ติดต่อ</label>
+      <input
+        type="text"
+        name="contact-name"
+        id="contact-name"
+        [(ngModel)]="contactName"
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="contact-phone">เบอร์ติดต่อ</label>
+      <input
+        type="tel"
+        name="contact-phone"
+        id="contact-phone"
+        [(ngModel)]="phoneNumber"
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="truck-plate">ทะเบียน</label>
+      <input
+        type="text"
+        name="truck-plate"
+        id="truck-plate"
+        [(ngModel)]="truckLicensePlate"
+      />
+    </div>
+    <div class="app-form-select">
+      <label for="truck-type">ประเภทรถ</label>
+      <select name="truck-type" id="truck-type" [(ngModel)]="truckType">
+        <option value="" disabled>กรุณาเลือก</option>
+        @for (tt of truckTypeList; track $index) {
+        <option [ngValue]="tt">{{ tt }}</option>
+        }
+      </select>
+    </div>
+
+    <div>เลขที่ใบสั่งซื้อ (PO)</div>
+    <div class="ps-3">
+      @for (order of orderList(); track $index) {
+      <div>
+        <div class="form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            [name]="order.orderNumb + '-check'"
+            [attr.id]="order.orderNumb + '-check'"
+            [ngModel]="order.check"
+            (ngModelChange)="checkPo(order.orderNumb)"
+          />
+          <label [attr.for]="order.orderNumb + '-check'">{{
+            order.orderNumb
+          }}</label>
+        </div>
+        <!---->
+        @if(order.check){
+        <div class="mb-3 ps-4">
+          <label class="form-label" [attr.for]="order.orderNumb + '-box'"
+            >ระบุจำนวนลัง</label
+          >
+          <input
+            class="form-control"
+            type="number"
+            [name]="order.orderNumb + '-box'"
+            [attr.id]="order.orderNumb + '-box'"
+            min="1"
+            [ngModel]="order.box"
+            (ngModelChange)="changeBox(order.orderNumb)($event)"
+          />
+        </div>
+        }
+      </div>
+      }
+      <!---->
+      <div>รวม {{ totalBox() }} ลัง</div>
+    </div>
+    <div class="app-form-field">
+      <label for="remark">หมายเหตุ</label>
+      <textarea
+        name="remark"
+        id="remark"
+        rows="3"
+        [(ngModel)]="note"
+      ></textarea>
+    </div>
+    <div class="mb-3">
+      @if (tooLow()) {
+      <label for=""></label>
+      <div style="color: red">จำนวนลังน้อยเกินกำหนด</div>
+      }
+      <!---->
+      @if (tooHigh()) {
+      <div style="color: red">จำนวนลังเกินกำหนด กรุณาเลือกช่วงเวลาเพิ่ม</div>
+      }
+    </div>
+    <button class="btn btn-success w-100 mb-3" (click)="onSubmit()">จอง</button>
+    <a routerLink="../query" role="button" class="btn btn-danger w-100">กลับ</a>
+  </div>
+</div>
+
+<ng-template #searchComp let-modal>
+  <div class="modal-header">
+    <h4>ค้นหาบริษัท</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="app-form-select">
+      <label for="comp-type">บริษัท</label>
+      <select name="comp-type" id="comp-type" [(ngModel)]="compType">
+        <option value="DN">DN</option>
+        <option value="HU">HU</option>
+      </select>
+    </div>
+    <div class="app-form-field">
+      <label for="term">ชื่อบริษัท</label>
+      <input type="text" name="term" id="term" [(ngModel)]="term" />
+    </div>
+    @for (comp of resultComp(); track comp.compCode) {
+    <div class="row mb-2">
+      <div class="col">{{ comp.compName }}</div>
+      <div class="col-3">
+        <button class="btn btn-success btn-square" (click)="onSelectComp(comp)">
+          <i class="bi bi-plus"></i>
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+</ng-template>

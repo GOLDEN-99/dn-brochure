@@ -1,12 +1,12 @@
 import { InjectionToken, Signal, WritableSignal } from "@angular/core"
 import { Observable } from "rxjs"
-import { TAppOrder, TComp, TCreateReservationReq, TDoor, TDoorMap, TEditableResavation, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot, TWarehouse } from "../../types/ibob-supplier.type"
+import { TAppOrder, TComp, TCreateReservationReq, TDoor, TDoorMap, TEditableResavation, TFormattedLoginResponse, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot, TWarehouse } from "../../types/ibob-supplier.type"
 import { TDate } from "../../lib"
 import { TMaybe } from "../../types"
 import { NgbDate } from "@ng-bootstrap/ng-bootstrap"
 
 export interface IIbObLogin {
-    login: (req: TLoginReq) => Observable<TLoginRes>
+    login: (req: TLoginReq) => Observable<TFormattedLoginResponse>
 }
 
 export interface IIbObComp {

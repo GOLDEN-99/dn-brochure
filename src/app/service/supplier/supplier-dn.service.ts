@@ -65,7 +65,7 @@ export class SupplierDnService implements ISupplierList {
   pageLabel: Signal<'DN' | 'HU'> = signal('DN')
   compList$ = this.searchMany$.pipe(
     switchMap(params => this.api.get<TExtendedComp[]>(`${environment.oi}/comp/dn`, { params })),
-    getOrElse<TExtendedComp[]>([])
+    getOrElse<TExtendedComp[], TExtendedComp[]>([])
   )
   compList: Signal<TExtendedComp[]> = toSignal(this.compList$, { initialValue: [] })
 

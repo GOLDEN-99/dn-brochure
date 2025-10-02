@@ -24,13 +24,15 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class SupplierReserveAddComponent {
   private serv = inject(IBOBRESERVE_TOKEN)
   private route = inject(ActivatedRoute)
-  private query$ = this.route.queryParamMap.pipe(map(q => q.get('from') ?? 'reserve'))
-  queryString = toSignal(this.query$, { initialValue: 'reserve' })
-  backLink = computed(() => `/supplier/${this.queryString()}`)
+  private router = inject(Router)
+  createBackLink() {
+    const snap = this.route.snapshot
+    const compCode = snap.queryParamMap.getAll('compCode')
+    return this.router.createUrlTree(['supplier', 'reserve'], { queryParams: { compCode } })
+  }
   warehouse = input<string>()
   private warehouseServ = inject(WarehouseService)
   pageLabel = this.warehouseServ.currentWarehouseName
-  private router = inject(Router)
   private toastServ = inject(ToastService)
 
   private doorService = inject(DoorService)
@@ -164,15 +166,24 @@ export class SupplierReserveAddComponent {
     return total === 0 || this.tooLow() || this.tooHigh()
   })
 
+  contactName = signal('')
+  phoneNumber = signal('')
   note = signal('')
+  truckLicensePlate = signal('')
+  truckType = signal('')
+  truckTypeList = ['4 ล้อ', '6 ล้อ', '10 ล้อ']
   handleSubmit = () => {
     const date = this.activeDate()
     if (!date) throw new Error('no current date')
     const reservationDate = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
     const doorId = this.activeDoor()
     const note = this.note()
+    const truckType = this.truckType()
+    const contactName = this.contactName()
+    const phoneNumber = this.phoneNumber()
+    const truckLicensePlate = this.truckLicensePlate()
     if (!doorId) throw new Error('no current door')
-    const partialAppliedReservation = (reservationTime: string) => this.serv.createReservation({ reservationDate, reservationTime, doorId, note })
+    const partialAppliedReservation = (reservationTime: string) => this.serv.createReservation({ reservationDate, reservationTime, doorId, note, truckLicensePlate, truckType, contactName, phoneNumber })
     const timeSlot = this.activeSlot()
     const cmdList = timeSlot.map(partialAppliedReservation)
     forkJoin(cmdList).subscribe({

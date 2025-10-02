@@ -10,6 +10,8 @@ export class ApiService {
 
   private https = inject(HttpClient)
 
+  createJWTHeader = (jwt: string) => ({ headers: { Authorization: `bearer ${jwt}` } })
+
   get<T>(path: string, opt: TApiOpt = {}) {
     return this.https.get<T>(path, opt).pipe(catchError(err => throwError(() => err)))
   }
@@ -18,6 +20,10 @@ export class ApiService {
   }
   delete<T = any>(path: string, opt: TApiOpt = {}) {
     return this.https.delete<T>(path, opt).pipe(catchError(err => throwError(() => err)))
+  }
+
+  patch<T>(path: string, body: {}, opt: TApiOpt = {}) {
+    return this.https.patch<T>(path, body, opt).pipe(catchError(err => throwError(() => err)))
   }
 }
 
