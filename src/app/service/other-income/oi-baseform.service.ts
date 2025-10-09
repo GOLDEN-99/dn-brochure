@@ -80,6 +80,11 @@ export class OiBaseformService {
     const { compCode, compName, eventId, incomeId } = this.baseformState()
     return compCode === '' || compName === '' || eventId === 0 || incomeId === 0
   })
+
+  disableLight = computed(() => {
+    const { compCode, compName, eventId, incomeId } = this.baseformState()
+    return compCode === '' || compName === '' || eventId === 0 || incomeId === 0
+  })
 }
 
 export type TAppBaseformInsert = TBaseOiInsert<'app'>

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OtherIncomeBaseformComponent } from "../../../../components/other-income/form/other-income-baseform/other-income-baseform.component";
@@ -9,10 +9,10 @@ import { ToastService } from '../../../../service/toast/toast.service';
   selector: 'app-special-income-form',
   imports: [FormsModule, RouterLink, OtherIncomeBaseformComponent],
   template: `
-    <app-other-income-baseform mode="light" />
+    <app-other-income-baseform (isLightChange)="eventType.set($event)" mode="light" />
     <!--  action -->
     <div class="d-flex justify-content-center" style="gap: 1rem">
-      <button class="btn btn-success" (click)="onSubmit()">
+      <button class="btn btn-success" (click)="onSubmit()" [disabled]="disable()">
         <i class="bi bi-floppy"></i>
         <span> บันทึก </span>
       </button>
@@ -28,6 +28,10 @@ export class SpecialIncomeFormComponent {
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   private toast = inject(ToastService)
+  disableBaseForm = this.baseForm.disableLight
+  eventType = signal(0)
+  disableEvent = computed(() => this.eventType() !== 2)
+  disable = computed(() => this.disableBaseForm() || this.disableEvent())
   onSubmit() {
     this.baseForm.createHead().subscribe({
       next: ({ id }) => {
