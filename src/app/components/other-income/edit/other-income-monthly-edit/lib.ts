@@ -3,8 +3,9 @@ import { TOIStepItem } from "../../../../types"
 type TCalFn = (steps: TOIStepItem[]) => (capAmount: number | null, accAmount: number, accInc: number,) => (current: number) => number
 
 export const calFlat: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | null, accAmount: number, accIncome: number,) => (current: number) => {
-    if (capAmount !== null && accAmount >= capAmount) return 0
-    const calIncome = current * steps[0].rate / 100
+    const rawTarget = accAmount + current
+    const validAmount = applyCap(rawTarget, capAmount)
+    const calIncome = validAmount * steps[0].rate / 100
     return calIncome
 }
 
