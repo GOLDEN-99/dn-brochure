@@ -60,13 +60,13 @@ export class OtherIncomeNotLightFormComponent {
     const stepList = this.stepList().map((step, i, arr) => {
       const min = Number(step.start)
       const rate = Number(step.percent)
-      if (isNaN(min)) throw new Error('min must be a number')
-      if (isNaN(rate)) throw new Error('rate must be a number')
       const next = arr[i + 1]
       const nextStart = next?.start
       const max = typeof nextStart === 'number' ? nextStart : null
       return { min, max, rate } satisfies ReqStep
     })
+    const invalidValue = stepList.some(({ min, rate }) => isNaN(min) || isNaN(rate))
+    if (invalidValue) throw new Error('target ไม่ถูกต้อง')
     return {
       incVat, capAmount, stepList, stepType, isRebate, isInce, isComp, isDc
     }
@@ -90,6 +90,10 @@ export class OtherIncomeNotLightFormComponent {
         }
       )
     } catch (err) {
+      if (err instanceof Error) {
+        this.toastService.danger(err.message)
+        return
+      }
       this.toastService.danger(String(err))
     }
   }

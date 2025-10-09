@@ -244,33 +244,6 @@ export const routes: Routes = [
     },
     ...DN_INBOUND_ROUTE,
     ...HU_INBOUND_ROUTE,
-    // {
-    //     path: 'supplier/hu',
-    //     title: 'HU Inhouse',
-    //     providers: [
-    //         { provide: SUPPLIER_TOKEN, useExisting: SupplierHuService }
-    //     ],
-    //     children: [
-    //         {
-    //             path: '',
-    //             loadComponent: () =>
-    //                 import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
-    //                     .then(r => r.SupplierInhouseComponent),
-    //         },
-    //         {
-    //             path: ':compCode',
-    //             component: SupplierLayoutComponent,
-    //             resolve: [supplierCompResolver],
-    //             children: [
-    //                 {
-    //                     path: '',
-    //                     component: SupplierFormViewComponent
-    //                 }
-    //             ]
-    //         }
-    //     ]
-    // },
-    //รายได้อื่นๆ
     {
         path: 'other-income',
         title: 'รายได้อื่นๆ',
