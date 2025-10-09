@@ -12,7 +12,7 @@ import { OiBaseformService } from '../../../../service/other-income/oi-baseform.
   <div class="d-flex justify-content-center" style="gap: 1rem">
     @let btnLabel = displayText();
     @if(btnLabel !== ''){
-      <button class="btn btn-success" (click)="onSubmit()">
+      <button class="btn btn-success" (click)="onSubmit()" [disabled]="disabled()">
         <i class="bi bi-floppy"></i>
         <span> {{btnLabel}} </span>
       </button>
@@ -65,6 +65,12 @@ export class PurchaseIncomeFormComponent implements OnInit, OnDestroy {
       case 1: return 'ต่อไป'
       default: return 'บันทึก'
     }
+  })
+  disabled = computed(() => {
+    const isInce = this.isInce()
+    if (isInce) return false
+    const products = this.productList()
+    return products === null || products.length === 0
   })
   productList = this.baseFormService.productList
   onSubmit = () => {
