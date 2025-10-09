@@ -91,7 +91,6 @@ import { FormsModule } from '@angular/forms';
           </div>
           <div style="margin: 16px 0">
             <input
-              type="number"
               name="percent"
               id="percent"
               [ngModel]="step()[0].percent"

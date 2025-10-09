@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../../service/api/api.service';
 import { environment } from '../../../../../environments/environment';
 import { ToastService } from '../../../../service/toast/toast.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-other-income-not-light-form',
-  imports: [TargetSubformComponent, FormsModule],
+  imports: [TargetSubformComponent, FormsModule, RouterLink],
   templateUrl: './other-income-not-light-form.component.html',
   styleUrl: './other-income-not-light-form.component.scss'
 })
@@ -25,7 +25,7 @@ export class OtherIncomeNotLightFormComponent {
   isRebate = signal(false)
   invalidStep = computed(() => {
     const stepType = this.stepType()
-    if (stepType === 0) return false
+    if (stepType === 0) return true
     const stepList = this.stepList()
     return stepList.some(({ percent }) => percent === 0)
   })
@@ -58,8 +58,10 @@ export class OtherIncomeNotLightFormComponent {
     const stepType = this.stepType()
     const capAmount = Number(this.capAmount())
     const stepList = this.stepList().map((step, i, arr) => {
-      const min = step.start
-      const rate = step.percent
+      const min = Number(step.start)
+      const rate = Number(step.percent)
+      if (isNaN(min)) throw new Error('min must be a number')
+      if (isNaN(rate)) throw new Error('rate must be a number')
       const next = arr[i + 1]
       const nextStart = next?.start
       const max = typeof nextStart === 'number' ? nextStart : null
@@ -72,20 +74,24 @@ export class OtherIncomeNotLightFormComponent {
   private toastService = inject(ToastService)
   private router = inject(Router)
   onSubmit() {
-    return this.api.post<{ id: number }>(
-      `${this.url}/other-income/contact/not-light/${this.headId()}`,
-      this.request
-    ).subscribe(
-      {
-        next: (res) => {
-          this.toastService.success('เพิ่มรายได้อื่นๆสำเร็จ')
-          this.router.navigate(['../../'], { relativeTo: this.route })
-        },
-        error: (err) => {
-          this.toastService.danger(`${err.message}`)
+    try {
+      this.api.post<{ id: number }>(
+        `${this.url}/other-income/contact/not-light/${this.headId()}`,
+        this.request
+      ).subscribe(
+        {
+          next: (res) => {
+            this.toastService.success('เพิ่มรายได้อื่นๆสำเร็จ')
+            this.router.navigate(['../../'], { relativeTo: this.route })
+          },
+          error: (err) => {
+            this.toastService.danger(`${err.message}`)
+          }
         }
-      }
-    )
+      )
+    } catch (err) {
+      this.toastService.danger(String(err))
+    }
   }
 }
 
