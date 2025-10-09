@@ -54,6 +54,7 @@ export class PurchaseIncomeFormComponent implements OnInit, OnDestroy {
   }
 
   private baseFormService = inject(OiBaseformService)
+  private baseFormDisable = this.baseFormService.disableDc
   private comp = this.baseFormService.compData
   private router = inject(Router)
   private route = inject(ActivatedRoute)
@@ -67,16 +68,16 @@ export class PurchaseIncomeFormComponent implements OnInit, OnDestroy {
       default: return 'บันทึก'
     }
   })
-  disabled = computed(() => {
+  disableProduct = computed(() => {
     const isInce = this.isInce()
     if (isInce) return false
     const products = this.productList()
     return products === null || products.length === 0
   })
+  disabled = computed(() => this.disableProduct() || this.baseFormDisable())
   private toast = inject(ToastService)
   productList = this.baseFormService.productList
   onSubmit = () => {
-    const comp = this.comp()
     this.baseFormService.createHead().subscribe(
       {
         next: ({ id }) => {

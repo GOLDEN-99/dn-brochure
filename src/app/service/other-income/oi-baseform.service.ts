@@ -76,7 +76,10 @@ export class OiBaseformService {
     this.baseformState.set(this.defaultValue);
     this.productList.set(null)
   }
-
+  disableDc = computed(() => {
+    const { compCode, compName, eventId, incomeId } = this.baseformState()
+    return compCode === '' || compName === '' || eventId === 0 || incomeId === 0
+  })
 }
 
 export type TAppBaseformInsert = TBaseOiInsert<'app'>

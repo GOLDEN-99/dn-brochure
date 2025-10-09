@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../../service/api/api.service';
 import { environment } from '../../../../../environments/environment';
 import { ToastService } from '../../../../service/toast/toast.service';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-other-income-not-light-form',
-  imports: [TargetSubformComponent, FormsModule, RouterLink],
+  imports: [TargetSubformComponent, FormsModule],
   templateUrl: './other-income-not-light-form.component.html',
   styleUrl: './other-income-not-light-form.component.scss'
 })

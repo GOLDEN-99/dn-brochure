@@ -1,13 +1,13 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../service/api/api.service';
 import { environment } from '../../../../../environments/environment';
 import { ToastService } from '../../../../service/toast/toast.service';
 
 @Component({
   selector: 'app-other-income-light-form',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule],
   template: `  
   <!-- special target -->
   <div class="row">
@@ -34,9 +34,9 @@ import { ToastService } from '../../../../service/toast/toast.service';
     <i class="bi bi-floppy"></i>
     <span> บันทึก </span>
   </button>
-  <a routerLink="../" class="btn btn-outline-danger"
+  <!-- <a routerLink="../" class="btn btn-outline-danger"
     >ย้อนกลับ</a
-  >
+  > -->
 </div>
   `,
   styles: ``
