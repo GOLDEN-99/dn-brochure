@@ -44,7 +44,7 @@ export class SupplierReportService {
   private _monthReportMapper = ({ head, summary }: TOiSupplierRes) => [
     ...Object.entries(this._formatHead(head)),
     [],
-    ...Object.entries(this._formatMothSummary(summary))
+    ...Object.entries(this._formatMothSummary(summary, head.incVat))
   ]
   private _annualReportMapper = ({ head, monthly }: TOiSupplierAnnualRes) => [
     ...Object.entries(this._formatHead(head)).map(([key, value]) => [key, value]),
@@ -89,7 +89,7 @@ export class SupplierReportService {
   formatedMonthRes = computed(() => this.monthRes()
     .map(({ head, summary }) => ({
       head: this._formatHead(head),
-      summary: this._formatMothSummary(summary)
+      summary: this._formatMothSummary(summary, head.incVat)
     })))
   private _formatHead = (head: TMonthHead) => ({
     "ซัพพลายเออร์": `${head.compCode} ${head.compName}`,
@@ -99,15 +99,19 @@ export class SupplierReportService {
     "compensate": head.isComp ? 'หัก' : 'ไม่หัก',
     "incentive": head.isInce ? 'หัก' : 'ไม่หัก',
   })
-  private _formatMothSummary = (summary: TOiSupplierSummary) => ({
-    "ยอดจริง": summary.totalCost.toFixed(2),
-    "หัก vat": summary.applyVat.toFixed(2),
-    "หัก dc": summary.applyDc.toFixed(2),
-    "หัก rebate": summary.applyRebate.toFixed(2),
-    "หัก compensate": summary.applyComp.toFixed(2),
-    "หัก incentive": summary.applyInce.toFixed(2),
-    "ยอดซื้อเรียกเก็บ": (summary.totalCost - summary.applyVat - summary.applyDc - summary.applyRebate - summary.applyComp - summary.applyInce).toFixed(2)
-  })
+  private _formatMothSummary = (summary: TOiSupplierSummary, incVat: boolean) => {
+    const withVat = summary.totalCost - summary.applyComp - summary.applyRebate - summary.applyDc - summary.applyInce
+    const finalValue = incVat ? withVat : (withVat - summary.applyVat)
+    return {
+      "ยอดจริง": summary.totalCost.toFixed(2),
+      "หัก vat": summary.applyVat.toFixed(2),
+      "หัก dc": summary.applyDc.toFixed(2),
+      "หัก rebate": summary.applyRebate.toFixed(2),
+      "หัก compensate": summary.applyComp.toFixed(2),
+      "หัก incentive": summary.applyInce.toFixed(2),
+      "ยอดซื้อเรียกเก็บ": (finalValue).toFixed(2)
+    }
+  }
   async exportTo() {
     const resArr = this.formatedMonthRes()
     const aoa = resArr.map(({ head, summary }) => [

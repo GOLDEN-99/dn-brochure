@@ -42,7 +42,6 @@ export class PurchaseReportComponent {
   private loading = inject(LoadingService)
   exportSupplierMonth(compType: number) {
     const compCode = this.compCode()
-    console.log(compCode)
     const { month, year } = this.date()
     this.loading.startLoad()
     this.reportServ.exportSupplierMonthReport(compType, compCode, { year, month, day: 1 })
