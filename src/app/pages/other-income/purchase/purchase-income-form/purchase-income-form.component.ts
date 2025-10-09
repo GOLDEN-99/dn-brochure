@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { OtherIncomeBaseformComponent } from "../../../../components/other-income/form/other-income-baseform/other-income-baseform.component";
 import { OiBaseformService } from '../../../../service/other-income/oi-baseform.service';
+import { ToastService } from '../../../../service/toast/toast.service';
 @Component({
   selector: 'app-purchase-income-form',
   imports: [FormsModule, NgbDatepickerModule, RouterLink, OtherIncomeBaseformComponent],
@@ -72,6 +73,7 @@ export class PurchaseIncomeFormComponent implements OnInit, OnDestroy {
     const products = this.productList()
     return products === null || products.length === 0
   })
+  private toast = inject(ToastService)
   productList = this.baseFormService.productList
   onSubmit = () => {
     const comp = this.comp()
@@ -87,6 +89,7 @@ export class PurchaseIncomeFormComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.log(err)
+          this.toast.danger(String(err))
         },
       }
     )
