@@ -30,7 +30,7 @@ import { IBOB_COMP_TYPE_TOKEN, SUPPLIER_TOKEN } from './service/supplier/supplie
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
-import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
+import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, STOCK_ITEM_TOKEN, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
 import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
 import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
@@ -61,6 +61,7 @@ import { inboundApiServiceFactory } from './factory/inbound/supplier.service.pro
 import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
 import { ibobLoginGuardGuard } from './guard/ibob-login-guard.guard';
 import { ibobLocalCompResolver } from './resolvers/Ibob/ibob-local-comp.resolver';
+import { StockItemHomeComponent } from './pages/stock-item/stock-item-home/stock-item-home.component';
 
 export const routes: Routes = [
     {
@@ -404,6 +405,36 @@ export const routes: Routes = [
             {
                 path: "report/:year",
                 component: OtherIncomeReportComponent
+            }
+        ]
+    },
+    // stock item
+    {
+        path: 'stock-item',
+        component: PurchaseLayoutComponent,
+        providers: [
+            {
+                provide: TAB_TOKEN,
+                useValue: STOCK_ITEM_TOKEN
+            }
+        ],
+        children: [
+            {
+                path: '',
+                component: StockItemHomeComponent
+                // loadComponent() {
+                //     return import('./pages/stock-item/stock-item-home/stock-item-home.component')
+                //         .then(r => r.StockItemHomeComponent)
+                //         .catch(ex => NotfoundComponent)
+                // },
+            },
+            {
+                path: 'setup',
+                component: NotfoundComponent
+            },
+            {
+                path: 'report',
+                component: NotfoundComponent
             }
         ]
     },

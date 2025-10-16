@@ -117,6 +117,26 @@ export const LIGHT_TAB_TOKEN = {
   ]
 }
 
+export const STOCK_ITEM_TOKEN = {
+  tabList: [
+    {
+      label: 'เกณฑ์เดือนสั่งซื้อ',
+      link: './',
+      exact: true
+    },
+    {
+      label: 'คำนวน',
+      link: './setup',
+      exact: false
+    },
+    {
+      label: 'รายงาน',
+      link: './report',
+      exact: true
+    },
+  ]
+}
+
 @Component({
   selector: 'app-purchase-layout',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
