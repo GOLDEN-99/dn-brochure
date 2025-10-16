@@ -61,7 +61,7 @@ import { inboundApiServiceFactory } from './factory/inbound/supplier.service.pro
 import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
 import { ibobLoginGuardGuard } from './guard/ibob-login-guard.guard';
 import { ibobLocalCompResolver } from './resolvers/Ibob/ibob-local-comp.resolver';
-import { StockItemHomeComponent } from './pages/stock-item/stock-item-home/stock-item-home.component';
+import { stockSetupResolver } from './resolvers/stock-item/stock-setup.resolver';
 
 export const routes: Routes = [
     {
@@ -421,12 +421,11 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                component: StockItemHomeComponent
-                // loadComponent() {
-                //     return import('./pages/stock-item/stock-item-home/stock-item-home.component')
-                //         .then(r => r.StockItemHomeComponent)
-                //         .catch(ex => NotfoundComponent)
-                // },
+                loadComponent() {
+                    return import('./pages/stock-item/stock-item-home/stock-item-home.component')
+                        .then(r => r.StockItemHomeComponent)
+                        .catch(ex => NotfoundComponent)
+                },
             },
             {
                 path: 'setup',
@@ -437,6 +436,12 @@ export const routes: Routes = [
                 component: NotfoundComponent
             }
         ]
+    },
+    {
+        path: 'stock-item/add',
+        resolve: [stockSetupResolver],
+        loadComponent: () => import('./pages/stock-item/stock-item-add/stock-item-add.component')
+            .then(r => r.StockItemAddComponent).catch(ex => NotfoundComponent),
     },
     {
         path: "notfound",

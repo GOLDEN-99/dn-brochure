@@ -52,9 +52,9 @@ export class OiProductService {
   }
 }
 
-type TSearchProductResult = {
+export type TSearchProductResult = {
   goodCode: string
   goodName: string
   barCode: string
 }
-type TAppSearchProductResult = { check: boolean } & Omit<TSearchProductResult, 'barCode'>
+export type TAppSearchProductResult = { check: boolean } & Omit<TSearchProductResult, 'barCode'>

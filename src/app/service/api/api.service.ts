@@ -21,7 +21,9 @@ export class ApiService {
   delete<T = any>(path: string, opt: TApiOpt = {}) {
     return this.https.delete<T>(path, opt).pipe(catchError(err => throwError(() => err)))
   }
-
+  put<T = unknown>(path: string, body: any, opt: TApiOpt = {}) {
+    return this.https.put<T>(path, body, opt).pipe(catchError(err => throwError(() => err)))
+  }
   patch<T>(path: string, body: {}, opt: TApiOpt = {}) {
     return this.https.patch<T>(path, body, opt).pipe(catchError(err => throwError(() => err)))
   }

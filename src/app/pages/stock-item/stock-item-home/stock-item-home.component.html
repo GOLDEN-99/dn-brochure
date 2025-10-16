@@ -1,1 +1,123 @@
-<p>stock-item-home works!</p>
+<div style="background-color: white; padding: 1rem">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>%ทุนต่อGP</th>
+        <th>จำนวนเดือนตุนสินค้า</th>
+        <th style="width: 120px">
+          <button class="btn btn-outline-info" (click)="toggleReadOnly()">
+            แก้ไข
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (setup of setupList(); track setup.id) {
+      <tr style="height: 56px">
+        <td>น้อยกว่า {{ setup.riskPercent }}</td>
+        <td>{{ setup.stockMonth }}</td>
+        <td>
+          @if (!readOnly()) {
+          <button
+            class="btn btn-warning btn-squre me-1"
+            (click)="openEdit(setup)"
+          >
+            <i class="bi bi-pen"></i>
+          </button>
+          <button class="btn btn-danger btn-squre" (click)="onDelete(setup.id)">
+            <i class="bi bi-trash"></i>
+          </button>
+          }
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  @if (!readOnly()) {
+  <button
+    class="btn btn-info w-100"
+    (click)="isCreate.set(true)"
+    [disabled]="disableAdd()"
+  >
+    เพิ่ม
+  </button>
+  } @if (isCreate() && !readOnly()) {
+  <form class="mt-3">
+    <div class="app-form-field">
+      <label for="risk-percent-add">%ขั้นต่ำ</label>
+      <input
+        type="text"
+        name="risk-precent-add"
+        id="risk-percent-add"
+        [ngModel]="formState().riskPercent"
+        (ngModelChange)="updateFormPercent($event)"
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="stock-month-add">เดือนตุน</label>
+      <input
+        type="text"
+        name="stock-month-add"
+        id="stock-month-add"
+        [ngModel]="formState().stockMonth"
+        (ngModelChange)="updateFormMonth($event)"
+      />
+    </div>
+    @for (alert of alertCreateForm(); track $index) {
+    <div class="alert alert-danger" role="alert">
+      {{ alert }}
+    </div>
+    }
+    <button
+      class="btn btn-success w-100 mb-3"
+      [disabled]="disableCreate()"
+      (click)="onCreate()"
+    >
+      บันทึก
+    </button>
+    <button class="btn btn-danger w-100" (click)="closeAddForm()">
+      ยกเลิก
+    </button>
+  </form>
+  }
+  <!---->
+  @let data = updateState(); @if(data !== null && !readOnly()){
+  <form class="mt-3">
+    <div class="app-form-field">
+      <label for="risk-percent-edit">%ขั้นต่ำ</label>
+      <input
+        type="text"
+        name="risk-precent-edit"
+        id="risk-percent-edit"
+        [ngModel]="data.riskPercent"
+        (ngModelChange)="updatePercent($event)"
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="stock-month-edit">เดือนตุน</label>
+      <input
+        type="text"
+        name="stock-month-edit"
+        id="stock-month-edit"
+        [ngModel]="data.stockMonth"
+        (ngModelChange)="updateMonth($event)"
+      />
+    </div>
+    @for (alert of alertUpdateForm(); track $index) {
+    <div class="alert alert-danger" role="alert">
+      {{ alert }}
+    </div>
+    }
+    <button
+      class="btn btn-success w-100 mb-3"
+      [disabled]="disableUpdate()"
+      (click)="onUpdate()"
+    >
+      บันทึก
+    </button>
+    <button class="btn btn-danger w-100" (click)="updateState.set(null)">
+      ยกเลิก
+    </button>
+  </form>
+  }
+</div>
