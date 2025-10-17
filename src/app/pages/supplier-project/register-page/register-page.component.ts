@@ -8,6 +8,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ConditionPageComponent } from "../condition-page/condition-page.component";
 import { SupplierApiService } from '../../../service/supplier/supplier-api.service';
 import { ToastService } from '../../../service/toast/toast.service';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-register-page',
@@ -15,15 +16,18 @@ import { ToastService } from '../../../service/toast/toast.service';
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss'
 })
-export class RegisterPageComponent implements OnInit {
-  private supplierService = inject(SupplierApiService)
+export class RegisterPageComponent {
+  // private supplierService = inject(SupplierApiService)
   private formService = inject(SupplierFromService)
   formData = this.formService.formState
 
-  ngOnInit(): void {
-    const compCode = this.supplierService.selectedCode()
-    this.formData.update(prev => ({ ...prev, compCode }))
-  }
+  // ngOnInit(): void {
+  //   this.supplierService.selectedCode$.pipe(
+  //     tap()
+  //   )
+  //   const compCode = this.supplierService.selectedCode()
+  //   this.formData.update(prev => ({ ...prev, compCode }))
+  // }
 
   disable = computed(() => {
     const cur = this.formData()

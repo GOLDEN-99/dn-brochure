@@ -11,16 +11,14 @@ import { CnComponent } from './pages/cn-project/cn/cn.component';
 import { ProchureService } from './service/brochure/prochure/prochure.service';
 import { MarketingService } from './service/brochure/marketing/marketing.service';
 import { cnGuard } from './guard/cn-guard.guard';
-import { SupplierLayoutComponent } from './layout/supplier-layout/supplier-layout.component';
-import { SupplierDnService } from './service/supplier/supplier-dn.service';
-import { SupplierHuService } from './service/supplier/supplier-hu.service';
+
 import { SupplierReserveLayoutComponent } from './layout/supplier-reserve-layout/supplier-reserve-layout.component';
 import { SupplierReserveComponent } from './pages/supplier-project/supplier-reserve/supplier-reserve.component';
 import { InOutLayoutComponent } from './layout/in-out-layout/in-out-layout.component';
 import { InOutViewComponent } from './pages/supplier-project/in-out-view/in-out-view.component';
 import { InOutEditComponent } from './pages/supplier-project/in-out-edit/in-out-edit.component';
 import { InOutListComponent } from './pages/supplier-project/in-out-list/in-out-list.component';
-import { RegisterPageComponent } from './pages/supplier-project/register-page/register-page.component';
+
 import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolver';
 import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
 import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-add.component';

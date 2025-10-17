@@ -8,7 +8,7 @@ import { IbobCompService } from '../../../service/supplier/ibob-comp.service';
 import { TOIComp } from '../../../service/other-income/company.service';
 import { TMaybe } from '../../../types';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { filter, takeUntil } from 'rxjs';
+import { filter, map, takeUntil, tap } from 'rxjs';
 import { TDNCreate } from '../../../service/supplier/shared.type';
 import { SupplierApiService } from '../../../service/supplier/supplier-api.service';
 
@@ -18,7 +18,20 @@ import { SupplierApiService } from '../../../service/supplier/supplier-api.servi
   templateUrl: './step-three-page.component.html',
   styleUrl: './step-three-page.component.scss'
 })
-export class StepThreePageComponent extends BaseSupplierForm {
+export class StepThreePageComponent extends BaseSupplierForm implements OnInit, OnDestroy {
+
+  ngOnInit(): void {
+    this.route.pathFromRoot.map(snap => snap.url)[1]
+      .pipe(
+        map(arg => arg[1].path),
+        tap(c => this.compService.setCompType(c)),
+        takeUntil(this.sub$)
+      ).subscribe()
+  }
+  ngOnDestroy(): void {
+    this.sub$.next()
+    this.sub$.complete()
+  }
   readonly = input(false)
   protected modalService = inject(NgbModal)
   openModal(modal: TemplateRef<any>) {

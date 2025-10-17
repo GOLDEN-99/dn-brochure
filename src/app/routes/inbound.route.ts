@@ -1,12 +1,10 @@
 import { Route } from "@angular/router";
-import { SUPPLIER_TOKEN } from "../lib";
-import { SupplierDnService } from "../service/supplier/supplier-dn.service";
+
 import { SupplierApiService } from "../service/supplier/supplier-api.service";
 import { SupplierLayoutComponent } from "../layout/supplier-layout/supplier-layout.component";
 import { supplierCompResolver } from "../resolvers/Ibob/supplier-comp.resolver";
 import { SupplierFormViewComponent } from "../pages/supplier-project/supplier-form-view/supplier-form-view.component";
-import { SupplierHuService } from "../service/supplier/supplier-hu.service";
-import { compTypeResolver } from "../resolvers/Ibob/comp-type.resolver";
+
 
 export const DN_INBOUND_ROUTE: Route[] = [
     {
@@ -29,7 +27,6 @@ export const DN_INBOUND_ROUTE: Route[] = [
             {
                 path: 'form',
                 component: SupplierLayoutComponent,
-                // resolve: { comp: compTypeResolver },
                 children: [
                     {
                         path: '',
