@@ -63,6 +63,15 @@ export class SupplierFromService {
     this.emplList.update(prev => prev.map((p, i) => i === index ? ({ ...p, [key]: value }) : p))
 
   formState = signal(this.initialState)
+  invalidFormState = computed(() => {
+    const { compCode, username, userpass, compGroupCode, compName, compName2, compAddr, compPhone } = this.formState()
+    const pattern = /^0[01]\d{4}$/;
+    const invaliduser = !pattern.test(username)
+    return compCode === '' || invaliduser || userpass === ''
+      || compGroupCode === '' || compName === ''
+      || compAddr === '' || compPhone === ''
+      || compName2 === ''
+  })
   updator = <K extends keyof TFormState>(key: K) =>
     (value: TFormState[K]) => this.formState
       .update(prev => ({ ...prev, [key]: value }))
@@ -208,7 +217,7 @@ export class SupplierFromService {
     }
   }
 
-  disableSubmit = computed(() => this.item().length === 0)
+  disableSubmit = computed(() => this.item().length === 0 || this.invalidFormState())
 }
 
 
