@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { SupplierFromService } from '../../../service/supplier/supplier-from.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StepThreePageComponent } from "../step-three-page/step-three-page.component";
@@ -8,7 +8,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ConditionPageComponent } from "../condition-page/condition-page.component";
 import { SupplierApiService } from '../../../service/supplier/supplier-api.service';
 import { ToastService } from '../../../service/toast/toast.service';
-import { tap } from 'rxjs';
+import { Subject, takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'app-register-page',
@@ -16,18 +16,25 @@ import { tap } from 'rxjs';
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss'
 })
-export class RegisterPageComponent {
-  // private supplierService = inject(SupplierApiService)
+export class RegisterPageComponent implements OnInit, OnDestroy {
+  private sub$ = new Subject<void>();
+  ngOnInit(): void {
+    this.supplierService.selectedCode$
+      .pipe(
+        tap(code => this.formData.update(prev => ({ ...prev, compCode: code }))),
+        takeUntil(this.sub$)
+      )
+      .subscribe()
+  }
+  ngOnDestroy(): void {
+    this.sub$.next()
+    this.sub$.complete()
+  }
+  private supplierService = inject(SupplierApiService)
   private formService = inject(SupplierFromService)
   formData = this.formService.formState
 
-  // ngOnInit(): void {
-  //   this.supplierService.selectedCode$.pipe(
-  //     tap()
-  //   )
-  //   const compCode = this.supplierService.selectedCode()
-  //   this.formData.update(prev => ({ ...prev, compCode }))
-  // }
+
 
   disable = computed(() => {
     const cur = this.formData()

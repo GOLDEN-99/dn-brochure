@@ -11,21 +11,10 @@ import { takeUntil, tap } from 'rxjs';
   templateUrl: './auth-page.component.html',
   styleUrl: './auth-page.component.scss'
 })
-export class AuthPageComponent extends BaseSupplierForm implements OnInit, OnDestroy {
+export class AuthPageComponent extends BaseSupplierForm {
 
   private supplierApiServ = inject(SupplierApiService)
-  ngOnInit(): void {
-    this.supplierApiServ.selectedCode$
-      .pipe(
-        tap(code => this.updateCompCode(code)),
-        takeUntil(this.sub$)
-      )
-      .subscribe()
-  }
-  ngOnDestroy(): void {
-    this.sub$.next()
-    this.sub$.complete()
-  }
+
   readonly = input(false)
   passwordType = signal<'text' | 'password'>('password')
 
