@@ -1,1 +1,133 @@
-<p>stock-item-add works!</p>
+<section class="container">
+  <div class="p-3">
+    <button
+      class="btn btn-info w-100 mb-3"
+      (click)="openSearchProductModal(serachProduct)"
+    >
+      ค้นหาสินค้า
+    </button>
+    <!---->
+    <ul class="list-group">
+      @let currentProduct = selectedProduct(); @if (currentProduct !== null) {
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6>สินค้า</h6>
+        </div>
+        <div>
+          <span
+            ><div>
+              {{ currentProduct.goodName }}
+            </div>
+            <small>
+              {{ currentProduct.barCode }}
+            </small>
+          </span>
+        </div>
+      </li>
+
+      }
+      <!---->
+      @let curGP = gp();@if (curGP !== null) {
+      <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6>ทุนเดิม</h6>
+        </div>
+        <span>{{ curGP.dnCost }} </span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6>ทุนคำนวน</h6>
+        </div>
+        <span>
+          <input type="text" class="form-control" [(ngModel)]="dnCost" />
+        </span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6>ทุนใหม่</h6>
+        </div>
+        <span>
+          <input type="text" class="form-control" [(ngModel)]="newCost" />
+        </span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6>ขายส่ง 3</h6>
+        </div>
+        <span>{{ curGP.priceW3 }} </span>
+      </li>
+      }
+    </ul>
+  </div>
+</section>
+<ng-template #serachProduct let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">ค้นหาสินค้า</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body" style="max-height: 80vh; overflow-y: auto">
+    <div class="app-form-select">
+      <label for="mode"> ค้นหาจาก </label>
+      <select
+        name="mode"
+        id="mode"
+        [ngModel]="mode()"
+        (ngModelChange)="onModeChange($event)"
+      >
+        @for (item of modeList; track $index) {
+        <option [ngValue]="item.key">{{ item.label }}</option>
+        }
+      </select>
+    </div>
+    @if (mode() === 'goodCode') {
+    <div class="app-form-field">
+      <label for="good-code">รหัสสินค้า</label>
+      <input
+        type="text"
+        name="good-code"
+        id="good-code"
+        [ngModel]="search().goodCode"
+        (ngModelChange)="searchCode($event)"
+      />
+    </div>
+    }
+    <!---->
+    @if(mode() === 'goodName') {
+    <div class="app-form-field">
+      <label for="good-name">ชื่อสินค้า</label>
+      <input
+        type="text"
+        name="good-name"
+        id="good-name"
+        [ngModel]="search().goodName"
+        (ngModelChange)="searchName($event)"
+      />
+    </div>
+    }
+    <!---->
+    @let products = productList();
+    <!---->
+    @if (products.length !== 0) {
+    <!---->
+
+    @for (product of products; track product.goodCode) {
+    <div class="row mb-1">
+      <div class="col">({{ product.barCode }}) {{ product.goodName }}</div>
+      <div class="col-auto">
+        <button
+          class="btn btn-success btn-squre"
+          (click)="onAddProduct(product)"
+        >
+          <i class="bi bi-plus"></i>
+        </button>
+      </div>
+    </div>
+    } }
+  </div>
+</ng-template>
