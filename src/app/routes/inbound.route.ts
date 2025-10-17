@@ -6,6 +6,7 @@ import { SupplierLayoutComponent } from "../layout/supplier-layout/supplier-layo
 import { supplierCompResolver } from "../resolvers/Ibob/supplier-comp.resolver";
 import { SupplierFormViewComponent } from "../pages/supplier-project/supplier-form-view/supplier-form-view.component";
 import { SupplierHuService } from "../service/supplier/supplier-hu.service";
+import { compTypeResolver } from "../resolvers/Ibob/comp-type.resolver";
 
 export const DN_INBOUND_ROUTE: Route[] = [
     {
