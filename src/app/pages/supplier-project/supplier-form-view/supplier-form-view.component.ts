@@ -32,7 +32,6 @@ export class SupplierFormViewComponent implements OnInit, OnDestroy {
   readonly = signal(true)
 
   toggle = () => {
-    console.log('click')
     this.readonly.update(prev => !prev)
   }
   ngOnDestroy(): void {

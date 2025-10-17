@@ -72,54 +72,62 @@
   </div>
   @let contactForm = emplList();
   <!---->
-  <h5>sale</h5>
-  @for (c of contactForm; track $index) {
-  <div class="row align-items-end px-3 px-sm-0">
-    <div class="app-form-field col-sm">
-      <label [attr.for]="$index + 'emplName'">ชื่อ</label>
-      <input
-        type="text"
-        name="emplName"
-        [attr.id]="$index + 'emplName'"
-        [ngModel]="c.emplName"
-        (ngModelChange)="updateEmplName($event, $index)"
-        [readOnly]="readonly()"
-      />
-    </div>
-    <div class="app-form-field col-sm">
-      <label [attr.for]="$index + 'emplPhone'">โทรศัพท์</label>
-      <input
-        type="tel"
-        name="emplPhone"
-        [attr.id]="$index + 'emplPhone'"
-        [ngModel]="c.emplPhone"
-        (ngModelChange)="updateEmplPhone($event, $index)"
-        [readOnly]="readonly()"
-      />
-    </div>
-    <div class="app-form-field col-sm">
-      <label [attr.for]="$index + 'emplEmail'">Email</label>
-      <input
-        type="email"
-        name="emplEmail"
-        [attr.id]="$index + 'emplEmail'"
-        [ngModel]="c.emplEmail"
-        (ngModelChange)="updateEmplEmail($event, $index)"
-        [readOnly]="readonly()"
-      />
-    </div>
-    <div class="col-2 d-flex justify-content-between mb-3">
-      @if(contactForm.length !== 1) {
-      <button
-        class="btn btn-squre btn-danger"
-        [disabled]="readonly()"
-        (click)="removeContact($index)"
-      >
-        <i class="bi bi-dash"></i>
-      </button>
-      }
-      <!---->
-      @if ($index === contactForm.length-1) {
+  <div class="mb-2">sale</div>
+  <ul class="list-group">
+    @for (c of contactForm; track $index) {
+    <li class="list-group-item d-flex">
+      <span class="h-6 me-2" style="width: 1rem">{{ $index + 1 }}</span>
+      <div class="row align-items-end px-3 px-sm-0">
+        <div class="app-form-field col-sm">
+          <label [attr.for]="$index + 'emplName'">ชื่อ</label>
+          <input
+            type="text"
+            name="emplName"
+            [attr.id]="$index + 'emplName'"
+            [ngModel]="c.emplName"
+            (ngModelChange)="updateEmplName($event, $index)"
+            [readOnly]="readonly()"
+          />
+        </div>
+        <div class="app-form-field col-sm">
+          <label [attr.for]="$index + 'emplPhone'">โทรศัพท์</label>
+          <input
+            type="tel"
+            name="emplPhone"
+            [attr.id]="$index + 'emplPhone'"
+            [ngModel]="c.emplPhone"
+            (ngModelChange)="updateEmplPhone($event, $index)"
+            [readOnly]="readonly()"
+          />
+        </div>
+        <div class="app-form-field col-sm">
+          <label [attr.for]="$index + 'emplEmail'">Email</label>
+          <input
+            type="email"
+            name="emplEmail"
+            [attr.id]="$index + 'emplEmail'"
+            [ngModel]="c.emplEmail"
+            (ngModelChange)="updateEmplEmail($event, $index)"
+            [readOnly]="readonly()"
+          />
+        </div>
+        <div
+          class="col-sm-2 d-flex justify-content-end justify-content-sm-start mb-3"
+        >
+          <button
+            class="btn btn-squre btn-danger"
+            [disabled]="readonly() || contactForm.length === 1"
+            (click)="removeContact($index)"
+          >
+            <i class="bi bi-dash"></i>
+          </button>
+        </div>
+      </div>
+    </li>
+    }
+  </ul>
+  <div class="mb-2 px-3 py-2 d-flex justify-content-end">
+    <span>
       <button
         class="btn btn-squre btn-success"
         [disabled]="readonly()"
@@ -127,9 +135,6 @@
       >
         <i class="bi bi-plus"></i>
       </button>
-      }
-      <!---->
-    </div>
+    </span>
   </div>
-  }
 </div>
