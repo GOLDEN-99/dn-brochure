@@ -28,7 +28,7 @@ import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.reso
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
-import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
+import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, STOCK_ITEM_TOKEN, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
 import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
 import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
@@ -52,6 +52,7 @@ import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sa
 import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
 import { ibobLoginGuardGuard } from './guard/ibob-login-guard.guard';
 
+import { stockSetupResolver } from './resolvers/stock-item/stock-setup.resolver';
 
 export const routes: Routes = [
     {
@@ -367,6 +368,41 @@ export const routes: Routes = [
                 component: OtherIncomeReportComponent
             }
         ]
+    },
+    // stock item
+    {
+        path: 'stock-item',
+        component: PurchaseLayoutComponent,
+        providers: [
+            {
+                provide: TAB_TOKEN,
+                useValue: STOCK_ITEM_TOKEN
+            }
+        ],
+        children: [
+            {
+                path: '',
+                loadComponent() {
+                    return import('./pages/stock-item/stock-item-home/stock-item-home.component')
+                        .then(r => r.StockItemHomeComponent)
+                        .catch(ex => NotfoundComponent)
+                },
+            },
+            {
+                path: 'setup',
+                component: NotfoundComponent
+            },
+            {
+                path: 'report',
+                component: NotfoundComponent
+            }
+        ]
+    },
+    {
+        path: 'stock-item/add',
+        resolve: [stockSetupResolver],
+        loadComponent: () => import('./pages/stock-item/stock-item-add/stock-item-add.component')
+            .then(r => r.StockItemAddComponent).catch(ex => NotfoundComponent),
     },
     {
         path: "notfound",

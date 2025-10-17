@@ -1,7 +1,7 @@
 import { catchError, debounceTime, distinctUntilChanged, Observable, of, pipe, throwError } from "rxjs";
 import * as XLSX from "xlsx"
 
-export const catchErrorAndRethrow = () => catchError((err) => throwError(() => err))
+export const catchErrorAndRethrow = <T>() => catchError<T, Observable<never>>((err) => throwError(() => err))
 
 export const deepEqual = <T>(prev: T, current: T): boolean => {
     const tOfPrev = typeof prev
@@ -37,7 +37,7 @@ export const toManyXlxs = async (filename: string, sheetList: string[], data: an
     await XLSX.writeFileXLSX(wb, filename)
 }
 
-export const getOrElse = <In, Out>(fallback: Out) => catchError<In, Observable<Out>>((err) => {
+export const getOrElse = <In, Out = In>(fallback: Out) => catchError<In, Observable<Out>>((err) => {
     console.log(err);
     return of(fallback)
 })
