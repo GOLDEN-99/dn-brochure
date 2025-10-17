@@ -1,10 +1,9 @@
-import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
 import { FormsModule } from '@angular/forms';
 import { SupplierApiService } from '../../../service/supplier/supplier-api.service';
-import { TAuthFormState } from '../../../types/ibob-supplier.type';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { combineLatest, distinctUntilChanged, map, Observable, takeUntil } from 'rxjs';
+import { takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'app-auth-page',
@@ -13,6 +12,9 @@ import { combineLatest, distinctUntilChanged, map, Observable, takeUntil } from 
   styleUrl: './auth-page.component.scss'
 })
 export class AuthPageComponent extends BaseSupplierForm {
+
+  private supplierApiServ = inject(SupplierApiService)
+
   readonly = input(false)
   passwordType = signal<'text' | 'password'>('password')
 
@@ -23,10 +25,6 @@ export class AuthPageComponent extends BaseSupplierForm {
   updatePassword = this.updator('userpass')
   updateCompCode = this.updator('compCode')
   //
-  private supplierApiServ = inject(SupplierApiService)
-  compCode = this.supplierApiServ.selectedCode
-  compCode$ = toObservable(this.compCode)
-
 
 }
 

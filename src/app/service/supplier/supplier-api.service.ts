@@ -10,25 +10,41 @@ import { getOrElse } from '../../lib/utli';
 import { extractSaleName, itemMapper, normalizeComp, transformCompInfo } from './lib-ibob';
 
 export class SupplierApiService {
-  constructor(public compType: string) { }
+  constructor(public compType: string) {
+    console.log(compType)
+  }
   private url = environment.ibob
   private api = inject(ApiService)
-  private getCompCode = () => this.api.get<TGeneratedCompCode>(`${this.url}/GetCompInfoCreate`)
+  private getCompCode = this.api.get<TGeneratedCompCode>(`${this.url}/GetCompInfoCreate`)
   private refetch$ = new BehaviorSubject(true)
   refetch() {
     this.refetch$.next(true)
   }
-  generatedCode$ = this.refetch$.pipe(switchMap((val) => this.getCompCode()))
+  generatedCode$ = this.refetch$.pipe(switchMap((_) => this.getCompCode))
+
   generatedCode = toSignal(this.generatedCode$, { initialValue: null })
   selectedCode = computed(() => {
     const cur = this.generatedCode()
-    if (!cur) return 'มีข้อผิดพลาด'
+    if (!cur) {
+      console.log('not cannot get comp')
+      return 'มีข้อผิดพลาด'
+    }
+    console.log('comptype', this.compType)
     switch (this.compType) {
       case 'DN': return cur.dnCompCode
       case 'HU': return cur.compCode
       default: return 'มีข้อผิดพลาด'
     }
   })
+
+  selectedCode$ = this.generatedCode$.pipe(map(({ dnCompCode, compCode }) => {
+    console.log('comptype', this.compType)
+    switch (this.compType) {
+      case 'DN': return dnCompCode
+      case 'HU': return compCode
+      default: return 'มีข้อผิดพลาด'
+    }
+  }))
 
   createSupplier = (hu: Omit<THUCreate, 'compCode'>, dn: Omit<TDNCreate, 'compCode'>, item: TItem[]) => {
     const genComp = this.generatedCode()
@@ -51,7 +67,6 @@ export class SupplierApiService {
     return this.api.post(`${this.url}/CreateCompInfo`, { dn: null, hu: { ...req, compCode }, item }, {})
   }
 
-  private fetch$ = new BehaviorSubject('1')
 
   getCompInfoById(compCode: string) {
     this.singleCompCode.set(compCode)

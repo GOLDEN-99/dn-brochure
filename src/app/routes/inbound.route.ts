@@ -1,11 +1,10 @@
 import { Route } from "@angular/router";
-import { SUPPLIER_TOKEN } from "../lib";
-import { SupplierDnService } from "../service/supplier/supplier-dn.service";
+
 import { SupplierApiService } from "../service/supplier/supplier-api.service";
 import { SupplierLayoutComponent } from "../layout/supplier-layout/supplier-layout.component";
 import { supplierCompResolver } from "../resolvers/Ibob/supplier-comp.resolver";
 import { SupplierFormViewComponent } from "../pages/supplier-project/supplier-form-view/supplier-form-view.component";
-import { SupplierHuService } from "../service/supplier/supplier-hu.service";
+
 
 export const DN_INBOUND_ROUTE: Route[] = [
     {
@@ -19,16 +18,14 @@ export const DN_INBOUND_ROUTE: Route[] = [
         ],
         children: [
             {
-                // supplierApiService is injected here
                 path: '',
                 loadComponent: () =>
                     import('../pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
-                        .then(r => r.SupplierInhouseComponent),
+                        .then(r => r.SupplierInhouseComponent), // handle api generated comp code to form in this level
             },
             {
                 path: 'form',
                 component: SupplierLayoutComponent,
-                // resolve: { comp: compTypeResolver },
                 children: [
                     {
                         path: '',
@@ -57,11 +54,11 @@ export const DN_INBOUND_ROUTE: Route[] = [
             {
                 path: ':compCode',
                 component: SupplierLayoutComponent,
-                resolve: [supplierCompResolver],
+                resolve: [supplierCompResolver], // pre-fetch comp info by id
                 children: [
                     {
                         path: '',
-                        component: SupplierFormViewComponent
+                        component: SupplierFormViewComponent // handle api generated comp code to form in this level
                     },
                     {
                         path: 'product',
