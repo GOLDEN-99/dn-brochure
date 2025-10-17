@@ -48,7 +48,7 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   navigateComplete() {
-    this.router.navigate(['..', 'complete'], { relativeTo: this.route })
+    this.router.navigate(['complete'], { relativeTo: this.route })
   }
   private toast = inject(ToastService)
   compType = this.ibobApi.compType
