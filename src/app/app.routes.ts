@@ -53,6 +53,8 @@ import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
 import { ibobLoginGuardGuard } from './guard/ibob-login-guard.guard';
 
 import { stockSetupResolver } from './resolvers/stock-item/stock-setup.resolver';
+import { ibobCompTypeChildGuardGuard } from './guard/ibob-comp-type-child-guard.guard';
+import { ibobAuthGuard } from './guard/ibob-auth.guard';
 
 export const routes: Routes = [
     {
@@ -124,20 +126,20 @@ export const routes: Routes = [
             }
         ]
     },
+    //ib-ob manage reservation
     {
-        path: 'supplier/reserve',
-        title: 'SUPPLIER RESERVATION',
+        path: 'supplier/reserve/:compType',
+        title: (route, _) => `SUPPLIER RESERVATION ${route.paramMap.get('compType')?.toUpperCase() ?? ''}`,
+        canActivateChild: [ibobCompTypeChildGuardGuard, ibobAuthGuard],
         component: SupplierReserveLayoutComponent,
         children: [
             {
                 path: "",
-                canActivate: [ibobLoginGuardGuard],
                 component: SupplierReserveComponent
             },
             {
                 path: "add/:warehouse",
                 resolve: [getByWarehouseResolver],
-                canActivate: [ibobLoginGuardGuard],
                 loadComponent: () => import('./pages/supplier-project/supplier-reserve-add/supplier-reserve-add.component')
                     .then(r => r.SupplierReserveAddComponent)
             },
@@ -206,6 +208,7 @@ export const routes: Routes = [
     },
     ...DN_INBOUND_ROUTE,
     ...HU_INBOUND_ROUTE,
+    // other-income
     {
         path: 'other-income',
         title: 'รายได้อื่นๆ',
