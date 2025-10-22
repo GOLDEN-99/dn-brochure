@@ -1,4 +1,4 @@
-import { Component, computed, inject, Signal, signal } from '@angular/core';
+import { Component, computed, effect, inject, Signal, signal } from '@angular/core';
 import { StockItemApiService, TDNSaleResponse } from '../../../service/stock-item/stock-item-api.service';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -15,6 +15,18 @@ import { DecimalPipe } from '@angular/common';
   styleUrl: './stock-item-add.component.scss'
 })
 export class StockItemAddComponent {
+
+  constructor() {
+    const updateActualStock = effect(() => {
+      const exp = this.expcetTotalItemCount()
+      if (exp === null) {
+        this.stockOrder.set(0)
+      } else {
+        this.stockOrder.set(exp)
+      }
+    })
+  }
+  touch = signal(false)
   private stockItemServ = inject(StockItemApiService)
   private modalServ = inject(NgbModal)
   modeList = [{ key: "goodCode", label: 'รหัสสินค้า' }, { key: "goodName", label: "ชื่อสินค้า" }]
@@ -68,6 +80,7 @@ export class StockItemAddComponent {
     this.modalServ.dismissAll();
     this.stockItemServ.resetSearch();
     this.reset()
+    this.touch.set(true)
   }
   dnCost = signal(0)
   newCost = signal(0)
@@ -84,20 +97,6 @@ export class StockItemAddComponent {
     return null
   })
 
-
-
-  private _getMeanClass = (ref: Signal<number | null>) => (mean: number) => {
-    const selectedMean = ref()
-    if (mean === selectedMean && mean !== 0) return 'bg-success-subtle col p-2 text-success-emphasis'
-    return 'col p-2'
-  }
-
-
-
-  getCriteriaClass = (month: number) => {
-    const rawMonth = this.rawMonth()
-    return month === rawMonth ? 'list-group-item d-flex justify-content-between bg-success-subtle text-success-emphasis' : 'list-group-item d-flex justify-content-between'
-  }
   private histSale$ = this.selectedCode$
     .pipe(
       debounceTime(50),
@@ -125,7 +124,12 @@ export class StockItemAddComponent {
     const { short, long } = res
     return this._selectMean({ short, long })
   })
-  getSaleMeanClass = this._getMeanClass(this.selectSaleMean)
+
+  isReduceMonth = computed(() => {
+    const mean = this.selectSaleMean()
+    if (mean === null) return null
+    return mean < 100_000
+  })
 
   histSaleCount = computed(() => {
     const res = this.histSale()
@@ -143,7 +147,8 @@ export class StockItemAddComponent {
     const { short, long } = res
     return this._selectMean({ short, long })
   })
-  getDNCountMeanClass = this._getMeanClass(this.selectDNCount)
+
+  isComplete = computed(() => this.histSale() !== null && this.huItemCount() !== null)
 
   private _selectMean = ({ short, long }: { short: number, long: number }) => {
     if (long === 0) return short
@@ -165,14 +170,69 @@ export class StockItemAddComponent {
     const { short, long } = res
     return this._selectMean({ short, long })
   })
-  getHUCountMeanClass = this._getMeanClass(this.selectHUCount)
 
-  actualDNStock = signal(0)
-  totalDN = computed(() => Number(this.actualDNStock()) + 100)
-  actualHUStock = signal(0)
-  totalHU = computed(() => Number(this.actualHUStock()) + 100)
-
-  actualStockOrder = signal(0)
+  // reactive value
+  addedDNStock = signal(0)
+  addedDNPercent = computed(() => Number(this.addedDNStock()) + 100)
+  expectDNCount = computed(() => {
+    const dnCnt = this.selectDNCount()
+    const factor = this.addedDNPercent() / 100
+    if (dnCnt === null) return null
+    return factor * dnCnt
+  })
+  // reactive value
+  addedHUStock = signal(0)
+  addedHUPercent = computed(() => Number(this.addedHUStock()) + 100)
+  expectHUCount = computed(() => {
+    const huCnt = this.selectHUCount()
+    const factor = this.addedHUPercent() / 100
+    if (huCnt === null) return null
+    return factor * huCnt
+  })
+  rawItemCount = computed(() => {
+    let cnt = 0;
+    const dnCnt = this.selectDNCount()
+    if (dnCnt !== null) {
+      cnt += dnCnt
+    }
+    const huCnt = this.selectHUCount()
+    if (huCnt !== null) {
+      cnt += huCnt
+    }
+    return cnt
+  })
+  expectItemCount = computed(() => {
+    let cnt = 0;
+    const dnCnt = this.expectDNCount()
+    if (dnCnt !== null) {
+      cnt += dnCnt
+    }
+    const huCnt = this.expectHUCount()
+    if (huCnt !== null) {
+      cnt += huCnt
+    }
+    return cnt
+  })
+  totalItemCount = computed(() => {
+    const rawCnt = this.rawItemCount()
+    const useMonth = this.rawMonth()
+    if (useMonth === null) return null
+    const isReduced = this.isReduceMonth()
+    if (isReduced === null) return null
+    const calMonth = isReduced ? useMonth / 2 : useMonth
+    return Math.ceil(calMonth * rawCnt)
+  })
+  expcetTotalItemCount = computed(() => {
+    const rawCnt = this.expectItemCount()
+    const useMonth = this.rawMonth()
+    if (useMonth === null) return null
+    const isReduced = this.isReduceMonth()
+    if (isReduced === null) return null
+    const calMonth = isReduced ? useMonth / 2 : useMonth
+    return Math.ceil(calMonth * rawCnt)
+  })
+  // reactive value
+  stockOrder = signal<number>(0)
 
   modification = computed(() => {
     const res: TStockModification[] = []
@@ -197,7 +257,7 @@ export class StockItemAddComponent {
     let actualPerMonth = 0
     let actualTotal = 0
     const dnCnt = this.selectDNCount()
-    const actualDN = this.totalDN()
+    const actualDN = this.addedDNPercent()
     if (dnCnt !== null) {
       total += dnCnt
       res.push({ fieldName: 'dnCount', value: dnCnt, desc: 'จำนวนชิ้น DN', className: 'row py-2 px-3  bg-info-subtle' })
@@ -211,7 +271,7 @@ export class StockItemAddComponent {
 
     }
     const huCnt = this.selectHUCount()
-    const actualHU = this.totalHU()
+    const actualHU = this.addedHUPercent()
     if (huCnt !== null) {
       total += huCnt
       res.push({ fieldName: 'huCount', value: huCnt, desc: 'จำนวนชิ้น HU', className: 'row py-2 px-3  bg-primary-subtle' })
@@ -223,9 +283,9 @@ export class StockItemAddComponent {
       actualTotal += actualHUCount
       res.push({ fieldName: 'totalHUCount', value: actualHUCount, desc: 'จำนวนควรตุน HU (ชิ้น)', className: 'row py-2 px-3  bg-primary-subtle' })
     }
-    res.push({ fieldName: 'totalCount', value: total, desc: 'จำนวนสินค้า (ชิ้น/เดือน)', className: 'row py-2 px-3 ' })
+    res.push({ fieldName: 'totalCount', value: total, desc: 'จำนวนสินค้าขั้นต้น (ชิ้น/เดือน)', className: 'row py-2 px-3 ' })
     res.push({ fieldName: 'totalCountMonth', value: actualPerMonth, desc: 'จำนวนสินค้า (ชิ้น/เดือน)', className: 'row py-2 px-3 ' })
-    const stockOrderAmount = this.actualStockOrder()
+    const stockOrderAmount = this.stockOrder()
 
     res.push({ fieldName: 'actualOrder', value: stockOrderAmount, desc: 'จำนวนที่ตุนได้ (ชิ้น)', className: 'row py-2 px-3  bg-success-subtle' })
     if (actualPerMonth === 0) {
@@ -238,10 +298,24 @@ export class StockItemAddComponent {
 
   reset = () => {
     this.dnCost.set(0)
-    this.actualDNStock.set(0)
-    this.actualHUStock.set(0)
-    this.actualStockOrder.set(0)
+    this.addedDNStock.set(0)
+    this.addedHUStock.set(0)
+    this.stockOrder.set(0)
   }
+
+  private _getMeanClass = (ref: Signal<number | null>) => (mean: number) => {
+    const selectedMean = ref()
+    if (mean === selectedMean && mean !== 0) return 'bg-success-subtle col p-2 text-success-emphasis'
+    return 'col p-2'
+  }
+
+  getCriteriaClass = (month: number) => {
+    const rawMonth = this.rawMonth()
+    return month === rawMonth ? 'list-group-item d-flex justify-content-between bg-success-subtle text-success-emphasis' : 'list-group-item d-flex justify-content-between'
+  }
+  getSaleMeanClass = this._getMeanClass(this.selectSaleMean)
+  getDNCountMeanClass = this._getMeanClass(this.selectDNCount)
+  getHUCountMeanClass = this._getMeanClass(this.selectHUCount)
 }
 
 type TBaseProduct = {

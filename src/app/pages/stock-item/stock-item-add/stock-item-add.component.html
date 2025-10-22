@@ -70,34 +70,6 @@
             </div>
             <span>{{ curGP.priceW3 | number : "1.2-2" }} </span>
           </li>
-          <li
-            class="list-group-item d-flex justify-content-between lh-condensed"
-          >
-            <div>
-              <h6>% ขายเพิ่มก่อนปรับราคา DN</h6>
-            </div>
-            <span style="max-width: 50%">
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="actualDNStock"
-              />
-            </span>
-          </li>
-          <li
-            class="list-group-item d-flex justify-content-between lh-condensed"
-          >
-            <div>
-              <h6>% ขายเพิ่มก่อนปรับราคา HU</h6>
-            </div>
-            <span style="max-width: 50%">
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="actualHUStock"
-              />
-            </span>
-          </li>
           }
         </ul>
         <!--gp calculation-->
@@ -159,6 +131,21 @@
             <div>{{ histstorySale.long.totalMean | number : "1.2-2" }}</div>
           </span>
         </div>
+        }@else if(touch()){
+        <div class="placeholder-glow d-flex" style="flex-direction: column">
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-7" style="height: 24px"></span>
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-8" style="height: 24px"></span>
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-7" style="height: 24px"></span>
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-4" style="height: 24px"></span>
+          <span class="placeholder my-2 col-11" style="height: 24px"></span>
+          <span class="placeholder my-2 col-8" style="height: 24px"></span>
+          <span class="placeholder my-2 col-7" style="height: 24px"></span>
+          <span class="placeholder my-2 col-4" style="height: 24px"></span>
+        </div>
         }
       </div>
       <div class="col-md mb-3">
@@ -182,32 +169,91 @@
             <span> {{ dnCnt.long | number : "1.2-2" }} ชิ้น </span>
           </div>
         </div>
+        }@else if(touch()){
+        <div class="placeholder-glow d-flex" style="flex-direction: column">
+          <span class="placeholder my-2 col-7" style="height: 24px"></span>
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-8" style="height: 24px"></span>
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-11" style="height: 24px"></span>
+          <span class="placeholder my-2 col-7" style="height: 24px"></span>
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-4" style="height: 24px"></span>
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-8" style="height: 24px"></span>
+          <span class="placeholder my-2 col-7" style="height: 24px"></span>
+          <span class="placeholder my-2 col-4" style="height: 24px"></span>
+        </div>
         }
       </div>
       <div class="col-md mb-3">
         <h4>SP - LZ - HU (ชิ้น)</h4>
+        @let huCnt = huItemCount(); @if (huCnt !== null) {
         <ul class="list-group">
-          @let huCnt = huItemCount(); @if (huCnt !== null) { @for (cnt of
-          huCnt.list; track cnt.monthIndex+'-hu-item') {
+          @for (cnt of huCnt.list; track cnt.monthIndex+'-hu-item') {
           <li class="list-group-item d-flex justify-content-between">
             <span>{{ cnt.monthIndex }}</span>
             <span>{{ cnt.itemCount | number : "1.0-0" }}</span>
           </li>
           }
-          <div class="row mx-0">
-            <div [className]="getHUCountMeanClass(huCnt.short)">
-              <h6>จำนวนขายเฉลี่ย 3 เดือน</h6>
-              <span> {{ huCnt.short | number : "1.2-2" }} ชิ้น </span>
-            </div>
-            <div [className]="getHUCountMeanClass(huCnt.long)">
-              <h6>จำนวนขายเฉลี่ย 1 ปี</h6>
-              <span> {{ huCnt.long | number : "1.2-2" }} ชิ้น </span>
-            </div>
-          </div>
-          }
         </ul>
+        <div class="row mx-0">
+          <div [className]="getHUCountMeanClass(huCnt.short)">
+            <h6>จำนวนขายเฉลี่ย 3 เดือน</h6>
+            <span> {{ huCnt.short | number : "1.2-2" }} ชิ้น </span>
+          </div>
+          <div [className]="getHUCountMeanClass(huCnt.long)">
+            <h6>จำนวนขายเฉลี่ย 1 ปี</h6>
+            <span> {{ huCnt.long | number : "1.2-2" }} ชิ้น </span>
+          </div>
+        </div>
+        }@else if(touch()){
+        <div class="placeholder-glow d-flex" style="flex-direction: column">
+          <span class="placeholder my-2 col-7" style="height: 24px"></span>
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-8" style="height: 24px"></span>
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-11" style="height: 24px"></span>
+          <span class="placeholder my-2 col-7" style="height: 24px"></span>
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-4" style="height: 24px"></span>
+          <span class="placeholder my-2 col-6" style="height: 24px"></span>
+          <span class="placeholder my-2 col-8" style="height: 24px"></span>
+          <span class="placeholder my-2 col-7" style="height: 24px"></span>
+          <span class="placeholder my-2 col-4" style="height: 24px"></span>
+        </div>
+        }
       </div>
     </div>
+    @if (isComplete()) {
+
+    <div class="row mb-3">
+      <div class="col">
+        <div>
+          <h6>% ขายเพิ่มก่อนปรับราคา DN</h6>
+        </div>
+        <span style="max-width: 50%">
+          <input type="text" class="form-control" [(ngModel)]="addedDNStock" />
+        </span>
+      </div>
+      <div class="col">
+        <div>
+          <h6>% ขายเพิ่มก่อนปรับราคา HU</h6>
+        </div>
+        <span style="max-width: 50%">
+          <input type="text" class="form-control" [(ngModel)]="addedHUStock" />
+        </span>
+      </div>
+      <div class="col">
+        <div>
+          <h6>จำนวน stock จริง</h6>
+        </div>
+        <span style="max-width: 50%">
+          <input type="text" class="form-control" [(ngModel)]="stockOrder" />
+        </span>
+      </div>
+    </div>
+    <!--summary here-->
     @let summaryList = modification(); @if (summaryList.length !== 0) {
     <h4>สรุป</h4>
     @for (summary of summaryList; track summary.fieldName) {
@@ -215,7 +261,7 @@
       <div class="col">{{ summary.desc }}</div>
       <div class="col text-end">{{ summary.value }}</div>
     </div>
-    } }
+    } } }
   </div>
 </section>
 
