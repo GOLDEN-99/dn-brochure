@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../../service/toast/toast.service';
 import { LOGINABLE_TOKEN } from '../../../service/ibob/ibobToken';
 import { IbobAddService } from '../../../service/ibob/ibob-add.service';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, tap } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -25,8 +25,10 @@ export class SupplierLoginComponent {
   private route = inject(ActivatedRoute)
   private toast = inject(ToastService)
   private loginService = inject(LOGINABLE_TOKEN)
-  private compType$ = this.route.parent?.paramMap.pipe(map(p => p.get('compType')?.toUpperCase() ?? '')) ?? new BehaviorSubject('')
-  private compType = toSignal(this.compType$, { initialValue: '' })
+  private compType$ = this.route.parent?.paramMap.pipe(
+    map(p => p.get('compType')?.toUpperCase() ?? '')
+  )
+  compType = toSignal(this.compType$ ?? of(""), { initialValue: '' })
   loginForm = this.nnfb.group({
     user: this.nnfb.control('', Validators.required),
     password: this.nnfb.control('', Validators.required)
