@@ -21,7 +21,7 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.supplierService.selectedCode$
       .pipe(
-        tap(code => this.formData.update(prev => ({ ...prev, compCode: code }))),
+        tap(code => this.formData.update(prev => ({ ...prev, ...code }))),
         takeUntil(this.sub$)
       )
       .subscribe()

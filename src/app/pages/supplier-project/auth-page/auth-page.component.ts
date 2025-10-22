@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
 import { FormsModule } from '@angular/forms';
 import { SupplierApiService } from '../../../service/supplier/supplier-api.service';
@@ -21,10 +21,8 @@ export class AuthPageComponent extends BaseSupplierForm {
   togglePassword = () => this.passwordType.update(prev => prev === 'password' ? 'text' : 'password')
   formData = this.formService.formState
   private updator = this.formService.updator
-  updateUsername = this.updator('username')
   updatePassword = this.updator('userpass')
   updateCompCode = this.updator('compCode')
-  //
 
 }
 

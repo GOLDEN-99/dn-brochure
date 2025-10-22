@@ -38,11 +38,10 @@ export class SupplierApiService {
   })
 
   selectedCode$ = this.generatedCode$.pipe(map(({ dnCompCode, compCode }) => {
-    console.log('comptype', this.compType)
     switch (this.compType) {
-      case 'DN': return dnCompCode
-      case 'HU': return compCode
-      default: return 'มีข้อผิดพลาด'
+      case 'DN': return { username: '00' + dnCompCode.padStart(4, '0'), compCode: dnCompCode }
+      case 'HU': return { username: '01' + compCode.padStart(4, '0'), compCode }
+      default: return { username: '', compCode: 'มีข้อผิดพลาด' }
     }
   }))
 

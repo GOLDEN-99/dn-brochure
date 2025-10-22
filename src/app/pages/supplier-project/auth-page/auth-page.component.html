@@ -16,9 +16,8 @@
       type="text"
       name="username"
       id="username"
+      readonly
       [ngModel]="data.username"
-      (ngModelChange)="updateUsername($event)"
-      [readOnly]="readonly()"
     />
   </div>
   <div class="app-form-field">

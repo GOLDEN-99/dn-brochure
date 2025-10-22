@@ -65,9 +65,7 @@ export class SupplierFromService {
   formState = signal(this.initialState)
   invalidFormState = computed(() => {
     const { compCode, username, userpass, compGroupCode, compName, compName2, compAddr, compPhone } = this.formState()
-    const pattern = /^0[01]\d{4}$/;
-    const invaliduser = !pattern.test(username)
-    return compCode === '' || invaliduser || userpass === ''
+    return compCode === '' || username === '' || userpass === ''
       || compGroupCode === '' || compName === ''
       || compAddr === '' || compPhone === ''
       || compName2 === ''
