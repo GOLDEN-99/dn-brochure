@@ -14,11 +14,6 @@ export const DATE_RANGE_TOKEN = new InjectionToken<IDateRange>('date_range_token
   providedIn: 'root'
 })
 export class DateRangeService implements IDateRange {
-
-  constructor() {
-    const eff = effect(() => { console.log(this.formatFromDate()); console.log(this.formatToDate()) })
-  }
-
   private cal = inject(NgbCalendar)
   private today = this.cal.getToday()
 
