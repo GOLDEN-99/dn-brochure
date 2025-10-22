@@ -26,9 +26,7 @@ export class SupplierReserveAddComponent {
   private route = inject(ActivatedRoute)
   private router = inject(Router)
   createBackLink() {
-    const snap = this.route.snapshot
-    const compCode = snap.queryParamMap.getAll('compCode')
-    return this.router.createUrlTree(['supplier', 'reserve'], { queryParams: { compCode } })
+    return this.router.createUrlTree(['..', '..'], { queryParamsHandling: 'preserve', relativeTo: this.route }).toString()
   }
   warehouse = input<string>()
   private warehouseServ = inject(WarehouseService)
@@ -188,8 +186,7 @@ export class SupplierReserveAddComponent {
     const cmdList = timeSlot.map(partialAppliedReservation)
     forkJoin(cmdList).subscribe({
       next: res => {
-        res.forEach(console.log)
-        this.router.navigateByUrl('supplier/reserve')
+        this.router.navigate(['../..'], { relativeTo: this.route, queryParamsHandling: 'preserve' })
       },
       error: (err) => { console.error(err); }
     })

@@ -37,12 +37,6 @@ export const DN_INBOUND_ROUTE: Route[] = [
                         loadComponent: () => import('../pages/supplier-project/supplier-product-page/supplier-product-page.component')
                             .then(r => r.SupplierProductPageComponent)
                     },
-                    // {
-                    //     path: 'condition',
-                    //     loadComponent: () =>
-                    //         import('../pages/supplier-project/condition-page/condition-page.component')
-                    //             .then(r => r.ConditionPageComponent)
-                    // },
                     {
                         path: 'complete',
                         loadComponent: () =>
@@ -92,7 +86,6 @@ export const HU_INBOUND_ROUTE: Route[] = [
             {
                 path: 'form',
                 component: SupplierLayoutComponent,
-                // resolve: { comp: compTypeResolver },
                 children: [
                     {
                         path: '',
@@ -104,12 +97,6 @@ export const HU_INBOUND_ROUTE: Route[] = [
                         loadComponent: () => import('../pages/supplier-project/supplier-product-page/supplier-product-page.component')
                             .then(r => r.SupplierProductPageComponent)
                     },
-                    // {
-                    //     path: 'condition',
-                    //     loadComponent: () =>
-                    //         import('../pages/supplier-project/condition-page/condition-page.component')
-                    //             .then(r => r.ConditionPageComponent)
-                    // },
                     {
                         path: 'complete',
                         loadComponent: () =>
