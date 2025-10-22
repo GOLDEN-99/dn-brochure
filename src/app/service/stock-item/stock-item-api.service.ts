@@ -32,7 +32,7 @@ export class StockItemApiService {
   }
   private searchResult$ = this.searchProductTerm$.pipe(
     switchMap(t => this.searchProduct(t)),
-    getOrElse<TBaseProduct[]>([])
+    getOrElse<TBaseProduct[]>([]),
   )
   searchProductResult = toSignal(this.searchResult$, { initialValue: [] })
 
@@ -65,7 +65,8 @@ export class StockItemApiService {
     return this.api.get<TGPResponse>(`${this._stock_item_url}/good/${goodCode}`)
       .pipe(
         map(raw => this._formatCost(raw)),
-        getOrElse(null)
+        getOrElse(null),
+        startWith(null)
       )
   }
 
@@ -77,7 +78,8 @@ export class StockItemApiService {
           const praseLong = { totalMean: this._formatNumber(long.totalMean), countMean: this._formatNumber(long.countMean) }
           return { short: praseShort, long: praseLong, ...res }
         }),
-        getOrElse(null)
+        getOrElse(null),
+        startWith(null)
       )
   }
 
@@ -89,7 +91,8 @@ export class StockItemApiService {
           const praseLong = this._formatNumber(long.countMean)
           return { short: praseShort, long: praseLong, list: countList }
         }),
-        getOrElse(null)
+        getOrElse(null),
+        startWith(null)
       )
   }
 
