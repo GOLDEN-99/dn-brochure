@@ -4,9 +4,12 @@ import { TAppOrder, TComp, TCreateReservationReq, TDoor, TDoorMap, TEditableResa
 import { TDate } from "../../lib"
 import { TMaybe } from "../../types"
 import { NgbDate } from "@ng-bootstrap/ng-bootstrap"
+import { TAuthStorageKey } from "../local/local.service"
 
 export interface IIbObLogin {
     login: (req: TLoginReq) => Observable<TFormattedLoginResponse>
+    saveLogin: (user: TAuthStorageKey, res: TFormattedLoginResponse) => void
+    setAppState: ({ comp, order, token }: TFormattedLoginResponse) => void
 }
 
 export interface IIbObComp {

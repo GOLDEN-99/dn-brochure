@@ -2,12 +2,12 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, combineLatest, filter, map, of, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, filter, map, of, switchMap, tap, throwError } from 'rxjs';
 import { IIbObLogin, IIbObReserve } from './ibobToken';
 import { TAppOrder, TCreateReservationReq, TEditableResavation, TFormattedLoginResponse, TGetIbObRes, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot } from '../../types/ibob-supplier.type';
 import { convertToIso } from '../../lib';
 import { TMaybe } from '../../types';
-import { LocalService } from '../local/local.service';
+import { LocalService, TAuthStorageKey } from '../local/local.service';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { IbobQueryReservationService } from './ibob-query-reservation.service';
 import { DateRangeService } from './date-range-service.service';
@@ -47,11 +47,11 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
       : or
   ))
 
-  private saved = (user: string, { comp, token, order }: TFormattedLoginResponse) => {
+  saveLogin = (user: TAuthStorageKey, { comp, token, order }: TFormattedLoginResponse) => {
     this.storage.setLoginResponse(user)({ comp, token, order })
   }
 
-  private setAppState = ({ comp, order, token }: TFormattedLoginResponse) => {
+  setAppState = ({ comp, order, token }: TFormattedLoginResponse) => {
     this.currentComp.set(comp)
     this.orderList.set(order.map(o => ({ ...o, check: false, box: 0 })))
     this.token = token
@@ -66,8 +66,6 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
     return this.api.post<TLoginRes>(`${this.baseurl}/compSingIn`, req)
       .pipe(
         map(res => this.formatLoginRespose(res)),
-        tap(res => this.saved(req.user, res)),
-        tap(res => this.setAppState(res)),
       )
   }
 
@@ -125,9 +123,9 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
     return isLogin
   }
 
-  loadCompData = (compCode: string | null) => {
-    if (compCode === null) return
-    const data = this.storage.getLoginResponse(compCode)()
+  loadCompData = (compType: string | null, compCode: string | null) => {
+    if (compCode === null || compType === null) return
+    const data = this.storage.getLoginResponse({ compType, user: compCode })()
     if (!data) return
     const { comp, order, token } = data
     this.currentComp.set(comp)

@@ -26,8 +26,6 @@ export class LocalService {
 
   private setItem = (key: string, exp: () => number) =>
     (value: unknown) => {
-      console.log('set to local')
-      console.log(value)
       const txt = JSON.stringify({ data: value, exp: exp() })
       localStorage.setItem(key, txt)
     }
@@ -55,13 +53,18 @@ export class LocalService {
     return isBase64 ? str : ''
   }
 
-  setLoginResponse = (user: string, exp: () => number = () => this.addHour(12)) => this.setItem(`user-${user}`, exp)
-  getLoginResponse = (user: string) => this.getItem(loginPraser)(`user-${user}`)
+  setLoginResponse = ({ compType, user }: TAuthStorageKey, exp: () => number = () => this.addHour(12)) => this.setItem(`${compType.toLowerCase()}-${user}`, exp)
+  getLoginResponse = ({ compType, user }: TAuthStorageKey) => this.getItem(loginPraser)(`${compType.toLowerCase()}-${user}`)
 }
 
 type TBaseStorageItem<T> = {
   data: T
   exp: number
+}
+
+export type TAuthStorageKey = {
+  compType: string
+  user: string
 }
 
 
