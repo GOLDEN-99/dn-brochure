@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TMaybe } from '../../../types';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, debounce, debounceTime, filter, forkJoin, map, retry, Subject, switchMap, tap } from 'rxjs';
+import { combineLatest, debounce, debounceTime, filter, forkJoin, map, retry, startWith, Subject, switchMap, tap } from 'rxjs';
 import { DecimalPipe } from '@angular/common';
 
 
@@ -67,6 +67,7 @@ export class StockItemAddComponent {
     this.selectedProduct.set(product);
     this.modalServ.dismissAll();
     this.stockItemServ.resetSearch();
+    this.reset()
   }
   dnCost = signal(0)
   newCost = signal(0)
@@ -101,7 +102,11 @@ export class StockItemAddComponent {
     .pipe(
       debounceTime(50),
       switchMap(c => this.stockItemServ.getHistSale(c)),
-      tap(() => this._canFetch.next())
+      tap((res) => {
+        if (res !== null) {
+          this._canFetch.next()
+        }
+      })
     )
   histSale = toSignal(this.histSale$, { initialValue: null })
   histSaleTotal = computed(() => {
@@ -162,48 +167,81 @@ export class StockItemAddComponent {
   })
   getHUCountMeanClass = this._getMeanClass(this.selectHUCount)
 
-  realStockAmou = signal(0)
+  actualDNStock = signal(0)
+  totalDN = computed(() => Number(this.actualDNStock()) + 100)
+  actualHUStock = signal(0)
+  totalHU = computed(() => Number(this.actualHUStock()) + 100)
+
+  actualStockOrder = signal(0)
 
   modification = computed(() => {
     const res: TStockModification[] = []
     const riskPercent = this.riskPercent()
     const rawMonth = this.rawMonth()
     if (riskPercent !== null) {
-      //res.push(`ความเสี่ยง ${riskPercent} % คิดเป็น ${rawMonth} เดือน`)
-      res.push({ fieldName: 'riskPercent', value: riskPercent, desc: 'ความเสี่ยง' })
+      res.push({ fieldName: 'riskPercent', value: riskPercent, desc: 'ความเสี่ยง', className: 'row py-2 px-3 ' })
     }
     if (rawMonth === null) return res
     let calMonth = rawMonth
-    res.push({ fieldName: 'rawMonth', value: rawMonth, desc: 'เดือนขั้นต้น' })
+    res.push({ fieldName: 'rawMonth', value: rawMonth, desc: 'เดือนขั้นต้น', className: 'row py-2 px-3 ' })
     const mean = this.selectSaleMean()
     if (mean === null) return res
-    res.push({ fieldName: 'mean', value: mean, desc: 'ยอดขาย DN' })
+    res.push({ fieldName: 'mean', value: mean, desc: 'ยอดขาย DN', className: 'row py-2 px-3 ' })
     if (mean < 100000) {
-      //res.push(`ยอดขายย้อนหลังน้อยกว่า 100,000 คิด ${rawMonth / 2}`)
       calMonth = calMonth / 2
-      res.push({ fieldName: 'useMonth', value: calMonth, desc: 'ยอดขาย DN < 100,000 ปรับเดือนใช้' })
+      res.push({ fieldName: 'useMonth', value: calMonth, desc: 'ยอดขาย DN < 100,000 ปรับเดือนใช้', className: 'row py-2 px-3 text-danger' })
     } else {
-      res.push({ fieldName: 'useMonth', value: calMonth, desc: 'ยอดขาย DN >= 100,000 ไม่ปรับเดือนใช้' })
+      res.push({ fieldName: 'useMonth', value: calMonth, desc: 'ยอดขาย DN >= 100,000 ไม่ปรับเดือนใช้', className: 'row py-2 px-3 text-danger' })
     }
     let total = 0
+    let actualPerMonth = 0
+    let actualTotal = 0
     const dnCnt = this.selectDNCount()
+    const actualDN = this.totalDN()
     if (dnCnt !== null) {
       total += dnCnt
-      res.push({ fieldName: 'dnCount', value: dnCnt, desc: 'จำนวนชิ้น DN' })
+      res.push({ fieldName: 'dnCount', value: dnCnt, desc: 'จำนวนชิ้น DN', className: 'row py-2 px-3  bg-info-subtle' })
+      res.push({ fieldName: 'actualDNPercent', value: actualDN, desc: 'จำนวนที่ตุนเพิ่ม DN (%)', className: 'row py-2 px-3  bg-info-subtle' })
+      const actualDNMean = actualDN * dnCnt / 100
+      actualPerMonth += actualDNMean
+      res.push({ fieldName: 'actualDNMean', value: actualDNMean, desc: 'จำนวนควรตุน DN (ชิ้น/เดือน)', className: 'row py-2 px-3  bg-info-subtle' })
+      const actualDNCount = actualDNMean * calMonth
+      actualTotal += actualDNCount
+      res.push({ fieldName: 'totalDNCount', value: actualDNCount, desc: 'จำนวนคสรตุน DN (ชิ้น)', className: 'row py-2 px-3  bg-info-subtle' })
+
     }
     const huCnt = this.selectHUCount()
+    const actualHU = this.totalHU()
     if (huCnt !== null) {
       total += huCnt
-      res.push({ fieldName: 'dnCount', value: huCnt, desc: 'จำนวนชิ้น HU' })
+      res.push({ fieldName: 'huCount', value: huCnt, desc: 'จำนวนชิ้น HU', className: 'row py-2 px-3  bg-primary-subtle' })
+      res.push({ fieldName: 'actualHUPercent', value: actualHU, desc: 'จำนวนที่ตุนเพิ่ม HU (%)', className: 'row py-2 px-3  bg-primary-subtle' })
+      const actualHUMean = actualHU * huCnt / 100
+      actualPerMonth += actualHUMean
+      res.push({ fieldName: 'actualHUMean', value: actualHUMean, desc: 'จำนวนควรตุน HU (ชิ้น/เดือน)', className: 'row py-2 px-3  bg-primary-subtle' })
+      const actualHUCount = actualHUMean * calMonth;
+      actualTotal += actualHUCount
+      res.push({ fieldName: 'totalHUCount', value: actualHUCount, desc: 'จำนวนควรตุน HU (ชิ้น)', className: 'row py-2 px-3  bg-primary-subtle' })
     }
-    res.push({ fieldName: 'totalCount', value: total, desc: 'จำนวนสินค้า (ชิ้น/เดือน)' })
-    const stockAmount = Math.ceil(total * calMonth)
-    res.push({ fieldName: 'stockAmou', value: stockAmount, desc: 'จำนวนที่ควรตุน (ชิ้น)' })
-    const actual = this.realStockAmou()
-    res.push({ fieldName: 'actualStockAmou', value: actual, desc: 'จำนวนที่ตุนได้ (ชิ้น)' })
-    res.push({ fieldName: 'actualMonth', value: actual / total, desc: 'ตุนได้จริง (เดือน)' })
+    res.push({ fieldName: 'totalCount', value: total, desc: 'จำนวนสินค้า (ชิ้น/เดือน)', className: 'row py-2 px-3 ' })
+    res.push({ fieldName: 'totalCountMonth', value: actualPerMonth, desc: 'จำนวนสินค้า (ชิ้น/เดือน)', className: 'row py-2 px-3 ' })
+    const stockOrderAmount = this.actualStockOrder()
+
+    res.push({ fieldName: 'actualOrder', value: stockOrderAmount, desc: 'จำนวนที่ตุนได้ (ชิ้น)', className: 'row py-2 px-3  bg-success-subtle' })
+    if (actualPerMonth === 0) {
+      res.push({ fieldName: 'actualMonth', value: 'คำนวนไม่ได้', desc: 'ตุนได้จริง (เดือน)', className: 'row py-2 px-3  bg-success-subtle' })
+    } else {
+      res.push({ fieldName: 'actualMonth', value: stockOrderAmount / actualPerMonth, desc: 'ตุนได้จริง (เดือน)', className: 'row py-2 px-3  bg-success-subtle' })
+    }
     return res
   })
+
+  reset = () => {
+    this.dnCost.set(0)
+    this.actualDNStock.set(0)
+    this.actualHUStock.set(0)
+    this.actualStockOrder.set(0)
+  }
 }
 
 type TBaseProduct = {
@@ -218,4 +256,5 @@ type TStockModification<T = unknown> = {
   fieldName: string
   desc: string
   value: T
+  className: string
 }
