@@ -1,16 +1,17 @@
 import { Component, computed, effect, inject, Signal, signal } from '@angular/core';
 import { StockItemApiService, TDNSaleResponse } from '../../../service/stock-item/stock-item-api.service';
 import { FormsModule } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbSlide } from '@ng-bootstrap/ng-bootstrap';
 import { TMaybe } from '../../../types';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { combineLatest, debounce, debounceTime, filter, forkJoin, map, retry, startWith, Subject, switchMap, tap } from 'rxjs';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
+import { LoadingSkeletonComponent } from '../loading-skeleton.component';
 
 
 @Component({
   selector: 'app-stock-item-add',
-  imports: [FormsModule, DecimalPipe],
+  imports: [FormsModule, DecimalPipe, LoadingSkeletonComponent],
   templateUrl: './stock-item-add.component.html',
   styleUrl: './stock-item-add.component.scss'
 })
@@ -26,7 +27,7 @@ export class StockItemAddComponent {
       }
     })
   }
-  touch = signal(false)
+  touch = signal(true)
   private stockItemServ = inject(StockItemApiService)
   private modalServ = inject(NgbModal)
   modeList = [{ key: "goodCode", label: 'รหัสสินค้า' }, { key: "goodName", label: "ชื่อสินค้า" }]
