@@ -1,7 +1,7 @@
 <section class="container">
   <div class="p-3">
     <button
-      class="btn btn-info w-100 mb-3"
+      class="btn btn-info w-100 mb-3 btn-lg"
       (click)="openSearchProductModal(serachProduct)"
     >
       ค้นหาสินค้า
@@ -210,7 +210,7 @@
           <h6>จำนวน stock จริง</h6>
         </div>
         <span style="max-width: 50%">
-          <input type="text" class="form-control" [(ngModel)]="stockOrder" />
+          <input type="text" class="form-control" [(ngModel)]="actualStock" />
         </span>
       </div>
     </div>
@@ -224,6 +224,9 @@
     </div>
     } } }
   </div>
+  <button class="btn btn-success w-100 btn-lg" [disabled]="disableForm()">
+    บันทึก
+  </button>
 </section>
 
 <!--search product modal-->

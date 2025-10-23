@@ -1,11 +1,11 @@
 import { Component, computed, effect, inject, Signal, signal } from '@angular/core';
-import { StockItemApiService, TDNSaleResponse } from '../../../service/stock-item/stock-item-api.service';
+import { StockItemApiService } from '../../../service/stock-item/stock-item-api.service';
 import { FormsModule } from '@angular/forms';
-import { NgbModal, NgbSlide } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TMaybe } from '../../../types';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, debounce, debounceTime, filter, forkJoin, map, retry, startWith, Subject, switchMap, tap } from 'rxjs';
-import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
+import { combineLatest, debounceTime, filter, map, Subject, switchMap, tap } from 'rxjs';
+import { DecimalPipe, } from '@angular/common';
 import { LoadingSkeletonComponent } from '../loading-skeleton.component';
 
 
@@ -21,13 +21,14 @@ export class StockItemAddComponent {
     const updateActualStock = effect(() => {
       const exp = this.expcetTotalItemCount()
       if (exp === null) {
-        this.stockOrder.set(0)
+        this.actualStock.set(0)
       } else {
-        this.stockOrder.set(exp)
+        this.actualStock.set(exp)
       }
     })
   }
-  touch = signal(true)
+  touch = signal(false)
+  private _SALE_CUTOFF = 100_000
   private stockItemServ = inject(StockItemApiService)
   private modalServ = inject(NgbModal)
   modeList = [{ key: "goodCode", label: 'รหัสสินค้า' }, { key: "goodName", label: "ชื่อสินค้า" }]
@@ -67,7 +68,9 @@ export class StockItemAddComponent {
   gpPercent = computed(() => {
     const gp = this.gp()
     if (gp === null) return 0
-    const { priceW3, dnCost } = gp
+    const { priceW3 } = gp
+    const dnCost = this.dnCost()
+    if (dnCost === 0) return 100 // avoid waste division
     return (priceW3 - dnCost) / priceW3 * 100
   })
   riskPercent = computed(() => {
@@ -98,16 +101,15 @@ export class StockItemAddComponent {
     return null
   })
 
-  private histSale$ = this.selectedCode$
-    .pipe(
-      debounceTime(50),
-      switchMap(c => this.stockItemServ.getHistSale(c)),
-      tap((res) => {
-        if (res !== null) {
-          this._canFetch.next()
-        }
-      })
-    )
+  private histSale$ = this.selectedCode$.pipe(
+    debounceTime(50),
+    switchMap(c => this.stockItemServ.getHistSale(c)),
+    tap((res) => {
+      if (res !== null) {
+        this._canFetch.next()
+      }
+    })
+  )
   histSale = toSignal(this.histSale$, { initialValue: null })
   histSaleTotal = computed(() => {
     const res = this.histSale()
@@ -124,12 +126,6 @@ export class StockItemAddComponent {
     if (res === null) return null
     const { short, long } = res
     return this._selectMean({ short, long })
-  })
-
-  isReduceMonth = computed(() => {
-    const mean = this.selectSaleMean()
-    if (mean === null) return null
-    return mean < 100_000
   })
 
   histSaleCount = computed(() => {
@@ -171,7 +167,6 @@ export class StockItemAddComponent {
     const { short, long } = res
     return this._selectMean({ short, long })
   })
-
   // reactive value
   addedDNStock = signal(0)
   addedDNPercent = computed(() => Number(this.addedDNStock()) + 100)
@@ -190,18 +185,7 @@ export class StockItemAddComponent {
     if (huCnt === null) return null
     return factor * huCnt
   })
-  rawItemCount = computed(() => {
-    let cnt = 0;
-    const dnCnt = this.selectDNCount()
-    if (dnCnt !== null) {
-      cnt += dnCnt
-    }
-    const huCnt = this.selectHUCount()
-    if (huCnt !== null) {
-      cnt += huCnt
-    }
-    return cnt
-  })
+
   expectItemCount = computed(() => {
     let cnt = 0;
     const dnCnt = this.expectDNCount()
@@ -214,94 +198,24 @@ export class StockItemAddComponent {
     }
     return cnt
   })
-  totalItemCount = computed(() => {
-    const rawCnt = this.rawItemCount()
-    const useMonth = this.rawMonth()
-    if (useMonth === null) return null
-    const isReduced = this.isReduceMonth()
-    if (isReduced === null) return null
-    const calMonth = isReduced ? useMonth / 2 : useMonth
-    return Math.ceil(calMonth * rawCnt)
-  })
+
   expcetTotalItemCount = computed(() => {
     const rawCnt = this.expectItemCount()
     const useMonth = this.rawMonth()
     if (useMonth === null) return null
-    const isReduced = this.isReduceMonth()
-    if (isReduced === null) return null
-    const calMonth = isReduced ? useMonth / 2 : useMonth
+    const meanSale = this.selectSaleMean()
+    if (meanSale === null) return null
+    const calMonth = meanSale < this._SALE_CUTOFF ? useMonth / 2 : useMonth
     return Math.ceil(calMonth * rawCnt)
   })
   // reactive value
-  stockOrder = signal<number>(0)
-
-  modification = computed(() => {
-    const res: TStockModification[] = []
-    const riskPercent = this.riskPercent()
-    const rawMonth = this.rawMonth()
-    if (riskPercent !== null) {
-      res.push({ fieldName: 'riskPercent', value: riskPercent, desc: 'ความเสี่ยง', className: 'row py-2 px-3 ' })
-    }
-    if (rawMonth === null) return res
-    let calMonth = rawMonth
-    res.push({ fieldName: 'rawMonth', value: rawMonth, desc: 'เดือนขั้นต้น', className: 'row py-2 px-3 ' })
-    const mean = this.selectSaleMean()
-    if (mean === null) return res
-    res.push({ fieldName: 'mean', value: mean, desc: 'ยอดขาย DN', className: 'row py-2 px-3 ' })
-    if (mean < 100000) {
-      calMonth = calMonth / 2
-      res.push({ fieldName: 'useMonth', value: calMonth, desc: 'ยอดขาย DN < 100,000 ปรับเดือนใช้', className: 'row py-2 px-3 text-danger' })
-    } else {
-      res.push({ fieldName: 'useMonth', value: calMonth, desc: 'ยอดขาย DN >= 100,000 ไม่ปรับเดือนใช้', className: 'row py-2 px-3 text-danger' })
-    }
-    let total = 0
-    let actualPerMonth = 0
-    let actualTotal = 0
-    const dnCnt = this.selectDNCount()
-    const actualDN = this.addedDNPercent()
-    if (dnCnt !== null) {
-      total += dnCnt
-      res.push({ fieldName: 'dnCount', value: dnCnt, desc: 'จำนวนชิ้น DN', className: 'row py-2 px-3  bg-info-subtle' })
-      res.push({ fieldName: 'actualDNPercent', value: actualDN, desc: 'จำนวนที่ตุนเพิ่ม DN (%)', className: 'row py-2 px-3  bg-info-subtle' })
-      const actualDNMean = actualDN * dnCnt / 100
-      actualPerMonth += actualDNMean
-      res.push({ fieldName: 'actualDNMean', value: actualDNMean, desc: 'จำนวนควรตุน DN (ชิ้น/เดือน)', className: 'row py-2 px-3  bg-info-subtle' })
-      const actualDNCount = actualDNMean * calMonth
-      actualTotal += actualDNCount
-      res.push({ fieldName: 'totalDNCount', value: actualDNCount, desc: 'จำนวนคสรตุน DN (ชิ้น)', className: 'row py-2 px-3  bg-info-subtle' })
-
-    }
-    const huCnt = this.selectHUCount()
-    const actualHU = this.addedHUPercent()
-    if (huCnt !== null) {
-      total += huCnt
-      res.push({ fieldName: 'huCount', value: huCnt, desc: 'จำนวนชิ้น HU', className: 'row py-2 px-3  bg-primary-subtle' })
-      res.push({ fieldName: 'actualHUPercent', value: actualHU, desc: 'จำนวนที่ตุนเพิ่ม HU (%)', className: 'row py-2 px-3  bg-primary-subtle' })
-      const actualHUMean = actualHU * huCnt / 100
-      actualPerMonth += actualHUMean
-      res.push({ fieldName: 'actualHUMean', value: actualHUMean, desc: 'จำนวนควรตุน HU (ชิ้น/เดือน)', className: 'row py-2 px-3  bg-primary-subtle' })
-      const actualHUCount = actualHUMean * calMonth;
-      actualTotal += actualHUCount
-      res.push({ fieldName: 'totalHUCount', value: actualHUCount, desc: 'จำนวนควรตุน HU (ชิ้น)', className: 'row py-2 px-3  bg-primary-subtle' })
-    }
-    res.push({ fieldName: 'totalCount', value: total, desc: 'จำนวนสินค้าขั้นต้น (ชิ้น/เดือน)', className: 'row py-2 px-3 ' })
-    res.push({ fieldName: 'totalCountMonth', value: actualPerMonth, desc: 'จำนวนสินค้า (ชิ้น/เดือน)', className: 'row py-2 px-3 ' })
-    const stockOrderAmount = this.stockOrder()
-
-    res.push({ fieldName: 'actualOrder', value: stockOrderAmount, desc: 'จำนวนที่ตุนได้ (ชิ้น)', className: 'row py-2 px-3  bg-success-subtle' })
-    if (actualPerMonth === 0) {
-      res.push({ fieldName: 'actualMonth', value: 'คำนวนไม่ได้', desc: 'ตุนได้จริง (เดือน)', className: 'row py-2 px-3  bg-success-subtle' })
-    } else {
-      res.push({ fieldName: 'actualMonth', value: stockOrderAmount / actualPerMonth, desc: 'ตุนได้จริง (เดือน)', className: 'row py-2 px-3  bg-success-subtle' })
-    }
-    return res
-  })
+  actualStock = signal<number>(0)
 
   reset = () => {
     this.dnCost.set(0)
     this.addedDNStock.set(0)
     this.addedHUStock.set(0)
-    this.stockOrder.set(0)
+    this.actualStock.set(0)
   }
 
   private _getMeanClass = (ref: Signal<number | null>) => (mean: number) => {
@@ -317,7 +231,90 @@ export class StockItemAddComponent {
   getSaleMeanClass = this._getMeanClass(this.selectSaleMean)
   getDNCountMeanClass = this._getMeanClass(this.selectDNCount)
   getHUCountMeanClass = this._getMeanClass(this.selectHUCount)
+
+
+  disableForm = computed(() => !this.isComplete() || this.riskPercent() === null || this.rawMonth() === null || this.selectSaleMean() === null)
+
+  request = computed<TMaybe<TStockFormState>>(() => {
+    const gp = this.gp();
+    if (gp === null) return null
+    const { priceW3, goodCode } = gp
+    const oldCost = this.dnCost();
+    const newCost = this.newCost();
+    const saleMean = this.selectSaleMean()
+    const riskPercent = this.riskPercent()
+    if (riskPercent === null) return null
+    if (saleMean === null) return null
+    const dnSale = this.selectDNCount()
+    if (dnSale === null) return null
+    const huSale = this.selectHUCount()
+    if (huSale === null) return null
+    const rawMonth = this.rawMonth()
+    if (rawMonth === null) return null
+    const useMonth = saleMean < this._SALE_CUTOFF ? rawMonth / 2 : rawMonth
+    const dnUpsalePercent = this.addedDNPercent()
+    if (isNaN(dnUpsalePercent)) return null
+    const huUpsalePercent = this.addedHUPercent()
+    if (isNaN(huUpsalePercent)) return null
+    const actualStock = this.actualStock()
+
+    // computed value
+    const dnExpectCount = dnSale * dnUpsalePercent / 100
+    const huExpectCount = huSale * huUpsalePercent / 100
+    const totalCount = dnSale + huSale
+    const stockCount = Math.ceil(useMonth * totalCount)
+    const expectTotalCount = dnExpectCount + huExpectCount
+    const expectStockCount = Math.ceil(useMonth * expectTotalCount)
+    return {
+      goodCode, priceW3,
+      oldCost, newCost, riskPercent,
+      saleMean, rawMonth, useMonth,
+      dnSale, huSale,
+      dnUpsalePercent, huUpsalePercent,
+      actualStock,
+      // computed for display
+      dnExpectCount, huExpectCount,
+      totalCount, expectTotalCount,
+      stockCount, expectStockCount,
+    }
+  })
+
+
+  private _appReportHandler: Array<(state: TStockFormState) => TStockModification> = [
+    ({ riskPercent }) => ({ fieldName: 'riskPercent', value: riskPercent, desc: 'ความเสี่ยง', className: 'row py-2 px-3' }),
+    ({ rawMonth }) => ({ fieldName: 'rawMonth', value: rawMonth, desc: 'เดือนขั้นต้น', className: 'row py-2 px-3' }),
+    ({ saleMean }) => ({ fieldName: 'mean', value: saleMean, desc: 'ยอดขาย DN', className: 'row py-2 px-3' }),
+    ({ useMonth, saleMean }) => ({
+      fieldName: 'useMonth', value: useMonth, className: 'row py-2 px-3 text-danger',
+      desc: saleMean < this._SALE_CUTOFF ? 'ยอดขาย DN < 100,000 ปรับเดือนใช้' : 'ยอดขาย DN >= 100,000 ไม่ปรับเดือนใช้',
+    }),
+    // dn detail
+    ({ dnSale }) => ({ fieldName: 'dnSale', value: dnSale, desc: 'จำนวนชิ้น DN (ชิ้น/เดือน)', className: 'row py-2 px-3 bg-info-subtle' }),
+    ({ dnUpsalePercent }) => ({ fieldName: 'dnUpsalePercent', value: dnUpsalePercent, desc: 'จำนวนที่ตุนเพิ่ม DN (%)', className: 'row py-2 px-3 bg-info-subtle' }),
+    ({ dnExpectCount }) => ({ fieldName: 'dnExpectCount', value: dnExpectCount, desc: 'จำนวนควรตุน DN (ชิ้น/เดือน)', className: 'row py-2 px-3 bg-info-subtle' }),
+    ({ dnExpectCount, useMonth }) => ({ fieldName: 'dnStockCount', value: dnExpectCount * useMonth, desc: 'จำนวนควรตุน DN (ชิ้น)', className: 'row py-2 px-3  bg-info-subtle' }),
+    // hu detail
+    ({ huSale }) => ({ fieldName: 'huSale', value: huSale, desc: 'จำนวนชิ้น HU (ชิ้น/เดือน)', className: 'row py-2 px-3 bg-primary-subtle' }),
+    ({ huUpsalePercent }) => ({ fieldName: 'huUpsalePercent', value: huUpsalePercent, desc: 'จำนวนที่ตุนเพิ่ม HU (%)', className: 'row py-2 px-3 bg-primary-subtle' }),
+    ({ huExpectCount }) => ({ fieldName: 'huExpectCount', value: huExpectCount, desc: 'จำนวนควรตุน HU (ชิ้น/เดือน)', className: 'row py-2 px-3 bg-primary-subtle' }),
+    ({ huExpectCount, useMonth }) => ({ fieldName: 'huStockCount', value: huExpectCount * useMonth, desc: 'จำนวนควรตุน HU (ชิ้น)', className: 'row py-2 px-3 bg-primary-subtle' }),
+    // summary
+    ({ totalCount }) => ({ fieldName: 'totalCount', value: totalCount, desc: 'จำนวนสินค้าขั้นต้น (ชิ้น/เดือน)', className: 'row py-2 px-3 bg-success-subtle' }),
+    ({ expectTotalCount }) => ({ fieldName: 'expectTotalCount', value: expectTotalCount, desc: 'จำนวนสินค้า (ชิ้น/เดือน)', className: 'row py-2 px-3 bg-success-subtle' }),
+    ({ stockCount }) => ({ fieldName: 'stockCount', value: stockCount, desc: 'จำนวนที่ตุนได้ (ชิ้น)', className: 'row py-2 px-3 bg-success-subtle' }),
+    ({ actualStock }) => ({ fieldName: 'actualStock', value: actualStock, desc: 'จำนวนที่ตุนได้ (ชิ้น)', className: 'row py-2 px-3 bg-success-subtle' }),
+    ({ actualStock, useMonth }) => useMonth === 0
+      ? ({ fieldName: 'actualMonth', value: 'คำนวนไม่ได้', desc: 'ตุนได้จริง (เดือน)', className: 'row py-2 px-3 text-danger bg-success-subtle' })
+      : ({ fieldName: 'actualMonth', value: actualStock / useMonth, desc: 'ตุนได้จริง (เดือน)', className: 'row py-2 px-3  bg-success-subtle' }),
+  ]
+
+  modification = computed(() => {
+    const state = this.request()
+    if (state === null) return []
+    return this._appReportHandler.map(fn => fn(state))
+  })
 }
+
 
 type TBaseProduct = {
   goodCode: string
@@ -332,4 +329,28 @@ type TStockModification<T = unknown> = {
   desc: string
   value: T
   className: string
+}
+
+
+type TStockFormState = {
+  goodCode: string
+  priceW3: number
+  oldCost: number
+  newCost: number
+  riskPercent: number
+  saleMean: number // month from criteria
+  rawMonth: number // rawMonth || rawMonth/2
+  useMonth: number
+  dnSale: number
+  huSale: number
+  dnUpsalePercent: number
+  huUpsalePercent: number
+  actualStock: number
+  // computed for display
+  dnExpectCount: number
+  huExpectCount: number
+  totalCount: number
+  expectTotalCount: number
+  stockCount: number
+  expectStockCount: number
 }
