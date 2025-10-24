@@ -1,0 +1,114 @@
+<div style="background-color: white; padding: 1rem">
+  <div class="row">
+    <div class="app-form-field col-md">
+      <label for="barcode">รหัสสินค้า</label>
+      <input type="text" name="barcode" id="barcode" [(ngModel)]="barCode" />
+    </div>
+    <div class="app-form-select col-md">
+      <label for="duration">จำนวนเดือนตุน</label>
+      <select name="duration" id="duration" [(ngModel)]="duration">
+        <option [ngValue]="0" [disabled]="">กรุณาเลือก</option>
+        @for (duration of durationList(); track $index) {
+        <option [ngValue]="duration * 30">{{ duration }} เดือน</option>
+        }
+      </select>
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">วันที่บันทึก</th>
+        <th scope="col">รหัสสินค้า</th>
+        <th scope="col">ชื่อสินค้า</th>
+        <th scope="col">ค่าอะไรไม่รู้</th>
+        <th scope="col">stock ปัจจุบัน (ชิ้น)</th>
+        <th scope="col">ระยะเวลาตุน (เดือน)</th>
+        <th scope="col">จำนวนตุน (ชิ้น)</th>
+      </tr>
+    </thead>
+    @let stocks = stockList();@let hasStock = stocks.length !== 0;
+    <tbody>
+      @if (hasStock) { @for (stock of stocks; track stock.id) {
+      <tr>
+        <td scope="row">{{ stock.createAt }}</td>
+        <td>{{ stock.barCode }}</td>
+        <td>{{ stock.goodName }}</td>
+        <td></td>
+        <td></td>
+        <td>
+          <button
+            class="btn-outline-success btn-squre"
+            (click)="onSelectStock(stock, updateModal)"
+          >
+            <i class="bi bi-plus"></i>
+          </button>
+        </td>
+        <td>{{ stock.actualStock }} {{ stock.unitDesc }}</td>
+      </tr>
+      } } @else if (touch()) {
+      <ng-container *ngTemplateOutlet="loadingTable" />
+      }
+    </tbody>
+  </table>
+  @if (hasStock) {
+  <button
+    class="btn btn-success w-100 btn-lg"
+    style="margin-top: auto"
+    (click)="onExport()"
+  >
+    export
+  </button>
+  }
+</div>
+
+<ng-template #updateModal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">แก้ไขจำนวนตุน</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="onClose()"
+    ></button>
+  </div>
+  <div class="modal-body"></div>
+</ng-template>
+
+<ng-template #loadingTable>
+  <tr class="placeholder-glow">
+    <td scope="row"><span class="placeholder col-1"></span></td>
+    <td><span class="placeholder col-8"></span></td>
+    <td><span class="placeholder col-6"></span></td>
+    <td><span class="placeholder col-4"></span></td>
+    <td><span class="placeholder col-8"></span></td>
+    <td><span class="placeholder col-6"></span></td>
+    <td><span class="placeholder col-4"></span></td>
+  </tr>
+  <tr class="placeholder-glow">
+    <td scope="row"><span class="placeholder col-7"></span></td>
+    <td><span class="placeholder col-4"></span></td>
+    <td><span class="placeholder col-2"></span></td>
+    <td><span class="placeholder col-9"></span></td>
+    <td><span class="placeholder col-7"></span></td>
+    <td><span class="placeholder col-5"></span></td>
+    <td><span class="placeholder col-6"></span></td>
+  </tr>
+  <tr class="placeholder-glow">
+    <td scope="row"><span class="placeholder col-5"></span></td>
+    <td><span class="placeholder col-7"></span></td>
+    <td><span class="placeholder col-6"></span></td>
+    <td><span class="placeholder col-4"></span></td>
+    <td><span class="placeholder col-12"></span></td>
+    <td><span class="placeholder col-6"></span></td>
+    <td><span class="placeholder col-3"></span></td>
+  </tr>
+  <tr class="placeholder-glow">
+    <td scope="row"><span class="placeholder col-4"></span></td>
+    <td><span class="placeholder col-8"></span></td>
+    <td><span class="placeholder col-7"></span></td>
+    <td><span class="placeholder col-11"></span></td>
+    <td><span class="placeholder col-8"></span></td>
+    <td><span class="placeholder col-3"></span></td>
+    <td><span class="placeholder col-4"></span></td>
+  </tr>
+</ng-template>

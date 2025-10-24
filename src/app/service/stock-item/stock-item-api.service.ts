@@ -4,7 +4,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, of, retry, retryWhen, startWith, Subject, switchMap, tap } from 'rxjs';
 import { ApiService } from '../api/api.service';
 import { catchErrorAndRethrow, getOrElse } from '../../lib/utli';
-import { TStockSetup } from '../../types';
+import { TMaybe, TStockSetup } from '../../types';
 
 
 @Injectable({
@@ -96,6 +96,14 @@ export class StockItemApiService {
       )
   }
 
+  getManyStock = (params: TQueryManyStockRequest): Observable<Array<TQueryNewStockResponse>> =>
+    this.api.get<Array<TQueryNewStockResponse>>(`${this._stock_item_url}`, { params })
+      .pipe(
+        startWith([])
+      )
+
+  updateNewStock = ({ id, ...res }: TUpdateStockRequest) => this.api.post(`${this._stock_item_url}/${id}`, { ...res })
+
   private _formatCost = ({ goodCode, dnCost, priceW3 }: TGPResponse) => {
     const praseCost = this._formatNumber(dnCost)
     const prasePrice = this._formatNumber(priceW3)
@@ -149,3 +157,44 @@ export type TAppFormatList<T> = {
   long: number
   list: T[]
 }
+
+export type TStockState = {
+  goodCode: string
+  priceW3: number
+  oldCost: number
+  newCost: number
+  riskPercent: number
+  saleMean: number // month from criteria
+  rawMonth: number // rawMonth || rawMonth/2
+  useMonth: number
+  dnSale: number
+  huSale: number
+  dnUpsalePercent: number
+  huUpsalePercent: number
+  actualStock: number
+  // computed for display
+  dnExpectCount: number
+  huExpectCount: number
+  totalCount: number
+  expectTotalCount: number
+  stockCount: number
+  expectStockCount: number
+}
+
+type TCreateNewStock = Pick<TStockState, 'goodCode' | 'oldCost' | 'newCost' | 'priceW3' | 'riskPercent' | 'dnSale' | 'huSale' | 'dnUpsalePercent' | 'huUpsalePercent' | 'actualStock'>
+
+export type TQueryManyStockRequest = {
+  barCode: string
+  duration: number
+}
+
+export type TQueryNewStockResponse = {
+  id: number
+  goodName: string
+  barCode: string
+  unitDesc: string
+  createAt: string
+  updateAt: TMaybe<string>
+} & TCreateNewStock
+
+export type TUpdateStockRequest = Pick<TQueryNewStockResponse, 'id'>

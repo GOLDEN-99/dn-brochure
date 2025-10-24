@@ -53,6 +53,7 @@ import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
 import { ibobLoginGuardGuard } from './guard/ibob-login-guard.guard';
 
 import { stockSetupResolver } from './resolvers/stock-item/stock-setup.resolver';
+import { StockItemReportComponent } from './pages/stock-item/stock-item-report/stock-item-report.component';
 
 export const routes: Routes = [
     {
@@ -389,12 +390,8 @@ export const routes: Routes = [
                 },
             },
             {
-                path: 'setup',
-                component: NotfoundComponent
-            },
-            {
                 path: 'report',
-                component: NotfoundComponent
+                component: StockItemReportComponent
             }
         ]
     },
