@@ -55,6 +55,7 @@ import { ibobLoginGuardGuard } from './guard/ibob-login-guard.guard';
 import { stockSetupResolver } from './resolvers/stock-item/stock-setup.resolver';
 import { ibobCompTypeChildGuardGuard } from './guard/ibob-comp-type-child-guard.guard';
 import { ibobAuthGuard } from './guard/ibob-auth.guard';
+import { StockItemReportComponent } from './pages/stock-item/stock-item-report/stock-item-report.component';
 
 export const routes: Routes = [
     {
@@ -392,12 +393,8 @@ export const routes: Routes = [
                 },
             },
             {
-                path: 'setup',
-                component: NotfoundComponent
-            },
-            {
                 path: 'report',
-                component: NotfoundComponent
+                component: StockItemReportComponent
             }
         ]
     },

@@ -1,11 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, of, retry, retryWhen, startWith, Subject, switchMap, tap } from 'rxjs';
 import { ApiService } from '../api/api.service';
 import { catchErrorAndRethrow, getOrElse } from '../../lib/utli';
-import { TStockSetup } from '../../types';
-import { TSearchProductResult } from '../other-income/oi-product.service';
+import { TMaybe, TStockSetup } from '../../types';
+
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +32,7 @@ export class StockItemApiService {
   }
   private searchResult$ = this.searchProductTerm$.pipe(
     switchMap(t => this.searchProduct(t)),
-    getOrElse<TBaseProduct[]>([])
+    getOrElse<TBaseProduct[]>([]),
   )
   searchProductResult = toSignal(this.searchResult$, { initialValue: [] })
 
@@ -62,22 +62,139 @@ export class StockItemApiService {
   setup = toSignal(this.setup$, { initialValue: [] })
 
   getGoodGP = (goodCode: string) => {
-    if (goodCode === '') return of(null)
-    return this.api.get<TGPResponse>(`${this._stock_item_url}/good/${goodCode}`).pipe(getOrElse(null))
+    return this.api.get<TGPResponse>(`${this._stock_item_url}/good/${goodCode}`)
+      .pipe(
+        map(raw => this._formatCost(raw)),
+        getOrElse(null),
+        startWith(null)
+      )
   }
 
+  getHistSale = (goodCode: string) => {
+    return this.api.get<TDNSaleResponse>(`${this._stock_item_url}/sale/${goodCode}`)
+      .pipe(
+        map<TDNSaleResponse, TDNSaleResponse>(({ short, long, ...res }) => {
+          const praseShort = { totalMean: this._formatNumber(short.totalMean), countMean: this._formatNumber(short.countMean) }
+          const praseLong = { totalMean: this._formatNumber(long.totalMean), countMean: this._formatNumber(long.countMean) }
+          return { short: praseShort, long: praseLong, ...res }
+        }),
+        getOrElse(null),
+        startWith(null)
+      )
+  }
+
+  getHUSaleCount = (goodCode: string) => {
+    return this.api.get<THUSaleResponse>(`${this._stock_item_url}/hu-item-count/${goodCode}`)
+      .pipe(
+        map<THUSaleResponse, TAppFormatList<Omit<THistSaleRecordBase, 'subtotal'>>>(({ short, long, countList }) => {
+          const praseShort = this._formatNumber(short.countMean)
+          const praseLong = this._formatNumber(long.countMean)
+          return { short: praseShort, long: praseLong, list: countList }
+        }),
+        getOrElse(null),
+        startWith(null)
+      )
+  }
+
+  getManyStock = (params: TQueryManyStockRequest): Observable<Array<TQueryNewStockResponse>> =>
+    this.api.get<Array<TQueryNewStockResponse>>(`${this._stock_item_url}`, { params })
+      .pipe(
+        startWith([])
+      )
+
+  updateNewStock = ({ id, ...res }: TUpdateStockRequest) => this.api.post(`${this._stock_item_url}/${id}`, { ...res })
+
+  private _formatCost = ({ goodCode, dnCost, priceW3 }: TGPResponse) => {
+    const praseCost = this._formatNumber(dnCost)
+    const prasePrice = this._formatNumber(priceW3)
+    return { goodCode, dnCost: praseCost, priceW3: prasePrice }
+  }
+
+  private _formatNumber = (value: number) => Number(value.toFixed(2))
 }
 
 
-type TBaseProduct = {
+export type TBaseProduct = {
   goodCode: string
   goodName: string
   barCode: string
   goodStat: boolean
 }
 
-type TGPResponse = {
+export type TGPResponse = {
   goodCode: string
   dnCost: number
   priceW3: number
 }
+
+export type THistSaleRecordBase = {
+  monthIndex: number
+  subtotal: number
+  itemCount: number
+}
+
+
+export type TDNSummaryBase = {
+  totalMean: number
+  countMean: number
+}
+
+export type TDNSaleResponse = {
+  short: TDNSummaryBase
+  long: TDNSummaryBase
+  saleList: Omit<THistSaleRecordBase, 'itemCount'>[]
+  countList: Omit<THistSaleRecordBase, 'subtotal'>[]
+}
+
+export type THUSaleResponse = {
+  short: Pick<TDNSummaryBase, 'countMean'>
+  long: Pick<TDNSummaryBase, 'countMean'>
+  countList: Omit<THistSaleRecordBase, 'subtotal'>[]
+}
+
+export type TAppFormatList<T> = {
+  short: number
+  long: number
+  list: T[]
+}
+
+export type TStockState = {
+  goodCode: string
+  priceW3: number
+  oldCost: number
+  newCost: number
+  riskPercent: number
+  saleMean: number // month from criteria
+  rawMonth: number // rawMonth || rawMonth/2
+  useMonth: number
+  dnSale: number
+  huSale: number
+  dnUpsalePercent: number
+  huUpsalePercent: number
+  actualStock: number
+  // computed for display
+  dnExpectCount: number
+  huExpectCount: number
+  totalCount: number
+  expectTotalCount: number
+  stockCount: number
+  expectStockCount: number
+}
+
+type TCreateNewStock = Pick<TStockState, 'goodCode' | 'oldCost' | 'newCost' | 'priceW3' | 'riskPercent' | 'dnSale' | 'huSale' | 'dnUpsalePercent' | 'huUpsalePercent' | 'actualStock'>
+
+export type TQueryManyStockRequest = {
+  barCode: string
+  duration: number
+}
+
+export type TQueryNewStockResponse = {
+  id: number
+  goodName: string
+  barCode: string
+  unitDesc: string
+  createAt: string
+  updateAt: TMaybe<string>
+} & TCreateNewStock
+
+export type TUpdateStockRequest = Pick<TQueryNewStockResponse, 'id'>

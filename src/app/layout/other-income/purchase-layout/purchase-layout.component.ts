@@ -125,11 +125,6 @@ export const STOCK_ITEM_TOKEN = {
       exact: true
     },
     {
-      label: 'คำนวน',
-      link: './setup',
-      exact: false
-    },
-    {
       label: 'รายงาน',
       link: './report',
       exact: true
