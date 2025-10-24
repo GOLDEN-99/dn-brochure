@@ -1,7 +1,5 @@
-import { inject, Injectable } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TMapForm } from '../../types';
-import { TCondiBranch, TcondiReq, TCondiSup } from '../../types/ibob-supplier.type';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { TDNCreate, TEmplState, TFormState, THUCreate, TIbAppItem, TItem } from './shared.type';
 @Injectable({
   providedIn: 'root'
 })
@@ -9,253 +7,216 @@ export class SupplierFromService {
 
   constructor() { }
 
-  private fb = inject(FormBuilder)
-
-  private authForm = this.fb.nonNullable.group({
-    username: this.fb.nonNullable.control('', Validators.required),
-    userpass: this.fb.nonNullable.control("", Validators.required)
-  })
-
-  addGeneralContacForm = () => this.form.controls.general.controls.contact.push(
-    this.fb.nonNullable.group({
-      emplPhone: this.fb.nonNullable.control('', Validators.required),
-      emplName: this.fb.nonNullable.control("", Validators.required),
-      emplEmail: this.fb.nonNullable.control("")
-    })
-  )
-
-  removeGenralContactForm = (idx: number) =>
-    this.form.controls.general.controls.contact.removeAt(idx)
-
-
-  private generalForm: TGeneralForm = this.fb.nonNullable.group({
-    compName: this.fb.nonNullable.control('', Validators.required),
-    compName2: this.fb.nonNullable.control("", Validators.required),
-    compAddr: this.fb.nonNullable.control("", Validators.required),
-    contact: this.fb.nonNullable.array<TContacListForm>([this.fb.nonNullable.group({
-      emplPhone: this.fb.nonNullable.control("", Validators.required),
-      emplName: this.fb.nonNullable.control("", Validators.required),
-      emplEmail: this.fb.nonNullable.control("")
-    })], Validators.minLength(1)),
-    compEmail: this.fb.nonNullable.control("", Validators.required),
-    compFax: this.fb.nonNullable.control("", Validators.required),
-
-  })
-
-  addEmplList = () => this.form.controls.stepThree.controls.emplList.controls.push(
-    this.fb.nonNullable.group({
-      emplName: this.fb.nonNullable.control("", Validators.required),
-      emplEmail: this.fb.nonNullable.control("", Validators.required)
-    })
-  )
-
-  removeEmplList = (idx: number) => this.form.controls.stepThree.controls.emplList.removeAt(idx)
-
-  private emplListForm: TEmplListForm = this.fb.nonNullable.array([this.fb.nonNullable.group({
-    emplName: this.fb.nonNullable.control("", Validators.required),
-    emplEmail: this.fb.nonNullable.control("", Validators.required)
-  })], Validators.minLength(1))
-
-  private paymentForm: TPaymentForm = this.fb.nonNullable.group({
-    paymentTerms: this.fb.nonNullable.control(0, [Validators.required, Validators.min(0)]),
-    tradePerDisc: this.fb.nonNullable.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
-    cashPerDisc: this.fb.nonNullable.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
-    dcPerDisc: this.fb.nonNullable.control(0, [Validators.min(0), Validators.max(100), Validators.required]),
-  })
-
-
-  private stepThreeForm: TStep3Form = this.fb.nonNullable.group({
-    supplier: this.fb.nonNullable.control("", Validators.required),
-    comp: this.fb.nonNullable.group<TMapForm<TComp>>({
-      compGroupCode: this.fb.nonNullable.control("", [Validators.required]),
-      compName: this.fb.nonNullable.control("", Validators.required)
-    }),
-    shipTo: this.fb.nonNullable.control("", Validators.required),
-    orderRemark: this.fb.nonNullable.control("", Validators.required),
-    emplList: this.emplListForm,
-    payment: this.paymentForm,
-    tax: this.fb.nonNullable.group({
-      tax1: this.fb.nonNullable.control(false),
-      tax2: this.fb.nonNullable.control(false),
-      tax3: this.fb.nonNullable.control(false)
-    })
-  })
-
-  private returnForm: TReturnForm = this.fb.nonNullable.group({
-    before: this.fb.nonNullable.control(0),
-    after: this.fb.nonNullable.control(0),
-    whole: this.fb.nonNullable.control(false),
-    lot: this.fb.nonNullable.control(false),
-  })
-
-  private condiForm: TCondiForm = this.fb.nonNullable.group({})
-
-  addCondi = (key: 'sup' | 'branch') => () => {
-    const f: TReturnForm = this.fb.nonNullable.group({
-      before: this.fb.nonNullable.control(0, Validators.required),
-      after: this.fb.nonNullable.control(0, Validators.required),
-      whole: this.fb.nonNullable.control(false, Validators.required),
-      lot: this.fb.nonNullable.control(false, Validators.required),
-    })
-
-    this.form.controls.condi.addControl(key, f)
+  private initialState: TFormState = {
+    compCode: '',
+    compName: '',
+    compName2: '',
+    compAddr: '',
+    compFax: '',
+    compPhone: '',
+    compEmail: '',
+    compStat: '1',
+    compGroupCode: '',
+    compGroupDesc: '',
+    parentCompCode: '',
+    parentCompName: '',
+    shipTo: '',
+    orderRemark: '',
+    orderFileType: '',
+    cashPerDisc: 0,
+    dcPerDisc: 0,
+    tradePerDisc: 0,
+    paymentTerms: 30,
+    billIncludeVAT: false,
+    fixedPrice: false,
+    registered: false,
+    supReturn: false,
+    supFullBox: false,
+    supSameLot: false,
+    supMonthAfterExp: 0,
+    supMonthBeforeExp: 0,
+    stkReturn: false,
+    stkFullBox: false,
+    stkSameLot: false,
+    stkMonthAfterExp: 0,
+    stkMonthBeforeExp: 0,
+    username: '',
+    userpass: '',
+    updateDate: null,
+    sapUpdateDate: null,
+    timeStamp: null
   }
 
-  removeCondi = (key: 'sup' | 'branch') => () => {
-    this.form.controls.condi.removeControl(key)
-  }
+  item = signal<TIbAppItem[]>([]);
+  updateItem = <K extends keyof TIbAppItem>(key: K) => (value: TIbAppItem[K], index: number) =>
+    this.item.update(prev => prev.map((p, i) => i === index ? ({ ...p, [key]: value }) : p))
 
-  form: TForm = this.fb.nonNullable.group({
-    auth: this.authForm,
-    general: this.generalForm,
-    stepThree: this.stepThreeForm,
-    condi: this.condiForm
+  inintialEmpl: TEmplState = { emplEmail: '', emplName: '', emplPhone: '' }
+  emplList = signal<TEmplState[]>([this.inintialEmpl])
+  addEmpl = () => this.emplList
+    .update(prev => [...prev, this.inintialEmpl])
+  removeEmpl = (index: number) => this.emplList
+    .update(
+      prev => prev.filter((_, i) => i !== index)
+    )
+  updateEmpl = <K extends keyof TEmplState>(key: K) => (value: TEmplState[K], index: number) =>
+    this.emplList.update(prev => prev.map((p, i) => i === index ? ({ ...p, [key]: value }) : p))
+
+  formState = signal(this.initialState)
+  invalidFormState = computed(() => {
+    const { compCode, username, userpass, compGroupCode, compName, compName2, compAddr, compPhone } = this.formState()
+    return compCode === '' || username === '' || userpass === ''
+      || compGroupCode === '' || compName === ''
+      || compAddr === '' || compPhone === ''
+      || compName2 === ''
   })
+  updator = <K extends keyof TFormState>(key: K) =>
+    (value: TFormState[K]) => this.formState
+      .update(prev => ({ ...prev, [key]: value }))
 
-  getCondiSup = (): TCondiSup => {
-    const defaultValue = {
-      return: '0',
-      fullBox: '0',
-      sameLot: '0',
-      monthBeforExp: 0,
-      monthAfterExp: 0
-    }
-    const sup = this.form.controls.condi.get('sup') as TReturnForm | undefined
+  setCompCode = (compCode: string) => this.formState
+    .update(prev => ({ ...prev, compCode }))
 
-    if (!sup) {
-      return {
-        supReturn: defaultValue.return,
-        supFullBox: defaultValue.fullBox,
-        supSameLot: defaultValue.sameLot,
-        supMonthBeforeExp: defaultValue.monthBeforExp,
-        supMonthAfterExp: defaultValue.monthAfterExp
-      }
-    }
-    const { before, after, whole, lot } = sup.getRawValue()
+  resetForm = () => {
+    this.formState.set(this.initialState)
+    this.emplList.set([this.inintialEmpl])
+    this.item.set([])
+  }
+  get DNReq(): Omit<TDNCreate, 'compCode'> {
+    const base = this.formState()
     return {
-      supReturn: '1',
-      supFullBox: whole ? '1' : '0',
-      supSameLot: lot ? '1' : '0',
-      supMonthBeforeExp: before,
-      supMonthAfterExp: after
+      compName: base.compName,
+      compName2: base.compName2,
+      compAddr: base.compAddr,
+      compFax: base.compFax,
+      compEmail: base.compEmail,
+      compPhone: base.compPhone,
+      compGroupCode: base.compGroupCode,
+      parentCompCode: base.parentCompCode,
+      orderRemark: base.orderRemark,
+      compStat: '1',
+      paymentTerms: base.paymentTerms,
+      tradePerDisc: base.tradePerDisc,
+      dcPerDisc: base.dcPerDisc,
+      cashPerDisc: base.cashPerDisc,
+      billIncludeVAT: base.billIncludeVAT ? '1' : '0',
+      orderFileType: '', // '' for dn
+      timeStamp: null,
+      updateDate: null,
+      sapUpdateDate: null,
+      username: base.username,
+      userpass: base.userpass
     }
   }
+  get DNItem(): TItem[] {
+    const itemlist = this.item()
+    return itemlist.map(({
+      goodStat,
+      ...res
+    }) => ({
+      ...res,
+      goodStat: this.booleanAdapter(goodStat),
+      isShipTo: '0',
+      supReturn: '0',
+      supFullBox: '0',
+      supSameLot: '0',
+      supMonthBeforeExp: '0',
+      supMonthAfterExp: '0',
+      stkReturn: '0',
+      stkFullBox: '0',
+      stkSameLot: '0',
+      stkMonthBeforeExp: '0',
+      stkMonthAfterExp: '0',
+    }))
+  }
 
-  getCondiBranch = (): TCondiBranch => {
-    const defaultValue = {
-      return: '0',
-      fullBox: '0',
-      sameLot: '0',
-      monthBeforExp: 0,
-      monthAfterExp: 0
+  get HUItem(): TItem[] {
+    const itemlist = this.item()
+    return itemlist.map(({
+      goodCode,
+      goodStat,
+      isShipTo,
+      supReturn,
+      supFullBox,
+      supSameLot,
+      supMonthBeforeExp,
+      supMonthAfterExp,
+      stkReturn,
+      stkFullBox,
+      stkSameLot,
+      stkMonthBeforeExp,
+      stkMonthAfterExp,
+      ...res
+    }) => ({
+      ...res,
+      goodCode,
+      goodStat: this.booleanAdapter(goodStat),
+      isShipTo: String(isShipTo),
+      supReturn: this.booleanAdapter(supReturn),
+      supFullBox: this.booleanAdapter(supFullBox),
+      supSameLot: this.booleanAdapter(supSameLot),
+      supMonthAfterExp: String(supMonthAfterExp),
+      supMonthBeforeExp: String(supMonthAfterExp),
+      stkReturn: this.booleanAdapter(stkReturn),
+      stkFullBox: this.booleanAdapter(stkFullBox),
+      stkSameLot: this.booleanAdapter(stkSameLot),
+      stkMonthAfterExp: String(stkMonthAfterExp),
+      stkMonthBeforeExp: String(stkMonthAfterExp),
+    }))
+  }
+  private booleanAdapter = (value: boolean) => {
+    switch (value) {
+      case true: return '1'
+      case false: return '0'
     }
-    const sup = this.form.controls.condi.get('branch') as TReturnForm | undefined
-
-    if (!sup) {
-      return {
-        stkReturn: defaultValue.return,
-        stkFullBox: defaultValue.fullBox,
-        stkSameLot: defaultValue.sameLot,
-        stkMonthBeforeExp: defaultValue.monthBeforExp,
-        stkMonthAfterExp: defaultValue.monthAfterExp
-      }
-    }
-    const { before, after, whole, lot } = sup.getRawValue()
+  }
+  get HUReq(): Omit<THUCreate, 'compCode'> {
+    const base = this.formState()
+    const emplList = this.emplList()
+    const supReturn = base.stkReturn ? '1' : '0'
+    const supFullBox = base.supFullBox ? '1' : '0'
+    const supSameLot = base.supSameLot ? '1' : '0'
+    const supMonthBeforeExp = base.supMonthAfterExp ?? 0
+    const supMonthAfterExp = base.supMonthAfterExp ?? 0
+    const stkReturn = base.stkReturn ? '1' : '0'
+    const stkFullBox = base.stkFullBox ? '1' : '0'
+    const stkSameLot = base.stkSameLot ? '1' : '0'
+    const stkMonthBeforeExp = base.stkMonthBeforeExp ?? 0
+    const stkMonthAfterExp = base.stkMonthAfterExp ?? 0
     return {
-      stkReturn: '1',
-      stkFullBox: whole ? '1' : '0',
-      stkSameLot: lot ? '1' : '0',
-      stkMonthBeforeExp: before,
-      stkMonthAfterExp: after
+      compName: base.compName,
+      compName2: base.compName2,
+      compAddr: base.compAddr,
+      compFax: base.compFax,
+      compEmail: base.compEmail,
+      compPhone: base.compPhone,
+      compGroupCode: base.compGroupCode,
+      parentCompCode: base.parentCompCode,
+      orderRemark: base.orderRemark,
+      compStat: '1',
+      paymentTerms: base.paymentTerms,
+      tradePerDisc: base.tradePerDisc,
+      dcPerDisc: base.dcPerDisc,
+      cashPerDisc: base.cashPerDisc,
+      billIncludeVAT: base.billIncludeVAT ? '1' : '0',
+      orderFileType: 'Pdf', // '' for dn
+      timeStamp: null,
+      updateDate: null,
+      sapUpdateDate: null,
+      // same as dn
+      fixedPrice: base.fixedPrice ? '1' : '0',
+      registered: base.registered ? '1' : '0',
+      shipTo: base.shipTo,
+      saleName: emplList.flatMap(c => c.emplName !== "" ? [`${c.emplName} /${c.emplPhone} /${c.emplEmail} `] : []).join('|'),
+      supReturn, supFullBox, supSameLot, supMonthBeforeExp, supMonthAfterExp,
+      stkReturn, stkFullBox, stkSameLot, stkMonthBeforeExp, stkMonthAfterExp,
+      username: base.username,
+      userpass: base.userpass
     }
   }
 
-  getCondi = (): TcondiReq => {
-    const sup = this.getCondiSup()
-    const stk = this.getCondiBranch()
-    return {
-      ...sup,
-      ...stk,
-    }
-  }
+  disableSubmit = computed(() => this.item().length === 0 || this.invalidFormState())
 }
 
-type TAuthForm = FormGroup<{
-  username: FormControl<string>
-  userpass: FormControl<string>
-}>
 
-type TContacListForm = FormGroup<{
-  emplPhone: FormControl<string>
-  emplName: FormControl<string>
-  emplEmail: FormControl<string>
-}>
 
-type TComp = { compGroupCode: string, compName: string }
-
-type TCompForm = FormGroup<TMapForm<TComp>>
-
-type TGeneralForm = FormGroup<{
-  compName: FormControl<string>
-  compName2: FormControl<string>
-  compAddr: FormControl<string>
-  contact: FormArray<TContacListForm>
-  compFax: FormControl<string>
-  compEmail: FormControl<string>
-}>
-
-type TEmpl = {
-  emplName: string
-  emplEmail: string
-}
-type TEmplItemForm = FormGroup<TMapForm<TEmpl>>
-
-type TEmplListForm = FormArray<TEmplItemForm>
-
-type TSupplierPayment = {
-  paymentTerms: number
-  tradePerDisc: number
-  cashPerDisc: number
-  dcPerDisc: number
-}
-
-type TPaymentForm = FormGroup<TMapForm<TSupplierPayment>>
-
-type TTax = 1 | 2 | 3
-
-type TTaxForm = FormGroup<TMapForm<{
-  tax1: boolean
-  tax2: boolean
-  tax3: boolean
-}>>
-
-type TStep3Form = FormGroup<{
-  supplier: FormControl<string>
-  comp: TCompForm
-  orderRemark: FormControl<string>
-  shipTo: FormControl<string>
-  emplList: TEmplListForm
-  payment: TPaymentForm
-  tax: TTaxForm
-}>
-
-export type TReturnDetail = {
-  before: number
-  after: number
-  whole: boolean
-  lot: boolean
-}
-
-export type TReturnForm = FormGroup<TMapForm<TReturnDetail>>
-
-export type TCondiForm = FormGroup<{
-  sup?: TReturnForm
-  branch?: TReturnForm
-}>
-
-export type TForm = FormGroup<{
-  auth: TAuthForm
-  general: TGeneralForm
-  stepThree: TStep3Form
-  condi: TCondiForm
-}>

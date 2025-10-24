@@ -4,7 +4,11 @@
       <i class="bi bi-plus"></i>
       เพิ่มสินค้าจำหน่าย
     </button>
-    <button class="btn btn-outline-warning">
+    <button
+      class="btn btn-outline-warning"
+      (click)="onSetDefault()"
+      [disabled]="isDn()"
+    >
       <i class="bi bi-card-list"></i>
       กำหนดเงื่อนไขการคืนตามค่าเริ่มต้น
     </button>
@@ -12,18 +16,18 @@
       <i class="bi bi-trash"></i>
       ลบรายการสินค้ายกเลิก
     </button>
-    <button class="btn btn-info">
+    <button class="btn btn-outline-info">
       <i class="bi bi-floppy"></i>
       บันทึก
     </button>
+    <a role="button" class="btn btn-outline-secondary" routerLink="../">กลับ</a>
   </div>
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th>ราการสินค้า</th>
+        <th>รายการสินค้า</th>
         <th>รหัส</th>
         <th>ship to</th>
-        <th>ระงับ ship to</th>
         <th>ซับรับคืน</th>
         <th>ซับรับคืนก่อน Exp(ด)</th>
         <th>ซับรับคืนหลัง Exp(ด)</th>
@@ -37,78 +41,81 @@
       </tr>
     </thead>
     <tbody>
-      @let products = mock();
+      @let products = itemList();
       <!---->
       @for (p of products; track $index) {
       <tr>
-        <td>{{ p.name }}</td>
-        <td>{{ p.code }}</td>
+        <td [className]="getDangerStyle(p.goodStat)">{{ p.goodName }}</td>
+        <td [className]="getDangerStyle(p.goodStat)">{{ p.barCode }}</td>
         <td class="table-danger">
-          <input
-            class="form-check"
-            type="checkbox"
-            [ngModel]="p.shipTo"
-            (ngModelChange)="updateField('shipTo', $index)"
-          />
-        </td>
-        <td class="table-danger">
-          <input
-            class="form-check"
-            type="checkbox"
-            [ngModel]="p.cancelShipTo"
-            (ngModelChange)="updateField('cancelShipTo', $index)"
-          />
+          <select
+            name="isShipTo"
+            id="isShiptTo"
+            [ngModel]="p.isShipTo"
+            (ngModelChange)="updateItem('isShipTo')($event, $index)"
+            [disabled]="isDn()"
+          >
+            <option [ngValue]="0"></option>
+            <option [ngValue]="1">ship to</option>
+            <option [ngValue]="2">ระงับ ship to</option>
+          </select>
         </td>
         <td class="table-success">
           <input
             class="form-check"
             type="checkbox"
             [ngModel]="p.supReturn"
-            (ngModelChange)="updateField('supReturn', $index)"
+            (ngModelChange)="updateItem('supReturn')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
-        <td class="table-success"></td>
-        <td class="table-success"></td>
+        <td class="table-success">{{ p.supMonthBeforeExp }}</td>
+        <td class="table-success">{{ p.stkMonthAfterExp }}</td>
         <td class="table-success">
           <input
             class="form-check"
             type="checkbox"
-            [ngModel]="p.supLot"
-            (ngModelChange)="updateField('supLot', $index)"
+            [ngModel]="p.supSameLot"
+            (ngModelChange)="updateItem('supSameLot')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
         <td class="table-success">
           <input
             class="form-check"
             type="checkbox"
-            [ngModel]="p.supBox"
-            (ngModelChange)="updateField('supBox', $index)"
+            [ngModel]="p.supFullBox"
+            (ngModelChange)="updateItem('supFullBox')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
         <td class="table-info">
           <input
             class="form-check"
             type="checkbox"
-            [ngModel]="p.branchReturn"
-            (ngModelChange)="updateField('branchReturn', $index)"
+            [ngModel]="p.stkReturn"
+            (ngModelChange)="updateItem('stkReturn')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
-        <td class="table-info"></td>
-        <td class="table-info"></td>
+        <td class="table-info">{{ p.stkMonthBeforeExp }}</td>
+        <td class="table-info">{{ p.stkMonthAfterExp }}</td>
         <td class="table-info">
           <input
             class="form-check"
             type="checkbox"
-            [ngModel]="p.branchLot"
-            (ngModelChange)="updateField('branchLot', $index)"
+            [ngModel]="p.stkSameLot"
+            (ngModelChange)="updateItem('stkSameLot')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
         <td class="table-info">
           <input
             class="form-check"
             type="checkbox"
-            [ngModel]="p.branchBox"
-            (ngModelChange)="updateField('branchBox', $index)"
+            [ngModel]="p.stkFullBox"
+            (ngModelChange)="updateItem('stkFullBox')($event, $index)"
+            [disabled]="isDn()"
           />
         </td>
       </tr>
@@ -122,7 +129,45 @@
     title="เพิ่มสินค้าจำหน่าย"
     (crossClick)="modal.dismiss('Cross click')"
   >
-    <div modalBody>component here</div>
+    <div modalBody>
+      <div class="app-form-field">
+        <label for="barcode">บาร์โค้ด</label>
+        <input type="text" id="barcode" name="barcode" [(ngModel)]="barcode" />
+      </div>
+      <div class="app-form-field">
+        <label for="goodName">ชื่อสินค้า</label>
+        <input
+          type="text"
+          id="goodName"
+          name="goodName"
+          [(ngModel)]="goodName"
+        />
+      </div>
+      <div style="max-height: 45vh; overflow-y: auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width: 30%">บาร์โค้ด</th>
+              <th style="width: 50%">ชื่อสินค้า</th>
+              <th style="width: 20%"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (product of displayProduct(); track product.goodCode) {
+            <tr>
+              <td>{{ product.barCode }}</td>
+              <td>{{ product.goodName }}</td>
+              <td>
+                <button class="btn btn-success" (click)="onAddItem(product)">
+                  เพิ่ม
+                </button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
     <div modalFooter>
       <button class="btn btn-secondary" (click)="modal.close('Close modal')">
         Close

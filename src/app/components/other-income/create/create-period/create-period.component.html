@@ -1,0 +1,100 @@
+<div class="mb-3">
+  <div class="col-auto">
+    <button class="btn btn-primary w-100" (click)="openPeriod()">
+      สรุป period
+    </button>
+  </div>
+</div>
+
+<ng-template #periodModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">สรุป period</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="app-form-field-inline">
+      <div><label for="remark">ชื่อ period</label></div>
+      <div>
+        <input type="text" name="remark" id="remark" [(ngModel)]="remark" />
+      </div>
+    </div>
+    @let curEve = eventType(); @if (curEve === 1) {
+    <table class="table">
+      <thead>
+        <th>งวด</th>
+        <th>ยอดจริง</th>
+        <th>รายได้</th>
+        <th></th>
+      </thead>
+      <tbody>
+        @for (inc of incomeState(); track inc.id) {
+        <tr>
+          <td>
+            <div class="app-form-check m-0">
+              <input
+                type="checkbox"
+                [name]="inc.startDate + '-check'"
+                [id]="inc.checkDate + '-check'"
+                [ngModel]="inc.check"
+                (ngModelChange)="checkItem(inc.id)"
+              />
+            </div>
+          </td>
+          <td>{{ formateDate(inc.startDate) }}</td>
+          <td>{{ inc.actualAmount | number : "1.2-2" }}</td>
+          <td>{{ inc.incomeAmount | number : "1.2-2" }}</td>
+        </tr>
+        } @let summary = sum();
+        <tr>
+          <td colspan="2">รวม</td>
+          <td>{{ summary.totalAmount | number : "1.2-2" }}</td>
+          <td>{{ summary.totalIncome | number : "1.2-2" }}</td>
+        </tr>
+      </tbody>
+    </table>
+    }@else if (curEve === 3) {
+    <table class="table">
+      <thead>
+        <th>งวด</th>
+        <th>หมายเหตุ</th>
+        <th></th>
+      </thead>
+      <tbody>
+        @for (inc of incomeState(); track inc.id) {
+        <tr>
+          <td>
+            <div class="app-form-check m-0">
+              <input
+                type="checkbox"
+                [name]="inc.startDate + '-check'"
+                [id]="inc.checkDate + '-check'"
+                [ngModel]="inc.check"
+                (ngModelChange)="checkItem(inc.id)"
+              />
+            </div>
+          </td>
+          <td>{{ inc.reason }}</td>
+          <td>{{ inc.incomeAmount }}</td>
+        </tr>
+        } @let summary = sum();
+        <tr>
+          <td colspan="2">รวม</td>
+          <td>{{ summary.totalIncome }}</td>
+        </tr>
+      </tbody>
+    </table>
+    }@else {
+    <div>มีข้อผิดพลาด</div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary w-100" (click)="onAddPeriod()">
+      บันทึก
+    </button>
+  </div>
+</ng-template>

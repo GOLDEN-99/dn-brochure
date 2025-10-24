@@ -98,7 +98,7 @@
             : 'res-price-text text-center'
         "
       >
-        {{ priceTier.priceGold | number : "1.2-2" }}
+        {{ displayPrice() | number : "1.2-2" }}
       </div>
       <div
         [className]="

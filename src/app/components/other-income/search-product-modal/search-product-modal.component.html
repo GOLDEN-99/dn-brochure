@@ -29,26 +29,26 @@
           name="checkbox-product-all"
           id="checkbox-product-all"
           [ngModel]="isSelectAllItem()"
-          (ngModelChange)="selectAll()"
+          (ngModelChange)="selectAll($event)"
         />
       </div>
     </div>
     <div class="col">ทั้งหมด</div>
   </div>
-  @for (product of products; track $index) {
+  @for (product of products; track product.goodCode) {
   <div class="row">
     <div class="col-1">
       <div class="app-form-check">
         <input
           type="checkbox"
-          [attr.name]="'checkbox-product-' + $index"
-          [id]="'checkbox-product-' + $index"
+          [attr.name]="'checkbox-product-' + product.goodCode"
+          [id]="'checkbox-product-' + product.goodCode"
           [ngModel]="product.check"
-          (ngModelChange)="selectSomeProduct($index)"
+          (ngModelChange)="selectSomeProduct(product.goodCode)"
         />
       </div>
     </div>
-    <div class="col">{{ product.productName }}</div>
+    <div class="col">{{ product.goodName }}</div>
   </div>
   } }
 </div>

@@ -1,24 +1,28 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { SupplierApiService } from '../../../service/supplier/supplier-api.service';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'app-auth-page',
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './auth-page.component.html',
   styleUrl: './auth-page.component.scss'
 })
 export class AuthPageComponent extends BaseSupplierForm {
-  stepOneForm = this.formService.form.controls.auth
-  disable = () => this.stepOneForm.invalid || !this.stepOneForm.touched
-  passwordType = signal<'text' | 'password'>('password')
-
-  togglePassword = () => this.passwordType.update(prev => prev === 'password' ? 'text' : 'password')
 
   private supplierApiServ = inject(SupplierApiService)
 
-  comp = this.supplierApiServ.generatedCode
+  readonly = input(false)
+  passwordType = signal<'text' | 'password'>('password')
+
+  togglePassword = () => this.passwordType.update(prev => prev === 'password' ? 'text' : 'password')
+  formData = this.formService.formState
+  private updator = this.formService.updator
+  updatePassword = this.updator('userpass')
+  updateCompCode = this.updator('compCode')
 
 }
+

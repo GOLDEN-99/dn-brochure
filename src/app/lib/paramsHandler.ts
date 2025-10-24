@@ -1,5 +1,5 @@
 import { ActivatedRouteSnapshot } from "@angular/router";
-import { predicateEmpty, predicateNumber, predicatePromo, predicateString, predicateWhole, predicateZone } from "./predicate";
+import { predicateCompType, predicateEmpty, predicateNumber, predicatePromo, predicateString, predicateWhole, predicateZone } from "./predicate";
 
 export const paramsHandler = (key: string) => <T>(predicate: TPredicateFn<T>) => (route: ActivatedRouteSnapshot) => {
     const value = route.paramMap.get(key)
@@ -27,8 +27,12 @@ export const wholeHandler = paramsHandler('wholeType')(predicateWhole)
 export const tokenHandler = paramsHandler('token')(predicateString)
 export const wholeCodeHandler = paramsHandler('wholeCode')(predicateString)
 export const idPromotionHandler = paramsHandler('idPromotion')(predicateNumber)
+export const isWRRHandler = paramsHandler('isWRR')(predicateString)
 
 export const saleCodeHandler = paramsHandler('saleCode')(predicateString)
 export const wholeNumbHandler = paramsHandler('wholeNumb')(predicateString)
 export const zoneHandler = paramsHandler('zone')(predicateZone)
+export const headIdHandler = paramsHandler('headId')(predicateNumber)
+export const compCodeHandler = paramsHandler('compCode')(predicateString)
+export const compTypeHandler = paramsHandler('compType')(predicateCompType)
 

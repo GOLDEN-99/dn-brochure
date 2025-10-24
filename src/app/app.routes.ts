@@ -3,7 +3,7 @@ import { SearchPageComponent } from './pages/brochure-project/search-page/search
 import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
 import { NotfoundComponent } from './pages/notfound/notfound.component';
-import { BROCHURE_TOKEN } from './lib';
+import { BROCHURE_PRICE_TYPE_TOKEN, BROCHURE_TOKEN, OTHER_INCOME_PAGE_TOKEN } from './lib';
 import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
 import { cnResolver } from './resolvers/cn/cn.resolver';
 import { BaseBrochureComponent } from './pages/brochure-project/base-brochure/base-brochure.component';
@@ -11,38 +11,56 @@ import { CnComponent } from './pages/cn-project/cn/cn.component';
 import { ProchureService } from './service/brochure/prochure/prochure.service';
 import { MarketingService } from './service/brochure/marketing/marketing.service';
 import { cnGuard } from './guard/cn-guard.guard';
-import { SupplierLayoutComponent } from './layout/supplier-layout/supplier-layout.component';
-import { SupplierDnService } from './service/supplier/supplier-dn.service';
-import { SupplierHuService } from './service/supplier/supplier-hu.service';
+
 import { SupplierReserveLayoutComponent } from './layout/supplier-reserve-layout/supplier-reserve-layout.component';
 import { SupplierReserveComponent } from './pages/supplier-project/supplier-reserve/supplier-reserve.component';
 import { InOutLayoutComponent } from './layout/in-out-layout/in-out-layout.component';
 import { InOutViewComponent } from './pages/supplier-project/in-out-view/in-out-view.component';
 import { InOutEditComponent } from './pages/supplier-project/in-out-edit/in-out-edit.component';
 import { InOutListComponent } from './pages/supplier-project/in-out-list/in-out-list.component';
-import { RegisterPageComponent } from './pages/supplier-project/register-page/register-page.component';
+
 import { getByWarehouseResolver } from './resolvers/Ibob/get-by-warehouse.resolver';
 import { InOutNavComponent } from './layout/in-out-nav/in-out-nav.component';
 import { InOutAddComponent } from './pages/supplier-project/in-out-add/in-out-add.component';
 import { InOutDetailComponent } from './pages/supplier-project/in-out-detail/in-out-detail.component';
 import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.resolver';
-import { SUPPLIER_TOKEN } from './service/supplier/supplier.token';
-import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 
-import { FlashSaleCardComponent } from './components/brochure-card/flash-sale-card/flash-sale-card.component';
+import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
-import { PurchaseLayoutComponent } from './layout/other-income/purchase-layout/purchase-layout.component';
+import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, STOCK_ITEM_TOKEN, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
 import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
 import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
 import { PurchaseTemplateComponent } from './components/other-income/purchase-template/purchase-template.component';
 import { SpecialIncomeFormComponent } from './pages/other-income/purchase/special-income-form/special-income-form.component';
 
+import { OtherIncomeReportComponent } from './pages/other-income/other-income-report/other-income-report.component';
+import { BaseLayoutComponent, LABEL_TOKEN } from './layout/other-income/base-layout/base-layout.component';
+import { OtherIncomeLightFormComponent } from './components/other-income/form/other-income-light-form/other-income-light-form.component';
+import { OtherIncomeNotLightFormComponent } from './components/other-income/form/other-income-not-light-form/other-income-not-light-form.component';
+import { PurchasingLightHomeComponent } from './pages/other-income/purchase/purchasing-light-home/purchasing-light-home.component';
+import { getOtherIncomeLightIdResolver } from './resolvers/other-income/get-other-income-light-id.resolver';
+import { getOtherIncomeNotLightIdResolver } from './resolvers/other-income/get-other-income-not-light-id.resolver';
+import { NotLightSingleComponent } from './pages/other-income/purchase/not-light-single/not-light-single.component';
+import { LightSingleComponent } from './pages/other-income/purchase/light-single/light-single.component';
+import { AccountNotLightInvoiceComponent } from './pages/other-income/account/account-not-light-invoice.component';
+import { AccountNotLightProductComponent } from './pages/other-income/account/account-not-light-product.component';
+import { AccountLightBoxComponent } from './pages/other-income/account/account-light-box.component';
+import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
+
+import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
+import { ibobLoginGuardGuard } from './guard/ibob-login-guard.guard';
+
+import { stockSetupResolver } from './resolvers/stock-item/stock-setup.resolver';
+import { ibobCompTypeChildGuardGuard } from './guard/ibob-comp-type-child-guard.guard';
+import { ibobAuthGuard } from './guard/ibob-auth.guard';
+import { StockItemReportComponent } from './pages/stock-item/stock-item-report/stock-item-report.component';
+
 export const routes: Routes = [
     {
         path: 'flash-sale/:zone/:idPromotion',
-        component: FlashSaleCardComponent,
+        component: FlashSaleComponent,
         resolve: { fs: flashSaleResolver }
     },
     {
@@ -50,7 +68,8 @@ export const routes: Routes = [
         component: BaseBrochureComponent,
         resolve: { itemList: promotionResolver },
         providers: [
-            { provide: BROCHURE_TOKEN, useExisting: ProchureService }
+            { provide: BROCHURE_TOKEN, useExisting: ProchureService },
+            { provide: BROCHURE_PRICE_TYPE_TOKEN, useValue: { priceType: 'price' } }
         ]
     },
     {
@@ -58,11 +77,13 @@ export const routes: Routes = [
         component: BaseBrochureComponent,
         resolve: { itemList: marketingResolver },
         providers: [
-            { provide: BROCHURE_TOKEN, useExisting: MarketingService }
+            { provide: BROCHURE_TOKEN, useExisting: MarketingService },
+            { provide: BROCHURE_PRICE_TYPE_TOKEN, useValue: { priceType: 'priceGold' } }
         ]
     },
+    // cn
     {
-        path: "cn/:saleCode/:wholeCode/:wholeNumb",
+        path: "cn/:saleCode/:wholeCode/:wholeNumb/:isWRR",
         component: CnLayoutComponent,
         resolve: { wholeItem: cnResolver },
         children: [
@@ -106,42 +127,11 @@ export const routes: Routes = [
             }
         ]
     },
+    //ib-ob manage reservation
     {
-        path: 'supplier/form/product',
-        loadComponent: () => import('./pages/supplier-project/supplier-product-page/supplier-product-page.component')
-            .then(r => r.SupplierProductPageComponent)
-    },
-    {
-        path: 'supplier/form',
-        component: SupplierLayoutComponent,
-        children: [
-            {
-                path: '',
-                component: RegisterPageComponent
-            },
-            {
-                path: 'general',
-                loadComponent: () =>
-                    import('./pages/supplier-project/general-page/general-page.component')
-                        .then(r => r.GeneralPageComponent)
-            },
-            {
-                path: 'final',
-                loadComponent: () =>
-                    import('./pages/supplier-project/step-three-page/step-three-page.component')
-                        .then(r => r.StepThreePageComponent)
-            },
-            {
-                path: 'condition',
-                loadComponent: () =>
-                    import('./pages/supplier-project/condition-page/condition-page.component')
-                        .then(r => r.ConditionPageComponent)
-            }
-        ]
-    },
-    {
-        path: 'supplier/reserve',
-        title: 'DN SUPPLIER RESERVATION',
+        path: 'supplier/reserve/:compType',
+        title: (route, _) => `SUPPLIER RESERVATION ${route.paramMap.get('compType')?.toUpperCase() ?? ''}`,
+        canActivateChild: [ibobCompTypeChildGuardGuard, ibobAuthGuard],
         component: SupplierReserveLayoutComponent,
         children: [
             {
@@ -200,31 +190,26 @@ export const routes: Routes = [
                     {
                         path: 'query',
                         component: InOutQueryComponent
+                    },
+                    {
+                        path: 'add',
+                        loadComponent: () => import("./pages/supplier-project/ibob-admin-add/ibob-admin-add.component")
+                            .then(r => r.IbobAdminAddComponent)
+                            .catch((err) => NotfoundComponent),
+                    },
+                    {
+                        path: ':reserveId',
+                        loadComponent: () => import("./pages/supplier-project/ibob-admin-edit/ibob-admin-edit.component")
+                            .then(r => r.IbobAdminEditComponent)
+                            .catch((err) => NotfoundComponent),
                     }
                 ]
             }
         ]
     },
-    {
-        path: 'supplier/dn',
-        title: 'DN Inhouse',
-        loadComponent: () =>
-            import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
-                .then(r => r.SupplierInhouseComponent),
-        providers: [
-            { provide: SUPPLIER_TOKEN, useExisting: SupplierDnService }
-        ]
-    },
-    {
-        path: 'supplier/hu',
-        title: 'HU Inhouse',
-        loadComponent: () =>
-            import('./pages/supplier-project/supplier-inhouse/supplier-inhouse.component')
-                .then(r => r.SupplierInhouseComponent),
-        providers: [
-            { provide: SUPPLIER_TOKEN, useExisting: SupplierHuService }
-        ]
-    },
+    ...DN_INBOUND_ROUTE,
+    ...HU_INBOUND_ROUTE,
+    // other-income
     {
         path: 'other-income',
         title: 'รายได้อื่นๆ',
@@ -232,10 +217,20 @@ export const routes: Routes = [
             {
                 path: 'purchase',
                 component: PurchaseLayoutComponent,
+                providers: [
+                    {
+                        provide: TAB_TOKEN,
+                        useValue: PURCHASE_TAB_TOKEN
+                    }
+                ],
                 children: [
                     {
-                        path: '',
+                        path: 'not-light',
                         component: PurchaseHomeComponent
+                    },
+                    {
+                        path: 'light',
+                        component: PurchasingLightHomeComponent
                     },
                     {
                         path: 'report',
@@ -244,22 +239,170 @@ export const routes: Routes = [
                 ]
             },
             {
-                path: 'purchase/create',
-                component: PurchaseIncomeFormComponent
+                path: 'purchase/not-light/create',
+                component: BaseLayoutComponent,
+                providers: [
+                    {
+                        provide: LABEL_TOKEN,
+                        useValue: { label: "รายได้อื่นๆ" }
+                    }
+                ],
+                children: [
+                    {
+                        path: "",
+                        component: PurchaseIncomeFormComponent
+                    },
+                    {
+                        path: ":headId",
+                        component: OtherIncomeNotLightFormComponent
+                    }
+                ]
             },
             {
-                path: 'purchase/create-special',
-                component: SpecialIncomeFormComponent
+                path: 'purchase/light/create',
+                component: BaseLayoutComponent,
+                providers: [
+                    {
+                        provide: LABEL_TOKEN,
+                        useValue: { label: "รายได้อื่นๆ light box" }
+                    },
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: true }
+                    }
+                ],
+                children: [
+                    {
+                        path: "",
+                        component: SpecialIncomeFormComponent
+                    },
+                    {
+                        path: ":headId",
+                        component: OtherIncomeLightFormComponent
+                    }
+                ]
             },
             {
-                path: 'purchase/:id',
+                path: 'purchase/light/:headId',
+                resolve: { single: getOtherIncomeLightIdResolver },
+                providers: [
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: true }
+                    }
+                ],
+                component: LightSingleComponent
+            },
+            {
+                path: 'purchase/not-light/:headId',
+                resolve: { single: getOtherIncomeNotLightIdResolver },
+                providers: [
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: true }
+                    }
+                ],
+                component: NotLightSingleComponent
+            },
+            {
+                path: "account",
+                component: PurchaseLayoutComponent,
+                providers: [
+                    {
+                        provide: TAB_TOKEN,
+                        useValue: ACCOUNT_TAB_TOKEN
+                    },
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: false }
+                    }
+                ],
+                children: [
+                    {
+                        path: 'not-light',
+                        component: AccountNotLightInvoiceComponent
+                    },
+                    {
+                        path: 'not-light-product',
+                        component: AccountNotLightProductComponent
+                    },
+                    {
+                        path: 'light',
+                        component: AccountLightBoxComponent
+                    },
+                    {
+                        path: 'report',
+                        component: OtherIncomeReportComponent
+                    }
+                ]
+            },
+            {
+                path: 'account/light/:headId',
+                resolve: { single: getOtherIncomeLightIdResolver },
+                providers: [
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: false }
+                    }
+                ],
+                component: LightSingleComponent
+            },
+            {
+                path: 'account/not-light/:headId',
+                resolve: { single: getOtherIncomeNotLightIdResolver },
+                providers: [
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: false }
+                    }
+                ],
+                component: NotLightSingleComponent
+            },
+            // {
+            //     path: 'account/not-light-product/:headId',
+            //     resolve: { single: getOtherIncomeNotLightIdResolver },
+            //     component: NotLightSingleComponent
+            // },
+            {
+                path: "account/:id",
                 component: PurchaseTemplateComponent
             },
             {
-                path: 'purchase/:id/edit',
-                component: PurchaseTemplateComponent
+                path: "report/:year",
+                component: OtherIncomeReportComponent
             }
         ]
+    },
+    // stock item
+    {
+        path: 'stock-item',
+        component: PurchaseLayoutComponent,
+        providers: [
+            {
+                provide: TAB_TOKEN,
+                useValue: STOCK_ITEM_TOKEN
+            }
+        ],
+        children: [
+            {
+                path: '',
+                loadComponent() {
+                    return import('./pages/stock-item/stock-item-home/stock-item-home.component')
+                        .then(r => r.StockItemHomeComponent)
+                        .catch(ex => NotfoundComponent)
+                },
+            },
+            {
+                path: 'report',
+                component: StockItemReportComponent
+            }
+        ]
+    },
+    {
+        path: 'stock-item/add',
+        resolve: [stockSetupResolver],
+        loadComponent: () => import('./pages/stock-item/stock-item-add/stock-item-add.component')
+            .then(r => r.StockItemAddComponent).catch(ex => NotfoundComponent),
     },
     {
         path: "notfound",

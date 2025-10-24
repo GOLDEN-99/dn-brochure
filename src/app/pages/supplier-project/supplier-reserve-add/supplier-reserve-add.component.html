@@ -58,7 +58,7 @@
 </div>
 <!---->
 @let total = totalBox();
-<form class="reserve-form p-3 rounded">
+<div class="reserve-form p-3 rounded">
   @let c = comp ();
   <!---->
   @if (c) {
@@ -81,6 +81,43 @@
     <input type="tel" name="tel" id="tel" [value]="c.compPhone" disabled />
   </div>
   }
+  <div class="app-form-field">
+    <label for="contact-name">ชื่อผู้ติดต่อ</label>
+    <input
+      type="text"
+      name="contact-name"
+      id="contact-name"
+      [(ngModel)]="contactName"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="contact-phone">เบอร์ติดต่อ</label>
+    <input
+      type="tel"
+      name="contact-phone"
+      id="contact-phone"
+      [(ngModel)]="phoneNumber"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="truck-plate">ทะเบียน</label>
+    <input
+      type="text"
+      name="truck-plate"
+      id="truck-plate"
+      [(ngModel)]="truckLicensePlate"
+    />
+  </div>
+  <div class="app-form-select">
+    <label for="truck-type">ประเภทรถ</label>
+    <select name="truck-type" id="truck-type" [(ngModel)]="truckType">
+      <option value="" disabled>กรุณาเลือก</option>
+      @for (tt of truckTypeList; track $index) {
+      <option value="tt">{{ tt }}</option>
+      }
+    </select>
+  </div>
+
   <div>เลขที่ใบสั่งซื้อ (PO)</div>
   <div class="ps-3">
     @for (order of poList(); track $index) {
@@ -143,7 +180,11 @@
   >
     จอง
   </button>
-  <a routerLink="/supplier/reserve" role="button" class="btn btn-danger w-100"
+  <a
+    routerLink="../../"
+    queryParamsHandling="preserve"
+    role="button"
+    class="btn btn-danger w-100"
     >กลับ</a
   >
-</form>
+</div>

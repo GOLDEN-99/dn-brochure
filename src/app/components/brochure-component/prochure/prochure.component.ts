@@ -1,5 +1,5 @@
 import { Component, computed, effect, input, ViewEncapsulation } from '@angular/core';
-import { TBorchureHead, TCardProps, TItem, TWhole, TZone } from '../../../types';
+import { TBorchureHead, TCardProps, TItem, TPrice, TWhole, TZone } from '../../../types';
 import { zoneToColor } from '../../../lib';
 import { ProchureCardComponent } from '../../brochure-card/prochure-card/prochure-card.component';
 import { BrochureCardSpecialComponent } from '../../brochure-card/brochure-card-special/brochure-card-special.component';
@@ -14,14 +14,12 @@ import { BrochureCardSpecialComponent } from '../../brochure-card/brochure-card-
   encapsulation: ViewEncapsulation.None
 })
 export class ProchureComponent {
-  constructor() {
-    const eff = effect(() => console.log(this.itemList()))
-  }
   //props
   itemList = input.required<TItem[]>()
   size = input.required<8 | 12>()
   head = input.required<TBorchureHead>()
   isStatic = input(false)
+  priceType = input.required<keyof TPrice>()
   //computed
   isNewCustomer = computed(() => this.head().isNewCustomer)
   wholeType = computed<TWhole>(() => this.head().wholeType)

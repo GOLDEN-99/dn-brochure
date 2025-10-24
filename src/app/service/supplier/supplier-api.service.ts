@@ -1,75 +1,113 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
-import { TCompDetailRes, TCompProduct, TDNComp, TGeneratedCompCode, THUComp } from '../../types/ibob-supplier.type';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, catchError, combineLatest, map, Subject, switchMap, tap, throwError } from 'rxjs';
+import { TCompDetailRes, TGeneratedCompCode, } from '../../types/ibob-supplier.type';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, map, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import { TDNCreate, THUCreate, TItem } from './shared.type';
+import { IBOB_COMP_TYPE_TOKEN, TExtendedComp } from './supplier.token';
+import { getOrElse } from '../../lib/utli';
+import { extractSaleName, itemMapper, normalizeComp, transformCompInfo } from './lib-ibob';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class SupplierApiService {
-
-  constructor() { }
-
-  private api = inject(ApiService)
+  constructor(public compType: string) {
+    console.log(compType)
+  }
   private url = environment.ibob
-
-  private generatedCode$ = this.api.get<TGeneratedCompCode>(`${this.url}/GetCompInfoCreate`)
+  private api = inject(ApiService)
+  private getCompCode = this.api.get<TGeneratedCompCode>(`${this.url}/GetCompInfoCreate`)
+  private refetch$ = new BehaviorSubject(true)
+  refetch() {
+    this.refetch$.next(true)
+  }
+  generatedCode$ = this.refetch$.pipe(switchMap((_) => this.getCompCode))
 
   generatedCode = toSignal(this.generatedCode$, { initialValue: null })
-
-  createSupplier = (req: TCreateSupplierReq) => this.api.post(`${this.url}/CreateCompInfo`, req, {})
-
-  private fetch$ = new BehaviorSubject('1')
-
-  private compCode$ = new Subject<string>()
-
-  private compMode$ = new Subject<'DN' | 'HU'>()
-
-  private params$ = combineLatest({
-    compCode: this.compCode$,
-    compMode: this.compMode$
+  selectedCode = computed(() => {
+    const cur = this.generatedCode()
+    if (!cur) {
+      console.log('not cannot get comp')
+      return 'มีข้อผิดพลาด'
+    }
+    console.log('comptype', this.compType)
+    switch (this.compType) {
+      case 'DN': return cur.dnCompCode
+      case 'HU': return cur.compCode
+      default: return 'มีข้อผิดพลาด'
+    }
   })
 
-  private main$ = this.fetch$.pipe(
-    switchMap(
-      () => this.params$
-        .pipe(
-          switchMap(
-            ({ compCode, compMode }) => compMode === 'DN'
-              ? this.getDNByCompCode(compCode)
-              : this.getHUByCompCode(compCode)
-          ),
-          catchError(err => throwError(() => err))
-        )
-    ),
-    catchError(err => throwError(() => err))
+  selectedCode$ = this.generatedCode$.pipe(map(({ dnCompCode, compCode }) => {
+    switch (this.compType) {
+      case 'DN': return { username: '00' + dnCompCode.padStart(4, '0'), compCode: dnCompCode }
+      case 'HU': return { username: '01' + compCode.padStart(4, '0'), compCode }
+      default: return { username: '', compCode: 'มีข้อผิดพลาด' }
+    }
+  }))
+
+  createSupplier = (hu: Omit<THUCreate, 'compCode'>, dn: Omit<TDNCreate, 'compCode'>, item: TItem[]) => {
+    const genComp = this.generatedCode()
+    if (!genComp) throw new Error('cannot get comp code')
+    const { dnCompCode, compCode } = genComp
+    return this.api.post(`${this.url}/CreateCompInfo`, { hu: { ...hu, compCode }, dn: { ...dn, compCode: dnCompCode }, item }, {})
+  }
+
+  createDnSupplier = (req: Omit<TDNCreate, 'compCode'>, item: TItem[]) => {
+    const genComp = this.generatedCode()
+    if (!genComp) throw new Error('cannot get comp code')
+    const { dnCompCode } = genComp
+    return this.api.post(`${this.url}/CreateCompInfo`, { hu: null, dn: { ...req, compCode: dnCompCode }, item }, {})
+  }
+
+  createHuSupplier = (req: Omit<THUCreate, 'compCode'>, item: TItem[]) => {
+    const genComp = this.generatedCode()
+    if (!genComp) throw new Error('cannot get comp code')
+    const { compCode } = genComp
+    return this.api.post(`${this.url}/CreateCompInfo`, { dn: null, hu: { ...req, compCode }, item }, {})
+  }
+
+
+  getCompInfoById(compCode: string) {
+    this.singleCompCode.set(compCode)
+  }
+  singleCompCode = signal("")
+  eqComp$ = toObservable(this.singleCompCode).pipe(filter(c => c !== ''))
+  private fetchFn = (compCode: string) =>
+    this.api.get<TCompDetailRes>(`${this.url}/GetCompSubRes/${compCode}/${this.compType}`)
+  // search single
+  private compData$ = this.eqComp$.pipe(switchMap((req) => this.fetchFn(req)))
+  // private sharedComp$ = this.compData$
+  //   .pipe(shareReplay(3))
+  formmatComp$ = this.compData$.pipe(map(transformCompInfo))
+  // private compInfo$ = this.sharedComp$
+  //   .pipe(map(res => normalizeComp(res)))
+  // compInfo = toSignal(this.compInfo$, { initialValue: {} })
+
+  // private compItem$ = this.sharedComp$
+  //   .pipe(map(({ item }) => item.map(i => itemMapper(i))))
+  // compItem = toSignal(this.compItem$, { initialValue: [] })
+
+
+  // search many
+  term = signal('')
+  compCode = signal('')
+  private term$ = toObservable(this.term).pipe(distinctUntilChanged(), debounceTime(300))
+  private searchCompCode$ = toObservable(this.compCode).pipe(distinctUntilChanged(), debounceTime(300))
+  searchMany$ = combineLatest(
+    [this.term$, this.searchCompCode$]
+  ).pipe(
+    filter(([term, compCode]) => term !== '' || compCode !== ''),
+    map(([term, compCode]) => ({ term, compCode }))
   )
-
-  private getDNByCompCode = (comp: string) =>
-    this.api.get<TCompDetailRes>(`${this.url}/GetCompSubRes/${comp}/DN`)
-      .pipe(
-        tap(({ dn, item }) => {
-          this.dnComp.update(() => dn)
-          this.dnProduct.update(() => item)
-        })
-      )
-
-  private dnComp = signal<TDNComp | null>(null)
-  private dnProduct = signal<TCompProduct[]>([])
-
-  private getHUByCompCode = (comp: string) =>
-    this.api.get<TCompDetailRes>(`${this.url}/GetCompSubRes/${comp}/HU`)
-      .pipe(
-        tap(({ hu, item }) => {
-          this.huComp.update(() => hu)
-          this.huProduct.update(() => item)
-        })
-      )
-
-  private huComp = signal<THUComp | null>(null)
-  private huProduct = signal<TCompProduct[]>([])
+  compList$ = this.searchMany$
+    .pipe(
+      switchMap(
+        ({ term, compCode }) => this.api.get<TExtendedComp[]>(
+          `${environment.oi}/comp/${this.compType}`,
+          { params: { term, compCode } }
+        )),
+      getOrElse<TExtendedComp[], TExtendedComp[]>([])
+    )
+  compList = toSignal(this.compList$, { initialValue: [] })
 }
 
-export type TCreateSupplierReq = {}

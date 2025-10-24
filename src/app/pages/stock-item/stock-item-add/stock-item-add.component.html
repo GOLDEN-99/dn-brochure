@@ -1,0 +1,302 @@
+<section class="container">
+  <div class="p-3">
+    <button
+      class="btn btn-info w-100 mb-3 btn-lg"
+      (click)="openSearchProductModal(serachProduct)"
+    >
+      ค้นหาสินค้า
+    </button>
+    <!---->
+    <div class="row">
+      <div class="col-md mb-3">
+        <h4>รายละเอียดสินค้า</h4>
+        <ul class="list-group">
+          @let currentProduct = selectedProduct(); @if (currentProduct !== null)
+          {
+          <li
+            class="list-group-item d-flex justify-content-between lh-condensed"
+          >
+            <div>
+              <h6>สินค้า</h6>
+            </div>
+            <div>
+              <span
+                ><div>
+                  {{ currentProduct.goodName }}
+                </div>
+                <small>
+                  {{ currentProduct.barCode }}
+                </small>
+              </span>
+            </div>
+          </li>
+
+          }
+          <!---->
+          @let curGP = gp();@if (curGP !== null) {
+          <li
+            class="list-group-item d-flex justify-content-between lh-condensed"
+          >
+            <div>
+              <h6>ทุนเดิม</h6>
+            </div>
+            <span>{{ curGP.dnCost }} </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between lh-condensed"
+          >
+            <div>
+              <h6>ทุนคำนวน</h6>
+            </div>
+            <span style="max-width: 50%">
+              <input type="text" class="form-control" [(ngModel)]="dnCost" />
+            </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between lh-condensed"
+          >
+            <div>
+              <h6>ทุนใหม่</h6>
+            </div>
+            <span style="max-width: 50%">
+              <input type="text" class="form-control" [(ngModel)]="newCost" />
+            </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between lh-condensed"
+          >
+            <div>
+              <h6>ขายส่ง 3</h6>
+            </div>
+            <span>{{ curGP.priceW3 | number : "1.2-2" }} </span>
+          </li>
+          }
+        </ul>
+        <!--gp calculation-->
+        <div class="row mx-0">
+          <div class="col px-3 py-2">
+            <div>
+              <h6>ต้นทุน</h6>
+              <span> {{ costChange() | number : "1.2-2" }} % </span>
+            </div>
+          </div>
+          <div class="col px-3 py-2">
+            <h6>GP</h6>
+            <span> {{ gpPercent() | number : "1.2-2" }} % </span>
+          </div>
+          @let risk = riskPercent();
+          <div class="col px-3 py-2 bg-warning-subtle">
+            <h6>ความเสี่ยง</h6>
+            <span>
+              {{ risk === null ? "คำนวนไม่ได้" : (risk | number : "1.2-2") }} %
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md mb-3">
+        <!--criteria-->
+        <h4>เกณฑ์</h4>
+        <ul class="list-group">
+          @for (c of appCriteria(); track $index) {
+          <li [className]="getCriteriaClass(c.stockMonth)">
+            <span> {{ c.riskPercent }} % </span>
+            <span>
+              {{ c.stockMonth }}
+            </span>
+          </li>
+          }
+        </ul>
+      </div>
+    </div>
+    <!--stock here-->
+    <div class="row">
+      <div class="col-md mb-3">
+        <h4>ยอดขาย DN (บาท)</h4>
+        @let histstorySale = histSale(); @if (histstorySale !== null) {
+        <ul class="list-group">
+          @for (sale of histstorySale.saleList; track sale.monthIndex) {
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{{ sale.monthIndex }}</span>
+            <span> {{ sale.subtotal | number : "1.2-2" }} </span>
+          </li>
+          }
+        </ul>
+        <div class="row mx-0">
+          <span [className]="getSaleMeanClass(histstorySale.short.totalMean)">
+            <h6>ยอดขายเฉลี่ย 3 เดือน</h6>
+            <div>{{ histstorySale.short.totalMean | number : "1.2-2" }}</div>
+          </span>
+          <span [className]="getSaleMeanClass(histstorySale.long.totalMean)">
+            <h6>ยอดขายเฉลี่ย 1 ปี</h6>
+            <div>{{ histstorySale.long.totalMean | number : "1.2-2" }}</div>
+          </span>
+        </div>
+        }@else if(touch()){
+        <app-loading-skeleton />
+        }
+      </div>
+      <div class="col-md mb-3">
+        <h4>ยอดขาย DN (ชิ้น)</h4>
+        @let dnCnt = histSaleCount(); @if (dnCnt !== null) {
+        <ul class="list-group">
+          @for (cnt of dnCnt.countList; track cnt.monthIndex+'-hu-item') {
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{{ cnt.monthIndex }}</span>
+            <span>{{ cnt.itemCount | number : "1.0-0" }}</span>
+          </li>
+          }
+        </ul>
+        <div class="row mx-0">
+          <div [className]="getDNCountMeanClass(dnCnt.short)">
+            <h6>จำนวนขายเฉลี่ย 3 เดือน</h6>
+            <span> {{ dnCnt.short | number : "1.2-2" }} ชิ้น </span>
+          </div>
+          <div [className]="getDNCountMeanClass(dnCnt.long)">
+            <h6>จำนวนขายเฉลี่ย 1 ปี</h6>
+            <span> {{ dnCnt.long | number : "1.2-2" }} ชิ้น </span>
+          </div>
+        </div>
+        }@else if(touch()){
+        <app-loading-skeleton />
+        }
+      </div>
+      <div class="col-md mb-3">
+        <h4>SP - LZ - HU (ชิ้น)</h4>
+        @let huCnt = huItemCount(); @if (huCnt !== null) {
+        <ul class="list-group">
+          @for (cnt of huCnt.list; track cnt.monthIndex+'-hu-item') {
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{{ cnt.monthIndex }}</span>
+            <span>{{ cnt.itemCount | number : "1.0-0" }}</span>
+          </li>
+          }
+        </ul>
+        <div class="row mx-0">
+          <div [className]="getHUCountMeanClass(huCnt.short)">
+            <h6>จำนวนขายเฉลี่ย 3 เดือน</h6>
+            <span> {{ huCnt.short | number : "1.2-2" }} ชิ้น </span>
+          </div>
+          <div [className]="getHUCountMeanClass(huCnt.long)">
+            <h6>จำนวนขายเฉลี่ย 1 ปี</h6>
+            <span> {{ huCnt.long | number : "1.2-2" }} ชิ้น </span>
+          </div>
+        </div>
+        }@else if(touch()){
+        <app-loading-skeleton />
+        }
+      </div>
+    </div>
+    @if (isComplete()) {
+
+    <div class="row mb-3">
+      <div class="col">
+        <div>
+          <h6>% ขายเพิ่มก่อนปรับราคา DN</h6>
+        </div>
+        <span style="max-width: 50%">
+          <input type="text" class="form-control" [(ngModel)]="addedDNStock" />
+        </span>
+      </div>
+      <div class="col">
+        <div>
+          <h6>% ขายเพิ่มก่อนปรับราคา HU</h6>
+        </div>
+        <span style="max-width: 50%">
+          <input type="text" class="form-control" [(ngModel)]="addedHUStock" />
+        </span>
+      </div>
+      <div class="col">
+        <div>
+          <h6>จำนวน stock จริง</h6>
+        </div>
+        <span style="max-width: 50%">
+          <input type="text" class="form-control" [(ngModel)]="actualStock" />
+        </span>
+      </div>
+    </div>
+    <!--summary here-->
+    @let summaryList = modification(); @if (summaryList.length !== 0) {
+    <h4>สรุป</h4>
+    @for (summary of summaryList; track summary.fieldName) {
+    <div [className]="summary.className">
+      <div class="col">{{ summary.desc }}</div>
+      <div class="col text-end">{{ summary.value }}</div>
+    </div>
+    } } }
+  </div>
+  <button class="btn btn-success w-100 btn-lg" [disabled]="disableForm()">
+    บันทึก
+  </button>
+</section>
+
+<!--search product modal-->
+<ng-template #serachProduct let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">ค้นหาสินค้า</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body" style="max-height: 80vh; overflow-y: auto">
+    <div class="app-form-select">
+      <label for="mode"> ค้นหาจาก </label>
+      <select
+        name="mode"
+        id="mode"
+        [ngModel]="mode()"
+        (ngModelChange)="onModeChange($event)"
+      >
+        @for (item of modeList; track $index) {
+        <option [ngValue]="item.key">{{ item.label }}</option>
+        }
+      </select>
+    </div>
+    @if (mode() === 'goodCode') {
+    <div class="app-form-field">
+      <label for="good-code">รหัสสินค้า</label>
+      <input
+        type="text"
+        name="good-code"
+        id="good-code"
+        [ngModel]="search().goodCode"
+        (ngModelChange)="searchCode($event)"
+      />
+    </div>
+    }
+    <!---->
+    @if(mode() === 'goodName') {
+    <div class="app-form-field">
+      <label for="good-name">ชื่อสินค้า</label>
+      <input
+        type="text"
+        name="good-name"
+        id="good-name"
+        [ngModel]="search().goodName"
+        (ngModelChange)="searchName($event)"
+      />
+    </div>
+    }
+    <!---->
+    @let products = productList();
+    <!---->
+    @if (products.length !== 0) {
+    <!---->
+
+    @for (product of products; track product.goodCode) {
+    <div class="row mb-1">
+      <div class="col">({{ product.barCode }}) {{ product.goodName }}</div>
+      <div class="col-auto">
+        <button
+          class="btn btn-success btn-squre"
+          (click)="onAddProduct(product)"
+        >
+          <i class="bi bi-plus"></i>
+        </button>
+      </div>
+    </div>
+    } }
+  </div>
+</ng-template>

@@ -1,9 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../../service/toast/toast.service';
 import { LOGINABLE_TOKEN } from '../../../service/ibob/ibobToken';
 import { IbobAddService } from '../../../service/ibob/ibob-add.service';
+import { BehaviorSubject, map, Observable, of, tap } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-supplier-login',
@@ -20,8 +22,13 @@ export class SupplierLoginComponent {
 
   private nnfb = inject(NonNullableFormBuilder)
   private router = inject(Router)
+  private route = inject(ActivatedRoute)
   private toast = inject(ToastService)
   private loginService = inject(LOGINABLE_TOKEN)
+  private compType$ = this.route.parent?.paramMap.pipe(
+    map(p => p.get('compType')?.toUpperCase() ?? '')
+  )
+  compType = toSignal(this.compType$ ?? of(""), { initialValue: '' })
   loginForm = this.nnfb.group({
     user: this.nnfb.control('', Validators.required),
     password: this.nnfb.control('', Validators.required)
@@ -32,10 +39,18 @@ export class SupplierLoginComponent {
   togglePassword = () => this.passwordType.update(prev => prev === 'password' ? 'text' : 'password')
 
   handleLogin = () => {
+    const redirect = this.route.snapshot.queryParamMap.getAll('redirect')
     const formData = this.loginForm.getRawValue()
+    const expectedCompType = this.compType()
     this.loginService.login(formData).subscribe({
-      next: ({ comp: { compCode } }) => {
-        this.router.navigateByUrl('/supplier/reserve')
+      next: (res) => {
+        if (res.comp.shipto !== expectedCompType) {
+          this.toast.danger(`username หรือ password ไม่ถูกต้องสำหรับ ${expectedCompType}`)
+          return
+        }
+        this.loginService.saveLogin({ compType: expectedCompType, user: formData.user }, res)
+        this.loginService.setAppState(res);
+        this.router.navigate([...redirect], { queryParams: { compCode: formData.user }, relativeTo: this.route })
       },
       error: (err) => {
         this.toast.danger('ล็อคอินผิดพลาด')

@@ -12,7 +12,7 @@
   </thead>
   <tbody>
     @for (item of doorList(); track $index) {
-    <tr tabindex="0" (click)="goTo(item.doorId)">
+    <tr tabindex="0" (click)="goTo(item.doorId)" style="cursor: pointer">
       <td>{{ item.name }}</td>
       <td>{{ item.timeUse }}</td>
       <td>{{ item.intendant }}</td>

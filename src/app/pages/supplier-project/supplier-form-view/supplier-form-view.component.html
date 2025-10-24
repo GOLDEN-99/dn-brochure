@@ -1,0 +1,20 @@
+<app-auth-page [readonly]="readonly()" />
+<app-general-page [readonly]="readonly()" />
+<app-step-three-page [readonly]="readonly()" />
+<app-condition-page [readonly]="readonly()" />
+<a class="btn btn-success w-100 mb-3" routerLink="./product"
+  >รายการจำหน่ายสินค้า</a
+>
+<button class="btn btn-primary w-100 mb-3" [disabled]="true">ถัดไป</button>
+<a class="btn btn-danger w-100 mb-3" role="button" routerLink="../">ย้อนกลับ</a>
+<button
+  class="btn btn-rounded btn-info"
+  style="z-index: 1000; position: fixed; right: 2rem; top: 2rem"
+  (click)="toggle()"
+>
+  @if (readonly()) {
+  <i class="bi bi-pen"></i>
+  }@else {
+  <i class="bi bi-eye"></i>
+  }
+</button>

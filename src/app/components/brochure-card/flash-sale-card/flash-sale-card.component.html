@@ -1,23 +1,29 @@
 @let prop = cardProp();
 
-<div [className]="headerClass()">
-  <img src="/image/FS/head.png" alt="head" />
-  <div [className]="textClass()">{{ prop.goodName }}</div>
+<div [style]="headerContainer()">
+  <div [className]="headerClass()">
+    <div [className]="textClass()">{{ prop.goodName }}</div>
+  </div>
 </div>
 <div [className]="contentClass()">
-  <div class="content-section" style="display: flex; justify-content: center">
-    <div>
-      <div style="display: flex">
-        <div [className]="goodCodeClass()">{{ prop.barCode }}</div>
-        <div style="flex: 1 1 auto"></div>
+  <div class="content-section">
+    <div style="height: 100%">
+      <div>
+        <span [className]="goodCodeClass()">{{ prop.barCode }}</span>
       </div>
-      <img [src]="imgUrl()" alt="product image" />
+      <div class="img-container" style="display: flex; justify-content: center">
+        <img
+          [src]="imgUrl()"
+          alt="product image"
+          (load)="handleOnLoad($event)"
+        />
+      </div>
     </div>
   </div>
   <div class="content-section" style="position: relative; align-items: end">
     <div [className]="priceTextClass()">
       {{ prop.flashPrice | number : "1.2-2" }}.-
     </div>
-    <img src="/image/FS/price.png" alt="price" style="width: 100%" />
+    <img src="/image/FS/price.png" alt="price" />
   </div>
 </div>

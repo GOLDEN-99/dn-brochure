@@ -78,3 +78,4 @@ export const getWeekRange = ({ year, month, day }: TDate) => {
     }
 }
 
+export const convertToIso = ({ year, month, day }: TDate) => `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`

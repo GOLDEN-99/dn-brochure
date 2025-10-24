@@ -1,1 +1,66 @@
-<p>purchase-report works!</p>
+<h4>รายเดือน</h4>
+<div class="mb-3">
+  <div class="row">
+    <div class="app-form-select col">
+      <label for="month">เดือน</label>
+      <select
+        name="month"
+        id="month"
+        [ngModel]="date().month"
+        (ngModelChange)="changeMonth($event)"
+      >
+        @for (month of monthArray; track month) {
+        <option [ngValue]="month">{{ month }}</option>
+        }
+      </select>
+    </div>
+    <div class="app-form-select col">
+      <label for="year">ปี</label>
+      <select
+        name="year"
+        id="year"
+        [ngModel]="date().year"
+        (ngModelChange)="changeYear($event)"
+      >
+        @for (year of yearArray; track year) {
+        <option [ngValue]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+    <div class="app-form-field col">
+      <label for="code">รหัสซัพ</label>
+      <input type="text" id="code" name="code" [(ngModel)]="compCode" />
+    </div>
+  </div>
+  <button
+    class="btn btn-primary w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportSupplierMonth(1)"
+  >
+    รายงานซัพพลายเออร์ DN รายเดือน
+  </button>
+  <button
+    class="btn btn-success w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportSupplierMonth(2)"
+  >
+    รายงานซัพพลายเออร์ HU รายเดือน
+  </button>
+</div>
+<h4>รายปี</h4>
+<div class="mb-3">
+  <button
+    class="btn btn-primary w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportSupplierAnnual(1)"
+  >
+    รายงานซัพพลายเออร์ DN รายปี
+  </button>
+  <button
+    class="btn btn-success w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportSupplierAnnual(2)"
+  >
+    รายงานซัพพลายเออร์ HU รายปี
+  </button>
+</div>

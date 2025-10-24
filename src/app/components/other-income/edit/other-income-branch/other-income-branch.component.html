@@ -1,0 +1,88 @@
+<div class="mb-3">
+  <div class="row" style="justify-content: space-between">
+    <h2 class="col-auto">รายชื่อสาขา</h2>
+    @if(canEdit()){
+    <div class="col-auto">
+      <button class="btn btn-primary" (click)="openModal()">เพิ่ม</button>
+    </div>
+    }
+  </div>
+  <div style="max-height: 200px; overflow-y: auto">
+    @let branches = branchList();
+    <table class="table">
+      <thead>
+        <tr>
+          <th>สาขา</th>
+          <th>วันที่</th>
+          <th style="width: 10%"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (branch of branches; track branch.id) {
+        <tr>
+          <td>{{ branch.branchName }}</td>
+          <td>{{ branch.openDate | date }}</td>
+          <td>
+            <button
+              class="btn btn-danger"
+              (click)="onDelete(branch.id, branch.branchCode)"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #branchModal let-modal>
+  <div class="modal-header">
+    <h4>แก้ไขรายการรายได้อื่นๆ</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-date-input label="วันที่เปิดสาขา" [(date)]="openDate" />
+    <div class="app-form-field-inline">
+      <div>
+        <label for="term">ค้นหาชื่อ</label>
+      </div>
+      <div>
+        <input type="text" name="term" id="term" [(ngModel)]="term" />
+      </div>
+    </div>
+    <div class="mb-3" style="height: 40vh; overflow-y: auto">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 10%">รหัส</th>
+            <th>ชื่อ</th>
+            <th style="width: 20%"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (b of filteredBranch(); track b.branchCode) {
+          <tr>
+            <td>{{ b.branchCode }}</td>
+            <td>{{ b.branchName }}</td>
+            <td>
+              <button class="btn btn-primary" (click)="addBranch(b.branchCode)">
+                เพิ่มสาขา
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- <div class="modal-footer">
+    <button class="btn btn-primary w-100">บันทึก</button>
+  </div> -->
+</ng-template>

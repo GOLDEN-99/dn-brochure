@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { TMaybe } from '../../types';
+import { TComp, TModifiedComp } from '../../types/ibob-supplier.type';
+import { loginPraser } from './local-lib';
 
 @Injectable({
   providedIn: 'root'
@@ -21,23 +24,37 @@ export class LocalService {
     return unix > exp
   }
 
-  private setItem = <K extends TStorageKey>(key: K, exp: number) =>
-    (value: TBaseStorage[K]) => {
-      const expIn = this.addHour(exp)
-      const txt = JSON.stringify({ data: value, exp: expIn })
+  private setItem = (key: string, exp: () => number) =>
+    (value: unknown) => {
+      const txt = JSON.stringify({ data: value, exp: exp() })
       localStorage.setItem(key, txt)
     }
 
-  private getItem = <K extends TStorageKey>(key: K) => () => {
-    const txtData = localStorage.getItem(key)
-    if (!txtData) return null
-    const { data, exp } = JSON.parse(txtData) as TStorageMap[K]
-    if (this.isExp(exp)) return null
-    return data
+  private getItem = <T>(praser: (value: unknown) => T | null) => (key: string) => () => {
+    try {
+      const txtData = localStorage.getItem(key)
+      if (!txtData) throw new Error(`no data with key ${key}`)
+      const { data, exp } = JSON.parse(txtData) as any
+      if (this.isExp(exp)) throw new Error('expired data')
+      const prasedData = praser(data)
+      return prasedData
+    } catch (err) {
+      console.error(err)
+      return null
+    }
   }
 
-  saveToken = this.setItem('dnToken', 1)
-  loadToken = this.getItem('dnToken')
+  private jwtPraser = (data: unknown) => {
+    const str = String(data)
+    const tokenPart = str.split('.')
+    if (tokenPart.length !== 3) return null
+    const base64UrlRegex = /^[A-Za-z0-9_-]+$/;
+    const isBase64 = tokenPart.every(part => base64UrlRegex.test(part) && part.length > 0)
+    return isBase64 ? str : ''
+  }
+
+  setLoginResponse = ({ compType, user }: TAuthStorageKey, exp: () => number = () => this.addHour(12)) => this.setItem(`${compType.toLowerCase()}-${user}`, exp)
+  getLoginResponse = ({ compType, user }: TAuthStorageKey) => this.getItem(loginPraser)(`${compType.toLowerCase()}-${user}`)
 }
 
 type TBaseStorageItem<T> = {
@@ -45,14 +62,9 @@ type TBaseStorageItem<T> = {
   exp: number
 }
 
-type TBaseStorage = {
-  dnToken: string
-}
-type TStorageKey = keyof TBaseStorage
-
-type TMapToStorage<T extends Record<string, unknown>> = {
-  [key in keyof T]: TBaseStorageItem<T[key]>
+export type TAuthStorageKey = {
+  compType: string
+  user: string
 }
 
-type TStorageMap = TMapToStorage<TBaseStorage>
 

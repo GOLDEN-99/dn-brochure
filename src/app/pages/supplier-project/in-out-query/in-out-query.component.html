@@ -1,13 +1,41 @@
 @if (isAdmin()) {
 <div style="display: flex; justify-content: end">
-  <a href="" class="btn btn-danger mb-3">เพิ่มการจอง</a>
+  <a [routerLink]="createLink()" class="btn btn-danger mb-3">เพิ่มการจอง</a>
 </div>
 }
 <div class="row">
-  <div class="col"><app-date-input label="ตั้งแต่" [(date)]="from" /></div>
-  <div class="col"><app-date-input label="ถึง" [(date)]="to" /></div>
+  <div class="col"><app-date-input label="ตั้งแต่" [(date)]="fromDate" /></div>
+  <div class="col"><app-date-input label="ถึง" [(date)]="toDate" /></div>
 </div>
-<app-ibob-query-tab />
+<div class="row">
+  <div class="mb-3">
+    <label for="search-field-select" class="form-label">ค้นหารายการจอง</label>
+    <select
+      name="search-field-select"
+      id="search-field-select"
+      [ngModel]="currentOption()"
+      (ngModelChange)="onCurrentOptionChange($event)"
+      class="form-select"
+    >
+      <option value="" disabled>กรุณาเลือก</option>
+      @for (item of optionList; track $index) {
+      <option [ngValue]="item.id">{{ item.label }}</option>
+      }
+    </select>
+  </div>
+</div>
+@if (currentOption() === "compName") {
+<div class="app-form-field">
+  <label for="comp-name">ชื่อซัพ</label>
+  <input type="text" name="comp-name" id="comp-name" [(ngModel)]="compName" />
+</div>
+} @if (currentOption() === "order") {
+<div class="app-form-field">
+  <label for="order">เลข order</label>
+  <input type="text" name="order" id="order" [(ngModel)]="order" />
+</div>
+}
+<button class="btn btn-success w-100 mb-3" (click)="onClick()">ค้นหา</button>
 <table class="table table-bordered table-striped">
   <thead>
     <tr>
@@ -21,21 +49,39 @@
     </tr>
   </thead>
   <tbody>
+    @for (reserve of reserveList(); track $index) {
     <tr>
-      <th>2025-01-01</th>
-      <th>12:00</th>
-      <th>door 1</th>
-      <th>sup 1</th>
-      <th>po 1 2 3</th>
-      <th>7</th>
+      <th>{{ reserve.reservationDate | date }}</th>
+      <th>{{ reserve.reservationTime }}</th>
+      <th>{{ reserve.doorName }}</th>
+      <th>{{ reserve.companyName }}</th>
+      <th>
+        <div>
+          @for (order of reserve.orderList; track $index) {
+          <div>{{ order.orderNumb }}</div>
+          }
+        </div>
+      </th>
+      <th>{{ reserve.total }}</th>
       <th>
         <div style="display: flex; justify-content: space-between">
-          <a href="" class="btn btn-link">รายละเอียด</a>
+          <a
+            [routerLink]="`../${reserve.id}`"
+            queryParamsHandling="preserve"
+            class="btn btn-link"
+            >รายละเอียด</a
+          >
           @if (isAdmin()) {
-          <a href="" class="btn btn-danger">แก้ไข</a>
+          <button
+            class="btn btn-danger btn-squre"
+            (click)="onDelete(reserve.id)"
+          >
+            ลบ
+          </button>
           }
         </div>
       </th>
     </tr>
+    }
   </tbody>
 </table>

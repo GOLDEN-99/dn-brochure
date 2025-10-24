@@ -1,13 +1,16 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, combineLatest, map, of, Subject, switchMap, tap } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { catchError, combineLatest, filter, map, of, switchMap, tap, throwError } from 'rxjs';
 import { IIbObLogin, IIbObReserve } from './ibobToken';
-import { TAppOrder, TCreateReservationReq, TEditableResavation, TGetIbObRes, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot } from '../../types/ibob-supplier.type';
-import { TDate } from '../../lib';
+import { TAppOrder, TCreateReservationReq, TEditableResavation, TFormattedLoginResponse, TGetIbObRes, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot } from '../../types/ibob-supplier.type';
+import { convertToIso } from '../../lib';
 import { TMaybe } from '../../types';
-import { LocalService } from '../local/local.service';
+import { LocalService, TAuthStorageKey } from '../local/local.service';
+import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
+import { IbobQueryReservationService } from './ibob-query-reservation.service';
+import { DateRangeService } from './date-range-service.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +22,9 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
   private api = inject(ApiService)
   private baseurl = environment.ibob
   private storage = inject(LocalService)
+  private token = ''
 
-  currentComp = signal<TMaybe<TModifiedComp>>({
+  private mockComp = {
     compCode: 'test code',
     saleName: 'contactName',
     compName: 'test name',
@@ -28,8 +32,10 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
     compName2: 'thai comp?',
     compPhone: '0999999999',
     shipto: 'anywhere'
-  })
-  orderList = signal<TAppOrder[]>([{ orderDate: '2025-01-01', orderNumb: 'PO12345', check: false, box: 0 }]) // mocking data
+  }
+  private mockOrder = [{ orderDate: '2025-01-01', orderNumb: 'PO12345', check: false, box: 0 }]
+  currentComp = signal<TMaybe<TModifiedComp>>(null)
+  orderList = signal<TAppOrder[]>([]) // mocking data
   checkOrder = (orderId: string) => this.orderList.update((prev) => prev.map((or) =>
     or.orderNumb === orderId
       ? ({ ...or, check: !or.check, box: or.check ? 0 : or.box })
@@ -41,42 +47,62 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
       : or
   ))
 
-
-  private loginHandler = ({ comp, door, shipto, token, order }: TLoginRes) => {
-    this.currentComp.set({ ...comp, shipto })
-    this.storage.saveToken(token)
-    this.orderList.update(() => order.map(order => ({ ...order, check: false, box: 0 })))
+  saveLogin = (user: TAuthStorageKey, { comp, token, order }: TFormattedLoginResponse) => {
+    this.storage.setLoginResponse(user)({ comp, token, order })
   }
+
+  setAppState = ({ comp, order, token }: TFormattedLoginResponse) => {
+    this.currentComp.set(comp)
+    this.orderList.set(order.map(o => ({ ...o, check: false, box: 0 })))
+    this.token = token
+  }
+
+  private formatLoginRespose = ({ comp, shipto, ...res }: TLoginRes): TFormattedLoginResponse => ({
+    comp: { ...comp, shipto },
+    ...res
+  })
 
   login(req: TLoginReq) {
     return this.api.post<TLoginRes>(`${this.baseurl}/compSingIn`, req)
-      .pipe(tap(this.loginHandler))
+      .pipe(
+        map(res => this.formatLoginRespose(res)),
+      )
   }
 
 
-  createReservation({ doorId, note, reservationDate, reservationTime }: TEditableResavation) {
+  createReservation(formData: TEditableResavation) {
     const currentCompData = this.currentComp()
     if (!currentCompData) throw new Error('please login')
+    const orderList = this.orderList()
+    const order = orderList.map(({ orderNumb, box }) => ({ orderNumb, box }))
     const reqBody: TCreateReservationReq = {
       companyName: currentCompData.compName,
       compCode: currentCompData.compCode,
-      contactName: currentCompData.saleName,
-      phoneNumber: currentCompData.compPhone,
       email: currentCompData.compEmail,
       shipto: currentCompData.shipto,
-      note,
-      doorId,
-      reservationDate,
-      reservationTime,
-      truckType: "???",
-      truckLicensePlate: "???",
-      order: this.orderList().map(({ orderNumb, box }) => ({ orderNumb, box }))
+      order,
+      ...formData
     }
-    return this.api.post(`${this.baseurl}/CreateReservation`, reqBody)
+    const headers = this.api.createJWTHeader(this.token)
+    return this.api.post(`${this.baseurl}/CreateReservation`, reqBody, { ...headers })
   }
 
-  private gate$ = new Subject<string>()
-  private selectDate$ = new Subject<string>()
+  adminCreateReservation = (req: TCreateReservationReq, withHeader: boolean = false) => {
+    if (withHeader) {
+      const headers = this.api.createJWTHeader(this.token)
+      return this.api.post(`${this.baseurl}/CreateReservation`, req, { ...headers })
+    }
+
+    return this.api.post(`${this.baseurl}/CreateReservation`, req)
+  }
+
+  gate = signal<TMaybe<string>>(null)
+  private gate$ = toObservable(this.gate).pipe(filter(g => g !== null))
+  private cal = inject(NgbCalendar)
+  private today = this.cal.getToday()
+  selectDate = signal(this.today)
+  private isoSelectDate = computed(() => convertToIso(this.selectDate()))
+  private selectDate$ = toObservable(this.isoSelectDate)
   private params$ = combineLatest([this.gate$, this.selectDate$])
   private getTimeSlot = (gate: string, iso: string) => this.api
     .get<TGetIbObRes>(`${this.baseurl}/GetInBound/${gate}/${iso}`)
@@ -85,18 +111,85 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
       catchError((err) => { console.log(err); return of([] as TTimeSlot[]); })
     )
 
-  changeGate(gate: string) {
-    this.gate$.next(gate)
-  }
-  changeDate({ day, month, year }: TDate) {
-    const isoDate = `${year}-${month}-${day}`
-    this.selectDate$.next(isoDate)
-  }
   private posibleSlot$ = this.params$
     .pipe(
       switchMap(([gate, date]) => this.getTimeSlot(gate, date)),
       tap(console.log)
     )
   possibleSlot = toSignal(this.posibleSlot$, { initialValue: [] })
+
+  isLogin = () => {
+    const isLogin = this.currentComp() !== null || this.token !== ''
+    return isLogin
+  }
+
+  loadCompData = (compType: string | null, compCode: string | null) => {
+    if (compCode === null || compType === null) return
+    const data = this.storage.getLoginResponse({ compType, user: compCode })()
+    if (!data) return
+    const { comp, order, token } = data
+    this.currentComp.set(comp)
+    this.orderList.set(order.map((o) => ({ ...o, check: false, box: 0 })))
+    this.token = token
+  }
+  private compParam$ = toObservable(this.currentComp).pipe(
+    filter(c => c !== null),
+    map(({ compCode, shipto }) => ({ compCode, compType: shipto }))
+  )
+  private dateRangeService = inject(DateRangeService)
+  fromDate = this.dateRangeService.fromDate
+  toDate = this.dateRangeService.toDate
+  private dateRange$ = this.dateRangeService.dateRange$
+  private qParams$ = combineLatest([this.dateRange$, this.compParam$]).pipe(map(([range, comp]) => ({ ...range, ...comp })))
+
+  private reservationService = inject(IbobQueryReservationService)
+
+  private reservationList$ = this.qParams$.pipe(
+    switchMap((q) => this.reservationService.getManyReservation(q)),
+  )
+  reservationList = toSignal(this.reservationList$, { initialValue: [] })
+
 }
 
+
+type TQueryReservation = {
+  compType: string
+  compCode: string
+  fromDate: string
+  toDate: string
+}
+
+type TReservationItem = {
+  orderNumb: string
+  box: number
+}
+
+type TReservationDetail = {
+  id: number
+  reservationDate: string
+  reservationTime: string
+  companyName: string
+  compCode: string
+  shipTo: string
+  contactName: string
+  phoneNumber: string
+  email: string
+  truckType: string
+  truckLicensePlate: string
+  note: string
+  doorId: number
+  doorName: string
+  warehouseId: number
+  warehouseName: string
+  location: string
+}
+
+type TReservationRes = {
+  reservation: TReservationDetail
+  orderList: TReservationItem[]
+}
+
+type TFlatenReservation = {
+  total: number
+  orderList: TReservationItem[]
+} & TReservationDetail

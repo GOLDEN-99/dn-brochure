@@ -1,6 +1,6 @@
-import { Component, computed, output, signal } from '@angular/core';
+import { Component, computed, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TProduct } from '../../../types';
+import { OiProductService } from '../../../service/other-income/oi-product.service';
 
 @Component({
   selector: 'app-search-product-modal',
@@ -9,23 +9,17 @@ import { TProduct } from '../../../types';
   styleUrl: './search-product-modal.component.scss'
 })
 export class SearchProductModalComponent {
-  term = signal("")
-  result = signal<TAppProduct[]>([
-    { check: false, productName: 'product 1', id: '1' }, { check: true, productName: 'product 2', id: '2' }
-  ])
+  private productService = inject(OiProductService)
+  term = this.productService.term
+  result = this.productService.product
 
   isSelectAllItem = computed(() => this.result().every(({ check }) => check))
-  selectAll() {
-    const current = this.isSelectAllItem()
-    this.result.update(prev => prev.map((p) => ({ ...p, check: !current })))
-  }
+  selectAll = this.productService.selectAll
 
-  selectedList = computed(() => this.result().flatMap(({ check, id, productName }) => check ? [{ id, productName }] : []))
-  selectProduct = output<TProduct[]>()
+  selectedList = computed(() => this.result().filter(({ check }) => check))
+  selectProduct = output<TOIProduct[]>()
 
-  selectSomeProduct(id: number) {
-    this.result.update(prev => prev.map((p, i) => i === id ? ({ ...p, check: !p.check }) : p))
-  }
+  selectSomeProduct = this.productService.toggleProduct
 
   close = output<void>()
   onClose() {
@@ -37,4 +31,5 @@ export class SearchProductModalComponent {
   }
 }
 
-type TAppProduct = { check: boolean } & TProduct
+type TAppProduct = { check: boolean, goodCode: string, goodName: string }
+type TOIProduct = { goodCode: string, goodName: string }

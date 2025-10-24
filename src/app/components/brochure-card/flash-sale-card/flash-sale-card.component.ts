@@ -16,9 +16,11 @@ export class FlashSaleCardComponent {
   textClass = computed(() => {
     const stat = this.isStatic()
     if (stat) {
-      return this.cardProp().goodName.length > 30 ? 'header-text text-white long static' : 'header-text text-white static'
+      return 'header-text text-white static'
+      // return this.cardProp().goodName.length > 30 ? 'header-text text-white long static' : 'header-text text-white static'
     }
-    return this.cardProp().goodName.length > 30 ? 'header-text text-white long' : 'header-text text-white'
+    return 'header-text text-white'
+    //return this.cardProp().goodName.length > 30 ? 'header-text text-white long' : 'header-text text-white'
   }
   )
 
@@ -31,4 +33,17 @@ export class FlashSaleCardComponent {
   priceTextClass = computed(() => this.isStatic() ? 'price-text static text-white' : 'price-text text-white')
 
   goodCodeClass = computed(() => this.isStatic() ? 'goodcode static' : 'goodcode')
+
+  headerContainer = computed(() => this.isStatic() ? 'height:35%;' : 'height:25%;')
+
+  handleOnLoad(e: any) {
+    const containerRatio = 0.8
+    const img = e.target as HTMLImageElement
+    const ratio = img.naturalWidth / img.naturalHeight
+    if (ratio < containerRatio) {
+      img.style.height = '730px'
+    } else {
+      img.style.width = '590px'
+    }
+  }
 }

@@ -15,7 +15,6 @@ export class CalendarDailyComponent {
 
   constructor() {
     const doorEff = effect(() => this.dailyServ.setDoor(this.doorList()))
-
   }
 
   onSelectDate(date: NgbDate) {
@@ -33,7 +32,7 @@ export class CalendarDailyComponent {
   displayList = this.dailyServ.displayDoors
 
   getStatus = (arg: any) => (col: string) => {
-    return arg[col].status ?? 0 as number
+    return arg[col]?.status ?? 0 as number
   }
 
   thaiDate(date: NgbDateStruct | null) {

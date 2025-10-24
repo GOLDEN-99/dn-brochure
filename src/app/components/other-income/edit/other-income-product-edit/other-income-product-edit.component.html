@@ -1,0 +1,36 @@
+@let products = productList(); @if (products.length !== 0) {
+
+<div class="mb-3">
+  <div class="row" style="justify-content: space-between">
+    <h2 class="col-auto">รายการสินค้า</h2>
+    @if (canEdit()) {
+    <div class="col-auto">
+      <button class="btn btn-primary">เพิ่ม</button>
+    </div>
+    }
+  </div>
+  <div style="max-height: 240px; overflow-y: auto">
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width: 25%">รหัส</th>
+          <th style="width: 75%">ชื่อ</th>
+          <!-- <th></th> -->
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of products; track product.id) {
+        <tr>
+          <td>{{ product.barCode }}</td>
+          <td>{{ product.goodName }}</td>
+          <!-- <td>
+                <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
+              </td> -->
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+}

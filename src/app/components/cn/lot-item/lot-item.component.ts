@@ -54,7 +54,6 @@ export class LotItemComponent {
     const min = 1
     const max = this.maxValue()
     const curAmount = this.lotItem().returnAmou
-    console.log(min, curAmount, max)
     return curAmount < min || curAmount > max || this.invalid()
   })
   invalidClass = computed(() => {
@@ -63,5 +62,5 @@ export class LotItemComponent {
       ? 'form-control is-invalid'
       : 'form-control is-valid'
   })
-
+  maximumItemCount = computed(() => this.lotItem().goodAmou)
 }

@@ -1,6 +1,8 @@
-import { Component, model, output, signal } from '@angular/core';
+import { Component, inject, model, output, signal } from '@angular/core';
 import { SupllierSelectComponent } from "../supllier-select/supllier-select.component";
 import { FormsModule } from '@angular/forms';
+import { IbobCompService } from '../../../service/supplier/ibob-comp.service';
+import { TOIComp } from '../../../service/other-income/company.service';
 
 @Component({
   selector: 'app-search-supplier',
@@ -9,16 +11,13 @@ import { FormsModule } from '@angular/forms';
   styles: ''
 })
 export class SearchSupplierComponent {
-  selectedSuplier = output<TComp>()
-  sup = signal({ id: 0, label: 'กรุณาเลือก' })
-  term = signal("")
-  items = signal<TComp[]>([])
+  selectedSuplier = output<TOIComp>()
+  private compService = inject(IbobCompService)
+  items = this.compService.compList
+  groupCode = this.compService.groupCode
+  term = this.compService.term
 
 }
 
-type TComp = {
-  comp: string,
-  conpCode: string
-}
 
 type TOpt = { id: number, label: string } | null
