@@ -69,6 +69,5 @@ export const calSemi: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | nu
 
 const applyCap = (amount: number, capAmount: number | null): number => {
     if (capAmount === null) return amount;
-    if (capAmount <= amount) return 0;
     return Math.min(amount, capAmount);
 };
