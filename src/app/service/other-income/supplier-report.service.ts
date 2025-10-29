@@ -93,6 +93,7 @@ export class SupplierReportService {
     })))
   private _formatHead = (head: TMonthHead) => ({
     "ซัพพลายเออร์": `${head.compCode} ${head.compName}`,
+    "ชื่อเรียก": `${head.displayName}`,
     "รวม vat": head.incVat ? 'รวม' : 'ไม่รวม',
     "dc": head.isDc ? 'หัก' : 'ไม่หัก',
     "rebate": head.isRebate ? 'หัก' : 'ไม่หัก',
