@@ -264,7 +264,7 @@ export class StockItemAddComponent {
     const totalCount = dnSale + huSale
     const stockCount = Math.ceil(useMonth * totalCount)
     const expectTotalCount = dnExpectCount + huExpectCount
-    const expectStockCount = Math.ceil(useMonth * expectTotalCount)
+    const expectStock = Math.ceil(useMonth * expectTotalCount)
     return {
       goodCode, priceW3,
       oldCost, newCost, riskPercent,
@@ -275,7 +275,7 @@ export class StockItemAddComponent {
       // computed for display
       dnExpectCount, huExpectCount,
       totalCount, expectTotalCount,
-      stockCount, expectStockCount,
+      stockCount, expectStock,
     }
   })
 
@@ -302,7 +302,7 @@ export class StockItemAddComponent {
     ({ totalCount }) => ({ fieldName: 'totalCount', value: totalCount, desc: 'จำนวนสินค้าขั้นต้น (ชิ้น/เดือน)', className: 'row py-2 px-3 bg-success-subtle' }),
     ({ expectTotalCount }) => ({ fieldName: 'expectTotalCount', value: expectTotalCount, desc: 'จำนวนสินค้า (ชิ้น/เดือน)', className: 'row py-2 px-3 bg-success-subtle' }),
     ({ stockCount }) => ({ fieldName: 'stockCount', value: stockCount, desc: 'จำนวนที่ตุนได้ (ชิ้น)', className: 'row py-2 px-3 bg-success-subtle' }),
-    ({ actualStock }) => ({ fieldName: 'actualStock', value: actualStock, desc: 'จำนวนที่ตุนได้ (ชิ้น)', className: 'row py-2 px-3 bg-success-subtle' }),
+    ({ expectStock }) => ({ fieldName: 'expectStock', value: expectStock, desc: 'จำนวนที่ควรตุน (ชิ้น)', className: 'row py-2 px-3 bg-success-subtle' }),
     ({ actualStock, useMonth }) => useMonth === 0
       ? ({ fieldName: 'actualMonth', value: 'คำนวนไม่ได้', desc: 'ตุนได้จริง (เดือน)', className: 'row py-2 px-3 text-danger bg-success-subtle' })
       : ({ fieldName: 'actualMonth', value: actualStock / useMonth, desc: 'ตุนได้จริง (เดือน)', className: 'row py-2 px-3  bg-success-subtle' }),
@@ -345,12 +345,12 @@ type TStockFormState = {
   huSale: number
   dnUpsalePercent: number
   huUpsalePercent: number
+  expectStock: number // expected stock = (dn + hu sale + upsale percent ) * useMonth // expectTotalCount * useMonth
   actualStock: number
   // computed for display
   dnExpectCount: number
   huExpectCount: number
-  totalCount: number
-  expectTotalCount: number
-  stockCount: number
-  expectStockCount: number
+  totalCount: number // hu sale /mo + dn sale /mo
+  expectTotalCount: number // totalCount * upsale for each company
+  stockCount: number // totalCount * useMonth
 }

@@ -14,42 +14,61 @@
       </select>
     </div>
   </div>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">วันที่บันทึก</th>
-        <th scope="col">รหัสสินค้า</th>
-        <th scope="col">ชื่อสินค้า</th>
-        <th scope="col">ค่าอะไรไม่รู้</th>
-        <th scope="col">stock ปัจจุบัน (ชิ้น)</th>
-        <th scope="col">ระยะเวลาตุน (เดือน)</th>
-        <th scope="col">จำนวนตุน (ชิ้น)</th>
-      </tr>
-    </thead>
-    @let stocks = stockList();@let hasStock = stocks.length !== 0;
-    <tbody>
-      @if (hasStock) { @for (stock of stocks; track stock.id) {
-      <tr>
-        <td scope="row">{{ stock.createAt }}</td>
-        <td>{{ stock.barCode }}</td>
-        <td>{{ stock.goodName }}</td>
-        <td></td>
-        <td></td>
-        <td>
-          <button
-            class="btn-outline-success btn-squre"
-            (click)="onSelectStock(stock, updateModal)"
-          >
-            <i class="bi bi-plus"></i>
-          </button>
-        </td>
-        <td>{{ stock.actualStock }} {{ stock.unitDesc }}</td>
-      </tr>
-      } } @else if (touch()) {
-      <ng-container *ngTemplateOutlet="loadingTable" />
-      }
-    </tbody>
-  </table>
+  <div style="overflow-x: auto">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">วันที่บันทึก</th>
+          <th scope="col">รหัสสินค้า</th>
+          <th scope="col">ชื่อสินค้า</th>
+          <th scope="col">ยอดใช้คำนวน (เดือน)</th>
+          <th scope="col">ขายสินค้าเฉลี่ย (ชิ้น)</th>
+          <th scope="col">stock ปัจจุบัน (ชิ้น)</th>
+          <th scope="col">ระยะเวลาตุน (เดือน)</th>
+          <th scope="col">จำนวนตุน (ชิ้น)</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      @let stocks = stockList();@let hasStock = stocks.length !== 0;
+      <tbody>
+        @if (hasStock) { @for (stock of stocks; track stock.id) {
+        <tr>
+          <td scope="row">{{ stock.createAt | date }}</td>
+          <td>{{ stock.barCode }}</td>
+          <td>{{ stock.goodName }}</td>
+          <td>{{ stock.useMonth }} เดือน</td>
+          <td>
+            {{
+              (stock.huSale * stock.huUpsalePercent +
+                stock.dnSale * stock.dnUpsalePercent) /
+                100
+            }}
+          </td>
+          <td>{{ stock.stockOnHand }} {{ stock.unitDesc }}</td>
+          <td>
+            {{
+              (stock.actualStock * 100) /
+                (stock.huSale * stock.huUpsalePercent +
+                  stock.dnSale * stock.dnUpsalePercent)
+            }}
+            เดือน
+          </td>
+          <td>{{ stock.actualStock }} {{ stock.unitDesc }}</td>
+          <td>
+            <button
+              class="btn btn-squre btn-outline-warning"
+              (click)="onSelectStock(stock, updateModal)"
+            >
+              <i class="bi bi-pen"></i>
+            </button>
+          </td>
+        </tr>
+        } } @else if (touch()) {
+        <ng-container *ngTemplateOutlet="loadingTable" />
+        }
+      </tbody>
+    </table>
+  </div>
   @if (hasStock) {
   <button
     class="btn btn-success w-100 btn-lg"
@@ -71,7 +90,19 @@
       (click)="onClose()"
     ></button>
   </div>
-  <div class="modal-body"></div>
+  <div class="modal-body">
+    <div class="app-form-field">
+      <label for="new-actual">จำนวนตุนจริง (ชิ้น)</label>
+      <input
+        type="number"
+        [ngModel]="selectStock()?.actualStock"
+        (ngModelChange)="changeActualStock($event)"
+      />
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success w-100">บันทึก</button>
+  </div>
 </ng-template>
 
 <ng-template #loadingTable>
