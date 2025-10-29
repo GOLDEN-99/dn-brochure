@@ -43,7 +43,7 @@
       <div>{{ stepLists[0].rate }} %</div>
       }@else { @for (st of stepLists; track $index) {
       <div style="display: flex; gap: 1rem">
-        <div>ตั้งแต่ {{ st.min }}</div>
+        <div style="width: 160px">ตั้งแต่ {{ st.min | number : "1.2-2" }}</div>
         <div>คิด {{ st.rate }}%</div>
       </div>
       } }
