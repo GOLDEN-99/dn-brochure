@@ -6,7 +6,7 @@ export const calFlat: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | nu
     const rawTarget = accAmount + current
     const validAmount = applyCap(rawTarget, capAmount)
     const calIncome = validAmount * steps[0].rate / 100
-    return calIncome
+    return calIncome - accIncome
 }
 
 export const calStep: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | null, accAmount: number, accIncome: number,) => (current: number) => {

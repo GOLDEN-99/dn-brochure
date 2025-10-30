@@ -89,7 +89,6 @@ export class NotLightSingleComponent {
   ]
 
   private _genSelector = (incomeType: number) => {
-    console.log(incomeType)
     switch (incomeType) {
       case 1:
         return this.periodOrderSelector

@@ -1,8 +1,8 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { DateInputComponent } from "../../../components/date-input/date-input.component";
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { combineLatest, filter, map, of, tap } from 'rxjs';
+import { combineLatest, filter, map, of, Subject, takeUntil, tap } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { IbobAdminService } from '../../../service/ibob/ibob-admin.service';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +16,7 @@ import { getOrElse } from '../../../lib/utli';
   templateUrl: './in-out-query.component.html',
   styleUrl: './in-out-query.component.scss',
 })
-export class InOutQueryComponent {
+export class InOutQueryComponent implements OnInit, OnDestroy {
   private ibobAdminService = inject(IbobAdminService)
   fromDate = this.ibobAdminService.fromDate
   toDate = this.ibobAdminService.toDate
@@ -28,7 +28,6 @@ export class InOutQueryComponent {
   private route = inject(ActivatedRoute)
   private warehouse$ = this.route.parent?.paramMap.pipe(
     map(pm => pm.get("warehouse")),
-    tap(console.log),
     map(Number),
     filter(wh => !isNaN(wh)),
   ) ?? of(0)
@@ -80,6 +79,13 @@ export class InOutQueryComponent {
     this.onSearch({ warehouse, compName, order, ...dateRange })
   }
 
+  refetchOnPageChange = (warehouse: number) => {
+    const compName = this.compName()
+    const order = this.order()
+    const dateRange = this.ibobAdminService.getDateRange()
+    this.onSearch({ warehouse, compName, order, ...dateRange })
+  }
+
   onDelete(reservationId: number) {
     this.ibobAdminService.deleteReservation(reservationId).subscribe({
       next: (res) => {
@@ -87,5 +93,12 @@ export class InOutQueryComponent {
       }
     })
   }
-
+  private _unsub$ = new Subject<void>()
+  ngOnInit(): void {
+    this.warehouse$.pipe(takeUntil(this._unsub$)).subscribe(warehouse => this.refetchOnPageChange(warehouse))
+  }
+  ngOnDestroy(): void {
+    this._unsub$.next()
+    this._unsub$.complete()
+  }
 }
