@@ -28,7 +28,7 @@ import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.reso
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
-import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, STOCK_ITEM_TOKEN, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
+import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, QUOTA_ITEM_TOKEN, STOCK_ITEM_TOKEN, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
 import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
 import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
@@ -403,6 +403,36 @@ export const routes: Routes = [
         resolve: [stockSetupResolver],
         loadComponent: () => import('./pages/stock-item/stock-item-add/stock-item-add.component')
             .then(r => r.StockItemAddComponent).catch(ex => NotfoundComponent),
+    },
+    //quota-item
+    {
+        path: 'quota-item',
+        component: PurchaseLayoutComponent,
+        providers: [
+            {
+                provide: TAB_TOKEN,
+                useValue: QUOTA_ITEM_TOKEN
+            }
+        ],
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('./pages/quota-item/quota-item-add/quota-item-add.component')
+                    .then(r => r.QuotaItemAddComponent)
+                    .catch((_) => NotfoundComponent)
+            },
+            {
+                path: 'good-list',
+                loadComponent: () => import('./pages/quota-item/quota-item-list/quota-item-list.component')
+                    .then(r => r.QuotaItemListComponent).catch((_) => NotfoundComponent)
+            },
+            {
+                path: 'whole-list',
+                loadComponent: () => import('./pages/quota-item/quota-item-whole-list/quota-item-whole-list.component')
+                    .then(r => r.QuotaItemWholeListComponent)
+                    .catch((_) => NotfoundComponent)
+            }
+        ]
     },
     {
         path: "notfound",

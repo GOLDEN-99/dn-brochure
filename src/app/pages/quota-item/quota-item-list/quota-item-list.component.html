@@ -1,0 +1,69 @@
+<section class="bg-white p-3">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="app-form-field-inline">
+        <div class="w-25">
+          <label for="barcode">รหัสสินค้า</label>
+        </div>
+        <div class="w-75">
+          <input
+            type="text"
+            name="barcode"
+            id="barcode"
+            [ngModel]="searchQuota().barcode"
+            (ngModelChange)="changeCode($event)"
+          />
+        </div>
+      </div>
+      <div class="app-form-field-inline">
+        <div class="w-25">
+          <label for="goodName">ชื่อสินค้า</label>
+        </div>
+        <div class="w-75">
+          <input
+            type="text"
+            name="goodName"
+            id="goodName"
+            [ngModel]="searchQuota().goodName"
+            (ngModelChange)="changeSearchName($event)"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="col-md">
+      <button class="btn btn-primary w-100" (click)="search$.next(true)">
+        ค้นหา
+      </button>
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">รหัสสินค้า</th>
+        <th scope="col">ชื่อสินค้า</th>
+        <th scope="col">100%</th>
+        <th scope="col">80%</th>
+        <th scope="col">48%</th>
+        <th scope="col">32%</th>
+        <th scope="col">15%</th>
+        <th scope="col">5%</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (quota of result(); track $index) {
+      <tr>
+        <td>{{ quota.barCode }}</td>
+        <td>{{ quota.goodName }}</td>
+        <td>{{ quota.quotaAmount }}</td>
+        <td>{{ quota.saleQuota }}</td>
+        <!--80% display-->
+        <td>{{ quota.wholeSaleQuota }}</td>
+        <td>{{ quota.goodSaleQuota }}</td>
+        <td>{{ quota.oldSaleQuota }}</td>
+        <td>{{ quota.newSaleQuota }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <button class="btn btn-success w-100">export</button>
+</section>

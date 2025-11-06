@@ -1,0 +1,55 @@
+<section class="bg-white p-3">
+  <div class="row">
+    <div class="col-md-6">
+      <app-date-input label="ตั้งแต่" [(date)]="fromDate" />
+    </div>
+    <div class="col-md-6">
+      <app-date-input label="ถึง" [(date)]="toDate" />
+    </div>
+    <div class="col-md">
+      <div class="app-form-field-inline">
+        <div class="w-25"><label for="wholeCode">รหัสร้าน</label></div>
+        <div class="w-75">
+          <input type="text" name="wholeCode" id="wholeCode" />
+        </div>
+      </div>
+      <div class="app-form-field-inline">
+        <div class="w-25"><label for="barcode">รหัสสินค้า</label></div>
+        <div class="w-75">
+          <input type="text" name="barcode" id="barcode" />
+        </div>
+      </div>
+    </div>
+    <div class="col-md">
+      <button class="btn-primary btn w-100">ค้นหา</button>
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">รหัสร้าน</th>
+        <th scope="col">ชื่อร้าน</th>
+        <th scope="col">รหัสสินค้า</th>
+        <th scope="col">ชื่อสินค้า</th>
+        <th scope="col">โควต้าทั้งหมด</th>
+        <th scope="col">โค้วต้าที่ใช้แล้ว</th>
+        <th scope="col">เหลือ</th>
+        <th scope="col">ใช้ได้ก่อนวันที่</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (wholeQuota of wholeQuotaList(); track $index) {
+      <tr>
+        <td scope="row">{{ wholeQuota.wholeCode }}</td>
+        <td>{{ wholeQuota.wholeName }}</td>
+        <td>{{ wholeQuota.barCode }}</td>
+        <td>{{ wholeQuota.goodName }}</td>
+        <td>{{ wholeQuota.quotaAmount }}</td>
+        <td>{{ wholeQuota.useQuotaAmount }}</td>
+        <td>{{ wholeQuota.quotaAmount - wholeQuota.useQuotaAmount }}</td>
+        <td>{{ wholeQuota.useBefore | date }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</section>
