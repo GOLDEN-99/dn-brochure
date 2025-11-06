@@ -42,26 +42,7 @@ export class StockItemReportComponent {
     return criteria.flatMap(({ stockMonth }) => [stockMonth, stockMonth / 2]).sort()
   })
   stockList = toSignal(this.stockList$, {
-    initialValue: [{
-      id: 1,
-      goodName: 'test',
-      barCode: '123456',
-      unitDesc: 'unit',
-      createAt: '2025-01-01',
-      updateAt: null,
-      goodCode: '1234',
-      oldCost: 2,
-      newCost: 5,
-      priceW3: 3,
-      saleMean: 120000,
-      useMonth: 3,
-      dnSale: 1200,
-      dnUpsalePercent: 100,
-      huSale: 1000,
-      huUpsalePercent: 120,
-      stockOnHand: 100,
-      actualStock: 51
-    }]
+    initialValue: []
   })
 
   private toast = inject(ToastService)
