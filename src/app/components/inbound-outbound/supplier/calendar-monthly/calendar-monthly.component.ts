@@ -54,7 +54,7 @@ export class CalendarMonthlyComponent {
 
   doorStat = computed(() => this.selectedDoor().map(({ doorId, name }) => {
     const statusList = this.dailyServ.allDoorStat()
-    const stat = statusList.find((s) => s.door === name)
+    const stat = statusList.find((s) => String(s.doorId) === doorId)
     return { doorId, name, status: stat ? stat.status : -1 }
   }))
 

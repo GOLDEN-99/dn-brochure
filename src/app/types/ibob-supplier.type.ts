@@ -129,7 +129,7 @@ export type TDailyReq = {
     warehouseId: string
 }
 
-export type TDailyItem = { door: string, status: number, times: TSlotReady[] }
+export type TDailyItem = { doorId: number, door: string, status: number, times: TSlotReady[] }
 
 export type TDailyRes = {
     date: string

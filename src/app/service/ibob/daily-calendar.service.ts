@@ -56,13 +56,13 @@ export class DailyCalendarService {
   refArr = signal<string[]>([])
 
   setDoor = (doors: TAppDoor[]) => {
-    const selectedDoor = doors.flatMap(({ check, name }) => check ? [name] : [])
+    const selectedDoor = doors.flatMap(({ check, name, doorId }) => check ? [doorId] : [])
     this.refArr.set(selectedDoor)
   }
 
   filterDoor = computed(
     () => this.resevation()
-      .flatMap(({ door, times }) => this.refArr().includes(door)
+      .flatMap(({ door, times, doorId }) => this.refArr().includes(String(doorId))
         ? times.map(t => ({ ...t, door }))
         : [])
   )
