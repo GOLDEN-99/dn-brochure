@@ -31,7 +31,7 @@
     [stepType]="e.notLight.stepType"
     [stepList]="e.stepList"
     [capAmount]="e.notLight.capAmount"
-    [canEdit]="true"
+    [canEdit]="isPurchase"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
@@ -45,7 +45,7 @@
   <!--add incentive income here-->
   @if (e.event.eventType === 3) {
   <app-other-income-monthly-incentive-edit
-    [canEdit]="true"
+    [canEdit]="isPurchase"
     [id]="e.head.id"
     [eventType]="e.event.eventType"
     [incomeList]="e.incomeList"
