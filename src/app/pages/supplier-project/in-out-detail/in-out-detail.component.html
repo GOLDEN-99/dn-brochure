@@ -78,7 +78,13 @@
       <div class="col">
         <div class="app-form-field">
           <label for="intendant">ชื่อผู้ดูแล</label>
-          <input type="text" name="intendant" id="intendant" disabled />
+          <input
+            type="text"
+            name="intendant"
+            id="intendant"
+            disabled
+            [ngModel]="info.intendant"
+          />
         </div>
       </div>
       <div class="col">
