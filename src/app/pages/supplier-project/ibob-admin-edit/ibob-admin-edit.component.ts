@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal, TemplateRef, viewChild, viewChildren } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, map, Subject, switchMap, tap } from 'rxjs';
 import { getOrElse } from '../../../lib/utli';
 import { TAppDoorProp, TAppOrder, TTimeSlot } from '../../../types/ibob-supplier.type';
 import { NgbCalendar, NgbDate, NgbDatepicker, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -46,7 +46,7 @@ export class IbobAdminEditComponent {
   private changeReservationData = this.ibobQuery.changeReservationData
   private searchTimeSlot = this.ibobQuery.searchTimeSlot
   private searchComp = this.ibobQuery.searchComp
-  private searchOrder = this.ibobQuery.searchOrder
+  //private searchOrder = this.ibobQuery.searchOrder
   private reservation$ = this.reservationId$.pipe(
     tap(() => this.isLoading.set(true)),
     switchMap(id => this.getById(id)),
@@ -77,7 +77,6 @@ export class IbobAdminEditComponent {
   private searchTimeslotParam = computed<[string, string]>(() => selectTimeslotParams(this.reservationData()))
   private searchTimeslotParam$ = toObservable(this.searchTimeslotParam)
     .pipe(filter(search => search.every(s => s !== '')))
-
 
   truckTypeList = ['4 ล้อ', '6 ล้อ', '10 ล้อ']
 
@@ -124,6 +123,21 @@ export class IbobAdminEditComponent {
   cloneActiveDoor = signal<TMaybe<TAppDoorProp>>(null)
   cloneActiveSlot = signal<TMaybe<string>>(null)
   cloneDate = signal(this.today)
+
+  cloneParam = computed(() => {
+    const door = this.cloneActiveDoor()
+    const { year, month, day } = this.cloneDate()
+    if (!door) return null
+    return [door.doorId, `${year}-${month}-${day}`] satisfies [string, string]
+  })
+
+  private cloneParam$ = toObservable(this.cloneParam)
+  private clonePossibleDoor$ = this.cloneParam$.pipe(
+    filter(p => p !== null),
+    switchMap(p => this.searchTimeSlot(...p)),
+  )
+  cloneTimeSlot = toSignal(this.clonePossibleDoor$, { initialValue: [] })
+
   cloneThaiDate = computed(() => {
     const { year, month, day } = this.cloneDate()
     return `${day}/${month}/${year}`

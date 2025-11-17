@@ -238,7 +238,7 @@
           margin: 0 auto;
         "
       >
-        @for (slot of timeslot(); track $index) {
+        @for (slot of cloneTimeSlot(); track $index) {
         <button
           [className]="btnEditClass(slot.time)"
           (click)="updateActiveSlot(slot.time)"
