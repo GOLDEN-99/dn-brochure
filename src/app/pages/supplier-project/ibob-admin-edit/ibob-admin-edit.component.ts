@@ -1,8 +1,8 @@
-import { Component, computed, effect, inject, signal, TemplateRef, viewChild, viewChildren } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, map, Subject, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
 import { getOrElse } from '../../../lib/utli';
-import { TAppDoorProp, TAppOrder, TTimeSlot } from '../../../types/ibob-supplier.type';
+import { TAppDoorProp, TAppOrder, TAppOrderState, TTimeSlot } from '../../../types/ibob-supplier.type';
 import { NgbCalendar, NgbDate, NgbDatepicker, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IbobAddService } from '../../../service/ibob/ibob-add.service';
 import { SelectDoorOptionComponent } from "../../../components/inbound-outbound/select-door-option/select-door-option.component";
@@ -45,14 +45,18 @@ export class IbobAdminEditComponent {
   private getById = this.ibobQuery.getSingleReservation
   private changeReservationData = this.ibobQuery.changeReservationData
   private searchTimeSlot = this.ibobQuery.searchTimeSlot
-  private searchComp = this.ibobQuery.searchComp
-  //private searchOrder = this.ibobQuery.searchOrder
   private reservation$ = this.reservationId$.pipe(
     tap(() => this.isLoading.set(true)),
     switchMap(id => this.getById(id)),
     tap((res) => {
       this.isLoading.set(false);
       this.success.set(res !== null)
+      const orders = res?.orderList ?? []
+      let state: Record<string, number> = {}
+      for (const order of orders) {
+        state[order.orderNumb] = order.box;
+      }
+      this.orderState.set(state);
     }),
   )
 
@@ -80,17 +84,11 @@ export class IbobAdminEditComponent {
 
   truckTypeList = ['4 ล้อ', '6 ล้อ', '10 ล้อ']
 
+  orderState = signal<TAppOrderState>({})
+  poList = computed(() => Object.entries(this.orderState()).map(([orderNumb, box]) => ({ orderNumb, box })))
   compCode = computed(() => selectShortComp(this.reservationData()))
-  private activeOrder = computed(() => this.orderList().flatMap(({ check, orderNumb, box }) => check ? [{ orderNumb, box }] : []))
-  // checkPo = (orderNumb: string) => this.orderList.update(prev => prev.map(p => p.orderNumb === orderNumb ? ({ ...p, check: !p.check }) : p))
-  // changeBox = (orderNumb: string) => (box: number) => this.orderList.update(prev => prev.map(p => p.orderNumb === orderNumb ? ({ ...p, box }) : p))
   totalBox = computed(() => this.orderList().reduce((acc, cur) => acc + cur.box, 0))
-
   compType = computed(() => this.comp().compType)
-  private compType$ = toObservable(this.compType).pipe(filter(c => c !== ''))
-  term = signal("")
-  private term$ = toObservable(this.term).pipe(filter(t => t !== ''), distinctUntilChanged(), debounceTime(300))
-  private searchCompParam$ = combineLatest([this.compType$, this.term$])
 
   private timeslot$ = this.searchTimeslotParam$
     .pipe(
@@ -102,12 +100,6 @@ export class IbobAdminEditComponent {
   activeSlot = computed(() => selectSlot(this.reservationData()))
   btnClass = (cur: string) => this.activeSlot().some(a => a === cur) ? 'btn btn-success' : 'btn btn-outline-secondary'
   disableTime = ({ isReserved, time }: TTimeSlot) => this.activeSlot().some(a => a === time) ? false : isReserved
-
-  // private queryOrder$ = this.compCode$.pipe(switchMap(c => this.searchOrder(c)))
-  resultComp$ = this.searchCompParam$.pipe(
-    switchMap(search => this.searchComp(...search))
-  )
-
 
   private modalService = inject(NgbModal)
   openModal = (ref: any) => this.modalService.open(ref)

@@ -63,8 +63,7 @@ const praseLoginOrder = (value: any): TLoginOrder => {
 
         const praseStrWithObj = praseStr(value)
         const orderNumb = praseStrWithObj('orderNumb')
-        const orderDate = praseStrWithObj('orderDate')
-        return { orderDate, orderNumb }
+        return { orderNumb }
     } catch (err) {
         console.error(err)
         throw err

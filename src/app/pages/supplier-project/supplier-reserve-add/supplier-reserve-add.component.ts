@@ -1,16 +1,17 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgbCalendar, NgbDate, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IBOBRESERVE_TOKEN } from '../../../service/ibob/ibobToken';
 import { IbobAddService } from '../../../service/ibob/ibob-add.service';
 import { TMaybe } from '../../../types';
-import { TDoor } from '../../../types/ibob-supplier.type';
+import { TActiveOrderV2, TDoor } from '../../../types/ibob-supplier.type';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { forkJoin, map, tap } from 'rxjs';
+import { filter, forkJoin, switchMap } from 'rxjs';
 import { DoorService } from '../../../service/ibob/door.service';
 import { WarehouseService } from '../../../service/ibob/warehouse.service';
 import { ToastService } from '../../../service/toast/toast.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { IbobQueryReservationService } from '../../../service/ibob/ibob-query-reservation.service';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-supplier-reserve-add',
@@ -25,6 +26,16 @@ export class SupplierReserveAddComponent {
   private serv = inject(IBOBRESERVE_TOKEN)
   private route = inject(ActivatedRoute)
   private router = inject(Router)
+  private modalService = inject(NgbModal)
+  private ibobQueryService = inject(IbobQueryReservationService)
+  private searchOrderModal = viewChild('searchOrderModal')
+  openModal = () => {
+    this.modalService.open(this.searchOrderModal());
+  }
+  closeModal = () => {
+    this.modalService.dismissAll();
+    this.orderNumb.set('')
+  }
   createBackLink() {
     return this.router.createUrlTree(['..', '..'], { queryParamsHandling: 'preserve', relativeTo: this.route }).toString()
   }
@@ -113,6 +124,19 @@ export class SupplierReserveAddComponent {
   }
 
   comp = this.serv.currentComp
+  private comp$ = toObservable(this.comp)
+  private activeOrder$ = this.comp$.pipe(
+    filter(c => c !== null),
+    switchMap(({ compCode, shipto }) => this.ibobQueryService.searchOrder({ compCode, compType: shipto })
+    )
+  )
+  activeOrder = toSignal(this.activeOrder$, { initialValue: [] })
+  orderNumb = signal('')
+  orders = computed(() => this.activeOrder().filter(({ orderNumb }) => {
+    const po = this.orderNumb()
+    if (po !== '') return orderNumb.includes(po)
+    return true
+  }))
   doorList = this.doorService.doorList
   possibleSlot = this.serv.possibleSlot
 
@@ -149,7 +173,7 @@ export class SupplierReserveAddComponent {
   changeBox = this.serv.changeOrderAmount
   totalBox = computed(
     () => this.poList()
-      .reduce((acc, cur) => cur.check ? acc + cur.box : acc, 0)
+      .reduce((acc, { box }) => acc + box, 0)
   )
 
   tooLow = computed(() => this.totalBox() < this.minBox())
@@ -191,4 +215,10 @@ export class SupplierReserveAddComponent {
       error: (err) => { console.error(err); }
     })
   }
+
+  onAddOrder = ({ orderNumb }: TActiveOrderV2) => {
+    this.serv.checkOrder(orderNumb)
+  }
+
+  onDelete = (orderId: string) => this.serv.deleteOrder(orderId)
 }

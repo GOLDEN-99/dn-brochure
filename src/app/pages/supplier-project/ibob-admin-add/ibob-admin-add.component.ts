@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { SelectDoorOptionComponent } from "../../../components/inbound-outbound/select-door-option/select-door-option.component";
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../service/api/api.service';
@@ -8,11 +8,12 @@ import { environment } from '../../../../environments/environment';
 import { TExtendedComp } from '../../../service/supplier/supplier.token';
 import { getOrElse } from '../../../lib/utli';
 import { NgbCalendar, NgbDate, NgbDatepicker, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TAppDoor, TAppDoorProp, TAppOrder, TCreateReservationReq, TGetIbObRes, TLoginOrder, TTimeSlot } from '../../../types/ibob-supplier.type';
+import { TActiveOrderV2, TAppDoor, TAppDoorProp, TAppOrder, TAppOrderState, TCreateReservationReq, TGetIbObRes, TLoginOrder, TTimeSlot } from '../../../types/ibob-supplier.type';
 import { convertToIso } from '../../../lib';
 import { IbobAddService } from '../../../service/ibob/ibob-add.service';
 import { RouterLink } from '@angular/router';
 import { TMaybe } from '../../../types';
+import { IbobQueryReservationService } from '../../../service/ibob/ibob-query-reservation.service';
 
 @Component({
   selector: 'app-ibob-admin-add',
@@ -21,11 +22,6 @@ import { TMaybe } from '../../../types';
   styleUrl: './ibob-admin-add.component.scss'
 })
 export class IbobAdminAddComponent {
-  constructor() {
-    this.queryOrder$.subscribe({
-      next: (res) => this.orderList.set(res)
-    })
-  }
   comp = signal({
     compCode: "",
     compName: "",
@@ -75,11 +71,15 @@ export class IbobAdminAddComponent {
   truckLicensePlate = signal("")
   truckType = signal("")
   note = signal("")
-  orderList = signal<TAppOrder[]>([])
-  private activeOrder = computed(() => this.orderList().flatMap(({ check, orderNumb, box }) => check ? [{ orderNumb, box }] : []))
-  checkPo = (orderNumb: string) => this.orderList.update(prev => prev.map(p => p.orderNumb === orderNumb ? ({ ...p, check: !p.check }) : p))
-  changeBox = (orderNumb: string) => (box: number) => this.orderList.update(prev => prev.map(p => p.orderNumb === orderNumb ? ({ ...p, box }) : p))
-  totalBox = computed(() => this.orderList().reduce((acc, cur) => acc + cur.box, 0))
+  orderState = signal<TAppOrderState>({})
+
+  onAddOrder = ({ orderNumb }: TActiveOrderV2) => this.orderState.update(prev => ({ ...prev, [orderNumb]: (prev[orderNumb] ?? 0) + 1 }));
+
+  poList = computed(() => Object.entries(this.orderState()).map(([orderNumb, box]) => ({ orderNumb, box })))
+  checkPo = (orderNumb: string) => this.orderState.update(prev => ({ ...prev, [orderNumb]: (prev[orderNumb] ?? 0) + 1 }))
+  changeBox = (orderNumb: string) => (box: number) => this.orderState.update(prev => ({ ...prev, [orderNumb]: box }))
+  onDelete = (orderNumb: string) => this.orderState.update(({ [orderNumb]: _, ...res }) => ({ ...res }))
+  totalBox = computed(() => this.poList().reduce((acc, cur) => acc + cur.box, 0))
 
   private api = inject(ApiService)
   compType = signal("DN")
@@ -90,13 +90,6 @@ export class IbobAdminAddComponent {
   private searchComp = (compType: string, term: string) =>
     this.api.get<TExtendedComp[]>(`${environment.oi}/comp/${compType}`, { params: { term } })
       .pipe(getOrElse<TExtendedComp[], TExtendedComp[]>([])
-      )
-
-  private searchOrder = ({ compType, compCode }: { compType: string, compCode: string }) =>
-    this.api.get<TLoginOrder[]>(`${environment.oi}/ib-ob/active-order/${compType}/${compCode}`)
-      .pipe(
-        map<TLoginOrder[], TAppOrder[]>(orderList => orderList.map(order => ({ ...order, check: false, box: 0 })))
-        , getOrElse<TAppOrder[], TAppOrder[]>([])
       )
 
   private searchTimeSlot = (doorId: string, date: string) =>
@@ -129,7 +122,8 @@ export class IbobAdminAddComponent {
   activeSlot = signal<string[]>([])
   btnClass = (cur: string) => this.activeSlot().some(a => a === cur) ? 'btn btn-success' : 'btn btn-outline-secondary'
 
-  private queryOrder$ = this.compCode$.pipe(switchMap(c => this.searchOrder(c)))
+  private queryOrder$ = this.compCode$.pipe(switchMap(c => this.ibobQueryService.searchOrder(c)))
+  queryOrder = toSignal(this.queryOrder$, { initialValue: [] })
   resultComp$ = this.searchCompParam$.pipe(
     switchMap(search => this.searchComp(...search))
   )
@@ -141,6 +135,7 @@ export class IbobAdminAddComponent {
 
   onSelectComp({ compName, compEmail, compPhone, compCode, compType }: TExtendedComp) {
     this.comp.set({ compEmail, compName, compPhone, compCode, compType })
+    this.orderState.set({})
     this.modalService.dismissAll()
   }
 
@@ -174,10 +169,28 @@ export class IbobAdminAddComponent {
     const reservationDate = this.isoDate()
     const contactName = this.contactName()
     const doorId = this.activeDoor()?.doorId ?? "0"
-    const order = this.activeOrder()
+    const order = this.poList()
     const note = this.note()
     return {
       doorId, reservationDate, companyName, contactName, phoneNumber, email, truckType, truckLicensePlate, note, compCode, order, shipto
     }
   }
+
+
+  private ibobQueryService = inject(IbobQueryReservationService)
+  private searchOrderModal = viewChild('searchOrderModal')
+  orderNumb = signal('')
+  displayOrder = computed(() => this.queryOrder().filter(({ orderNumb }) => {
+    const po = this.orderNumb()
+    if (po !== '') return orderNumb.includes(po)
+    return true
+  }));
+  openSearchOrderModal = () => {
+    this.modalService.open(this.searchOrderModal());
+  }
+  closeModal = () => {
+    this.modalService.dismissAll();
+    this.orderNumb.set('')
+  }
+
 }

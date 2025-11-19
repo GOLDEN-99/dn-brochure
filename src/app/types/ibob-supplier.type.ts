@@ -43,13 +43,21 @@ export type TDoorMap = {
 
 export type TLoginOrder = {
     orderNumb: string
-    orderDate: string
+    //orderDate: string
+}
+
+export type TActiveOrderV2 = {
+    orderNumb: string
+    compName: string
+    isSameComp: boolean
 }
 
 export type TAppOrder = {
+    orderNumb: string
     box: number
-    check: boolean
-} & TLoginOrder
+}
+
+export type TAppOrderState = Record<string, number>
 
 export type TLoginRes = {
     comp: TComp

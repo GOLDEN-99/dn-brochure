@@ -136,65 +136,60 @@
     </div>
 
     <div>เลขที่ใบสั่งซื้อ (PO)</div>
-    <div class="ps-3">
-      @for (order of orderList(); track $index) {
+    <div class="ps-3 mb-3">
+      @for (order of poList(); track order.orderNumb) {
       <div class="row">
+        <div class="col-2 md:col-1">
+          <div class="py-2">{{ order.orderNumb }}</div>
+        </div>
+        <!---->
         <div class="col">
-          <div class="form-check">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              [name]="order.orderNumb + '-check'"
-              [attr.id]="order.orderNumb + '-check'"
-              [ngModel]="order.check"
-              disabled
-            />
-            <label [attr.for]="order.orderNumb + '-check'">{{
-              order.orderNumb
-            }}</label>
+          <div class="app-form-field-inline">
+            <div>
+              <label class="form-label" [attr.for]="order.orderNumb + '-box'"
+                >ระบุจำนวนลัง</label
+              >
+            </div>
+            <div>
+              <input
+                class="form-control"
+                type="number"
+                [name]="order.orderNumb + '-box'"
+                [attr.id]="order.orderNumb + '-box'"
+                min="1"
+                [ngModel]="order.box"
+                readonly
+              />
+            </div>
           </div>
-          <!---->
-          @if(order.check){
-          <div class="mb-3 ps-4">
-            <label class="form-label" [attr.for]="order.orderNumb + '-box'"
-              >ระบุจำนวนลัง</label
-            >
-            <input
-              class="form-control"
-              type="number"
-              [name]="order.orderNumb + '-box'"
-              [attr.id]="order.orderNumb + '-box'"
-              min="1"
-              [ngModel]="order.box"
-              readonly
-            />
-          </div>
-          }
         </div>
         @if (isAdmin()) {
-        <div class="col-2 row">
-          <span>
-            <button
-              class="btn btn-outline-warning btn-squre"
-              (click)="openOrderModal(order, changeOrder)"
-            >
-              <i class="bi bi-pen"></i>
-            </button>
-          </span>
-          <span>
-            <button
-              class="btn btn-squre btn-danger"
-              (click)="onDeleteOrder(order.orderNumb)"
-            >
-              <i class="bi bi-trash"></i>
-            </button>
-          </span>
+
+        <div class="col-auto">
+          <button
+            class="btn btn-outline-warning btn-squre"
+            (click)="openOrderModal(order, changeOrder)"
+          >
+            <i class="bi bi-pen"></i>
+          </button>
         </div>
+        <div class="col-auto">
+          <button
+            class="btn btn-squre btn-danger"
+            (click)="onDeleteOrder(order.orderNumb)"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+
         }
       </div>
       }
+
       <!---->
+      @if (totalBox() !== 0) {
       <div>รวม {{ totalBox() }} ลัง</div>
+      }
     </div>
 
     <a [routerLink]="backLink" role="button" class="btn btn-danger w-100"
@@ -354,7 +349,7 @@
       type="button"
       class="btn-close"
       aria-label="Close"
-      (click)="closeDriverModal()"
+      (click)="closeOrderModal()"
     ></button>
   </div>
   <div class="modal-body">

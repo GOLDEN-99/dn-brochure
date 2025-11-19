@@ -22,6 +22,7 @@ export class IbobAdminService {
 
   compName = signal("")
   order = signal("")
+  compCode = signal("")
 
   private queryReservationService = inject(IbobQueryReservationService)
 

@@ -21,6 +21,7 @@ export class InOutQueryComponent implements OnInit, OnDestroy {
   fromDate = this.ibobAdminService.fromDate
   toDate = this.ibobAdminService.toDate
   compName = this.ibobAdminService.compName
+  compCode = this.ibobAdminService.compCode
   order = this.ibobAdminService.order
   reserveList = this.ibobAdminService.reservationList
   onSearch = this.ibobAdminService.searchReservation
@@ -58,25 +59,35 @@ export class InOutQueryComponent implements OnInit, OnDestroy {
   createLink = computed(() => this.router.createUrlTree(
     ['supplier', 'in-out', this.warehouseId(), 'add'],
   ))
-  optionList = [{ id: "compName", label: "ชื่อซัพ" }, { id: "order", label: "เลข order" }]
+  optionList = [{ id: "compName", label: "ชื่อซัพ" }, { id: "compCode", label: "รหัสซัพ" }, { id: "order", label: "เลข po" }]
   currentOption = signal('')
   onCurrentOptionChange(opt: string) {
     this.currentOption.set(opt)
-    if (opt === 'compName') {
-      this.order.set("")
-      return
-    }
-    if (opt === 'order') {
-      this.compName.set("")
+    switch (opt) {
+      case 'compName':
+        this.order.set("")
+        this.compCode.set("")
+        break
+      case 'compCode':
+        this.compName.set("")
+        this.order.set("")
+        break
+      case 'order':
+        this.compName.set("")
+        this.compCode.set("")
+        break
+      default:
+        console.log('ไม่พบตัวเลือก ', opt)
     }
   }
 
   onClick() {
     const warehouse = this.warehouseId()
     const compName = this.compName()
+    const compCode = this.compCode()
     const order = this.order()
     const dateRange = this.ibobAdminService.getDateRange()
-    this.onSearch({ warehouse, compName, order, ...dateRange })
+    this.onSearch({ warehouse, compName, order, compCode, ...dateRange })
   }
 
   refetchOnPageChange = (warehouse: number) => {
