@@ -21,7 +21,7 @@ export const calStep: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | nu
         if (max === null) {
             rawIncome += thisStep * rate
         } else {
-            const amount = Math.min(thisStep, max)
+            const amount = Math.min(thisStep, max - min)
             rawIncome += amount * rate
         }
     }
