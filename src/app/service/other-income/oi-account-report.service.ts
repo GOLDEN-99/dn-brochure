@@ -48,7 +48,7 @@ export class OiAccountReportService {
   private _api = inject(ApiService)
   private _getIso = convertToIso
   private _formatCompType = (compType: number) => compType === 1 ? 'DN' : 'HU'
-  private _getInvoiceReport = (compType: string) => this._api.get<TInvocieReport[]>(`${this.basePath}/${compType}/invoices`)
+  private _getInvoiceReport = (compType: string, reportType: string) => this._api.get<TInvocieReport[]>(`${this.basePath}/${compType}/invoices`, { params: { reportType } })
   private _getReceiptReport = (compType: string) => this._api.get<TReceiptReport[]>(`${this.basePath}/${compType}/receipts`)
   private _getAnnualReport = ({ compType, year }: TQueryWithYear) => this._api.get<TAnnualReport[]>(`${this.basePath}/${compType}`, { params: { year } })
   private _getLighyBoxReport = ({ compType, year }: TQueryWithYear) => this._api.get<TLightBoxReport[]>(`${this.basePath}/${compType}/annual/light-box`, { params: { year } })
@@ -61,10 +61,15 @@ export class OiAccountReportService {
   private _getRangeCreditReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeCreditReport[]>(`${this.basePath}/${compType}/range/credit`, { params: { startDate, endDate } })
 
   private invoice$ = this._baseQuery$.pipe(
-    switchMap(({ compType }) => this._getInvoiceReport(compType)),
+    switchMap(({ compType }) => this._getInvoiceReport(compType, 'invoice')),
     this._catchSilent<TAnnualReport[]>([])
   )
   invoice = toSignal(this.invoice$, { initialValue: [] })
+  private credit$ = this._baseQuery$.pipe(
+    switchMap(({ compType }) => this._getInvoiceReport(compType, 'credit')),
+    this._catchSilent<TAnnualReport[]>([])
+  )
+  cresit = toSignal(this.credit$, { initialValue: [] })
   private receipt$ = this._baseQuery$.pipe(
     switchMap(({ compType }) => this._getReceiptReport(compType)),
     this._catchSilent<TReceiptReport[]>([])
@@ -78,9 +83,9 @@ export class OiAccountReportService {
   private _mapToAoa = <T extends TObj>(mapper: TFieldSelector<T>[]) =>
     (data: T[]) => [mapper.map(({ label }) => label), ...data.map(d => mapper.map(({ fn }) => fn(d)))]
 
-  exportInvoiceReport(compType: number) {
+  exportInvoiceReport(compType: number, reportType: string) {
     const comp = this._formatCompType(compType)
-    return this._getInvoiceReport(comp).pipe(map(formatInvoice))
+    return this._getInvoiceReport(comp, reportType).pipe(map(formatInvoice))
   }
   exportReceiptReport(compType: number) {
     const comp = this._formatCompType(compType)

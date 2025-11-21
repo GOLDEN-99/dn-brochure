@@ -33,6 +33,8 @@ export class OtherIncomeReportComponent {
   private _iso = convertToIso(this.today)
   private _invName = `รายงานออกใบแจ้งหนี้วันที่-${this._iso}.xlsx`
   private _invSheet = 'รอออกใบแจ้งหนี้'
+  private _creditName = `รายงานออกใบลดหนี้วันที่-${this._iso}.xlsx`
+  private _creditSheet = 'รอออกใบลดหนี้'
   private _receName = `รายงานออกใบเสร็จวันที่-${this._iso}.xlsx`
   private _receSheet = 'รอออกใบเสร็จ'
   private _lightName = `รายงาน lightBox-${this._iso}.xlsx`
@@ -56,12 +58,22 @@ export class OtherIncomeReportComponent {
   private accReport = inject(OiAccountReportService)
   exportInvoice(compType: number) {
     this.loading.startLoad()
-    this.accReport.exportInvoiceReport(compType).subscribe({
+    this.accReport.exportInvoiceReport(compType, 'invoice').subscribe({
       next: async res => await this.toXlsx(this._invName, this._invSheet, res),
       error: (err) => this.toast.danger(err?.message),
       complete: () => this.loading.endLoad()
     })
   }
+
+  exportCredit(compType: number) {
+    this.loading.startLoad()
+    this.accReport.exportInvoiceReport(compType, 'credit').subscribe({
+      next: async res => await this.toXlsx(this._creditName, this._creditSheet, res),
+      error: (err) => this.toast.danger(err?.message),
+      complete: () => this.loading.endLoad()
+    })
+  }
+
   exportRece(compType: number) {
     this.loading.startLoad()
     this.accReport.exportReceiptReport(compType).subscribe({
