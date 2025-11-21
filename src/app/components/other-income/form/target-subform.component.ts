@@ -39,7 +39,6 @@ import { FormsModule } from '@angular/forms';
                   <input
                     [attr.name]="'start-input-' + $index"
                     [id]="'start-input-' + $index"
-                    type="number"
                     [ngModel]="s.start"
                     (ngModelChange)="changeStart($index)($event)"
                   />
@@ -54,7 +53,6 @@ import { FormsModule } from '@angular/forms';
                 <div>
                   <input
                     [id]="'percent-input-' + $index"
-                    type="number"
                     [ngModel]="s.percent"
                     (ngModelChange)="changePercent($index)($event)"
                   />
@@ -83,7 +81,6 @@ import { FormsModule } from '@angular/forms';
         </div>
       </div>
       } @else if(targetValue === 1) {
-      <!--case stepType = 0,1-->
       <div class="bg-lightgray" style="padding: 0 8px">
         <div class="app-form-field-inline">
           <div style="margin: 16px 0">

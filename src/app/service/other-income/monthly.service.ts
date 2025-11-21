@@ -114,6 +114,7 @@ type TMonthlyIncomeItem = {
 type TMonthlyIncomeItem2 = {
   receNumb: string
   calAmount: number
+  billNumb: string
 }
 
 type TAppIncomeItem = {
