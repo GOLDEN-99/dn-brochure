@@ -45,11 +45,11 @@ export const ACCOUNT_TAB_TOKEN: ITabSetting = {
       link: './light',
       exact: false
     },
-    {
-      label: 'รายได้อื่นๆ รับรู้จากสินค้า',
-      link: './not-light-product',
-      exact: false
-    },
+    // {
+    //   label: 'รายได้อื่นๆ รับรู้จากสินค้า',
+    //   link: './not-light-product',
+    //   exact: false
+    // },
     {
       label: 'report',
       link: './report',

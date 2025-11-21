@@ -322,10 +322,10 @@ export const routes: Routes = [
                         path: 'not-light',
                         component: AccountNotLightInvoiceComponent
                     },
-                    {
-                        path: 'not-light-product',
-                        component: AccountNotLightProductComponent
-                    },
+                    // {
+                    //     path: 'not-light-product',
+                    //     component: AccountNotLightProductComponent
+                    // },
                     {
                         path: 'light',
                         component: AccountLightBoxComponent
