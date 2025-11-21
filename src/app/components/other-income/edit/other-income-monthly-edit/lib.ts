@@ -17,7 +17,7 @@ export const calStep: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | nu
     for (const step of steps) {
         const { min, max, rate } = step
         const thisStep = validAmount - min
-        if (thisStep <= 0) break
+        if (thisStep < 0) break
         if (max === null) {
             rawIncome += thisStep * rate
         } else {
@@ -36,7 +36,7 @@ export const calSemi: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | nu
     let rawIncome = 0
     for (const step of steps) {
         const { min, max, rate } = step
-        if (validAmount > min && (max === null || validAmount < max)) {
+        if (validAmount >= min && (max === null || validAmount < max)) {
             rawIncome += validAmount * rate
         }
     }
