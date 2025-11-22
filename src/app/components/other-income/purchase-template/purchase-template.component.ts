@@ -67,7 +67,6 @@ export class PurchaseTemplateComponent {
   }
 
   setFromDate(date: NgbDate | null) {
-    console.log(date)
     if (!date) return
     this.fromDate.update(() => date)
   }

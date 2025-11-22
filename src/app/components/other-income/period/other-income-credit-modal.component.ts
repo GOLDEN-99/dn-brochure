@@ -127,7 +127,6 @@ export class OtherIncomeCreditModalComponent {
     const periodId = this.periodId();
     this.periodService.insertCredit(periodId, req).subscribe({
       next: (res) => {
-        console.log(res);
         this.success.emit('เพิ่มใบลดหนี้สำเร็จ');
         this.resetInvState();
       },

@@ -71,7 +71,6 @@ export class CalendarMonthlyComponent {
   }
 
   slotClass = (compCode: string | null) => {
-    console.log(compCode)
     return compCode === null ? 'bg-color-green' : 'bg-color-red'
   }
 
@@ -80,7 +79,7 @@ export class CalendarMonthlyComponent {
       case 0: return 'indicator bg-color-green'
       case 1: return 'indicator bg-color-yellow'
       case 2: return 'indicator bg-color-red'
-      default: return ''
+      default: return 'indicator bg-color-green'
     }
   }
 

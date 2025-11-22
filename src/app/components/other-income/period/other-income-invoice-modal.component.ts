@@ -128,7 +128,6 @@ export class OtherIncomeInvoiceModalComponent {
     const periodId = this.periodId();
     this.periodService.insertInv(periodId, req).subscribe({
       next: (res) => {
-        console.log(res);
         this.success.emit('เพิ่มใบแจ้งหนี้สำเร็จ');
         this.resetInvState();
       },

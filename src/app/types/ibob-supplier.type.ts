@@ -137,7 +137,10 @@ export type TDailyReq = {
     warehouseId: string
 }
 
-export type TDailyItem = { doorId: number, door: string, status: number, times: TSlotReady[] }
+export type TDailyItem = {
+    doorId: number, door: string, status: number, reservedCount: number,
+    totalSlots: number, times: TSlotReady[]
+}
 
 export type TDailyRes = {
     date: string

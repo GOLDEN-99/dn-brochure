@@ -48,7 +48,7 @@
   <div class="calendar-row" style="background-color: #eeeeee; height: 24px">
     <div class="calendar-th" role="columnheader">เวลา</div>
     @for (h of header(); track $index) {
-    <div class="calendar-th" role="columnheader">{{ h }}</div>
+    <div class="calendar-th" role="columnheader">{{ h.name }}</div>
     }
   </div>
 
@@ -68,8 +68,8 @@
       [isoDate]="'1999-01-01'"
       [month]="1"
       [withOutDate]="true"
-      [color]="getStatus(slot)(h)"
-      (onClick)="openModal(h, slot.time)"
+      [color]="getStatus(slot)(h.doorId)"
+      (onClick)="openModal(h, slot)"
     />
     }
   </div>

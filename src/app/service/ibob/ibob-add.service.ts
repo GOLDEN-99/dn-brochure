@@ -24,16 +24,6 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
   private storage = inject(LocalService)
   private token = ''
 
-  private mockComp = {
-    compCode: 'test code',
-    saleName: 'contactName',
-    compName: 'test name',
-    compEmail: 'test@email.com',
-    compName2: 'thai comp?',
-    compPhone: '0999999999',
-    shipto: 'anywhere'
-  }
-
   currentComp = signal<TMaybe<TModifiedComp>>(null)
   orderState = signal<TAppOrderState>({}) // mocking data
   orderList: Signal<TAppOrder[]> = computed(() => Object.entries(this.orderState()).map(([k, v]) => ({ orderNumb: k, box: v, check: true, orderDate: '2025-11-19' })))
@@ -67,8 +57,6 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
         map(res => this.formatLoginRespose(res)),
       )
   }
-
-
   createReservation(formData: TEditableResavation) {
     const currentCompData = this.currentComp()
     if (!currentCompData) throw new Error('please login')

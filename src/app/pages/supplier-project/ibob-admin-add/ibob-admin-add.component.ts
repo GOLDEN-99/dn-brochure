@@ -150,7 +150,6 @@ export class IbobAdminAddComponent {
     const mapReq = selectSlot.map(
       (reservationTime) =>
         this.createReservation({ ...baseReq, reservationTime })
-          .pipe(tap(() => console.log(reservationTime)))
     )
     forkJoin(mapReq).subscribe({
       next: (res) => {

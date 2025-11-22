@@ -56,12 +56,10 @@ export class OtherIncomeLightFormComponent {
     const req = this.request
     this.api.post(`${this.url}/other-income/contact/light/${this.headId()}`, req).subscribe({
       next: (res) => {
-        console.log(res);
         this.toastService.success('เพิ่มรายได้อื่นๆ สำเร็จ')
         this.router.navigate(['../../'], { relativeTo: this.route })
       },
       error: (err) => {
-        console.log(err);
         this.toastService.danger(`${err.message}`)
       }
     })

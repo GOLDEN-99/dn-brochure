@@ -16,7 +16,6 @@ export class BaseSupplierForm {
     private url$ = combineLatest(this.route.pathFromRoot.map(snapshot => snapshot.url))
         .pipe(
             map(snap => snap.flatMap(s => s.map(a => a.path))),
-            tap(console.log)
         )
     protected urlList = toSignal(this.url$, { initialValue: [] })
     protected compTypeSignal = computed(() => this.urlList()[2].toUpperCase())

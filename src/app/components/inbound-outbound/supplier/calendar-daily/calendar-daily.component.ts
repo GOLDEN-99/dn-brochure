@@ -17,9 +17,6 @@ export class CalendarDailyComponent {
     const doorEff = effect(() => this.dailyServ.setDoor(this.doorList()))
   }
 
-  onSelectDate(date: NgbDate) {
-    console.log(date)
-  }
   formatter = inject(NgbDateParserFormatter);
 
   private doorServ = inject(DoorService)
@@ -41,22 +38,28 @@ export class CalendarDailyComponent {
   }
   private modalServ = inject(NgbModal)
   dailyModal = viewChild('dailyModal')
-  openModal = (doorName: string, time: string) => {
-    const targetDoor = this.doorList().find(({ doorId, name, check }) => name === doorName && check)
+  openModal = (door: { doorId: string, name: string }, slot: { time: string, min: number }) => {
+    const targetDoor = this.doorList().find(({ doorId, check }) => doorId === door.doorId && check)
     if (!targetDoor) return
-    this.selectTime.set(time)
+    this.selectMin.set(slot.min)
+    this.selectTime.set(slot.time)
     this.dailyServ.setDoorId(targetDoor.doorId, targetDoor.name)
     this.modalServ.open(this.dailyModal(), {})
   }
   currentThaiDate = computed(() => this.thaiDate(this.currentDate()))
   targetDoor = this.dailyServ.doorName
   selectTime = signal<string | null>(null)
+  selectMin = signal<number>(0)
   slotContent = computed(
-    () => this.dailyServ.reseavationList()
-      .flatMap(({ reservationTime, compCode, ...res }) =>
-        reservationTime.substring(0, 2) === (this.selectTime() ?? '').substring(0, 2) && compCode !== null
-          ? [{ ...res, compCode, reservationTime: reservationTime.substring(0, 5) }]
-          : []
-      ))
+    () => {
+      const selectMin = this.selectMin()
+      return this.dailyServ.reseavationList()
+        .flatMap(({ reservationTime, min, compCode, ...res }) =>
+          selectMin <= min && selectMin + 60 > min
+            ? [{ ...res, compCode, reservationTime: reservationTime.substring(0, 5) }]
+            : []
+        )
+    }
+  )
   slotClass = (compCode: string | null) => compCode === null ? 'bg-color-green' : 'bg-color-red'
 }

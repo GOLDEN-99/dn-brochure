@@ -124,7 +124,6 @@ export class OtherIncomeReceiptModalComponent {
     const periodId = this.periodId();
     this.periodService.insertRece(periodId, req).subscribe({
       next: (res) => {
-        console.log(res);
         this.success.emit('เพิ่มใบเสร็จสำเร็จ');
         this.resetReceState();
       },
