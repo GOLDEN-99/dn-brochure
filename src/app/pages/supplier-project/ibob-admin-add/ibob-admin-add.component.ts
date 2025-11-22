@@ -14,6 +14,7 @@ import { IbobAddService } from '../../../service/ibob/ibob-add.service';
 import { RouterLink } from '@angular/router';
 import { TMaybe } from '../../../types';
 import { IbobQueryReservationService } from '../../../service/ibob/ibob-query-reservation.service';
+import { ToastService } from '../../../service/toast/toast.service';
 
 @Component({
   selector: 'app-ibob-admin-add',
@@ -139,6 +140,8 @@ export class IbobAdminAddComponent {
     this.modalService.dismissAll()
   }
 
+  private toast = inject(ToastService)
+
   private ibobAdd = inject(IbobAddService)
   createReservation = this.ibobAdd.adminCreateReservation
   onSubmit() {
@@ -151,10 +154,10 @@ export class IbobAdminAddComponent {
     )
     forkJoin(mapReq).subscribe({
       next: (res) => {
-        console.table(res)
+        this.toast.success(`เพิ่มการจองสำเร็จจำนวน ${res.length} slot`)
       },
       error: (err) => {
-        console.error(err)
+        this.toast.danger(`ไม่สามารถเพิ่มการจองได้ ${err}`)
       }
     })
   }
