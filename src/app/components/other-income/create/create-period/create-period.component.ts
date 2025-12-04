@@ -16,6 +16,11 @@ export class CreatePeriodComponent {
   private today = this.cal.getToday();
   date = signal({ day: 1, month: this.today.month, year: this.today.year })
   eventType = input.required<number>()
+  modalName = computed(() => {
+    const event = this.eventType()
+    if (event === 3) return 'ชื่อใบแจ้งหนี้'
+    return 'ชื่อ period'
+  })
   compType = input.required<string | undefined>()
   compCode = input.required<string | undefined>()
   headId = input.required<number>();
