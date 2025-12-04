@@ -7,7 +7,7 @@
     (click)="close.emit()"
   ></button>
 </div>
-<div class="modal-body" style="max-height: 75vh; overflow-y: auto">
+<div class="modal-body" style="height: 75vh; overflow-y: auto">
   <div class="row">
     <div class="col">
       <app-discount-select [(discountId)]="discType" discountType="bill" />
@@ -18,98 +18,118 @@
         <input type="text" name="term" id="term" [(ngModel)]="term" />
       </div>
     </div>
+    <div class="row">
+      <div class="col">
+        <app-date-input label="วันที่เริ่ม" [(date)]="billStart" />
+      </div>
+      <div class="col">
+        <app-date-input label="วันที่จบ" [(date)]="billEnd" />
+      </div>
+    </div>
     <div class="col-auto">
       <button
-        class="btn btn-primary"
+        class="btn btn-outline-primary w-100"
         (click)="onSearch()"
         [disabled]="disabled()"
       >
         ค้นหา
       </button>
+
+      @if (!touch()) {
+      <div>ค้นหาสินค้า</div>
+      }@else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>po</th>
+            <th>วันที่</th>
+            <th>บิลซัพ</th>
+            <th>วันที่บิลซัพ</th>
+            <th>ยอด</th>
+            <th>รายละเอียด</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orderList(); track order.orderNumb) {
+          <tr>
+            <td>
+              <button class="btn btn-success" (click)="addSingleOrder(order)">
+                <i class="bi bi-plus"></i>
+              </button>
+            </td>
+            <td>{{ order.orderNumb }}</td>
+            <td>{{ order.receDate | date }}</td>
+            <td>{{ order.billNumb }}</td>
+            <td>{{ order.billDate | date }}</td>
+            <td>{{ order.discount | number : "1.2-2" }}</td>
+            <td>
+              <div style="display: flex; flex-direction: column">
+                @for (rece of order.receList; track $index) {
+                <div style="display: flex; justify-content: space-between">
+                  <div>
+                    {{ rece.receNumb }}
+                  </div>
+                  <div>{{ rece.discount | number : "1.2-2" }}</div>
+                </div>
+                }
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+      <button
+        class="btn btn-primary w-100 mb-3"
+        [disabled]="invalidOrder()"
+        (click)="addOrder()"
+      >
+        เพิ่มทั้งหมด
+      </button>
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width: 180px">po</th>
+            <th style="width: 180px">ยอด</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of selectOrder(); track item.orderNumb) {
+          <tr>
+            <td>{{ item.orderNumb }}</td>
+            <td>{{ item.discount }}</td>
+            <td>
+              <button
+                class="btn btn-danger"
+                (click)="deleteOrder(item.orderNumb)"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+          }
+          <tr>
+            <td>ยอดคำนวน</td>
+            <td>
+              {{ sum() | number : "1.2-2" }}/{{
+                periodAmount() | number : "1.2-2"
+              }}
+            </td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      }
+    </div>
+    <div class="modal-footer">
+      <button
+        class="btn btn-primary w-100"
+        [disabled]="selectOrder().length === 0"
+        (click)="onSubmit()"
+      >
+        บันทึก
+      </button>
     </div>
   </div>
-  @if (!touch()) {
-  <div>ค้นหาสินค้า</div>
-  }@else {
-  <table class="table">
-    <thead>
-      <tr>
-        <th style="width: 20px"></th>
-        <th style="width: 80px">po</th>
-        <th style="width: 100px">ยอด</th>
-        <th>รายละเอียด</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (order of orderList(); track order.orderNumb) {
-      <tr>
-        <td>
-          <button class="btn btn-success" (click)="addSingleOrder(order)">
-            <i class="bi bi-plus"></i>
-          </button>
-        </td>
-        <td>{{ order.orderNumb }}</td>
-        <td>{{ order.discount | number : "1.2-2" }}</td>
-        <td>
-          <div style="display: flex; flex-direction: column">
-            @for (rece of order.receList; track $index) {
-            <div style="display: flex; justify-content: space-between">
-              <div>
-                {{ rece.receNumb }}
-              </div>
-              <div>{{ rece.discount | number : "1.2-2" }}</div>
-            </div>
-            }
-          </div>
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
-  <button
-    class="btn btn-primary w-100 mb-3"
-    [disabled]="invalidOrder()"
-    (click)="addOrder()"
-  >
-    เพิ่มทั้งหมด
-  </button>
-  <table class="table">
-    <thead>
-      <tr>
-        <th style="width: 180px">po</th>
-        <th style="width: 180px">ยอด</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (item of selectOrder(); track item.orderNumb) {
-      <tr>
-        <td>{{ item.orderNumb }}</td>
-        <td>{{ item.discount }}</td>
-        <td>
-          <button class="btn btn-danger" (click)="deleteOrder(item.orderNumb)">
-            <i class="bi bi-trash"></i>
-          </button>
-        </td>
-      </tr>
-      }
-      <tr>
-        <td>ยอดคำนวน</td>
-        <td>
-          {{ sum() | number : "1.2-2" }}/{{ periodAmount() | number : "1.2-2" }}
-        </td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  }
-</div>
-<div class="modal-footer">
-  <button
-    class="btn btn-primary w-100"
-    [disabled]="selectOrder().length === 0"
-    (click)="onSubmit()"
-  >
-    บันทึก
-  </button>
 </div>

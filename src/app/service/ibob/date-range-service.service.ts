@@ -1,5 +1,5 @@
 import { computed, effect, inject, Injectable, InjectionToken, Signal, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { NgbCalendar, NgbDate } from '@ng-bootstrap/ng-bootstrap';
 import { combineLatest, map, Observable } from 'rxjs';
 import { convertToIso } from '../../lib';
@@ -32,5 +32,9 @@ export class DateRangeService implements IDateRange {
     .pipe(
       map(([fromDate, toDate]) => ({ fromDate, toDate }))
     )
-
+  dateRange = computed(() => {
+    const fromDate = this.formatFromDate()
+    const toDate = this.formatToDate()
+    return { fromDate, toDate }
+  })
 }

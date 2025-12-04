@@ -7,8 +7,8 @@
     (click)="close.emit()"
   ></button>
 </div>
-<div class="modal-body" style="max-height: 75vh; overflow-y: auto">
-  <div class="row">
+<div class="modal-body" style="height: 75vh; overflow-y: auto">
+  <div class="row align-items-center">
     <div class="col">
       <app-discount-select [(discountId)]="discType" discountType="good" />
     </div>
@@ -18,25 +18,36 @@
         <input type="text" name="term" id="term" [(ngModel)]="term" />
       </div>
     </div>
-    <div class="col-auto">
-      <button
-        class="btn btn-primary"
-        (click)="onSearch()"
-        [disabled]="disabled()"
-      >
-        ค้นหา
-      </button>
+  </div>
+  <div class="row">
+    <div class="col">
+      <app-date-input label="วันที่เริ่ม" [(date)]="billStart" />
+    </div>
+    <div class="col">
+      <app-date-input label="วันที่จบ" [(date)]="billEnd" />
     </div>
   </div>
+
+  <button
+    class="btn btn-outline-primary w-100 mb-3"
+    (click)="onSearch()"
+    [disabled]="disabled()"
+  >
+    ค้นหา
+  </button>
+
   @if (!touch()) {
   <div>ค้นหาสินค้า</div>
   }@else {
   <table class="table">
     <thead>
       <tr>
-        <th style="width: 20px"></th>
-        <th style="width: 80px">po</th>
-        <th style="width: 100px">ยอด</th>
+        <th></th>
+        <th>po</th>
+        <th>วันที่</th>
+        <th>บิลซัพ</th>
+        <th>วันที่บิลซัพ</th>
+        <th>ยอด</th>
         <th>รายละเอียด</th>
       </tr>
     </thead>
@@ -49,18 +60,23 @@
           </button>
         </td>
         <td>{{ order.orderNumb }}</td>
+        <td>{{ order.receDate | date }}</td>
+        <td>{{ order.billNumb }}</td>
+        <td>{{ order.billDate | date }}</td>
         <td>{{ order.discount | number : "1.2-2" }}</td>
         <td>
           <div style="display: flex; flex-direction: column">
             @for (rece of order.productList; track $index) {
             <div style="display: flex; justify-content: space-between">
               <div>
-                {{ rece.receNumb }}
-              </div>
-              <div>
-                {{
-                `(${rece.barCode}) ${rece.goodName}`
-                }}
+                <div>
+                  {{ rece.receNumb }}
+                </div>
+                <div>
+                  {{
+                    `(${rece.barCode}) ${rece.goodName}`
+                  }}
+                </div>
               </div>
               <div>{{ rece.discount | number : "1.2-2" }}</div>
             </div>

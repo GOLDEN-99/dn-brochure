@@ -2,12 +2,14 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { OrderService, TOiBill, TOiOrder } from '../../../../service/other-income/order.service';
 import { PeriodService } from '../../../../service/other-income/period.service';
 import { FormsModule } from '@angular/forms';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { DiscountSelectComponent } from "../../form/discount-select/discount-select.component";
+import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
+import { DateInputComponent } from "../../../date-input/date-input.component";
 
 @Component({
   selector: 'app-other-income-order-modal',
-  imports: [FormsModule, DecimalPipe, DiscountSelectComponent],
+  imports: [FormsModule, DecimalPipe, DiscountSelectComponent, DateInputComponent, DatePipe],
   templateUrl: './other-income-order-modal.component.html',
   styleUrl: './other-income-order-modal.component.scss'
 })
@@ -21,6 +23,21 @@ export class OtherIncomeOrderModalComponent {
   discType = signal(0)
   touch = signal(false)
   disabled = computed(() => this.compCode() === undefined || this.compType() === undefined || this.discType() === 0)
+  calService = inject(NgbCalendar)
+  private today = this.calService.getToday()
+  private start = { year: this.today.year, month: 1, day: 1 }
+  private end = { year: this.today.year, month: 12, day: 31 }
+
+  billStart = signal(this.start)
+  isoBillStart = computed(() => {
+    const { year, month, day } = this.billStart()
+    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+  })
+  billEnd = signal(this.end)
+  isoBillEnd = computed(() => {
+    const { year, month, day } = this.billEnd()
+    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+  })
 
   periodId = input.required<number>()
 
@@ -29,10 +46,12 @@ export class OtherIncomeOrderModalComponent {
     const compType = this.compType()
     const discType = this.discType()
     const order = this.term()
+    const billStart = this.isoBillStart()
+    const billEnd = this.isoBillEnd()
     if (compCode === undefined || compType === undefined) return
     this.touch.set(true)
     this.orderServ.onSerach({
-      compCode, compType, discType, order
+      compCode, compType, discType, order, billEnd, billStart
     })
   }
 

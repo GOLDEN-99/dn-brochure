@@ -70,7 +70,7 @@ export class OtherIncomeGoodOrderPeriodComponent {
   private poModal = viewChild('poModal')
 
   openPo() {
-    this.modalServ.open(this.poModal())
+    this.modalServ.open(this.poModal(), { size: 'xl' })
   }
 
   onSuccess(value: string) {
