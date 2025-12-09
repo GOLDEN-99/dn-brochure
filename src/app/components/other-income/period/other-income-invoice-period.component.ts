@@ -1,4 +1,4 @@
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, inject, input, output, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OtherIncomeInvoiceModalComponent } from './other-income-invoice-modal.component';
@@ -7,36 +7,40 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-other-income-invoice-period',
-  imports: [FormsModule, DecimalPipe, OtherIncomeInvoiceModalComponent],
+  imports: [FormsModule, DecimalPipe, OtherIncomeInvoiceModalComponent, DatePipe],
   template: `
     <div class="mb-3">
 
         <table class="table">
           <thead>
             <tr>
-              <th style="width: 20%;">ใบแจ้งหนี้</th>
-              <th style="width: 20%;">ยอดใบแจ้งหนี้</th>
-              <th style="width: 20%;">หมายเหตุ</th>
-              <th style="width: 20%;">วันที่ใบแจ้งหนี้</th>
-              <th style="width: 20%;">
-                @if(canEdit()){
+              <th scope="col">ใบแจ้งหนี้</th>
+              <th scope="col">ยอดใบแจ้งหนี้</th>
+              <th scope="col">หมายเหตุ</th>
+              <th scope="col">วันที่ใบแจ้งหนี้</th>
+              @if(canEdit()){
+              <th scope="col">
                   <button
                   class="btn btn-sm btn-primary me-1"
                   (click)="openInvoice()"
                   >
                   เพิ่มใบแจ้งหนี้
                 </button>
-                }
               </th>
+            }
             </tr>
           </thead>
           <tbody>
             @for (inv of invoiceList(); track inv.id) {
             <tr>
-              <td>{{ inv.invNumb }}</td>
+              <td scope="row">{{ inv.invNumb }}</td>
               <td>{{ inv.invAmount| number : "1.2-2" }}</td>
               <td>{{ inv.invRemark }}</td>
-              <td colspan="2">{{ inv.invDate }}</td>
+              @if(canEdit()){
+                <td colspan="2">{{ inv.invDate |date }}</td>
+              } @else {
+                <td>{{ inv.invDate |date }}</td>
+              }
             </tr>
             }
           </tbody>

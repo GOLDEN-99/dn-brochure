@@ -15,6 +15,7 @@
     [totalIncome]="e.head.accIncome"
   />
   <app-other-income-branch
+    [periodId]="periodId()"
     [canEdit]="isPurchase"
     [lightId]="e.light.id"
     [branchList]="branches"

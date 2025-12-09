@@ -14,29 +14,33 @@ import { OtherIncomeOrderModalComponent } from './other-income-order-modal/other
         <table class="table">
           <thead>
             <tr>
-              <th style="width: 20%;">เลขใบ PO</th>
-              <th style="width: 20%;">รายได้บันทึก</th>
-              <th style="width: 20%;">ใบแจ้งหนี้ซัพ</th>
-              <th style="width: 20%;">ใบเสร็จรับเงิน</th>
-              <th style="width: 20%;">   
-                @if(canEdit()){
+              <th scope="col">เลขใบ PO</th>
+              <th scope="col">รายได้บันทึก</th>
+              <th scope="col">ใบแจ้งหนี้ซัพ</th>
+              <th scope="col">ใบเสร็จรับเงิน</th>
+              @if(canEdit()){
+              <th scope="col">   
                 <button
                   class="btn btn-sm btn-primary me-1"
                   (click)="openPo()"
                   >
                   เพิ่ม po
                 </button>
-              }     
               </th>
+            }     
             </tr>
           </thead>
           <tbody>
             @for (order of orderList(); track order.id) {
             <tr>
-              <td>{{ order.orderNumb }}</td>
+              <td scope="row">{{ order.orderNumb }}</td>
               <td>{{ order.actualAmount | number : "1.2-2" }}</td>
               <td>{{ order.supInvNumb  }}</td>
-              <td colspan="2">{{ order.receNumb  }}</td>
+              @if(canEdit()){
+                <td colspan="2">{{ order.receNumb  }}</td>
+              }@else{
+                <td>{{ order.receNumb  }}</td>
+              }
             </tr>
             }
           </tbody>

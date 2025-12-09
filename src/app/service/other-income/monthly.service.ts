@@ -51,8 +51,8 @@ export class MonthlyService {
     return this.api.post<any>(`${this.url}/monthly-income/${headId}/add-light-income`, { createDate })
   }
 
-  insertBranch(lightId: number, branchCode: string, openDate: string) {
-    return this.api.post<any>(`${this.url}/monthly-income/${lightId}/add-branch`, { branchCode, openDate })
+  insertBranch(lightId: number, branchCode: string, openDate: string, periodId: number) {
+    return this.api.post<any>(`${this.url}/monthly-income/${lightId}/add-branch`, { branchCode, openDate, periodId })
   }
 
   deleteBranch(branchId: number) {

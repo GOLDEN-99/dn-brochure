@@ -25,12 +25,15 @@ import { Component, computed, input } from '@angular/core';
   <div class="row">
     <div class="col">จำนวนเงินทั้งหมด</div>
     <div class="col">
+      {{ curEvent.totalAmount | number : "1.2-2" }}
+    </div>
+    <!-- <div class="col">
       {{
         (totalIncome() | number : "1.2-2") +
           "/" +
           (curEvent.totalAmount | number : "1.2-2")
       }}
-    </div>
+    </div> -->
   </div>
 </div>
   `,

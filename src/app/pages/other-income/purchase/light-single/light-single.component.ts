@@ -32,7 +32,7 @@ export class LightSingleComponent {
   branchList = computed(() => this.currentResult().branchList)
   incomeList = computed(() => this.currentResult().incomeList)
   periodList = computed(() => this.currentResult().periodList)
-
+  periodId = computed(() => this.periodList()[0]?.id ?? -1)
   private toastService = inject(ToastService)
 
   onRefetch() {

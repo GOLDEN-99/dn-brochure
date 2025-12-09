@@ -93,7 +93,8 @@ export class SupplierReportService {
     })))
   private _formatHead = (head: TMonthHead) => ({
     "ซัพพลายเออร์": `${head.compCode} ${head.compName}`,
-    "ชื่อเรียก": `${head.displayName}`,
+    "ชื่อรายรับภายใน": `${head.displayName}`,
+    "ชื่อกิจกรรม": head.eventName,
     "รวม vat": head.incVat ? 'รวม' : 'ไม่รวม',
     "dc": head.isDc ? 'หัก' : 'ไม่หัก',
     "rebate": head.isRebate ? 'หัก' : 'ไม่หัก',
@@ -189,7 +190,7 @@ export type TPivot<T> = {
   dec: T
 }
 
-type TMonthHead = Omit<NotLightSummary, 'company'> & { compCode: string, compName: string }
+type TMonthHead = Omit<NotLightSummary, 'company' | 'event'> & { compCode: string, compName: string, eventName: string }
 
 export type TOiSupplierRes = {
   head: TMonthHead

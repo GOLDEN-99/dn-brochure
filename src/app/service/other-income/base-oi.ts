@@ -106,6 +106,7 @@ export type TPeriodResult = {
     receDate: string | null
     creditAmount: number
     creditDate: string | null
+    periodRemark: string
 }
 
 export type TOrderItemDto = {
@@ -174,6 +175,10 @@ export type TIncomeItem = {
     reason: string
     checkDate: string | null
     incomeAmount: number
+}
+
+export type TEnchanceIncomeItem = TIncomeItem & {
+    accPurchase: number
 }
 
 export type TBranchItem = {

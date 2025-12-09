@@ -30,7 +30,8 @@ import { FormsModule } from '@angular/forms';
         class="form-select"
       >
         <option [ngValue]="1">รหัสซับ</option>
-        <option [ngValue]="2">รหัสสินค้า</option>
+        <option [ngValue]="2">ชื่อซับ</option>
+        <option [ngValue]="3">รหัสสินค้า</option>
       </select>
     </div>
 

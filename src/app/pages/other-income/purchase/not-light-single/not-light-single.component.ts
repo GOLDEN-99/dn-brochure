@@ -70,7 +70,8 @@ export class NotLightSingleComponent {
     { label: 'ชื่อ', fn: v => v.periodName },
     { label: 'ยอดซื้อ', fn: v => this._localFormatNumber(v.totalAmount) },
     { label: 'รายได้', fn: v => this._localFormatNumber(v.totalIncome) },
-    { label: 'ยอด po', fn: v => this._localFormatNumber(v.orderAmount) }
+    { label: 'ยอด po', fn: v => this._localFormatNumber(v.orderAmount) },
+    { label: 'หมายเหตุ', fn: v => v.periodRemark },
   ]
 
   periodReceSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
@@ -79,6 +80,7 @@ export class NotLightSingleComponent {
     { label: 'รายได้', fn: v => this._localFormatNumber(v.totalIncome) },
     { label: 'ยอดใบแจ้งหนี้', fn: v => this._localFormatNumber(v.invAmount) },
     { label: 'ยอดใบเสร็จ', fn: v => this._localFormatNumber(v.receAmount) },
+    { label: 'หมายเหตุ', fn: v => v.periodRemark },
   ]
 
   periodCreditSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
@@ -86,6 +88,7 @@ export class NotLightSingleComponent {
     { label: 'ยอดซื้อ', fn: v => this._localFormatNumber(v.totalAmount) },
     { label: 'รายได้', fn: v => this._localFormatNumber(v.totalIncome) },
     { label: 'ยอดใบลดหนี้', fn: v => this._localFormatNumber(v.creditAmount) },
+    { label: 'หมายเหตุ', fn: v => v.periodRemark },
   ]
 
   private _genSelector = (incomeType: number) => {

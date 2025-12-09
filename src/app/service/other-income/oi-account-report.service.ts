@@ -85,60 +85,70 @@ export class OiAccountReportService {
 
   exportInvoiceReport(compType: number, reportType: string) {
     const comp = this._formatCompType(compType)
-    return this._getInvoiceReport(comp, reportType).pipe(map(formatInvoice))
+    const withComp = formatInvoice(comp)
+    return this._getInvoiceReport(comp, reportType).pipe(map(withComp))
   }
   exportReceiptReport(compType: number) {
     const comp = this._formatCompType(compType)
-    return this._getReceiptReport(comp).pipe(map(formatReceipt))
+    const withComp = formatReceipt(comp)
+    return this._getReceiptReport(comp).pipe(map(withComp))
   }
   exportLightReport(compType: number, date: TDate) {
     const comp = this._formatCompType(compType)
     const year = this._getIso({ year: date.year, month: 1, day: 1 })
-    return this._getLighyBoxReport({ compType: comp, year }).pipe(map(formatLight))
+    const withComp = formatLight(comp)
+    return this._getLighyBoxReport({ compType: comp, year }).pipe(map(withComp))
   }
   exportAnnualIncomeReport(compType: number, date: TDate) {
     const comp = this._formatCompType(compType)
     const year = this._getIso({ year: date.year, month: 1, day: 1 })
-    return this._getAnnualIncomeReport({ compType: comp, year }).pipe(map(formatAnnualIncome))
+    const withComp = formatAnnualIncome(comp)
+    return this._getAnnualIncomeReport({ compType: comp, year }).pipe(map(withComp))
   }
   exportMonthbuyReport(compType: number, date: TDate) {
     const comp = this._formatCompType(compType)
+    const withComp = formatMonthbuy(comp)
     const month = this._getIso({ year: date.year, month: date.month, day: 1 })
-    return this._getMonthBuyReport({ compType: comp, month }).pipe(map(formatMonthbuy))
+    return this._getMonthBuyReport({ compType: comp, month }).pipe(map(withComp))
   }
 
   exportInceReport(compType: number, date: TDate) {
     const comp = this._formatCompType(compType)
+    const withComp = formatMonthince(comp)
     const month = this._getIso({ year: date.year, month: date.month, day: 1 })
-    return this._getMonthInceReport({ compType: comp, month }).pipe(map(formatMonthince))
+    return this._getMonthInceReport({ compType: comp, month }).pipe(map(withComp))
   }
 
   exportBillReport(compType: number, start: TDate, end: TDate) {
     const comp = this._formatCompType(compType)
+    const withComp = formatRangeBill(comp)
     const startDate = this._getIso({ year: start.year, month: start.month, day: 1 })
     const endDate = this._getIso({ year: end.year, month: end.month, day: 1 })
-    return this._getRangeBillReport({ compType: comp, startDate, endDate }).pipe(map(formatRangeBill))
+    return this._getRangeBillReport({ compType: comp, startDate, endDate }).pipe(map(withComp))
   }
 
   exportProductReport(compType: number, start: TDate, end: TDate) {
     const comp = this._formatCompType(compType)
+    const withComp = formatRangeBill(comp)
     const startDate = this._getIso({ year: start.year, month: start.month, day: 1 })
     const endDate = this._getIso({ year: end.year, month: end.month, day: 1 })
-    return this._getRangeProductReport({ compType: comp, startDate, endDate }).pipe(map(formatRangeBill))
+    return this._getRangeProductReport({ compType: comp, startDate, endDate }).pipe(map(withComp))
   }
 
   exportInvReceReport(compType: number, start: TDate, end: TDate) {
     const comp = this._formatCompType(compType)
+    const withComp = formatRangeInvRece(comp)
     const startDate = this._getIso({ year: start.year, month: start.month, day: 1 })
     const endDate = this._getIso({ year: end.year, month: end.month, day: 1 })
-    return this._getRangeInvReceReport({ compType: comp, startDate, endDate }).pipe(map(formatRangeInvRece))
+    return this._getRangeInvReceReport({ compType: comp, startDate, endDate }).pipe(map(withComp))
   }
 
   exportCreditReport(compType: number, start: TDate, end: TDate) {
     const comp = this._formatCompType(compType)
+    const withComp = formatRangeCredit(comp)
     const startDate = this._getIso({ year: start.year, month: start.month, day: 1 })
     const endDate = this._getIso({ year: end.year, month: end.month, day: 1 })
-    return this._getRangeCreditReport({ compType: comp, startDate, endDate }).pipe(map(formatRangeCredit))
+    return this._getRangeCreditReport({ compType: comp, startDate, endDate }).pipe(map(withComp))
   }
 }
 

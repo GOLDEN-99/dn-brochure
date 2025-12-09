@@ -12,29 +12,33 @@ import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.com
         <table class="table">
           <thead>
             <tr>
-              <th style="width: 20%;">ใบลดหนี้</th>
-              <th style="width: 20%;">ยอดใบลดหนี้</th>
-              <th style="width: 20%;">หมายเหตุ</th>
-              <th style="width: 20%;">วันที่ใบลดหนี้</th>
-              <th style="width: 20%;">
-                @if(canEdit()){
+              <th scope="col">ใบลดหนี้</th>
+              <th scope="col">ยอดใบลดหนี้</th>
+              <th scope="col">หมายเหตุ</th>
+              <th scope="col">วันที่ใบลดหนี้</th>
+              @if(canEdit()){
+              <th scope="col">
                   <button
                   class="btn btn-sm btn-primary me-1"
                   (click)="openCredit()"
                   >
                   เพิ่มใบลดหนี้
                 </button>
-              }
-            </th>
+              </th>
+            }
             </tr>
           </thead>
           <tbody>
             @for (credit of creditList(); track credit.id) {
             <tr>
-              <td>{{ credit.creditNumb }}</td>
+              <td scope="row">{{ credit.creditNumb }}</td>
               <td>{{ credit.creditAmount| number : "1.2-2" }}</td>
               <td>{{ credit.creditRemark }}</td>
-              <td colspan="2">{{ credit.creditDate }}</td>
+              @if(canEdit()){
+                <td colspan="2">{{ credit.creditDate }}</td>
+              } @else {
+                <td>{{ credit.creditDate }}</td>
+              }
             </tr>
             }
           </tbody>

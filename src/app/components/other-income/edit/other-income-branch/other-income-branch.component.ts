@@ -23,6 +23,7 @@ export class OtherIncomeBranchComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.branchSet.clear();
   }
+  periodId = input.required<number>()
   refetch = output<void>()
   lightId = input.required<number>()
   branchList = input<TBranchItem[]>([])
@@ -50,10 +51,15 @@ export class OtherIncomeBranchComponent implements OnInit, OnDestroy {
       this.toastServ.danger('มีร้านนี้แล้ว')
       return
     }
+    const periodId = this.periodId();
+    if (periodId <= 0) {
+      this.toastServ.danger('มีข้อผิดพลาด ไม่พบข้อมูลงวด')
+      return
+    }
     const lightId = this.lightId()
     const { year, month, day } = this.openDate()
     const iso = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    this.monthServ.insertBranch(lightId, branchCode, iso).subscribe({
+    this.monthServ.insertBranch(lightId, branchCode, iso, periodId).subscribe({
       next: (res) => {
         this.toastServ.success('เพิ่มสาขาสำเร็จ');
         this.branchSet.add(branchCode);

@@ -2,41 +2,45 @@ import { Component, inject, input, output, viewChild } from '@angular/core';
 import { TReceiptItemDto } from '../../../service/other-income/base-oi';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.component';
 
 @Component({
   selector: 'app-other-income-recipt-period',
-  imports: [FormsModule, DecimalPipe, OtherIncomeReceiptModalComponent],
+  imports: [FormsModule, DecimalPipe, OtherIncomeReceiptModalComponent, DatePipe],
   template: `
     <div class="mb-3">
 
         <table class="table">
           <thead>
             <tr>
-              <th style="width: 20%;">เลขใบเสร็จ</th>
-              <th style="width: 20%;">ยอดใบเสร็จ</th>
-              <th style="width: 20%;">หมายเหตุ</th>
-              <th style="width: 20%;">วันที่ใบเสร็จ</th>
-              <th style="width: 20%;">
-                @if(canEdit()){
+              <th scope="col">เลขใบเสร็จ</th>
+              <th scope="col">ยอดใบเสร็จ</th>
+              <th scope="col">หมายเหตุ</th>
+              <th scope="col">วันที่ใบเสร็จ</th>
+              @if(canEdit()){
+              <th scope="col">
                   <button
                   class="btn btn-sm btn-secondary"
                   (click)="openReceipt()"
                   >
                   เพิ่มใบเสร็จรับเงิน
                 </button>
-              }
               </th>
+            }
             </tr>
           </thead>
           <tbody>
             @for (inv of receiptList(); track inv.id) {
             <tr>
-              <td>{{ inv.receNumb }}</td>
+              <td scope="row">{{ inv.receNumb }}</td>
               <td>{{ inv.receAmount| number : "1.2-2" }}</td>
               <td>{{ inv.receRemark  }}</td>
-              <td colspan="2">{{ inv.receDate }}</td>
+              @if(canEdit()){
+                <td colspan="2">{{ inv.receDate | date}}</td>
+              }@else {
+                <td>{{ inv.receDate | date}}</td>
+              }
             </tr>
             }
           </tbody>

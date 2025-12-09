@@ -32,7 +32,8 @@ export class CreatePeriodComponent {
   checkItem(id: number) {
     this.incomeState.update(prev => prev.map(p => p.id === id ? ({ ...p, check: !p.check }) : p))
   }
-  remark = signal("")
+  periodName = signal("")
+  periodRemark = signal("")
   sum = computed(() => this.incomeState().reduce((acc, { check, incomeAmount, actualAmount }) => check
     ? {
       totalAmount: acc.totalAmount + actualAmount,
@@ -63,11 +64,12 @@ export class CreatePeriodComponent {
     return `${mm}/${yy}`
   }
   get period() {
-    const periodName = this.remark()
+    const periodName = this.periodName()
+    const periodRemark = this.periodRemark()
     const incState = this.incomeState()
     const monthlyList = incState.flatMap(({ id, check, startDate, endDate }) => check ? [{ id, startDate, endDate }] : [])
     const summary = this.sum()
-    return { periodName, ...summary, monthlyList }
+    return { periodName, periodRemark, ...summary, monthlyList }
   }
   private periodservice = inject(PeriodService)
   onAddPeriod() {

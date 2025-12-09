@@ -9,28 +9,23 @@ import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of
 })
 export class OiLightService extends BaseOiService {
 
-  private term$ = new Subject<string>()
-  private mode$ = new Subject<number>()
+  private goodCode$ = new Subject<string>()
+  private compCode$ = new Subject<string>()
+  private compName$ = new Subject<string>()
   private compType$ = new Subject<number>() // code | good
   private sharedComp$ = this.compType$.pipe(
     map((compType) => compType === 1 ? "DN" : "HU"),
     shareReplay(1)
   )
-  private queryParam$ = combineLatest([this.mode$, this.term$, this.sharedComp$])
-    .pipe(
-      filter(([m, t]) => m !== 0 && !!t),
-      map(([mode, term, compType]) => ({ compType, query: { mode, term } }))
-    )
+  private queryParam$ = new Subject<TSearchManyHead>()
   getAll({ compType, query }: { compType: string, query: {} }) {
     return this.api.get<ManyContactLightResponse[]>(`${this.url}/other-income/contact/light/${compType}`, { params: query })
       .pipe(catchError(err => { console.log(err); return of([]) }))
   }
-  private lightList$ = this.queryParam$.pipe(switchMap((search) => this.getAll(search)))
+  private lightList$ = this.queryParam$.pipe(switchMap(({ compType, ...res }) => this.getAll({ compType, query: res })))
   lightList = toSignal(this.lightList$, { initialValue: [] })
-  searchMany(mode: number, term: string, compType: number) {
-    this.mode$.next(mode)
-    this.term$.next(term)
-    this.compType$.next(compType)
+  searchMany(req: TSearchManyHead) {
+    this.queryParam$.next(req)
   }
 
   private fetch$ = new BehaviorSubject<boolean>(true)
@@ -68,4 +63,9 @@ export class OiLightService extends BaseOiService {
 
 }
 
-
+type TSearchManyHead = {
+  compType: string
+  compCode?: string
+  compName?: string
+  goodCode?: string
+}

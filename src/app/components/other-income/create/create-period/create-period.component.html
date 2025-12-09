@@ -19,10 +19,15 @@
   <div class="modal-body">
     <div class="app-form-field-inline">
       <div>
-        <label for="remark">{{ modalName() }}</label>
+        <label for="period-name">{{ modalName() }}</label>
       </div>
       <div>
-        <input type="text" name="remark" id="remark" [(ngModel)]="remark" />
+        <input
+          type="text"
+          name="period-name"
+          id="period-name"
+          [(ngModel)]="periodName"
+        />
       </div>
     </div>
     @let curEve = eventType(); @if (curEve === 1) {
@@ -93,6 +98,14 @@
     }@else {
     <div>มีข้อผิดพลาด</div>
     }
+    <div class="app-form-field-inline">
+      <div>
+        <label for="remark">หมายเหตุ</label>
+      </div>
+      <div>
+        <input name="remark" id="remark" rows="3" [(ngModel)]="periodRemark" />
+      </div>
+    </div>
   </div>
   <div class="modal-footer">
     <button class="btn btn-primary w-100" (click)="onAddPeriod()">

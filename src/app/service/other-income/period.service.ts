@@ -40,6 +40,7 @@ type TCreatPeriodReq = {
   periodName: string
   totalAmount: number
   totalIncome: number
+  periodRemark: string
   monthlyList: TMonth[]
 }
 
