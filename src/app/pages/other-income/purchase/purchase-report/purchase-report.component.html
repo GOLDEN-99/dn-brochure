@@ -46,6 +46,20 @@
   >
     รายงานซัพพลายเออร์ HU รายเดือน
   </button>
+  <button
+    class="btn btn-primary w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportSupplierMonthDetial(1)"
+  >
+    รายงานซัพพลายเออร์ DN รายเดือน (ละเอียด)
+  </button>
+  <button
+    class="btn btn-success w-100 mb-3"
+    [disabled]="disable1()"
+    (click)="exportSupplierMonthDetial(2)"
+  >
+    รายงานซัพพลายเออร์ HU รายเดือน (ละเอียด)
+  </button>
 </div>
 <h4>รายปี</h4>
 <div class="mb-3">
