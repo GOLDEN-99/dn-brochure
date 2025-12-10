@@ -185,4 +185,25 @@ export class OtherIncomeReportComponent {
         }
       })
   }
+
+  exportSupplierMonthDetial(compType: number) {
+    const compCode = this.compCode()
+    const { month, year } = this.date()
+    this.loading.startLoad()
+    this.reportServ.exportSupplierMonthDetialReport(compType, compCode, { year, month, day: 1 }).subscribe({
+      next: async (res) => {
+        if (res.length === 0) {
+          this.toast.danger('ไม่มีข้อมูล')
+          this.loading.endLoad()
+          return
+        }
+        await this.reportServ.exportManySheet(res,)
+        this.toast.success('สำเร็จ')
+        this.loading.endLoad()
+      }, error: (err) => {
+        this.toast.danger(err);
+        this.loading.endLoad();
+      }
+    })
+  }
 }
