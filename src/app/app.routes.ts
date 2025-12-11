@@ -32,7 +32,6 @@ import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, QUOTA_I
 import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
 import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
-import { PurchaseTemplateComponent } from './components/other-income/purchase-template/purchase-template.component';
 import { SpecialIncomeFormComponent } from './pages/other-income/purchase/special-income-form/special-income-form.component';
 
 import { OtherIncomeReportComponent } from './pages/other-income/other-income-report/other-income-report.component';
@@ -363,10 +362,7 @@ export const routes: Routes = [
             //     resolve: { single: getOtherIncomeNotLightIdResolver },
             //     component: NotLightSingleComponent
             // },
-            {
-                path: "account/:id",
-                component: PurchaseTemplateComponent
-            },
+
             {
                 path: "report/:year",
                 component: OtherIncomeReportComponent
