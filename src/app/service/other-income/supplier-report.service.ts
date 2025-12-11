@@ -132,8 +132,8 @@ export class SupplierReportService {
   private _monthDetialMapper: TFieldSelector<TOiSupplierDetial>[] = [
     { label: "เลขใบสั่งซื้อ (PO)", fn: (v) => v.orderNumb },
     { label: "เลขที่รับเข้า", fn: (v) => v.receNumb },
-    { label: "วันที่รับเข้า", fn: (v) => v.receDate },
-    { label: "เลขที่บิล", fn: (v) => v.billNumb.split('T')[0] },
+    { label: "วันที่รับเข้า", fn: (v) => v.receDate.split('T')[0] },
+    { label: "เลขที่บิล", fn: (v) => v.billNumb },
     { label: "วันที่บิล", fn: (v) => v.billDate.split('T')[0] },
     { label: 'ยอดรวม', fn: (v) => v.totalCost.toFixed(2) },
     { label: 'หัก vat', fn: (v) => v.applyVat.toFixed(2) },
