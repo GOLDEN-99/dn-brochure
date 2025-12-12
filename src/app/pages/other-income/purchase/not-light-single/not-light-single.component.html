@@ -56,6 +56,7 @@
   <!---->
   @if (isPurchase) {
   <app-create-period
+    [incomeType]="e.income.incomeType"
     [eventType]="e.event.eventType"
     [incomeList]="incomes"
     [headId]="e.head.id"

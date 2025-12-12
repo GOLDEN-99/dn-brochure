@@ -15,10 +15,12 @@ export class CreatePeriodComponent {
   private cal = inject(NgbCalendar)
   private today = this.cal.getToday();
   date = signal({ day: 1, month: this.today.month, year: this.today.year })
+  incomeType = input.required<number>()
   eventType = input.required<number>()
   modalName = computed(() => {
-    const event = this.eventType()
-    if (event === 3) return 'ชื่อใบแจ้งหนี้'
+    const it = this.incomeType()
+    if (it === 3) return 'ชื่อใบแจ้งหนี้'
+    if (it === 4) return 'ชื่อใบลดหนี้'
     return 'ชื่อ period'
   })
   compType = input.required<string | undefined>()

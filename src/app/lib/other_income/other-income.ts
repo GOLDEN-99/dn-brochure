@@ -35,6 +35,8 @@ const receiptMapper: TFieldSelector<TReceiptReport>[] = [
     { label: 'ยอดใบแจ้งหนี้', fn: v => v.invAmount },
     { label: 'หมายเหตุ', fn: v => v.invRemark },
 ]
+
+// backend send total_income / total_branch //
 const lightboxMapper: TFieldSelector<TLightBoxReport>[] = [
     { label: 'ชื่อ', fn: v => v.displayName },
     { label: 'กิจกรรม', fn: v => v.eventName },
