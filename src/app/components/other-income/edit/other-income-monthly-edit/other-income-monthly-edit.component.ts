@@ -44,7 +44,11 @@ export class OtherIncomeMonthlyEditComponent {
 
   private modalService = inject(NgbModal)
   openModal(content: any) {
-    this.modalService.open(content)
+    const modalRef = this.modalService.open(content)
+    modalRef.result.finally(() => {
+      this.monthService.cleanup()
+      this.resetForm()
+    })
   }
   private monthService = inject(MonthlyService)
   date = this.monthService.date
@@ -92,8 +96,8 @@ export class OtherIncomeMonthlyEditComponent {
       },
       error: (err) => {
         this.fail.emit(err.message)
-      },
-      complete: () => this.resetForm()
+        this.disableOnclick.set(false)
+      }
     })
   }
 

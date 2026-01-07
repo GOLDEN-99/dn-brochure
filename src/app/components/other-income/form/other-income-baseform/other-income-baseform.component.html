@@ -17,7 +17,7 @@
   [eventId]="formData.eventId"
   (eventIdChange)="updateEvent($event)"
   [filter]="mode()"
-  (isLightChange)="isLightChange.emit($event)"
+  (isLightChange)="onSelectEventTypeChange($event)"
 />
 <app-income-select
   [incomeId]="formData.incomeId"
@@ -67,7 +67,7 @@
   (compNameChange)="updateCompName($event)"
 />
 @let products = productList(); @if (products !== null && formData.compCode !==
-'') {
+'' && eventType() === 1) {
 <app-search-product-subform
   [comp]="searchProductParam()"
   [selectProducts]="products"

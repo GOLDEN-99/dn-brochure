@@ -46,7 +46,7 @@ import { FormsModule } from '@angular/forms';
       />
     </div>
     <div class="mb-3">
-      <button class="btn btn-primary w-100" (click)="click.emit()">ค้นหา</button>
+      <button class="btn btn-primary w-100" (click)="click.emit()">ค้นหากิจกรรม</button>
     </div>
   </div>
   `,

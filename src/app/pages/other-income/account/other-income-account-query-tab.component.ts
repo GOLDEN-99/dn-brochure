@@ -96,15 +96,6 @@ export class OtherIncomeAccountQueryTabComponent {
   compCodeChange = this.onValueChange("compCode")
   goodCodeChange = this.onValueChange("goodCode")
   disbleMode = input<boolean>(false)
-
-  // onChangeFilter = (filter: number) => {
-  //   if (filter === 3) {
-  //     this.termChange('')
-  //   } else {
-  //     this.eventChange.emit(0)
-  //   }
-  //   this.fieldChange.emit(filter);
-  // }
 }
 
 type TFilter = 'light' | 'not-light' | 'all'

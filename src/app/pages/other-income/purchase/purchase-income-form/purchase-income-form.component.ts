@@ -9,7 +9,7 @@ import { ToastService } from '../../../../service/toast/toast.service';
   selector: 'app-purchase-income-form',
   imports: [FormsModule, NgbDatepickerModule, RouterLink, OtherIncomeBaseformComponent],
   template: `
-  <app-other-income-baseform mode="not-light" (isLightChange)="isLight.set($event)" />
+  <app-other-income-baseform mode="not-light" [(eventType)]="eventType" />
   <div class="d-flex justify-content-center" style="gap: 1rem">
     @let btnLabel = displayText();
     @if(btnLabel !== ''){
@@ -58,11 +58,12 @@ export class PurchaseIncomeFormComponent implements OnInit, OnDestroy {
   private comp = this.baseFormService.compData
   private router = inject(Router)
   private route = inject(ActivatedRoute)
-  isLight = signal(-1)
-  isInce = computed(() => this.isLight() === 3)
+  eventType = signal(-1)
+  // isDcRebate = computed(() => this.isLight() === 1)
+  isInce = computed(() => this.eventType() === 3)
   displayText = computed(() => {
-    const isLight = this.isLight()
-    switch (isLight) {
+    const eventType = this.eventType()
+    switch (eventType) {
       case -1: return ''
       case 1: return 'ต่อไป'
       default: return 'บันทึก'

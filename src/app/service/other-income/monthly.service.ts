@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
 import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { TCompType, TOIStepItem } from '../../types';
-import { BehaviorSubject, catchError, combineLatest, map, Subject, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of, Subject, switchMap, tap, throwError } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
@@ -15,7 +15,7 @@ export class MonthlyService {
   private cal = inject(NgbCalendar)
   private today = this.cal.getToday()
   constructor() { }
-  private id$ = new Subject<number>()
+  private id$ = new BehaviorSubject<number | null>(null)
   date = signal({ year: this.today.year, month: this.today.month, day: this.today.day })
   updateDate = (key: keyof NgbDateStruct) => (value: number) => this.date.update(prev => ({ ...prev, [key]: value }))
   private date$ = toObservable(this.date)
@@ -28,6 +28,7 @@ export class MonthlyService {
   private param$ = combineLatest([this.id$, this.convertDate$, this.comp$])
 
   getMonthlyIncome({ id, month, comp }: TMonthlyReq) {
+    if (id === null) return of([])
     return this.api.get<TMonthlyIncomeItem2[]>(
       `${this.url}/monthly-income/income-list/${id}`,
       { params: { month, comp } }
@@ -84,6 +85,12 @@ export class MonthlyService {
     const toPercent = raw / 100
     return toPercent
   }
+
+  cleanup() {
+    this.id$.next(null);
+    const { year, month, day } = this.today
+    this.date.set({ year, month, day })
+  }
 }
 
 type TDiscFactor = {
@@ -96,7 +103,7 @@ type TDiscFactor = {
 
 
 type TMonthlyReq = {
-  id: number
+  id: number | null
   month: string
   comp: TCompType
 }

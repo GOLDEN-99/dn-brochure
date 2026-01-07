@@ -33,7 +33,7 @@ import { FormsModule } from '@angular/forms';
             <div class="col">
               <div class="app-form-field-inline">
                 <div>
-                  <label [attr.for]="'start-input-' + $index">เริ่มต้น</label>
+                  <label [attr.for]="'start-input-' + $index">ยอดซื้อตั้งแต่</label>
                 </div>
                 <div>
                   <input
@@ -43,12 +43,13 @@ import { FormsModule } from '@angular/forms';
                     (ngModelChange)="changeStart($index)($event)"
                   />
                 </div>
+                <div>บาท</div>
               </div>
             </div>
             <div class="col">
               <div class="app-form-field-inline">
                 <div>
-                  <label [attr.for]="'percent-input-' + $index">ได้</label>
+                  <label [attr.for]="'percent-input-' + $index">คำนวน</label>
                 </div>
                 <div>
                   <input

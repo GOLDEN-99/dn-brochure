@@ -39,7 +39,8 @@ export class OtherIncomeBaseformComponent {
   updateStartDate = this.updator('startDate')
   updateEndDate = this.updator('endDate')
   mode = input<TFilter>('light')
-  isLightChange = output<number>()
+  eventType = input.required<number>()
+  eventTypeChange = output<number>()
   productList = this.baseFormService.productList
   private goodCodeSet = new Set<string>()
 
@@ -58,6 +59,13 @@ export class OtherIncomeBaseformComponent {
     if (hasDel) {
       this.productList.update(prev => prev === null ? [] : prev.filter(p => p.goodCode !== goodCode))
     }
+  }
+  onSelectEventTypeChange(eventType: number) {
+    if (eventType !== 1) {
+      this.productList.set([])
+      this.goodCodeSet.clear()
+    }
+    this.eventTypeChange.emit(eventType)
   }
 }
 
