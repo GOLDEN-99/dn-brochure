@@ -1,12 +1,12 @@
-import { Component, inject, input, output, viewChild } from '@angular/core';
+import { Component, input, viewChild } from '@angular/core';
 import { TReceiptItemDto } from '../../../service/other-income/base-oi';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.component';
+import { BasePeriodComponent } from './base-period.component';
 
 @Component({
-  selector: 'app-other-income-recipt-period',
+  selector: 'app-other-income-receipt-period',
   imports: [FormsModule, DecimalPipe, OtherIncomeReceiptModalComponent, DatePipe],
   template: `
     <div class="mb-3">
@@ -23,6 +23,7 @@ import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.c
                   <button
                   class="btn btn-sm btn-secondary"
                   (click)="openReceipt()"
+                  [disabled]="disabled()"
                   >
                   เพิ่มใบเสร็จรับเงิน
                 </button>
@@ -46,7 +47,7 @@ import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.c
           </tbody>
         </table>
       </div>
-          
+
     <ng-template #receiptModal let-modal>
       <app-other-income-receipt-modal
         [periodId]="periodId()"
@@ -60,29 +61,17 @@ import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.c
   `,
   styles: '',
 })
-export class OtherIncomeReciptPeriodComponent {
-  receiptList = input.required<TReceiptItemDto[]>()
-  periodId = input.required<number>()
-  invAmount = input.required<number>()
-  receAmount = input.required<number>()
-  canEdit = input(false)
-  success = output<string>()
-  fail = output<string>()
+export class OtherIncomeReceiptPeriodComponent extends BasePeriodComponent {
+  receiptList = input.required<TReceiptItemDto[]>();
+  periodId = input.required<number>();
+  invAmount = input.required<number>();
+  receAmount = input.required<number>();
+  canEdit = input(false);
+  disabled = input(false);
 
-  private modalServ = inject(NgbModal)
+  private receiptModal = viewChild('receiptModal');
 
-  private receiptModal = viewChild('receiptModal')
   openReceipt() {
-    this.modalServ.open(this.receiptModal())
-  }
-
-  onSuccess(value: string) {
-    this.modalServ.dismissAll()
-    this.success.emit(value);
-  }
-
-  onFail(value: string) {
-    this.modalServ.dismissAll()
-    this.fail.emit(value);
+    this.openModal(this.receiptModal());
   }
 }

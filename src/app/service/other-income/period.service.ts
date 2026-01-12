@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
 import { TIncomeItem } from './base-oi';
+import { PeriodStatus } from '../../types/other-income';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +32,19 @@ export class PeriodService {
 
   insertCredit(periodId: number, req: TPeriodCreditReq) {
     return this.api.post<any>(`${this.url}/period/${periodId}/credit`, req)
+  }
+
+  /**
+   * Update period status manually
+   * @param periodId - The period ID
+   * @param status - The new status (2=Complete, 3=Invoice, 4=Receipt, null=auto)
+   * @returns Promise with affectedRows count
+   */
+  updatePeriodStatus(periodId: number, status: PeriodStatus | null) {
+    return this.api.patch<{ affectedRows: number }>(
+      `${this.url}/period/${periodId}/status`,
+      { Status: status }
+    )
   }
 }
 

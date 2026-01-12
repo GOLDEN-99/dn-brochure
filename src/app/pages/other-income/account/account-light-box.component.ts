@@ -3,6 +3,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CUSTOM_FIELD_SEARCH_TOKEN, OTHER_INCOME_L_SEARCH } from '../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
 import { OtherIncomeAccountQueryTabComponent } from "./other-income-account-query-tab.component";
 import { PeriodLightService } from '../../../service/other-income/period-light.service';
+import { getPeriodStatusLabel, getPeriodStatusBadgeClass, formatAmountProgress } from '../../../lib/other_income/period-status-utils';
+import { formatLocalNumber } from '../../../lib/formatter';
+import { PeriodStatus } from '../../../types/other-income';
 
 @Component({
   selector: 'app-account-light-box',
@@ -19,6 +22,7 @@ import { PeriodLightService } from '../../../service/other-income/period-light.s
             <th>ชื่อซัพพลายเออร์</th>
             <th>ชื่อ period</th>
             <th>สถานะ</th>
+            <!-- <th>ความคืบหน้า</th> -->
             <th>รายละเอียด</th>
           </tr>
         </thead>
@@ -29,7 +33,23 @@ import { PeriodLightService } from '../../../service/other-income/period-light.s
             <td>{{ item.displayName }}</td>
             <td>{{ item.company.compName }}</td>
             <td>{{ item.periodName }}</td>
-            <td>{{ item.status }}</td>
+            <td>
+              <span [class]="getStatusBadgeClass(item.periodStatus)">
+                {{ getStatusLabel(item.periodStatus) }}
+              </span>
+            </td>
+            <!-- <td>
+              @if (item.periodStatus === PeriodStatus.Invoice) {
+                <small class="text-muted">รอใบแจ้งหนี้</small>
+              } @else if (item.periodStatus === PeriodStatus.Receipt) {
+                <div class="text-muted small">
+                  <div>ใบแจ้งหนี้: {{ formatNumber(item.invAmount) }} บาท</div>
+                  <div>ใบเสร็จ: {{ formatAmountProgress(item.receAmount, item.invAmount) }}</div>
+                </div>
+              } @else if (item.periodStatus === PeriodStatus.Complete) {
+                <small class="text-success">เสร็จสมบูรณ์</small>
+              }
+            </td> -->
             <td><a [routerLink]="genUrl(item.company.compCode, item.company.compType, item.id)">รายละเอียด</a></td>
           </tr>
           }
@@ -50,6 +70,14 @@ export class AccountLightBoxComponent {
   param = this.periodLight.params
   private router = inject(Router)
   private route = inject(ActivatedRoute)
+
+  // Helper methods for template
+  getStatusLabel = getPeriodStatusLabel;
+  getStatusBadgeClass = getPeriodStatusBadgeClass;
+  formatAmountProgress = formatAmountProgress;
+  formatNumber = formatLocalNumber;
+  PeriodStatus = PeriodStatus;
+
   genUrl(compCode: string, compType: string, id: number) {
     return this.router.createUrlTree([id], { relativeTo: this.route, queryParams: { compCode, compType } })
   }

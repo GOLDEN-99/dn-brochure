@@ -44,12 +44,10 @@ import { getOtherIncomeNotLightIdResolver } from './resolvers/other-income/get-o
 import { NotLightSingleComponent } from './pages/other-income/purchase/not-light-single/not-light-single.component';
 import { LightSingleComponent } from './pages/other-income/purchase/light-single/light-single.component';
 import { AccountNotLightInvoiceComponent } from './pages/other-income/account/account-not-light-invoice.component';
-import { AccountNotLightProductComponent } from './pages/other-income/account/account-not-light-product.component';
 import { AccountLightBoxComponent } from './pages/other-income/account/account-light-box.component';
 import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
 
 import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
-import { ibobLoginGuardGuard } from './guard/ibob-login-guard.guard';
 
 import { stockSetupResolver } from './resolvers/stock-item/stock-setup.resolver';
 import { ibobCompTypeChildGuardGuard } from './guard/ibob-comp-type-child-guard.guard';

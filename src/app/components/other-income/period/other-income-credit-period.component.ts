@@ -1,8 +1,8 @@
-import { Component, inject, input, output, viewChild } from '@angular/core';
+import { Component, input, viewChild } from '@angular/core';
 import { TCreditNoteDto } from '../../../service/other-income/base-oi';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DecimalPipe } from '@angular/common';
 import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.component";
+import { BasePeriodComponent } from './base-period.component';
 
 @Component({
   selector: 'app-other-income-credit-period',
@@ -21,6 +21,7 @@ import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.com
                   <button
                   class="btn btn-sm btn-primary me-1"
                   (click)="openCredit()"
+                  [disabled]="disabled()"
                   >
                   เพิ่มใบลดหนี้
                 </button>
@@ -44,12 +45,12 @@ import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.com
           </tbody>
         </table>
       </div>
-          
+
     <ng-template #creditModal let-modal>
-      <app-other-income-credit-modal 
-      [periodId]="periodId()" 
-      [incomeAmount]="incomeAmount()" 
-      [addedAmount]="addedAmount()"         
+      <app-other-income-credit-modal
+      [periodId]="periodId()"
+      [incomeAmount]="incomeAmount()"
+      [addedAmount]="addedAmount()"
       (success)="onSuccess($event)"
       (fail)="onFail($event)"
       (close)="modal.dismiss()" />
@@ -57,31 +58,17 @@ import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.com
   `,
   styles: ''
 })
-export class OtherIncomeCreditPeriodComponent {
-  canEdit = input(false)
-  creditList = input.required<TCreditNoteDto[]>()
-  periodId = input.required<number>()
-  incomeAmount = input.required<number>()
-  addedAmount = input.required<number>()
+export class OtherIncomeCreditPeriodComponent extends BasePeriodComponent {
+  canEdit = input(false);
+  creditList = input.required<TCreditNoteDto[]>();
+  periodId = input.required<number>();
+  incomeAmount = input.required<number>();
+  addedAmount = input.required<number>();
+  disabled = input(false);
 
-  success = output<string>()
-  fail = output<string>()
-
-  private modalServ = inject(NgbModal)
-
-  private invoiceModal = viewChild('creditModal')
+  private creditModal = viewChild('creditModal');
 
   openCredit() {
-    this.modalServ.open(this.invoiceModal())
-  }
-
-  onSuccess(value: string) {
-    this.modalServ.dismissAll()
-    this.success.emit(value);
-  }
-
-  onFail(value: string) {
-    this.modalServ.dismissAll()
-    this.fail.emit(value);
+    this.openModal(this.creditModal());
   }
 }

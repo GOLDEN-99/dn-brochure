@@ -1,9 +1,9 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, inject, input, output, viewChild } from '@angular/core';
+import { Component, input, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OtherIncomeInvoiceModalComponent } from './other-income-invoice-modal.component';
 import { TInviceItemDto } from '../../../service/other-income/base-oi';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BasePeriodComponent } from './base-period.component';
 
 @Component({
   selector: 'app-other-income-invoice-period',
@@ -23,6 +23,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
                   <button
                   class="btn btn-sm btn-primary me-1"
                   (click)="openInvoice()"
+                  [disabled]="disabled()"
                   >
                   เพิ่มใบแจ้งหนี้
                 </button>
@@ -46,7 +47,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
           </tbody>
         </table>
       </div>
-          
+
     <ng-template #invoiceModal let-modal>
       <app-other-income-invoice-modal
         [periodId]="periodId()"
@@ -59,32 +60,17 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
     </ng-template>
   `,
 })
-export class OtherIncomeInvoicePeriodComponent {
-  canEdit = input(false)
-  invoiceList = input.required<TInviceItemDto[]>()
-  periodId = input.required<number>()
-  incomeAmount = input.required<number>()
-  addedAmount = input.required<number>()
+export class OtherIncomeInvoicePeriodComponent extends BasePeriodComponent {
+  canEdit = input(false);
+  invoiceList = input.required<TInviceItemDto[]>();
+  periodId = input.required<number>();
+  incomeAmount = input.required<number>();
+  addedAmount = input.required<number>();
+  disabled = input(false);
 
-
-  success = output<string>()
-  fail = output<string>()
-
-  private modalServ = inject(NgbModal)
-
-  private invoiceModal = viewChild('invoiceModal')
+  private invoiceModal = viewChild('invoiceModal');
 
   openInvoice() {
-    this.modalServ.open(this.invoiceModal())
-  }
-
-  onSuccess(value: string) {
-    this.modalServ.dismissAll()
-    this.success.emit(value);
-  }
-
-  onFail(value: string) {
-    this.modalServ.dismissAll()
-    this.fail.emit(value);
+    this.openModal(this.invoiceModal());
   }
 }

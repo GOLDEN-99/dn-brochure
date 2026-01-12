@@ -21,8 +21,19 @@
     [branchList]="branches"
     (refetch)="onRefetch()"
   />
-
   @for (period of periods; track period.id) {
+  <app-other-income-period-display
+    [period]="period"
+    [incomeType]="e.income.incomeType"
+    [canEdit]="isPurchase"
+    [isPurchase]="isPurchase"
+    [compCode]="e.company.compCode"
+    [compType]="e.company.compType"
+    (success)="onSuccess($event)"
+    (fail)="onFail($event)"
+  />
+  } }
+  <!-- @for (period of periods; track period.id) {
   <div class="row bg-success bg-opacity-10">
     <div class="row">
       @for (head of currentHeader(); track $index) {
@@ -44,7 +55,7 @@
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
-  <app-other-income-recipt-period
+  <app-other-income-receipt-period
     [canEdit]="!isPurchase"
     [receiptList]="period.receiptList"
     [periodId]="period.id"
@@ -53,5 +64,5 @@
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
-  } }
+  } } -->
 </section>

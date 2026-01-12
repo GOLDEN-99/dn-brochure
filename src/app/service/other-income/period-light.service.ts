@@ -6,6 +6,7 @@ import { combineLatest, debounceTime, distinctUntilChanged, filter, map, Observa
 import { TEvent } from './event.service';
 import { TOIComp } from './company.service';
 import { TAccountQueryReqState } from './period-not-light.service';
+import { PeriodStatus } from '../../types/other-income';
 
 @Injectable({
   providedIn: 'root'
@@ -52,18 +53,7 @@ export class PeriodLightService {
     switchMap(({ compType, ...res }) => this.getMany(compType, { ...res }))
   )
   periods = toSignal(this.periodList$, { initialValue: [] })
-  modPeriod = computed(() => this.periods().map(({ receDate, invDate, ...res }) => {
-    const hasInv = invDate !== null
-    const hasRece = receDate !== null
-    const status = this.mapStatus(hasInv, hasRece)
-    return { ...res, receDate, invDate, status }
-  }))
-
-  private mapStatus(hasInv: boolean, hasRece: boolean) {
-    if (!hasInv) return 'รอเพิ่มใบแจ้งหนี้'
-    if (!hasRece) return 'รอเพิ่มใบเสร็จ'
-    return 'สำเร็จ'
-  }
+  modPeriod = computed(() => this.periods())
 }
 
 type TPeriodSummaryLight = {
@@ -78,6 +68,9 @@ type TPeriodSummaryLight = {
   endDate: string
   invDate: string | null
   receDate: string | null
+  invAmount: number
+  receAmount: number
+  periodStatus?: PeriodStatus | null
 }
 
 type TQueryReq = {
