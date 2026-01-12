@@ -18,21 +18,16 @@ export class OrderService {
 
   private params$ = new Subject<TOnSearchParams>()
   private shared$ = this.params$.pipe(shareReplay(1))
-  private search({ compCode, compType, discType, order }: TOnSearchParams): Observable<TOiBill[]> {
+  private search({ compCode, compType, discType, ...res }: TOnSearchParams): Observable<TOiBill[]> {
     const currentUrl = `${this.billUrl}/${compType}/${compCode}/${discType}`
-    if (order) {
-      return this.api.get<TOiBill[]>(currentUrl, { params: { order } })
-        .pipe(catchError(err => of([])))
-    }
-    return this.api.get<TOiBill[]>(currentUrl).pipe(catchError(err => of([])))
+    return this.api.get<TOiBill[]>(currentUrl, { params: { ...res } })
+      .pipe(catchError(err => of([])))
   }
-  private searchGood({ compCode, compType, discType, order }: TOnSearchParams): Observable<TOiGood[]> {
+  private searchGood({ compCode, compType, discType, ...res }: TOnSearchParams): Observable<TOiGood[]> {
     const currentUrl = `${this.goodUrl}/${compType}/${compCode}/${discType}`
-    if (order) {
-      return this.api.get<TOiGood[]>(currentUrl, { params: { order } })
-        .pipe(catchError(err => of([])))
-    }
-    return this.api.get<TOiGood[]>(currentUrl).pipe(catchError(err => of([])))
+
+    return this.api.get<TOiGood[]>(currentUrl, { params: { ...res } })
+      .pipe(catchError(err => of([])))
   }
   // ท้ายบิล
   private poList$ = this.shared$.pipe(switchMap(p => this.search(p)))
@@ -66,12 +61,27 @@ export type TOiOrder = {
 
 export type TOiBill = {
   receList: TSmallRece[]
+  receDate: string
+  billDate: string
+  billNumb: string
 } & TOiOrder
 
 export type TOiGood = {
   productList: TSmallProduct[]
+  receDate: string
+  billDate: string
+  billNumb: string
   remark: string
 } & TOiOrder
 
 
-type TOnSearchParams = { compCode: string, compType: string, discType: number, order: string }
+type TOnSearchParams = {
+  compCode: string,
+  compType: string,
+  discType: number,
+  order: string;
+  receStart?: string;
+  receEnd?: string;
+  billStart?: string;
+  billEnd?: string;
+}

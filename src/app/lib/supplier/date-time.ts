@@ -40,7 +40,6 @@ export const genCalendar = ({ month, year }: Omit<TDate, 'day'>) => {
         calendar.push(week)
         week = []
     }
-    console.table(calendar)
     return calendar
 }
 

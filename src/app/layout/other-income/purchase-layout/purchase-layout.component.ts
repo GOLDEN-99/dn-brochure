@@ -1,5 +1,6 @@
 import { Component, inject, InjectionToken } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { takeLast } from 'rxjs';
 
 type TTabItem = {
   label: string
@@ -44,11 +45,11 @@ export const ACCOUNT_TAB_TOKEN: ITabSetting = {
       link: './light',
       exact: false
     },
-    {
-      label: 'รายได้อื่นๆ รับรู้จากสินค้า',
-      link: './not-light-product',
-      exact: false
-    },
+    // {
+    //   label: 'รายได้อื่นๆ รับรู้จากสินค้า',
+    //   link: './not-light-product',
+    //   exact: false
+    // },
     {
       label: 'report',
       link: './report',
@@ -129,6 +130,26 @@ export const STOCK_ITEM_TOKEN = {
       link: './report',
       exact: true
     },
+  ]
+}
+
+export const QUOTA_ITEM_TOKEN = {
+  tabList: [
+    {
+      label: 'เพิ่มโควต้า',
+      link: './',
+      exact: true
+    },
+    {
+      label: 'รายการโควต้า',
+      link: './good-list',
+      exact: true
+    },
+    {
+      label: 'โควต้ารายร้าน',
+      link: './whole-list',
+      exact: true
+    }
   ]
 }
 

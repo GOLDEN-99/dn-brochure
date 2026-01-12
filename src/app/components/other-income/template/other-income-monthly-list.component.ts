@@ -1,5 +1,5 @@
-import { Component, computed, inject, input, output } from '@angular/core';
-import { TIncomeItem } from '../../../service/other-income/base-oi';
+import { Component, computed, inject, input, output, Signal } from '@angular/core';
+import { TEnchanceIncomeItem, TIncomeItem } from '../../../service/other-income/base-oi';
 import { MonthlyService } from '../../../service/other-income/monthly.service';
 import { TFieldSelector } from '../../../types';
 import { customFormatDate, customFormatMonth } from '../../../lib/formatter';
@@ -18,7 +18,7 @@ import { customFormatDate, customFormatMonth } from '../../../lib/formatter';
       </tr>
     </thead>
     <tbody>
-      @let incomes = incomeList();
+      @let incomes = computedIncomeList();
       @for (income of incomes;let i = $index; track i) {
       <tr>
         @for (fn of tableMapper();let j = $index; track j) {
@@ -43,26 +43,35 @@ export class OtherIncomeMonthlyListComponent {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })
-  private _dcSelector: TFieldSelector<TIncomeItem>[] = [
+  private _dcSelector: TFieldSelector<TEnchanceIncomeItem>[] = [
     { label: 'งวด', fn: v => this._formatMonth(v.startDate) },
     { label: 'ยอดคำนวน', fn: v => this.formatNumber(v.calAmount) },
     { label: 'ยอด cn', fn: v => this.formatNumber(v.cn) },
     { label: 'ยอดบันทึก', fn: v => this.formatNumber(v.actualAmount) },
     { label: 'ส่วนต่าง', fn: v => this.formatNumber(v.calAmount - v.cn - v.actualAmount) },
     { label: 'เหตุผล', fn: v => v.reason },
-    { label: 'รายได้', fn: v => v.incomeAmount }
+    { label: 'รายได้', fn: v => v.incomeAmount },
+    { label: 'ยอดซื้อสะสม', fn: v => this.formatNumber(v.accPurchase) }
   ]
-  private _notDcSelector: TFieldSelector<TIncomeItem>[] = [
+  private _notDcSelector: TFieldSelector<TEnchanceIncomeItem>[] = [
     { label: 'เริ่ม', fn: v => this._formatDate(v.startDate) },
     { label: 'จบ', fn: v => this._formatDate(v.endDate) },
     { label: 'หมายเหตุ', fn: v => v.reason },
-    { label: 'รายได้', fn: v => v.incomeAmount }
+    { label: 'รายได้', fn: v => v.incomeAmount },
+    { label: 'ยอดซื้อสะสม', fn: v => this.formatNumber(v.accPurchase) }
   ]
   isDc = input.required<boolean>()
   private _selector = computed(() => this.isDc() ? this._dcSelector : this._notDcSelector)
   tableHeader = computed(() => this._selector().map(({ label }) => label))
   tableMapper = computed(() => this._selector().map(({ fn }) => fn))
   incomeList = input.required<TIncomeItem[]>()
+  computedIncomeList: Signal<TEnchanceIncomeItem[]> = computed(() => {
+    const incList = this.incomeList()
+    let accPurchase = 0
+    return incList.map(inc => ({
+      ...inc, accPurchase: accPurchase += inc.actualAmount
+    }))
+  })
   success = output<string>()
   fail = output<string>()
   private monthService = inject(MonthlyService)

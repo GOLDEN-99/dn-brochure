@@ -24,7 +24,6 @@ export class SupplierFormViewComponent implements OnInit, OnDestroy {
         next: ({ formState, emplList, itemList }) => {
           this.formService.formState.update(prev => ({ ...prev, ...formState }))
           this.formService.emplList.set(emplList)
-          console.log(itemList)
           this.formService.item.set(itemList)
         }
       })

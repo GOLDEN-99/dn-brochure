@@ -51,7 +51,6 @@ export class SearchCompSubformComponent {
   compList = this.searchComp.compList
   isDn = computed(() => this.compType() === 'DN')
   changeDn = (changeToDn: boolean) => {
-    console.log('emit new value')
     if (changeToDn) {
       this.compTypeChange.emit('DN')
       this.group.set('DN')

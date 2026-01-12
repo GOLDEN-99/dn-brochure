@@ -56,7 +56,7 @@ export class OtherIncomeOrderReportComponent {
     const aoa = data.map(({ head, report }) => [
       ...this.mapPrimaryHeadToArray(head),
       [],
-      ['งวด', 'วันที่ใบ po', 'เลข po', 'วันที่ iv', 'เลข iv', 'วันที่ rc', 'เลข rc', 'รายได้คาดการ', 'รายได้จริง'],
+      ['งวด', 'วันที่ใบ po', 'เลข po', 'วันที่ iv', 'เลข iv', 'วันที่รับเข้า', 'เลข rc', 'รายได้คาดการ', 'รายได้จริง'],
       ...report.map(this.mapOrderToArray(head.period))
     ])
 

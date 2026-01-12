@@ -28,11 +28,10 @@ import { fetchDoorDetailResolver } from './resolvers/Ibob/fetch-door-detail.reso
 import { InOutQueryComponent } from './pages/supplier-project/in-out-query/in-out-query.component';
 import { flashSaleResolver } from './resolvers/flash-sale/flash-sale.resolver';
 
-import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, STOCK_ITEM_TOKEN, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
+import { ACCOUNT_TAB_TOKEN, PURCHASE_TAB_TOKEN, PurchaseLayoutComponent, QUOTA_ITEM_TOKEN, STOCK_ITEM_TOKEN, TAB_TOKEN } from './layout/other-income/purchase-layout/purchase-layout.component';
 import { PurchaseHomeComponent } from './pages/other-income/purchase/purchase-home/purchase-home.component';
 import { PurchaseReportComponent } from './pages/other-income/purchase/purchase-report/purchase-report.component';
 import { PurchaseIncomeFormComponent } from './pages/other-income/purchase/purchase-income-form/purchase-income-form.component';
-import { PurchaseTemplateComponent } from './components/other-income/purchase-template/purchase-template.component';
 import { SpecialIncomeFormComponent } from './pages/other-income/purchase/special-income-form/special-income-form.component';
 
 import { OtherIncomeReportComponent } from './pages/other-income/other-income-report/other-income-report.component';
@@ -45,12 +44,10 @@ import { getOtherIncomeNotLightIdResolver } from './resolvers/other-income/get-o
 import { NotLightSingleComponent } from './pages/other-income/purchase/not-light-single/not-light-single.component';
 import { LightSingleComponent } from './pages/other-income/purchase/light-single/light-single.component';
 import { AccountNotLightInvoiceComponent } from './pages/other-income/account/account-not-light-invoice.component';
-import { AccountNotLightProductComponent } from './pages/other-income/account/account-not-light-product.component';
 import { AccountLightBoxComponent } from './pages/other-income/account/account-light-box.component';
 import { FlashSaleComponent } from './pages/brochure-project/flash-sale/flash-sale.component';
 
 import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
-import { ibobLoginGuardGuard } from './guard/ibob-login-guard.guard';
 
 import { stockSetupResolver } from './resolvers/stock-item/stock-setup.resolver';
 import { ibobCompTypeChildGuardGuard } from './guard/ibob-comp-type-child-guard.guard';
@@ -322,10 +319,10 @@ export const routes: Routes = [
                         path: 'not-light',
                         component: AccountNotLightInvoiceComponent
                     },
-                    {
-                        path: 'not-light-product',
-                        component: AccountNotLightProductComponent
-                    },
+                    // {
+                    //     path: 'not-light-product',
+                    //     component: AccountNotLightProductComponent
+                    // },
                     {
                         path: 'light',
                         component: AccountLightBoxComponent
@@ -363,10 +360,7 @@ export const routes: Routes = [
             //     resolve: { single: getOtherIncomeNotLightIdResolver },
             //     component: NotLightSingleComponent
             // },
-            {
-                path: "account/:id",
-                component: PurchaseTemplateComponent
-            },
+
             {
                 path: "report/:year",
                 component: OtherIncomeReportComponent
@@ -403,6 +397,36 @@ export const routes: Routes = [
         resolve: [stockSetupResolver],
         loadComponent: () => import('./pages/stock-item/stock-item-add/stock-item-add.component')
             .then(r => r.StockItemAddComponent).catch(ex => NotfoundComponent),
+    },
+    //quota-item
+    {
+        path: 'quota-item',
+        component: PurchaseLayoutComponent,
+        providers: [
+            {
+                provide: TAB_TOKEN,
+                useValue: QUOTA_ITEM_TOKEN
+            }
+        ],
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('./pages/quota-item/quota-item-add/quota-item-add.component')
+                    .then(r => r.QuotaItemAddComponent)
+                    .catch((_) => NotfoundComponent)
+            },
+            {
+                path: 'good-list',
+                loadComponent: () => import('./pages/quota-item/quota-item-list/quota-item-list.component')
+                    .then(r => r.QuotaItemListComponent).catch((_) => NotfoundComponent)
+            },
+            {
+                path: 'whole-list',
+                loadComponent: () => import('./pages/quota-item/quota-item-whole-list/quota-item-whole-list.component')
+                    .then(r => r.QuotaItemWholeListComponent)
+                    .catch((_) => NotfoundComponent)
+            }
+        ]
     },
     {
         path: "notfound",

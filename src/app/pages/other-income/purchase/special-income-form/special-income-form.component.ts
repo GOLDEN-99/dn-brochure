@@ -9,7 +9,7 @@ import { ToastService } from '../../../../service/toast/toast.service';
   selector: 'app-special-income-form',
   imports: [FormsModule, RouterLink, OtherIncomeBaseformComponent],
   template: `
-    <app-other-income-baseform (isLightChange)="eventType.set($event)" mode="light" />
+    <app-other-income-baseform [(eventType)]="eventType" mode="light" />
     <!--  action -->
     <div class="d-flex justify-content-center" style="gap: 1rem">
       <button class="btn btn-success" (click)="onSubmit()" [disabled]="disable()">

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InOutLayoutComponent } from './in-out-layout.component';
+import { QuotaItemListComponent } from './quota-item-list.component';
 
-describe('InOutLayoutComponent', () => {
-  let component: InOutLayoutComponent;
-  let fixture: ComponentFixture<InOutLayoutComponent>;
+describe('QuotaItemListComponent', () => {
+  let component: QuotaItemListComponent;
+  let fixture: ComponentFixture<QuotaItemListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InOutLayoutComponent]
+      imports: [QuotaItemListComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(InOutLayoutComponent);
+    fixture = TestBed.createComponent(QuotaItemListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

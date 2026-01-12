@@ -33,28 +33,27 @@ import { FormsModule } from '@angular/forms';
             <div class="col">
               <div class="app-form-field-inline">
                 <div>
-                  <label [attr.for]="'start-input-' + $index">เริ่มต้น</label>
+                  <label [attr.for]="'start-input-' + $index">ยอดซื้อตั้งแต่</label>
                 </div>
                 <div>
                   <input
                     [attr.name]="'start-input-' + $index"
                     [id]="'start-input-' + $index"
-                    type="number"
                     [ngModel]="s.start"
                     (ngModelChange)="changeStart($index)($event)"
                   />
                 </div>
+                <div>บาท</div>
               </div>
             </div>
             <div class="col">
               <div class="app-form-field-inline">
                 <div>
-                  <label [attr.for]="'percent-input-' + $index">ได้</label>
+                  <label [attr.for]="'percent-input-' + $index">คำนวน</label>
                 </div>
                 <div>
                   <input
                     [id]="'percent-input-' + $index"
-                    type="number"
                     [ngModel]="s.percent"
                     (ngModelChange)="changePercent($index)($event)"
                   />
@@ -83,7 +82,6 @@ import { FormsModule } from '@angular/forms';
         </div>
       </div>
       } @else if(targetValue === 1) {
-      <!--case stepType = 0,1-->
       <div class="bg-lightgray" style="padding: 0 8px">
         <div class="app-form-field-inline">
           <div style="margin: 16px 0">

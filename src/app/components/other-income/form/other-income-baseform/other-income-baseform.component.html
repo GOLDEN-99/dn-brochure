@@ -1,7 +1,7 @@
 @let formData = state();
 <div class="app-form-field-inline">
   <div>
-    <label for="displayName">ชื่อสัญญา (ถ้ามี)</label>
+    <label for="displayName">ชื่อรายรับภายใน (ถ้ามี)</label>
   </div>
   <div>
     <input
@@ -17,7 +17,7 @@
   [eventId]="formData.eventId"
   (eventIdChange)="updateEvent($event)"
   [filter]="mode()"
-  (isLightChange)="isLightChange.emit($event)"
+  (isLightChange)="onSelectEventTypeChange($event)"
 />
 <app-income-select
   [incomeId]="formData.incomeId"
@@ -35,6 +35,7 @@
   >
     <option [ngValue]="0" disabled>กรุณาเลือก</option>
     <option [ngValue]="1">1 เดือน</option>
+    <option [ngValue]="2">2 เดือน</option>
     <option [ngValue]="3">3 เดือน</option>
     <option [ngValue]="6">6 เดือน</option>
     <option [ngValue]="12">12 เดือน</option>
@@ -66,7 +67,7 @@
   (compNameChange)="updateCompName($event)"
 />
 @let products = productList(); @if (products !== null && formData.compCode !==
-'') {
+'' && eventType() === 1) {
 <app-search-product-subform
   [comp]="searchProductParam()"
   [selectProducts]="products"

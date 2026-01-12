@@ -33,6 +33,8 @@ export class OtherIncomeReportComponent {
   private _iso = convertToIso(this.today)
   private _invName = `รายงานออกใบแจ้งหนี้วันที่-${this._iso}.xlsx`
   private _invSheet = 'รอออกใบแจ้งหนี้'
+  private _creditName = `รายงานออกใบลดหนี้วันที่-${this._iso}.xlsx`
+  private _creditSheet = 'รอออกใบลดหนี้'
   private _receName = `รายงานออกใบเสร็จวันที่-${this._iso}.xlsx`
   private _receSheet = 'รอออกใบเสร็จ'
   private _lightName = `รายงาน lightBox-${this._iso}.xlsx`
@@ -56,12 +58,22 @@ export class OtherIncomeReportComponent {
   private accReport = inject(OiAccountReportService)
   exportInvoice(compType: number) {
     this.loading.startLoad()
-    this.accReport.exportInvoiceReport(compType).subscribe({
+    this.accReport.exportInvoiceReport(compType, 'invoice').subscribe({
       next: async res => await this.toXlsx(this._invName, this._invSheet, res),
       error: (err) => this.toast.danger(err?.message),
       complete: () => this.loading.endLoad()
     })
   }
+
+  exportCredit(compType: number) {
+    this.loading.startLoad()
+    this.accReport.exportInvoiceReport(compType, 'credit').subscribe({
+      next: async res => await this.toXlsx(this._creditName, this._creditSheet, res),
+      error: (err) => this.toast.danger(err?.message),
+      complete: () => this.loading.endLoad()
+    })
+  }
+
   exportRece(compType: number) {
     this.loading.startLoad()
     this.accReport.exportReceiptReport(compType).subscribe({
@@ -172,5 +184,26 @@ export class OtherIncomeReportComponent {
           this.loading.endLoad();
         }
       })
+  }
+
+  exportSupplierMonthDetial(compType: number) {
+    const compCode = this.compCode()
+    const { month, year } = this.date()
+    this.loading.startLoad()
+    this.reportServ.exportSupplierMonthDetialReport(compType, compCode, { year, month, day: 1 }).subscribe({
+      next: async (res) => {
+        if (res.length === 0) {
+          this.toast.danger('ไม่มีข้อมูล')
+          this.loading.endLoad()
+          return
+        }
+        await this.reportServ.exportManySheet(res,)
+        this.toast.success('สำเร็จ')
+        this.loading.endLoad()
+      }, error: (err) => {
+        this.toast.danger(err);
+        this.loading.endLoad();
+      }
+    })
   }
 }

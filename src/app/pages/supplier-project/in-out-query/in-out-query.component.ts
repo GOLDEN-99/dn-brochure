@@ -1,8 +1,8 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { DateInputComponent } from "../../../components/date-input/date-input.component";
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { combineLatest, filter, map, of, tap } from 'rxjs';
+import { combineLatest, filter, map, of, Subject, takeUntil, tap } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { IbobAdminService } from '../../../service/ibob/ibob-admin.service';
 import { FormsModule } from '@angular/forms';
@@ -16,11 +16,12 @@ import { getOrElse } from '../../../lib/utli';
   templateUrl: './in-out-query.component.html',
   styleUrl: './in-out-query.component.scss',
 })
-export class InOutQueryComponent {
+export class InOutQueryComponent implements OnInit, OnDestroy {
   private ibobAdminService = inject(IbobAdminService)
   fromDate = this.ibobAdminService.fromDate
   toDate = this.ibobAdminService.toDate
   compName = this.ibobAdminService.compName
+  compCode = this.ibobAdminService.compCode
   order = this.ibobAdminService.order
   reserveList = this.ibobAdminService.reservationList
   onSearch = this.ibobAdminService.searchReservation
@@ -28,7 +29,6 @@ export class InOutQueryComponent {
   private route = inject(ActivatedRoute)
   private warehouse$ = this.route.parent?.paramMap.pipe(
     map(pm => pm.get("warehouse")),
-    tap(console.log),
     map(Number),
     filter(wh => !isNaN(wh)),
   ) ?? of(0)
@@ -59,21 +59,38 @@ export class InOutQueryComponent {
   createLink = computed(() => this.router.createUrlTree(
     ['supplier', 'in-out', this.warehouseId(), 'add'],
   ))
-  optionList = [{ id: "compName", label: "ชื่อซัพ" }, { id: "order", label: "เลข order" }]
+  optionList = [{ id: "compName", label: "ชื่อซัพ" }, { id: "compCode", label: "รหัสซัพ" }, { id: "order", label: "เลข po" }]
   currentOption = signal('')
   onCurrentOptionChange(opt: string) {
     this.currentOption.set(opt)
-    if (opt === 'compName') {
-      this.order.set("")
-      return
-    }
-    if (opt === 'order') {
-      this.compName.set("")
+    switch (opt) {
+      case 'compName':
+        this.order.set("")
+        this.compCode.set("")
+        break
+      case 'compCode':
+        this.compName.set("")
+        this.order.set("")
+        break
+      case 'order':
+        this.compName.set("")
+        this.compCode.set("")
+        break
+      default:
+        console.log('ไม่พบตัวเลือก ', opt)
     }
   }
 
   onClick() {
     const warehouse = this.warehouseId()
+    const compName = this.compName()
+    const compCode = this.compCode()
+    const order = this.order()
+    const dateRange = this.ibobAdminService.getDateRange()
+    this.onSearch({ warehouse, compName, order, compCode, ...dateRange })
+  }
+
+  refetchOnPageChange = (warehouse: number) => {
     const compName = this.compName()
     const order = this.order()
     const dateRange = this.ibobAdminService.getDateRange()
@@ -87,5 +104,12 @@ export class InOutQueryComponent {
       }
     })
   }
-
+  private _unsub$ = new Subject<void>()
+  ngOnInit(): void {
+    this.warehouse$.pipe(takeUntil(this._unsub$)).subscribe(warehouse => this.refetchOnPageChange(warehouse))
+  }
+  ngOnDestroy(): void {
+    this._unsub$.next()
+    this._unsub$.complete()
+  }
 }

@@ -47,7 +47,7 @@
     <div class="row">
       <div class="col">
         <div class="app-form-field">
-          <label for="minBox">จำนวนขั้นต่ำ (ลัง) </label>
+          <label for="minBox">จำนวนลังขั้นต่ำ ต่อ slot </label>
           <input
             type="number"
             name="minBox"
@@ -59,7 +59,7 @@
       </div>
       <div class="col">
         <div class="app-form-field">
-          <label for="maxBox">จำนวนสูงสุด (ลัง)</label>
+          <label for="maxBox">จำนวนลังสูงสุด ต่อ slot</label>
           <input
             type="number"
             id="maxBox"
@@ -78,7 +78,13 @@
       <div class="col">
         <div class="app-form-field">
           <label for="intendant">ชื่อผู้ดูแล</label>
-          <input type="text" name="intendant" id="intendant" disabled />
+          <input
+            type="text"
+            name="intendant"
+            id="intendant"
+            disabled
+            [ngModel]="info.intendant"
+          />
         </div>
       </div>
       <div class="col">

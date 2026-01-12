@@ -20,8 +20,6 @@ export const promotionResolver: ResolveFn<TItemList> = (route, state) => {
       return EMPTY
     }))
   } catch (err) {
-    console.log(err)
-    console.log('cannot prase url at promotonal reslover fn')
     toast.danger("ไม่สามารถค้นหาร้านได้");
     return new RedirectCommand(router.parseUrl(""))
   }

@@ -6,6 +6,7 @@ import { combineLatest, debounceTime, distinctUntilChanged, filter, map, Observa
 import { TEvent } from './event.service';
 import { TIncome } from './income.service';
 import { TOIComp } from './company.service';
+import { PeriodStatus } from '../../types/other-income';
 
 @Injectable({
   providedIn: 'root'
@@ -53,27 +54,9 @@ export class PeriodNotLightService {
   }
 
   periods = toSignal(this.data$, { initialValue: [] })
-  modPeriod = computed(() => this.periods().map(({ receDate, invDate, income, ...res }) => {
-    const hasInv = invDate !== null
-    const hasRece = receDate !== null
-    const status = this.mapStatus(hasInv, hasRece)
-    return { ...res, income, receDate, invDate, status }
-  }))
-  // modProPeriod = computed(() => this.periods().flatMap(({ receDate, invDate, income, ...res }) => {
-  //   const hasInv = invDate !== null
-  //   const hasRece = receDate !== null
-  //   const status = this.mapStatus(hasInv, hasRece)
-  //   if (this.isProduct(income.incomeType)) return [{ ...res, income, receDate, invDate, status }]
-  //   return []
-  // }))
+  modPeriod = computed(() => this.periods())
 
   private isProduct = (incomeType: number) => [1, 2].includes(incomeType)
-
-  private mapStatus(hasInv: boolean, hasRece: boolean) {
-    if (!hasInv) return 'รอเพิ่มใบแจ้งหนี้'
-    if (!hasRece) return 'รอเพิ่มใบเสร็จ'
-    return 'สำเร็จ'
-  }
 }
 
 type TPeriodSummary = {
@@ -90,6 +73,9 @@ type TPeriodSummary = {
   invDate: string | null
   receDate: string | null
   periodName: string
+  invAmount: number
+  receAmount: number
+  periodStatus?: PeriodStatus | null
 }
 
 type TQueryReq = {

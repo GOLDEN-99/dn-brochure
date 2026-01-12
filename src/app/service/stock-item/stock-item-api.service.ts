@@ -102,7 +102,7 @@ export class StockItemApiService {
         startWith([])
       )
 
-  updateNewStock = ({ id, ...res }: TUpdateStockRequest) => this.api.post(`${this._stock_item_url}/${id}`, { ...res })
+  updateNewStock = ({ id, actualStock }: TUpdateStockRequest) => this.api.post<{ count: number }>(`${this._stock_item_url}/${id}`, { actualStock })
 
   private _formatCost = ({ goodCode, dnCost, priceW3 }: TGPResponse) => {
     const praseCost = this._formatNumber(dnCost)
@@ -181,7 +181,7 @@ export type TStockState = {
   expectStockCount: number
 }
 
-type TCreateNewStock = Pick<TStockState, 'goodCode' | 'oldCost' | 'newCost' | 'priceW3' | 'riskPercent' | 'dnSale' | 'huSale' | 'dnUpsalePercent' | 'huUpsalePercent' | 'actualStock'>
+type TCreateNewStock = Pick<TStockState, 'goodCode' | 'oldCost' | 'newCost' | 'priceW3' | 'saleMean' | 'useMonth' | 'dnSale' | 'huSale' | 'dnUpsalePercent' | 'huUpsalePercent' | 'actualStock'>
 
 export type TQueryManyStockRequest = {
   barCode: string
@@ -195,6 +195,7 @@ export type TQueryNewStockResponse = {
   unitDesc: string
   createAt: string
   updateAt: TMaybe<string>
+  stockOnHand: number
 } & TCreateNewStock
 
-export type TUpdateStockRequest = Pick<TQueryNewStockResponse, 'id'>
+export type TUpdateStockRequest = Pick<TQueryNewStockResponse, 'id' | 'actualStock'>

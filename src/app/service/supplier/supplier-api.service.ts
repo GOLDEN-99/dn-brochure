@@ -11,7 +11,7 @@ import { extractSaleName, itemMapper, normalizeComp, transformCompInfo } from '.
 
 export class SupplierApiService {
   constructor(public compType: string) {
-    console.log(compType)
+
   }
   private url = environment.ibob
   private api = inject(ApiService)
@@ -26,10 +26,8 @@ export class SupplierApiService {
   selectedCode = computed(() => {
     const cur = this.generatedCode()
     if (!cur) {
-      console.log('not cannot get comp')
       return 'มีข้อผิดพลาด'
     }
-    console.log('comptype', this.compType)
     switch (this.compType) {
       case 'DN': return cur.dnCompCode
       case 'HU': return cur.compCode

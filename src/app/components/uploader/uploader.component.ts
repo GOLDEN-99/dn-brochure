@@ -32,40 +32,12 @@ export class UploaderComponent {
     })
   }
 
-  // uploadAll() {
-  //   console.log('click')
-  //   if (!this.wholeNumb) {
-  //     this.toast.danger("เกิดข้อผิดพลาด ลองเข้าใหม่อีกครั้ง")
-  //     return
-  //   }
-  //   console.log("upload")
-  //   this.disableRemove.update(() => true)
-  //   this.loadingServ.startLoad()
-  //   this.uploadServ.upload({ wholeNumb: this.wholeNumb }).subscribe({
-  //     next: () => {
-  //       this.hasUpload.update(() => true)
-  //       this.disableRemove.update(() => false)
-  //       this.loadingServ.endLoad()
-  //       this.toast.success("อัพโหลดสำเร็จ")
-  //     },
-  //     error: (err) => {
-  //       console.log(err)
-  //       this.disableRemove.update(() => false)
-  //       this.loadingServ.endLoad()
-  //       this.toast.danger("มีข้อผิดพลาด")
-  //     },
-  //     complete: () => {
-
-  //     }
-  //   })
-  // }
 
   clearSelection() {
     this.uploadServ.clear()
   }
 
   onSelectFile(e: Event) {
-    console.log(e)
     const input = e.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.handleFile(input.files[0]);

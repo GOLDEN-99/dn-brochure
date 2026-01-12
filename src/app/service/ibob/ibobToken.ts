@@ -21,6 +21,7 @@ interface IIbObFormState {
     orderList: Signal<TAppOrder[]>
     checkOrder: (orderId: string) => void
     changeOrderAmount: (orderId: string) => (box: number) => void
+    deleteOrder: (orderId: string) => void
 }
 
 export interface IIbObReserve extends IIbObFormState {

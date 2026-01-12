@@ -6,7 +6,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { combineLatest, filter, map, switchMap } from 'rxjs';
 import { getOrElse } from '../../lib/utli';
 import { DateRangeService } from './date-range-service.service';
-import { TAppDoorProp, TAppOrder, TGetIbObRes, TLoginOrder, TTimeSlot } from '../../types/ibob-supplier.type';
+import { TActiveOrderV2, TAppDoorProp, TAppOrder, TGetIbObRes, TLoginOrder, TTimeSlot } from '../../types/ibob-supplier.type';
 import { TExtendedComp } from '../supplier/supplier.token';
 
 @Injectable({
@@ -40,10 +40,9 @@ export class IbobQueryReservationService {
   changeReservationData = (id: number, req: TPatchReservationReq) => this.api.patch(`${environment.oi}/ib-ob/reservation/${id}`, req)
 
   searchOrder = ({ compType, compCode }: { compType: string, compCode: string }) =>
-    this.api.get<TLoginOrder[]>(`${environment.oi}/ib-ob/active-order/${compType}/${compCode}`)
+    this.api.get<TActiveOrderV2[]>(`${environment.oi}/ib-ob/active-order/${compType}/${compCode}`)
       .pipe(
-        map<TLoginOrder[], TAppOrder[]>(orderList => orderList.map(order => ({ ...order, check: false, box: 0 })))
-        , getOrElse<TAppOrder[], TAppOrder[]>([])
+        getOrElse<TActiveOrderV2[], TActiveOrderV2[]>([])
       )
 
   searchTimeSlot = (doorId: string, date: string) =>

@@ -7,7 +7,7 @@ import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
   imports: [FormsModule],
   template: `
   <div class="app-form-select">
-    <label for="year-select">เดือน</label>
+    <label for="year-select">ปี</label>
     <select
       name="year-select"
       id="year-select"

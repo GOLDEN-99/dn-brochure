@@ -20,29 +20,14 @@ export class OiNotLightService extends BaseOiService implements IRefetchable, IO
     return this.api.get<ManyContactResponse[]>(`${this.url}/other-income/contact/not-light/${compType}`, { params: query })
       .pipe(catchError(err => of([])))
   }
-  private term$ = new Subject<string>()
-  private mode$ = new Subject<number>()
-  private compType$ = new Subject<number>() // code | good
-  private sharedComp$ = this.compType$.pipe(
-    map(comp => comp === 1 ? "DN" : "HU"),
-    shareReplay(1)
-  )
-  private queryParam = combineLatest([this.mode$, this.term$, this.sharedComp$])
-    .pipe(
-      filter(([mode, term, _]) => mode !== 0 && !!term),
-      map(([mode, term, compType]) => ({
-        compType,
-        query: { mode, term }
-      }))
-    )
 
-  private notLight$ = this.queryParam.pipe(
-    switchMap((search) => this.getAll(search))
+  private queryParam$ = new Subject<TSearchManyHead>()
+
+  private notLight$ = this.queryParam$.pipe(
+    switchMap(({ compType, ...res }) => this.getAll({ compType, query: res }))
   )
-  searchMany(mode: number, term: string, compType: number) {
-    this.term$.next(term)
-    this.mode$.next(mode)
-    this.compType$.next(compType)
+  searchMany(req: TSearchManyHead) {
+    this.queryParam$.next(req)
   }
 
   notLightList = toSignal(this.notLight$, { initialValue: [] })
@@ -92,4 +77,11 @@ export class OiNotLightService extends BaseOiService implements IRefetchable, IO
     return this.api.post(`${this.url}/${id}/${purchasingId}`, poList)
   }
 
+}
+
+type TSearchManyHead = {
+  compType: string
+  compCode?: string
+  compName?: string
+  goodCode?: string
 }

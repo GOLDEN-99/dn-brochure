@@ -6,6 +6,7 @@ import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { combineLatest, combineLatestAll, filter, map, Observable, shareReplay, Subject, switchMap, tap } from 'rxjs';
 import { NotLightSummary } from './base-oi'
 import * as XLSX from 'xlsx'
+import { TFieldSelector } from '../../types';
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +40,7 @@ export class SupplierReportService {
     this.compCode$.next(compCode)
     this.compType$.next(compType)
   }
+  private queryByMonthDetail = ({ compCode, compType, month }: TPWithMonth) => this.api.get<TOiSupplierMonthDetialRes[]>(`${this.url}/monthly/${compType}/${compCode}/detail`, { params: { month } })
   private queryByMonth = ({ compCode, compType, month }: TPWithMonth) =>
     this.api.get<TOiSupplierRes[]>(`${this.url}/${compType}/${compCode}`, { params: { month } })
   private _monthReportMapper = ({ head, summary }: TOiSupplierRes) => [
@@ -46,6 +48,14 @@ export class SupplierReportService {
     [],
     ...Object.entries(this._formatMothSummary(summary, head.incVat))
   ]
+
+  private _monthReportDetialMapper = ({ head, summary }: TOiSupplierMonthDetialRes) => [
+    ...this._headFormatter.map(f => [f.label, f.fn(head)]),
+    [],
+    this._monthDetialMapper.map(f => f.label),
+    ...summary.map(s => this._monthDetialMapper.map(f => f.fn(s))),
+  ]
+
   private _annualReportMapper = ({ head, monthly }: TOiSupplierAnnualRes) => [
     ...Object.entries(this._formatHead(head)).map(([key, value]) => [key, value]),
     [],
@@ -57,6 +67,12 @@ export class SupplierReportService {
     const comp = compType === 1 ? 'DN' : 'HU'
     return this.queryByMonth({ compType: comp, compCode, month })
       .pipe(map(r => r.map(this._monthReportMapper)))
+  }
+  exportSupplierMonthDetialReport(compType: number, compCode: string, date: NgbDateStruct) {
+    const month = this.convertToIso(date)
+    const comp = compType === 1 ? 'DN' : 'HU'
+    return this.queryByMonthDetail({ compType: comp, compCode, month })
+      .pipe(map(r => r.map(this._monthReportDetialMapper)))
   }
   exportSupplierAnnualReport(compType: number, compCode: string, date: NgbDateStruct) {
     const year = this.convertToIso(date)
@@ -93,12 +109,42 @@ export class SupplierReportService {
     })))
   private _formatHead = (head: TMonthHead) => ({
     "ซัพพลายเออร์": `${head.compCode} ${head.compName}`,
+    "ชื่อรายรับภายใน": `${head.displayName}`,
+    "ชื่อกิจกรรม": head.eventName,
     "รวม vat": head.incVat ? 'รวม' : 'ไม่รวม',
     "dc": head.isDc ? 'หัก' : 'ไม่หัก',
     "rebate": head.isRebate ? 'หัก' : 'ไม่หัก',
     "compensate": head.isComp ? 'หัก' : 'ไม่หัก',
     "incentive": head.isInce ? 'หัก' : 'ไม่หัก',
   })
+
+  private _headFormatter: TFieldSelector<TMonthHead>[] = [
+    { label: "ซัพพลายเออร์", fn: (v) => `${v.compCode} ${v.compName}` },
+    { label: "ชื่อรายรับภายใน", fn: (v) => v.displayName },
+    { label: "ชื่อกิจกรรม", fn: (v) => v.eventName },
+    { label: "รวม vat", fn: (v) => v.incVat ? 'รวม' : 'ไม่รวม' },
+    { label: "dc", fn: (v) => v.isDc ? 'หัก' : 'ไม่หัก' },
+    { label: "rebate", fn: (v) => v.isRebate ? 'หัก' : 'ไม่หัก' },
+    { label: "compensate", fn: (v) => v.isComp ? 'หัก' : 'ไม่หัก' },
+    { label: "incentive", fn: (v) => v.isInce ? 'หัก' : 'ไม่หัก' },
+  ]
+
+  private _monthDetialMapper: TFieldSelector<TOiSupplierDetial>[] = [
+    { label: "เลขใบสั่งซื้อ (PO)", fn: (v) => v.orderNumb },
+    { label: "เลขที่รับเข้า", fn: (v) => v.receNumb },
+    { label: "วันที่รับเข้า", fn: (v) => v.receDate.split('T')[0] },
+    { label: "เลขที่บิล", fn: (v) => v.billNumb },
+    { label: "วันที่บิล", fn: (v) => v.billDate.split('T')[0] },
+    { label: 'ยอดรวม', fn: (v) => v.totalCost.toFixed(2) },
+    { label: 'หัก vat', fn: (v) => v.applyVat.toFixed(2) },
+    { label: 'หัก dc', fn: (v) => v.applyDc.toFixed(2) },
+    { label: 'หัก rebate', fn: (v) => v.applyRebate.toFixed(2) },
+    { label: 'หัก compensate', fn: (v) => v.applyComp.toFixed(2) },
+    { label: 'หัก incentive', fn: (v) => v.applyInce.toFixed(2) },
+    { label: 'หัก ส่วนลดการค้า', fn: (v) => v.applyTrade.toFixed(2) },
+    { label: 'cn', fn: (_) => 0 },
+    { label: 'ยอดสุทธิ', fn: (v) => (v.totalCost - v.applyVat - v.applyDc - v.applyRebate - v.applyComp - v.applyInce - v.applyTrade).toFixed(2) }
+  ]
   private _formatMothSummary = (summary: TOiSupplierSummary, incVat: boolean) => {
     const withVat = summary.totalCost - summary.applyComp - summary.applyRebate - summary.applyDc - summary.applyInce
     const finalValue = incVat ? withVat : (withVat - summary.applyVat)
@@ -112,6 +158,9 @@ export class SupplierReportService {
       "ยอดซื้อเรียกเก็บ": (finalValue).toFixed(2)
     }
   }
+
+
+
   async exportTo() {
     const resArr = this.formatedMonthRes()
     const aoa = resArr.map(({ head, summary }) => [
@@ -188,11 +237,31 @@ export type TPivot<T> = {
   dec: T
 }
 
-type TMonthHead = Omit<NotLightSummary, 'company'> & { compCode: string, compName: string }
+type TMonthHead = Omit<NotLightSummary, 'company' | 'event'> & { compCode: string, compName: string, eventName: string }
 
 export type TOiSupplierRes = {
   head: TMonthHead
   summary: TOiSupplierSummary
+}
+
+export type TOiSupplierDetial = {
+  orderNumb: string
+  receNumb: string
+  receDate: string
+  billNumb: string
+  billDate: string
+  totalCost: number
+  applyVat: number
+  applyDc: number
+  applyRebate: number
+  applyComp: number
+  applyInce: number
+  applyTrade: number
+}
+
+export type TOiSupplierMonthDetialRes = {
+  head: TMonthHead
+  summary: TOiSupplierDetial[]
 }
 
 export type TOiSupplierAnnualRes = {

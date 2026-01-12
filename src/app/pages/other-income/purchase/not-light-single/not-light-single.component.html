@@ -31,7 +31,7 @@
     [stepType]="e.notLight.stepType"
     [stepList]="e.stepList"
     [capAmount]="e.notLight.capAmount"
-    [canEdit]="true"
+    [canEdit]="isPurchase"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
   />
@@ -45,7 +45,7 @@
   <!--add incentive income here-->
   @if (e.event.eventType === 3) {
   <app-other-income-monthly-incentive-edit
-    [canEdit]="true"
+    [canEdit]="isPurchase"
     [id]="e.head.id"
     [eventType]="e.event.eventType"
     [incomeList]="e.incomeList"
@@ -56,6 +56,7 @@
   <!---->
   @if (isPurchase) {
   <app-create-period
+    [incomeType]="e.income.incomeType"
     [eventType]="e.event.eventType"
     [incomeList]="incomes"
     [headId]="e.head.id"
@@ -67,91 +68,15 @@
   }
   <!---->
   @for (period of periods; track period.id) {
-  <div class="mb-3">
-    <div class="row bg-success bg-opacity-10">
-      <div class="row">
-        @for (header of currentHeader(); track $index) {
-        <div class="col">{{ header }}</div>
-        }
-      </div>
-      <div class="row">
-        <!---->
-        @for (fn of currentMapper();track $index) {
-        <div class="col">{{ fn(period) }}</div>
-        }
-      </div>
-    </div>
-    <div style="overflow-x: auto; max-width: 100%">
-      <!--ท้ายบิล-->
-      @if (e.income.incomeType === 1) {
-      <div style="min-width: 100%" tabindex="0">
-        <app-other-income-order-period
-          [canEdit]="isPurchase"
-          [actualAmount]="period.totalIncome"
-          [orderList]="period.orderList"
-          [periodId]="period.id"
-          [compCode]="comp.compCode"
-          [compType]="comp.compType"
-          (success)="onSuccess($event)"
-          (fail)="onFail($event)"
-        />
-      </div>
-      }
-      <!--สินค้า-->
-      @if (e.income.incomeType === 2) {
-      <div style="min-width: 100%">
-        <app-other-income-good-order-period
-          [canEdit]="isPurchase"
-          [actualAmount]="period.totalIncome"
-          [orderList]="period.orderList"
-          [periodId]="period.id"
-          [compCode]="comp.compCode"
-          [compType]="comp.compType"
-          (success)="onSuccess($event)"
-          (fail)="onFail($event)"
-        />
-      </div>
-      }
-      <!--invoice-->
-      @if (e.income.incomeType === 3) {
-      <div style="min-width: 100%">
-        <app-other-income-invoice-period
-          [canEdit]="!isPurchase"
-          [invoiceList]="period.invoiceList"
-          [periodId]="period.id"
-          [incomeAmount]="period.totalIncome"
-          [addedAmount]="period.invAmount"
-          (success)="onSuccess($event)"
-          (fail)="onFail($event)"
-        />
-      </div>
-      <div style="min-width: 100%">
-        <app-other-income-recipt-period
-          [canEdit]="!isPurchase"
-          [receiptList]="period.receiptList"
-          [invAmount]="period.invAmount"
-          [receAmount]="period.receAmount"
-          [periodId]="period.id"
-          (success)="onSuccess($event)"
-          (fail)="onFail($event)"
-        />
-      </div>
-      }
-      <!--credit note-->
-      @if (e.income.incomeType === 4) {
-      <div style="min-width: 100%">
-        <app-other-income-credit-period
-          [canEdit]="!isPurchase"
-          [periodId]="period.id"
-          [incomeAmount]="period.totalIncome"
-          [addedAmount]="period.creditAmount"
-          [creditList]="period.creditList"
-          (success)="onSuccess($event)"
-          (fail)="onFail($event)"
-        />
-      </div>
-      }
-    </div>
-  </div>
+    <app-other-income-period-display
+      [period]="period"
+      [incomeType]="e.income.incomeType"
+      [canEdit]="isPurchase"
+      [isPurchase]="isPurchase"
+      [compCode]="comp.compCode"
+      [compType]="comp.compType"
+      (success)="onSuccess($event)"
+      (fail)="onFail($event)"
+    />
   } }
 </section>

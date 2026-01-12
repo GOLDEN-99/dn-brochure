@@ -43,13 +43,21 @@ export type TDoorMap = {
 
 export type TLoginOrder = {
     orderNumb: string
-    orderDate: string
+    //orderDate: string
+}
+
+export type TActiveOrderV2 = {
+    orderNumb: string
+    compName: string
+    isSameComp: boolean
 }
 
 export type TAppOrder = {
+    orderNumb: string
     box: number
-    check: boolean
-} & TLoginOrder
+}
+
+export type TAppOrderState = Record<string, number>
 
 export type TLoginRes = {
     comp: TComp
@@ -129,7 +137,10 @@ export type TDailyReq = {
     warehouseId: string
 }
 
-export type TDailyItem = { door: string, status: number, times: TSlotReady[] }
+export type TDailyItem = {
+    doorId: number, door: string, status: number, reservedCount: number,
+    totalSlots: number, times: TSlotReady[]
+}
 
 export type TDailyRes = {
     date: string

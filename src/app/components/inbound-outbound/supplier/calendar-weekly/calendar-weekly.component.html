@@ -128,9 +128,11 @@
   <div class="modal-body">
     @for (door of doorContent(); track $index) {
     <div style="display: flex; align-items: center; gap: 16px">
-      <div [className]="indicatoreClass(door.status)"></div>
+      <div
+        [className]="indicatorClass(door.times.length, door.totalSlots)"
+      ></div>
       <div>{{ door.door }}</div>
-      <button class="btn btn-link" (click)="openSecondaryModal(door.door)">
+      <button class="btn btn-link" (click)="openSecondaryModal(door.doorId)">
         ดูรายละเอียด
       </button>
     </div>
@@ -183,7 +185,7 @@
         "
       >
         <span>
-          {{ slot.reservationTime.substring(0, 5) }}
+          {{ slot.reservationTime }}
         </span>
         <span style="font-size: 12px">
           {{ slot.companyName ?? "" }}

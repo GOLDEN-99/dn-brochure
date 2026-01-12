@@ -1,0 +1,105 @@
+<section class="bg-white p-3">
+  <button
+    class="btn btn-info w-100 mb-3 btn-lg"
+    (click)="openSearchProductModal(serachProduct)"
+  >
+    ค้นหาสินค้า
+  </button>
+  <div class="app-form-field">
+    <label for="quota-amount">สินค้า</label>
+    <input
+      type="number"
+      name="quota-amount"
+      id="quota-amount"
+      [(ngModel)]="quotaAmount"
+    />
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 50%">สัดส่วน</th>
+        <th style="width: 50%">จำนวน</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of computedValue(); track $index) {
+      <tr>
+        <td>{{ row.label }}</td>
+        <td>{{ row.value }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <button class="btn btn-success btn-lg w-100">บันทึก</button>
+</section>
+<!--search product modal-->
+<ng-template #serachProduct let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">ค้นหาสินค้า</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body" style="max-height: 80vh; overflow-y: auto">
+    <div class="app-form-select">
+      <label for="mode"> ค้นหาจาก </label>
+      <select
+        name="mode"
+        id="mode"
+        [ngModel]="mode()"
+        (ngModelChange)="onModeChange($event)"
+      >
+        @for (item of modeList; track $index) {
+        <option [ngValue]="item.key">{{ item.label }}</option>
+        }
+      </select>
+    </div>
+    @if (mode() === 'barcode') {
+    <div class="app-form-field">
+      <label for="good-code">รหัสสินค้า</label>
+      <input
+        type="text"
+        name="good-code"
+        id="good-code"
+        [ngModel]="search().barcode"
+        (ngModelChange)="searchCode($event)"
+      />
+    </div>
+    }
+    <!---->
+    @if(mode() === 'goodName') {
+    <div class="app-form-field">
+      <label for="good-name">ชื่อสินค้า</label>
+      <input
+        type="text"
+        name="good-name"
+        id="good-name"
+        [ngModel]="search().goodName"
+        (ngModelChange)="searchName($event)"
+      />
+    </div>
+    }
+    <!---->
+    @let products = productList();
+    <!---->
+    @if (products.length !== 0) {
+    <!---->
+
+    @for (product of products; track product.goodCode) {
+    <div class="row mb-1">
+      <div class="col">({{ product.barCode }}) {{ product.goodName }}</div>
+      <div class="col-auto">
+        <button
+          class="btn btn-success btn-squre"
+          (click)="onSelectProduct(product)"
+        >
+          <i class="bi bi-plus"></i>
+        </button>
+      </div>
+    </div>
+    } }
+  </div>
+</ng-template>

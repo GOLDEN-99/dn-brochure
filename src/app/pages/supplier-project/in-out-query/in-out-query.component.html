@@ -31,8 +31,13 @@
 </div>
 } @if (currentOption() === "order") {
 <div class="app-form-field">
-  <label for="order">เลข order</label>
+  <label for="order">เลข po</label>
   <input type="text" name="order" id="order" [(ngModel)]="order" />
+</div>
+} @if (currentOption() === "compCode") {
+<div class="app-form-field">
+  <label for="compCode">รหัสซัพ</label>
+  <input type="text" name="compCode" id="compCode" [(ngModel)]="compCode" />
 </div>
 }
 <button class="btn btn-success w-100 mb-3" (click)="onClick()">ค้นหา</button>

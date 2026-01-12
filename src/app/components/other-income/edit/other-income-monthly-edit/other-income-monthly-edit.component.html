@@ -35,6 +35,7 @@
         <thead>
           <tr>
             <td>rece</td>
+            <td>บิลซัพ</td>
             <td>ยอดคำนวน</td>
           </tr>
         </thead>
@@ -42,11 +43,13 @@
           @for (inc of calIncome(); track $index) {
           <tr>
             <td>{{ inc.receNumb }}</td>
+            <td>{{ inc.billNumb }}</td>
             <td>{{ inc.calAmount | number : "1.2-2" }}</td>
           </tr>
           }
           <tr>
             <td>รวม</td>
+            <td></td>
             <td>{{ summary() | number : "1.2-2" }}</td>
           </tr>
         </tbody>

@@ -2,6 +2,18 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.11.
 
+## Documentation
+
+- **[API Reference](docs/API_REFERENCE.md)** - Complete Other Income API endpoint documentation
+- **[Usage Examples](docs/EXAMPLES.md)** - Common API usage patterns and workflows
+- **[API Changelog](docs/CHANGELOG.md)** - API version history and changes
+
+### Quick Links
+- [Master Data APIs](docs/API_REFERENCE.md#1-master-data-apis) - Branch, Company, Event, Income, Discount APIs
+- [Contact Management](docs/API_REFERENCE.md#2-contact-management-apis) - Light/Not-Light contact operations
+- [Period Management](docs/API_REFERENCE.md#3-period-management-apis) - Period CRUD and related operations
+- [Reports](docs/API_REFERENCE.md#6-report-apis) - Account and Supplier reports
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.

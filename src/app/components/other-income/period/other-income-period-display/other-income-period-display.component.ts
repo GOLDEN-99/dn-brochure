@@ -1,0 +1,199 @@
+import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
+import { TPopulatedPeriodResult } from '../../../../service/other-income/base-oi';
+import { BasePeriodComponent } from '../base-period.component';
+import { EditPeriodModalComponent } from '../edit-period-modal/edit-period-modal.component';
+import { OtherIncomeOrderPeriodComponent } from '../other-income-order-period.component';
+import { OtherIncomeGoodOrderPeriodComponent } from '../other-income-good-order-period.component';
+import { OtherIncomeInvoicePeriodComponent } from '../other-income-invoice-period.component';
+import { OtherIncomeReceiptPeriodComponent } from '../other-income-receipt-period.component';
+import { OtherIncomeCreditPeriodComponent } from '../other-income-credit-period.component';
+import { formatLocalNumber } from '../../../../lib/formatter';
+import { PeriodStatus, TFieldSelector } from '../../../../types';
+import { PeriodService } from '../../../../service/other-income/period.service';
+
+@Component({
+  selector: 'app-other-income-period-display',
+  imports: [
+    EditPeriodModalComponent,
+    OtherIncomeOrderPeriodComponent,
+    OtherIncomeGoodOrderPeriodComponent,
+    OtherIncomeInvoicePeriodComponent,
+    OtherIncomeReceiptPeriodComponent,
+    OtherIncomeCreditPeriodComponent,
+  ],
+  templateUrl: './other-income-period-display.component.html',
+  styleUrl: './other-income-period-display.component.scss'
+})
+export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
+  // Service injection
+  private periodService = inject(PeriodService);
+
+  // Inputs
+  period = input.required<TPopulatedPeriodResult>();
+  incomeType = input.required<number>();
+  canEdit = input.required<boolean>();
+  isPurchase = input.required<boolean>();
+  compCode = input.required<string | undefined>();
+  compType = input.required<string | undefined>();
+
+  activeChangeToRece = computed(() => {
+    const period = this.period();
+    const incomeType = this.incomeType();
+    const { periodStatus, creditList, invoiceList } = period
+    return periodStatus === 3
+      && (
+        (incomeType === 4 && creditList.length !== 0)
+        || (incomeType === 3 && invoiceList.length !== 0)
+      );
+  })
+
+  activeChangeToComplete = computed(() => {
+    const period = this.period();
+    const { periodStatus, receiptList } = period
+    return periodStatus === 4 && receiptList.length !== 0
+  })
+
+  disableAddInv = computed(() => {
+    const period = this.period();
+    const stat = period.periodStatus
+    return stat !== 3
+  })
+
+  disableAddReceipt = computed(() => {
+    const period = this.period();
+    const stat = period.periodStatus
+    return stat !== 4
+  })
+
+  isComplete = computed(() => {
+    return this.period().periodStatus === PeriodStatus.Complete;
+  })
+
+  // Signals for status change loading states
+  changingToRece = signal(false);
+  changingToComplete = signal(false);
+
+  // ViewChild for modals
+  private editModal = viewChild('editPeriodModal');
+  private confirmReceModal = viewChild('confirmReceModal');
+  private confirmCompleteModal = viewChild('confirmCompleteModal');
+
+  /**
+   * Change period status to "Waiting for Receipt" (4)
+   * Opens confirmation modal before making API call
+   */
+  changeToRece() {
+    this.openModal(this.confirmReceModal(), 'md');
+  }
+
+  /**
+   * Confirm and execute change to Receipt status
+   */
+  confirmChangeToRece() {
+    this.changingToRece.set(true);
+
+    this.periodService.updatePeriodStatus(
+      this.period().id,
+      PeriodStatus.Receipt
+    ).subscribe({
+      next: (result) => {
+        this.changingToRece.set(false);
+        if (result.affectedRows === 1) {
+          this.onSuccess('เปลี่ยนสถานะเป็น "รอเพิ่มใบเสร็จรับเงิน" สำเร็จ');
+        } else {
+          this.onFail('เปลี่ยนสถานะไม่สำเร็จ');
+        }
+      },
+      error: () => {
+        this.changingToRece.set(false);
+        this.onFail('เกิดข้อผิดพลาดในการเปลี่ยนสถานะ');
+      }
+    });
+  }
+
+  /**
+   * Change period status to "Complete" (2)
+   * Opens confirmation modal before making API call
+   */
+  changeToComplete() {
+    this.openModal(this.confirmCompleteModal(), 'md');
+  }
+
+  /**
+   * Confirm and execute change to Complete status
+   */
+  confirmChangeToComplete() {
+    this.changingToComplete.set(true);
+
+    this.periodService.updatePeriodStatus(
+      this.period().id,
+      PeriodStatus.Complete
+    ).subscribe({
+      next: (result) => {
+        this.changingToComplete.set(false);
+        if (result.affectedRows === 1) {
+          this.onSuccess('เปลี่ยนสถานะเป็น "สำเร็จ" สำเร็จ');
+        } else {
+          this.onFail('เปลี่ยนสถานะไม่สำเร็จ');
+        }
+      },
+      error: () => {
+        this.changingToComplete.set(false);
+        this.onFail('เกิดข้อผิดพลาดในการเปลี่ยนสถานะ');
+      }
+    });
+  }
+
+  // Signals for edit modal two-way binding
+  editPeriodName = signal('');
+  editPeriodRemark = signal('');
+
+  // Selector arrays
+  private periodOrderSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
+    //{ label: 'ชื่อ', fn: v => v.periodName },
+    { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
+    { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
+    { label: 'ยอด po', fn: v => formatLocalNumber(v.orderAmount) },
+    //{ label: 'หมายเหตุ', fn: v => v.periodRemark },
+  ];
+
+  private periodReceSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
+    //{ label: 'ชื่อ', fn: v => v.periodName },
+    { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
+    { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
+    { label: 'ยอดใบแจ้งหนี้', fn: v => formatLocalNumber(v.invAmount) },
+    { label: 'ยอดใบเสร็จ', fn: v => formatLocalNumber(v.receAmount) },
+    //{ label: 'หมายเหตุ', fn: v => v.periodRemark },
+  ];
+
+  private periodCreditSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
+    //{ label: 'ชื่อ', fn: v => v.periodName },
+    { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
+    { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
+    { label: 'ยอดใบลดหนี้', fn: v => formatLocalNumber(v.creditAmount) },
+    //{ label: 'หมายเหตุ', fn: v => v.periodRemark },
+  ];
+
+  // Computed selector based on income type
+  headerSelector = computed(() => {
+    switch (this.incomeType()) {
+      case 1:
+        return this.periodOrderSelector;
+      case 2:
+        return this.periodOrderSelector;
+      case 3:
+        return this.periodReceSelector;
+      case 4:
+        return this.periodCreditSelector;
+      default:
+        return [];
+    }
+  });
+
+  // Open edit modal
+  openEditModal() {
+    this.editPeriodName.set(this.period().periodName);
+    this.editPeriodRemark.set(this.period().periodRemark);
+    this.openModal(this.editModal());
+  }
+}

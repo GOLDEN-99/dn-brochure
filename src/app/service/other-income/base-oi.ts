@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { TOIComp } from "./company.service";
 import { TEvent } from "./event.service";
 import { TIncome } from "./income.service";
-import { TOIStepItem } from "../../types";
+import { TOIStepItem, PeriodStatus } from "../../types";
 import { environment } from "../../../environments/environment";
 
 export abstract class BaseOiService {
@@ -106,6 +106,8 @@ export type TPeriodResult = {
     receDate: string | null
     creditAmount: number
     creditDate: string | null
+    periodRemark: string
+    periodStatus?: PeriodStatus | null
 }
 
 export type TOrderItemDto = {
@@ -174,6 +176,10 @@ export type TIncomeItem = {
     reason: string
     checkDate: string | null
     incomeAmount: number
+}
+
+export type TEnchanceIncomeItem = TIncomeItem & {
+    accPurchase: number
 }
 
 export type TBranchItem = {

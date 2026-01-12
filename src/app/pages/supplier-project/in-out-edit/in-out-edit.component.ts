@@ -84,7 +84,7 @@ export class InOutEditComponent implements OnInit, OnDestroy {
     const lst = this.slotForm.controls[day].getRawValue()
     const len = lst.length
     if (len === 0) {
-      this.last.set({ hour: 8, minute: 30, second: 0 })
+      this.last.set({ hour: 7, minute: 0, second: 0 })
     } else {
       const { to } = lst[len - 1]
       this.last.set({ ...to })

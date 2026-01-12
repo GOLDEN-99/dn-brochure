@@ -56,7 +56,8 @@ export class OtherIncomeNotLightFormComponent {
     const isComp = this.isComp()
     const isInce = this.isInce()
     const stepType = this.stepType()
-    const capAmount = Number(this.capAmount())
+    const rawCap = this.capAmount()
+    const capAmount = rawCap === null ? null : Number(rawCap)
     const stepList = this.stepList().map((step, i, arr) => {
       const min = Number(step.start)
       const rate = Number(step.percent)

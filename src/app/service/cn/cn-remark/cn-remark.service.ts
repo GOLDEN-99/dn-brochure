@@ -10,13 +10,6 @@ import { environment } from '../../../../environments/environment';
 })
 export class CnRemarkService {
 
-  constructor() {
-    const eff = effect(() => {
-      console.log(this.remarkOpt());
-      console.log(this.prob())
-      console.log(this.cnType())
-    })
-  }
 
   private api = inject(ApiService)
 

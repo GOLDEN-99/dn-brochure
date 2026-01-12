@@ -3,7 +3,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs';
 import { StockItemApiService, TQueryNewStockResponse } from '../../../service/stock-item/stock-item-api.service';
-import { NgTemplateOutlet } from '@angular/common';
+import { DatePipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { TMaybe } from '../../../types';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastService } from '../../../service/toast/toast.service';
@@ -12,7 +12,7 @@ import { toXlxs } from '../../../lib/utli';
 
 @Component({
   selector: 'app-stock-item-report',
-  imports: [FormsModule, NgTemplateOutlet],
+  imports: [FormsModule, NgTemplateOutlet, DatePipe],
   templateUrl: './stock-item-report.component.html',
   styleUrl: './stock-item-report.component.scss'
 })
@@ -41,7 +41,9 @@ export class StockItemReportComponent {
     const criteria = this.stockItemService.setup()
     return criteria.flatMap(({ stockMonth }) => [stockMonth, stockMonth / 2]).sort()
   })
-  stockList = toSignal(this.stockList$, { initialValue: [] })
+  stockList = toSignal(this.stockList$, {
+    initialValue: []
+  })
 
   private toast = inject(ToastService)
   private modalService = inject(NgbModal);
@@ -50,6 +52,13 @@ export class StockItemReportComponent {
     this.selectStock.set(stock);
     this.modalService.open(ref)
   }
+  changeActualStock = (value: number) => this.selectStock.update(
+    prev => prev === null
+      ? null
+      : typeof value === 'number'
+        ? ({ ...prev, actualStock: value })
+        : prev
+  )
   onClose = () => {
     this.selectStock.set(null)
     this.modalService.dismissAll()
@@ -85,13 +94,23 @@ export class StockItemReportComponent {
   }
 
   private _reportFormaterr: Array<(value: TQueryNewStockResponse) => unknown> = [
+    ({ createAt }) => createAt,
     ({ barCode }) => barCode,
     ({ goodName }) => goodName,
+    ({ useMonth }) => useMonth,
+    ({ huSale, huUpsalePercent, dnSale, dnUpsalePercent }) =>
+      (huSale * huUpsalePercent + dnSale * dnUpsalePercent) / 100,
+    ({ stockOnHand, unitDesc }) => `${stockOnHand} ${unitDesc}`,
+    ({ huSale, huUpsalePercent, dnSale, dnUpsalePercent, actualStock }) =>
+      `${actualStock * 100 / (huSale * huUpsalePercent + dnSale * dnUpsalePercent)} เดือน`,
+    ({ actualStock, unitDesc }) => `${actualStock} ${unitDesc}`,
   ]
 
   onExport = async () => {
     const lst = this.stockList()
     const aoa = lst.map((l) => this._reportFormaterr.map(fn => fn(l)))
-    await toXlxs(`ตุนสินค้า.xlsx`, 'sheet1', aoa);
+    await toXlxs(`ตุนสินค้า.xlsx`, 'sheet1', [
+      ["วันที่บันทึก", "รหัสสินค้า", "ชื่อสินค้า", "ยอดใช้คำนวน (เดือน)", "ขายสินค้าเฉลี่ย (ชิ้น)", "stock ปัจจุบัน (ชิ้น)", "ระยะเวลาตุน (เดือน)", "จำนวนตุน (ชิ้น)",]
+      , ...aoa]);
   }
 }

@@ -6,9 +6,10 @@ const formatDisc = (v: boolean) => v ? 'ไม่หัก' : 'หัก'
 const formatDate = (v: string) => v.split('T')[0]
 
 const invocieMapper: TFieldSelector<TInvocieReport>[] = [
-    { label: 'id', fn: v => v.id },
+    { label: 'head id', fn: v => v.id },
     { label: 'period id', fn: v => v.periodId },
-    { label: 'ชื่อ', fn: v => v.displayName },
+    { label: 'ชื่อใบแจ้งหนี้', fn: v => v.periodName },
+    { label: 'หมายเหตุ period', fn: v => v.periodRemark },
     { label: 'กิจกรรม', fn: v => v.eventName },
     { label: 'รหัสซัพ', fn: v => v.compCode },
     { label: 'ชื่อซัพ', fn: v => v.compName },
@@ -18,9 +19,10 @@ const invocieMapper: TFieldSelector<TInvocieReport>[] = [
     { label: 'รายได้เรียกเก็บ', fn: v => v.totalIncome }
 ]
 const receiptMapper: TFieldSelector<TReceiptReport>[] = [
-    { label: 'id', fn: v => v.id },
+    { label: 'head id', fn: v => v.id },
     { label: 'period id', fn: v => v.periodId },
-    { label: 'ชื่อ', fn: v => v.displayName },
+    { label: 'ชื่อใบแจ้งหนี้', fn: v => v.periodName },
+    { label: 'หมายเหตุ period', fn: v => v.periodRemark },
     { label: 'กิจกรรม', fn: v => v.eventName },
     { label: 'รหัสซัพ', fn: v => v.compCode },
     { label: 'ชื่อซัพ', fn: v => v.compName },
@@ -33,6 +35,8 @@ const receiptMapper: TFieldSelector<TReceiptReport>[] = [
     { label: 'ยอดใบแจ้งหนี้', fn: v => v.invAmount },
     { label: 'หมายเหตุ', fn: v => v.invRemark },
 ]
+
+// backend send total_income / total_branch //
 const lightboxMapper: TFieldSelector<TLightBoxReport>[] = [
     { label: 'ชื่อ', fn: v => v.displayName },
     { label: 'กิจกรรม', fn: v => v.eventName },
@@ -42,7 +46,8 @@ const lightboxMapper: TFieldSelector<TLightBoxReport>[] = [
     { label: 'จบ', fn: v => formatDate(v.periodEnd) },
     { label: 'รหัสสาขา', fn: v => v.branchCode },
     { label: 'ชื่อสาขา', fn: v => v.branchName },
-    { label: 'รายได้เรียกเก็บ', fn: v => v.totalIncome }
+    { label: 'รายได้เรียกเก็บ 12 เดือน', fn: v => v.totalIncome.toFixed(2) },
+    { label: 'รายได้เรียกเก็บ/เดือน', fn: v => (v.totalIncome / 12).toFixed(2) },
 ]
 const annualIncomeMapper: TFieldSelector<TAnnualIncomeReport>[] = [
     { label: 'ชื่อ', fn: v => v.displayName },
@@ -190,8 +195,8 @@ const rangeCreditMapper: TFieldSelector<TRangeCreditReport>[] = [
     { label: 'หมายเหตุ', fn: v => v.creditRemark },
 ]
 
-const mapToAoa = <T extends TObj>(mapper: TFieldSelector<T>[]) =>
-    (data: T[]) => [mapper.map(({ label }) => label), ...data.map(d => mapper.map(({ fn }) => fn(d)))]
+const mapToAoa = <T extends TObj>(mapper: TFieldSelector<T>[]) => (compType: string) =>
+    (data: T[]) => [['บริษัท', ...mapper.map(({ label }) => label)], ...data.map(d => [compType, ...mapper.map(({ fn }) => fn(d))])]
 
 export const formatInvoice = mapToAoa(invocieMapper)
 export const formatReceipt = mapToAoa(receiptMapper)

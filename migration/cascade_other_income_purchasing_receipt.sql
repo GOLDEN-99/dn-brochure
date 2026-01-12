@@ -1,0 +1,8 @@
+ALTER TABLE other_income_purchase_receipts
+DROP CONSTRAINT FK_other_income_purchase_receipts_other_income_lists;
+
+ALTER TABLE other_income_purchase_receipts
+ADD CONSTRAINT FK_other_income_purchase_receipts_other_income_lists
+FOREIGN KEY (month_id) 
+REFERENCES other_income_lists(id)
+ON DELETE CASCADE;

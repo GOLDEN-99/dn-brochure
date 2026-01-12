@@ -26,6 +26,7 @@ export type TInvocieReport = {
     id: number
     periodId: number
     periodName: string
+    periodRemark: string
     periodStart: string
     periodEnd: string
     totalAmount: number

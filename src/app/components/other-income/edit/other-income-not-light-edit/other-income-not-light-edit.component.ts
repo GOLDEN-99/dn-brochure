@@ -2,10 +2,11 @@ import { Component, computed, inject, input, signal, viewChild } from '@angular/
 import { FormsModule } from '@angular/forms';
 import { TargetSubformComponent } from "../../form/target-subform.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-other-income-not-light-edit',
-  imports: [FormsModule, TargetSubformComponent],
+  imports: [FormsModule, TargetSubformComponent, DecimalPipe],
   templateUrl: './other-income-not-light-edit.component.html',
   styleUrl: './other-income-not-light-edit.component.scss'
 })

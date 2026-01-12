@@ -203,3 +203,10 @@ export type TInsertMonthlyIncomeState = {
 export interface IOtherIncomePageToke {
     isPurchase: boolean
 }
+
+export enum PeriodStatus {
+    All = 1,
+    Complete = 2,
+    Invoice = 3,
+    Receipt = 4
+}

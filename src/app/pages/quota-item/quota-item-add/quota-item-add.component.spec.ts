@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AccountHomeComponent } from './account-home.component';
+import { QuotaItemAddComponent } from './quota-item-add.component';
 
-describe('AccountHomeComponent', () => {
-  let component: AccountHomeComponent;
-  let fixture: ComponentFixture<AccountHomeComponent>;
+describe('QuotaItemAddComponent', () => {
+  let component: QuotaItemAddComponent;
+  let fixture: ComponentFixture<QuotaItemAddComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AccountHomeComponent]
+      imports: [QuotaItemAddComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AccountHomeComponent);
+    fixture = TestBed.createComponent(QuotaItemAddComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

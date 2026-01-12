@@ -30,7 +30,8 @@ import { FormsModule } from '@angular/forms';
         class="form-select"
       >
         <option [ngValue]="1">รหัสซับ</option>
-        <option [ngValue]="2">รหัสสินค้า</option>
+        <option [ngValue]="2">ชื่อซับ</option>
+        <option [ngValue]="3">รหัสสินค้า</option>
       </select>
     </div>
 
@@ -45,7 +46,7 @@ import { FormsModule } from '@angular/forms';
       />
     </div>
     <div class="mb-3">
-      <button class="btn btn-primary w-100" (click)="click.emit()">ค้นหา</button>
+      <button class="btn btn-primary w-100" (click)="click.emit()">ค้นหากิจกรรม</button>
     </div>
   </div>
   `,

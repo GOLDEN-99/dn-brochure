@@ -21,7 +21,7 @@ export class FsBrochureComponent {
   dayImg = computed(() => {
     const day = this.head()?.day
     if (!day) return 5
-    return day < 10 ? day : 5
+    return Math.min(day, 9)
   })
 
   dayActive = computed(() => this.head().dayActive)

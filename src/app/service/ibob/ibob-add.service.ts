@@ -1,10 +1,10 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, combineLatest, filter, map, of, switchMap, tap, throwError } from 'rxjs';
 import { IIbObLogin, IIbObReserve } from './ibobToken';
-import { TAppOrder, TCreateReservationReq, TEditableResavation, TFormattedLoginResponse, TGetIbObRes, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot } from '../../types/ibob-supplier.type';
+import { TAppOrder, TAppOrderState, TCreateReservationReq, TEditableResavation, TFormattedLoginResponse, TGetIbObRes, TLoginReq, TLoginRes, TModifiedComp, TTimeSlot } from '../../types/ibob-supplier.type';
 import { convertToIso } from '../../lib';
 import { TMaybe } from '../../types';
 import { LocalService, TAuthStorageKey } from '../local/local.service';
@@ -24,28 +24,17 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
   private storage = inject(LocalService)
   private token = ''
 
-  private mockComp = {
-    compCode: 'test code',
-    saleName: 'contactName',
-    compName: 'test name',
-    compEmail: 'test@email.com',
-    compName2: 'thai comp?',
-    compPhone: '0999999999',
-    shipto: 'anywhere'
-  }
-  private mockOrder = [{ orderDate: '2025-01-01', orderNumb: 'PO12345', check: false, box: 0 }]
   currentComp = signal<TMaybe<TModifiedComp>>(null)
-  orderList = signal<TAppOrder[]>([]) // mocking data
-  checkOrder = (orderId: string) => this.orderList.update((prev) => prev.map((or) =>
-    or.orderNumb === orderId
-      ? ({ ...or, check: !or.check, box: or.check ? 0 : or.box })
-      : or)
-  )
-  changeOrderAmount = (orderId: string) => (box: number) => this.orderList.update(prev => prev.map(or =>
-    or.orderNumb === orderId && or.check ?
-      ({ ...or, box })
-      : or
-  ))
+  orderState = signal<TAppOrderState>({}) // mocking data
+  orderList: Signal<TAppOrder[]> = computed(() => Object.entries(this.orderState()).map(([k, v]) => ({ orderNumb: k, box: v, check: true, orderDate: '2025-11-19' })))
+  checkOrder = (orderId: string) => this.orderState.update(prev => ({ ...prev, [orderId]: (prev[orderId] ?? 0) + 1 }))
+
+  changeOrderAmount = (orderId: string) => (box: number) => this.orderState.update(prev => ({ ...prev, [orderId]: box }))
+
+  deleteOrder = (orderId: string) => this.orderState.update(prev => {
+    const { [orderId]: _, ...rest } = prev
+    return rest
+  })
 
   saveLogin = (user: TAuthStorageKey, { comp, token, order }: TFormattedLoginResponse) => {
     this.storage.setLoginResponse(user)({ comp, token, order })
@@ -53,7 +42,7 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
 
   setAppState = ({ comp, order, token }: TFormattedLoginResponse) => {
     this.currentComp.set(comp)
-    this.orderList.set(order.map(o => ({ ...o, check: false, box: 0 })))
+    //this.orderList.set(order.map(o => ({ ...o, check: false, box: 0 })))
     this.token = token
   }
 
@@ -68,8 +57,6 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
         map(res => this.formatLoginRespose(res)),
       )
   }
-
-
   createReservation(formData: TEditableResavation) {
     const currentCompData = this.currentComp()
     if (!currentCompData) throw new Error('please login')
@@ -129,7 +116,7 @@ export class IbobAddService implements IIbObLogin, IIbObReserve {
     if (!data) return
     const { comp, order, token } = data
     this.currentComp.set(comp)
-    this.orderList.set(order.map((o) => ({ ...o, check: false, box: 0 })))
+    //this.orderList.set(order.map((o) => ({ ...o, check: false, box: 0 })))
     this.token = token
   }
   private compParam$ = toObservable(this.currentComp).pipe(

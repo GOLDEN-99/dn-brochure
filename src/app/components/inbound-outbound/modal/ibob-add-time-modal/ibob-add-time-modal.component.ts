@@ -26,7 +26,7 @@ export class IbobAddTimeModalComponent implements OnInit {
   close = output<void>()
   submit = output<TDuration>()
   day = input<string>('วันทดสอบ')
-  header = computed(() => `เพิ่มเวลาวันที่ ${this.day()}`)
+  header = computed(() => `เพิ่มเวลาวัน ${this.day()}`)
   onSubmit() {
     if (this.invalid()) return
     this.submit.emit(this.state())

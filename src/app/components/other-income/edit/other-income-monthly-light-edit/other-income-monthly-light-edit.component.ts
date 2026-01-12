@@ -36,7 +36,6 @@ export class OtherIncomeMonthlyLightEditComponent {
     const createDate = this.isoDate()
     this.monthService.insertLMonth(id, createDate).subscribe({
       next: (res) => {
-        console.log(res.purchasingId)
         this.success.emit('เพิ่มรับรู้รายเดือนสำเร็จ')
         this.modalService.dismissAll()
       },

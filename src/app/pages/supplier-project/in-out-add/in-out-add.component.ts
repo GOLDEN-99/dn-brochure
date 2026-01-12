@@ -33,8 +33,6 @@ export class InOutAddComponent {
     const req = this.doorFormServ.request
     this.doorMutServ.createDoor(req).subscribe({
       next: (res) => {
-        console.log(res);
-        console.log('ok');
         this.toastServ.success('เพิ่มสำเร็จ')
         this.doorServ.refetch()
         this.router.navigate(['../'], { relativeTo: this.route })
