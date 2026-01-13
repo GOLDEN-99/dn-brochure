@@ -132,3 +132,17 @@ export type TRangeInvReceReport = {
     receAmount: string
     receRemark: string
 } & TReceiptReport
+
+export type TIncomeListReport = {
+    Id: number
+    CompCode: string
+    CompType: string
+    DisplayName: string
+    CompName: string
+    StartDate: string
+    EndDate: string
+    EventName: string
+    EventType: string
+    IncomeName: string
+    IncomeType: string
+}
