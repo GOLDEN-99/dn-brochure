@@ -33,36 +33,52 @@
     (fail)="onFail($event)"
   />
   } }
-  <!-- @for (period of periods; track period.id) {
-  <div class="row bg-success bg-opacity-10">
-    <div class="row">
-      @for (head of currentHeader(); track $index) {
-      <div class="col">{{ head }}</div>
-      }
-    </div>
-    <div class="row">
-      @for (fn of currentMapper(); track $index) {
-      <div class="col">{{ fn(period) }}</div>
-      }
+
+  <button (click)="onDelete()" class="btn btn-danger w-100">ลบ</button>
+  <a routerLink=".." class="btn btn-secondary w-100 mt-2">กลับ</a>
+</section>
+
+<!-- Delete confirmation modal -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">ยืนยันการลบ</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+      [disabled]="deleting()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-danger d-flex align-items-start">
+      <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
+      <div>
+        <strong>คุณต้องการลบข้อมูลนี้ใช่หรือไม่?</strong>
+        <p class="mb-0 mt-2 small">การลบข้อมูลนี้จะไม่สามารถกู้คืนได้</p>
+      </div>
     </div>
   </div>
-  <app-other-income-invoice-period
-    [canEdit]="!isPurchase"
-    [invoiceList]="period.invoiceList"
-    [periodId]="period.id"
-    [incomeAmount]="period.totalIncome"
-    [addedAmount]="period.invAmount"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-  />
-  <app-other-income-receipt-period
-    [canEdit]="!isPurchase"
-    [receiptList]="period.receiptList"
-    [periodId]="period.id"
-    [invAmount]="period.invAmount"
-    [receAmount]="period.receAmount"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-  />
-  } } -->
-</section>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="modal.dismiss()"
+      [disabled]="deleting()"
+    >
+      ยกเลิก
+    </button>
+    <button
+      type="button"
+      class="btn btn-danger"
+      (click)="confirmDelete()"
+      [disabled]="deleting()"
+    >
+      @if (deleting()) {
+      <span class="spinner-border spinner-border-sm me-1"></span>
+      กำลังลบ... } @else {
+      <i class="bi bi-trash me-1"></i>
+      ยืนยันลบ }
+    </button>
+  </div>
+</ng-template>

@@ -61,6 +61,10 @@ export class OiLightService extends BaseOiService {
     return this.api.post(`${this.url}/${id}/branch`, body)
   }
 
+  deleteContact(id: number) {
+    return this.api.delete(`${this.url}/other-income/contact/${id}`)
+  }
+
 }
 
 type TSearchManyHead = {
