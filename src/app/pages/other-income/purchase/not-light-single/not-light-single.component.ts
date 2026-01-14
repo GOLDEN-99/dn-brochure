@@ -1,6 +1,6 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { OiNotLightService } from '../../../../service/other-income/oi-not-light.service';
-import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OtherIncomeHeadEditComponent } from "../../../../components/other-income/edit/other-income-head-edit/other-income-head-edit.component";
 import { OtherIncomeNotLightEditComponent } from "../../../../components/other-income/edit/other-income-not-light-edit/other-income-not-light-edit.component";
 import { OtherIncomeProductEditComponent } from "../../../../components/other-income/edit/other-income-product-edit/other-income-product-edit.component";
@@ -12,6 +12,7 @@ import { OtherIncomeMonthlyIncentiveEditComponent } from "../../../../components
 import { OtherIncomeMonthlyListComponent } from "../../../../components/other-income/template/other-income-monthly-list.component";
 import { OTHER_INCOME_PAGE_TOKEN } from '../../../../lib';
 import { OtherIncomePeriodDisplayComponent } from "../../../../components/other-income/period/other-income-period-display/other-income-period-display.component";
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-not-light-single',
@@ -22,16 +23,23 @@ import { OtherIncomePeriodDisplayComponent } from "../../../../components/other-
     NgbDatepickerModule, FormsModule,
     OtherIncomeMonthlyIncentiveEditComponent,
     OtherIncomeMonthlyListComponent,
-    OtherIncomePeriodDisplayComponent
+    OtherIncomePeriodDisplayComponent,
+    RouterLink,
   ],
   templateUrl: './not-light-single.component.html',
   styleUrl: './not-light-single.component.scss'
 })
 export class NotLightSingleComponent {
-  private toastService = inject(ToastService)
-  private _pageToken = inject(OTHER_INCOME_PAGE_TOKEN)
+  private readonly router = inject(Router)
+  private readonly route = inject(ActivatedRoute)
+  private readonly toastService = inject(ToastService)
+  private readonly modalServ = inject(NgbModal)
+  private readonly _pageToken = inject(OTHER_INCOME_PAGE_TOKEN)
   isPurchase = this._pageToken.isPurchase
-  private notLightServ = inject(OiNotLightService)
+  private readonly notLightServ = inject(OiNotLightService)
+
+  private readonly deleteModal = viewChild('deleteModal')
+  deleting = signal(false)
   data = this.notLightServ.singleRecord
   invalidValue = computed(() => this.data().length !== 1)
   currentResult = computed(() => this.data()[0])
@@ -54,5 +62,37 @@ export class NotLightSingleComponent {
 
   onFail(value: string) {
     this.toastService.danger(value);
+  }
+
+
+
+  onDelete() {
+    const headId = this.currentResult()?.head?.id
+    if (!headId) {
+      this.toastService.danger('ไม่สามารถลบข้อมูลได้');
+      return
+    }
+    this.modalServ.open(this.deleteModal(), { size: 'md' });
+  }
+
+  confirmDelete() {
+    const headId = this.currentResult()?.head?.id
+    if (!headId) return
+
+    this.deleting.set(true)
+    this.notLightServ.deleteContact(headId).subscribe({
+      next: () => {
+        this.deleting.set(false)
+        this.modalServ.dismissAll()
+        this.toastService.success('ลบข้อมูลสำเร็จ');
+        this.router.navigate(['..'], { relativeTo: this.route })
+      },
+      error: (err) => {
+        this.deleting.set(false)
+        this.modalServ.dismissAll()
+        const msg = err?.message ?? String(err)
+        this.toastService.danger(msg);
+      }
+    })
   }
 }
