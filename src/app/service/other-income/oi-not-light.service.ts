@@ -1,9 +1,8 @@
-import { inject, Injectable, Signal, signal } from '@angular/core';
-import { TInsertMonthlyIncome, TOIStepItem } from '../../types';
-import { BaseOiService, ManyContactResponse, NotLightSingle, NotLightSummary } from './base-oi';
-import { environment } from '../../../environments/environment';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import { Injectable, Signal } from '@angular/core';
+import { TInsertMonthlyIncome } from '../../types';
+import { BaseOiService, ManyContactResponse, NotLightSingle } from './base-oi';
+import { BehaviorSubject, catchError, combineLatest, Observable, of, Subject, switchMap } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 interface IRefetchable {
   refetch: () => void

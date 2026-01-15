@@ -1,6 +1,5 @@
 import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { TObj } from '../../types';
 import { catchError, throwError } from 'rxjs';
 
 @Injectable({
@@ -8,7 +7,7 @@ import { catchError, throwError } from 'rxjs';
 })
 export class ApiService {
 
-  private https = inject(HttpClient)
+  private readonly https = inject(HttpClient)
 
   createJWTHeader = (jwt: string) => ({ headers: { Authorization: `bearer ${jwt}` } })
 
