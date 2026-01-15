@@ -11,8 +11,8 @@ export class PeriodService {
 
   constructor() { }
 
-  private url = environment.oi
-  private api = inject(ApiService)
+  private readonly url = environment.oi
+  private readonly api = inject(ApiService)
 
   createPeriod(id: number, req: TCreatPeriodReq) {
     return this.api.post<{ periodId: number }>(`${this.url}/period/create/${id}`, req)
@@ -32,6 +32,19 @@ export class PeriodService {
 
   insertCredit(periodId: number, req: TPeriodCreditReq) {
     return this.api.post<any>(`${this.url}/period/${periodId}/credit`, req)
+  }
+
+  // Batch operations
+  batchInvoice(req: TPeriodInvBatch[]) {
+    return this.api.post<TBatchResult>(`${this.url}/batch/invoice`, req)
+  }
+
+  batchReceipt(req: TPeriodReceBatch[]) {
+    return this.api.post<TBatchResult>(`${this.url}/batch/receipt`, req)
+  }
+
+  batchCredit(req: TPeriodCreditBatch[]) {
+    return this.api.post<TBatchResult>(`${this.url}/batch/credit`, req)
   }
 
   /**
@@ -84,4 +97,24 @@ type TPeriodCreditReq = {
   creditDate: string
   creditAmount: number
   creditRemark: string
+}
+
+export type TPeriodInvBatch = { periodId: number } & TPeriodInvReq
+
+export type TPeriodCreditBatch = { periodId: number } & TPeriodCreditReq
+
+export type TPeriodReceBatch = { periodId: number } & TPeriodReceReq
+
+export type TBatchError = {
+  rowNumber: number
+  periodId: number
+  message: string
+}
+
+export type TBatchResult = {
+  updated: number
+  created: number
+  skipped: number
+  failed: number
+  errors: TBatchError[]
 }
