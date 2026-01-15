@@ -1,4 +1,4 @@
-import { inject, Injectable, OnDestroy } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
 import { catchError, of, tap } from 'rxjs';
@@ -10,10 +10,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class IncomeService {
 
   constructor() { }
-  private incomeMap = new Map<number, Pick<TIncome, 'incomeName' | 'incomeType'>>()
-  private api = inject(ApiService)
-  private url = environment.oi
-  private income$ = this.api.get<TIncome[]>(`${this.url}/other-income/income`)
+  private readonly incomeMap = new Map<number, Pick<TIncome, 'incomeName' | 'incomeType'>>()
+  private readonly api = inject(ApiService)
+  private readonly url = environment.oi
+  private readonly income$ = this.api.get<TIncome[]>(`${this.url}/other-income/income`)
     .pipe(
       tap((value) => {
         value.forEach(({ id, incomeName, incomeType }) => {
