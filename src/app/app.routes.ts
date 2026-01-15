@@ -4,6 +4,7 @@ import { promotionResolver } from './resolvers/promotion/promotion.resolver';
 import { marketingResolver } from './resolvers/marketing/marketing.resolver';
 import { NotfoundComponent } from './pages/notfound/notfound.component';
 import { BROCHURE_PRICE_TYPE_TOKEN, BROCHURE_TOKEN, OTHER_INCOME_PAGE_TOKEN } from './lib';
+import { handleLazyLoadError } from './utils/lazy-load-error-handler';
 import { CnLayoutComponent } from './layout/cn-layout/cn-layout.component';
 import { cnResolver } from './resolvers/cn/cn.resolver';
 import { BaseBrochureComponent } from './pages/brochure-project/base-brochure/base-brochure.component';
@@ -192,13 +193,13 @@ export const routes: Routes = [
                         path: 'add',
                         loadComponent: () => import("./pages/supplier-project/ibob-admin-add/ibob-admin-add.component")
                             .then(r => r.IbobAdminAddComponent)
-                            .catch((err) => NotfoundComponent),
+                            .catch(handleLazyLoadError('supplier/in-out/add')),
                     },
                     {
                         path: ':reserveId',
                         loadComponent: () => import("./pages/supplier-project/ibob-admin-edit/ibob-admin-edit.component")
                             .then(r => r.IbobAdminEditComponent)
-                            .catch((err) => NotfoundComponent),
+                            .catch(handleLazyLoadError('supplier/in-out/:reserveId')),
                     }
                 ]
             }
@@ -330,6 +331,12 @@ export const routes: Routes = [
                     {
                         path: 'report',
                         component: OtherIncomeReportComponent
+                    },
+                    {
+                        path: 'batch',
+                        loadComponent: () => import("./pages/other-income/account/other-income-account-batch/other-income-account-batch.component")
+                            .then(r => r.OtherIncomeAccountBatchComponent)
+                            .catch(handleLazyLoadError('other-income/account/batch'))
                     }
                 ]
             },
@@ -383,7 +390,7 @@ export const routes: Routes = [
                 loadComponent() {
                     return import('./pages/stock-item/stock-item-home/stock-item-home.component')
                         .then(r => r.StockItemHomeComponent)
-                        .catch(ex => NotfoundComponent)
+                        .catch(handleLazyLoadError('stock-item'))
                 },
             },
             {
@@ -396,7 +403,7 @@ export const routes: Routes = [
         path: 'stock-item/add',
         resolve: [stockSetupResolver],
         loadComponent: () => import('./pages/stock-item/stock-item-add/stock-item-add.component')
-            .then(r => r.StockItemAddComponent).catch(ex => NotfoundComponent),
+            .then(r => r.StockItemAddComponent).catch(handleLazyLoadError('stock-item/add')),
     },
     //quota-item
     {
@@ -413,18 +420,18 @@ export const routes: Routes = [
                 path: '',
                 loadComponent: () => import('./pages/quota-item/quota-item-add/quota-item-add.component')
                     .then(r => r.QuotaItemAddComponent)
-                    .catch((_) => NotfoundComponent)
+                    .catch(handleLazyLoadError('quota-item'))
             },
             {
                 path: 'good-list',
                 loadComponent: () => import('./pages/quota-item/quota-item-list/quota-item-list.component')
-                    .then(r => r.QuotaItemListComponent).catch((_) => NotfoundComponent)
+                    .then(r => r.QuotaItemListComponent).catch(handleLazyLoadError('quota-item/good-list'))
             },
             {
                 path: 'whole-list',
                 loadComponent: () => import('./pages/quota-item/quota-item-whole-list/quota-item-whole-list.component')
                     .then(r => r.QuotaItemWholeListComponent)
-                    .catch((_) => NotfoundComponent)
+                    .catch(handleLazyLoadError('quota-item/whole-list'))
             }
         ]
     },
