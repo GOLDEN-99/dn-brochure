@@ -90,10 +90,10 @@ export class OtherIncomeInvoiceModalComponent {
 
   invalidPeriodId = computed(() => this.periodId() <= 0)
 
-  private periodService = inject(PeriodService)
+  private readonly periodService = inject(PeriodService)
 
-  private calServ = inject(NgbCalendar)
-  private today = this.calServ.getToday()
+  private readonly calServ = inject(NgbCalendar)
+  private readonly today = this.calServ.getToday()
 
   invoiceDate = signal(this.today)
   invoiceNumb = signal("")

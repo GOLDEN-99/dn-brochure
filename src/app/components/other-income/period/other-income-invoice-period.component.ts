@@ -68,7 +68,7 @@ export class OtherIncomeInvoicePeriodComponent extends BasePeriodComponent {
   addedAmount = input.required<number>();
   disabled = input(false);
 
-  private invoiceModal = viewChild('invoiceModal');
+  private readonly invoiceModal = viewChild('invoiceModal');
 
   openInvoice() {
     this.openModal(this.invoiceModal());

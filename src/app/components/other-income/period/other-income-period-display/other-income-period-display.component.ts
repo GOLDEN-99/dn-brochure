@@ -26,7 +26,7 @@ import { PeriodService } from '../../../../service/other-income/period.service';
 })
 export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
   // Service injection
-  private periodService = inject(PeriodService);
+  private readonly periodService = inject(PeriodService);
 
   // Inputs
   period = input.required<TPopulatedPeriodResult>();
@@ -74,9 +74,9 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
   changingToComplete = signal(false);
 
   // ViewChild for modals
-  private editModal = viewChild('editPeriodModal');
-  private confirmReceModal = viewChild('confirmReceModal');
-  private confirmCompleteModal = viewChild('confirmCompleteModal');
+  private readonly editModal = viewChild('editPeriodModal');
+  private readonly confirmReceModal = viewChild('confirmReceModal');
+  private readonly confirmCompleteModal = viewChild('confirmCompleteModal');
 
   /**
    * Change period status to "Waiting for Receipt" (4)
@@ -149,7 +149,7 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
   editPeriodRemark = signal('');
 
   // Selector arrays
-  private periodOrderSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
+  private readonly periodOrderSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
     //{ label: 'ชื่อ', fn: v => v.periodName },
     { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
     { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
@@ -157,7 +157,7 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
     //{ label: 'หมายเหตุ', fn: v => v.periodRemark },
   ];
 
-  private periodReceSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
+  private readonly periodReceSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
     //{ label: 'ชื่อ', fn: v => v.periodName },
     { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
     { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
@@ -166,7 +166,7 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
     //{ label: 'หมายเหตุ', fn: v => v.periodRemark },
   ];
 
-  private periodCreditSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
+  private readonly periodCreditSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
     //{ label: 'ชื่อ', fn: v => v.periodName },
     { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
     { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
