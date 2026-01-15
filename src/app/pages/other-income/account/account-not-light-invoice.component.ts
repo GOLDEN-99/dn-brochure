@@ -3,7 +3,7 @@ import { CUSTOM_FIELD_SEARCH_TOKEN, OTHER_INCOME_NL_SEARCH } from '../../../comp
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OtherIncomeAccountQueryTabComponent } from "./other-income-account-query-tab.component";
 import { PeriodNotLightService } from '../../../service/other-income/period-not-light.service';
-import { getPeriodStatusLabel, getPeriodStatusBadgeClass, formatAmountProgress } from '../../../lib/other_income/period-status-utils';
+import { getPeriodStatusLabel, getPeriodStatusBadgeClass, formatAmountProgress } from '../../../lib/other-income/period-status-utils';
 import { formatLocalNumber } from '../../../lib/formatter';
 import { PeriodStatus } from '../../../types/other-income';
 

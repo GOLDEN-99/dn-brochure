@@ -6,8 +6,8 @@ import { ApiService } from '../api/api.service';
 import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TFieldSelector, TObj } from '../../types';
-import { formatAnnualIncome, formatRangeInvRece, formatInvoice, formatLight, formatMonthbuy, formatMonthince, formatRangeBill, formatRangeCredit, formatReceipt } from '../../lib/other_income/other-income';
-import { TAccountReportQuery, TAnnualIncomeReport, TAnnualReport, TIncomeListReport, TInvocieReport, TLightBoxReport, TMonthBuyReport, TMonthInceReport, TQueryWithMonth, TQueryWithRange, TQueryWithYear, TRangeBillReport, TRangeCreditReport, TRangeInvReceReport, TReceiptReport } from '../../lib/other_income/other-income.type';
+import { formatAnnualIncome, formatRangeInvRece, formatInvoice, formatLight, formatMonthbuy, formatMonthince, formatRangeBill, formatRangeCredit, formatReceipt } from '../../lib/other-income/other-income';
+import { TAccountReportQuery, TAnnualIncomeReport, TAnnualReport, TIncomeListReport, TInvocieReport, TLightBoxReport, TMonthBuyReport, TMonthInceReport, TQueryWithMonth, TQueryWithRange, TQueryWithYear, TRangeBillReport, TRangeCreditReport, TRangeInvReceReport, TReceiptReport } from '../../lib/other-income/other-income.type';
 
 @Injectable({
   providedIn: 'root'

@@ -2,7 +2,7 @@ import { Route } from "@angular/router";
 
 import { SupplierApiService } from "../service/supplier/supplier-api.service";
 import { SupplierLayoutComponent } from "../layout/supplier-layout/supplier-layout.component";
-import { supplierCompResolver } from "../resolvers/Ibob/supplier-comp.resolver";
+import { supplierCompResolver } from "../resolvers/ibob/supplier-comp.resolver";
 import { SupplierFormViewComponent } from "../pages/supplier-project/supplier-form-view/supplier-form-view.component";
 
 
