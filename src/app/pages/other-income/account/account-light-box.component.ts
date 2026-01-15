@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CUSTOM_FIELD_SEARCH_TOKEN, OTHER_INCOME_L_SEARCH } from '../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
 import { OtherIncomeAccountQueryTabComponent } from "./other-income-account-query-tab.component";
 import { PeriodLightService } from '../../../service/other-income/period-light.service';
-import { getPeriodStatusLabel, getPeriodStatusBadgeClass, formatAmountProgress } from '../../../lib/other_income/period-status-utils';
+import { getPeriodStatusLabel, getPeriodStatusBadgeClass, formatAmountProgress } from '../../../lib/other-income/period-status-utils';
 import { formatLocalNumber } from '../../../lib/formatter';
 import { PeriodStatus } from '../../../types/other-income';
 

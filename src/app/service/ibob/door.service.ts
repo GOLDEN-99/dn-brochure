@@ -21,17 +21,17 @@ export class DoorService {
     })
   }
 
-  private warehouseServ = inject(WarehouseService)
+  private readonly warehouseServ = inject(WarehouseService)
 
-  private url = environment.ibob
+  private readonly url = environment.ibob
 
-  private api = inject(ApiService)
+  private readonly api = inject(ApiService)
 
-  private fetch$ = new BehaviorSubject('fetch')
+  private readonly fetch$ = new BehaviorSubject('fetch')
 
-  private fetchDoor = (warehouseId: string) => this.api.get<TDoor[]>(`${this.url}/GetDoor`, { params: { warehouseId } })
+  private readonly fetchDoor = (warehouseId: string) => this.api.get<TDoor[]>(`${this.url}/GetDoor`, { params: { warehouseId } })
 
-  private door$ =
+  private readonly door$ =
     this.fetch$.pipe(
       switchMap(() => this.warehouseServ.warehouseId$.pipe(
         switchMap(this.fetchDoor),

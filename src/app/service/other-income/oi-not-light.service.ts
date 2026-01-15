@@ -1,9 +1,8 @@
-import { inject, Injectable, Signal, signal } from '@angular/core';
-import { TInsertMonthlyIncome, TOIStepItem } from '../../types';
-import { BaseOiService, ManyContactResponse, NotLightSingle, NotLightSummary } from './base-oi';
-import { environment } from '../../../environments/environment';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import { Injectable, Signal } from '@angular/core';
+import { TInsertMonthlyIncome } from '../../types';
+import { BaseOiService, ManyContactResponse, NotLightSingle } from './base-oi';
+import { BehaviorSubject, catchError, combineLatest, Observable, of, Subject, switchMap } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 interface IRefetchable {
   refetch: () => void
@@ -21,9 +20,9 @@ export class OiNotLightService extends BaseOiService implements IRefetchable, IO
       .pipe(catchError(err => of([])))
   }
 
-  private queryParam$ = new Subject<TSearchManyHead>()
+  private readonly queryParam$ = new Subject<TSearchManyHead>()
 
-  private notLight$ = this.queryParam$.pipe(
+  private readonly notLight$ = this.queryParam$.pipe(
     switchMap(({ compType, ...res }) => this.getAll({ compType, query: res }))
   )
   searchMany(req: TSearchManyHead) {
@@ -42,17 +41,17 @@ export class OiNotLightService extends BaseOiService implements IRefetchable, IO
 
   }
 
-  private fetch$ = new BehaviorSubject<boolean>(true)
+  private readonly fetch$ = new BehaviorSubject<boolean>(true)
   refetch = () => this.fetch$.next(true)
-  private id$ = new Subject<number>()
-  private comp2$ = new Subject<string>()
-  private param$ = combineLatest([this.fetch$, this.id$, this.comp2$])
+  private readonly id$ = new Subject<number>()
+  private readonly comp2$ = new Subject<string>()
+  private readonly param$ = combineLatest([this.fetch$, this.id$, this.comp2$])
   fetchById(id: number, compType: string) {
     this.id$.next(id)
     this.comp2$.next(compType)
   }
 
-  private singleRecord$ = this.param$
+  private readonly singleRecord$ = this.param$
     .pipe(
       switchMap(([_, id, compType]) => this.getById(id, compType)),
     )
@@ -75,6 +74,10 @@ export class OiNotLightService extends BaseOiService implements IRefetchable, IO
 
   createPo(id: number, purchasingId: number, poList: {}) {
     return this.api.post(`${this.url}/${id}/${purchasingId}`, poList)
+  }
+
+  deleteContact(id: number) {
+    return this.api.delete(`${this.url}/other-income/contact/${id}`)
   }
 
 }

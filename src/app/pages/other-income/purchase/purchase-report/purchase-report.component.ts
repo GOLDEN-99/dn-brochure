@@ -236,4 +236,44 @@ export class PurchaseReportComponent {
     year: this.today.year + 1
   })
 
+  exportIncomeList(compType: number) {
+    this.loading.startLoad()
+    const compTypeStr = compType === 1 ? 'DN' : 'HU'
+    this.accReport.getIncomeList(compType).subscribe({
+      next: async res => {
+        if (res.length === 0) {
+          this.toast.danger('ไม่มีข้อมูล')
+          this.loading.endLoad()
+          return
+        }
+        await this.toXlsx(
+          `รายการรายได้อื่นๆ-${compTypeStr}-${this._iso}.xlsx`,
+          `รายการรายได้อื่นๆ-${compTypeStr}`,
+          [
+            ['Id', 'รหัสบริษัท', 'ประเภทบริษัท', 'ชื่อแสดง', 'ชื่อบริษัท', 'วันที่เริ่มต้น', 'วันที่สิ้นสุด', 'ชื่อกิจกรรม', 'ประเภทกิจกรรม', 'ชื่อรายได้', 'ประเภทรายได้'],
+            ...res.map(item => [
+              item.Id,
+              item.CompCode,
+              item.CompType,
+              item.DisplayName,
+              item.CompName,
+              item.StartDate,
+              item.EndDate,
+              item.EventName,
+              item.EventType,
+              item.IncomeName,
+              item.IncomeType
+            ])
+          ]
+        )
+        this.toast.success('สำเร็จ')
+        this.loading.endLoad()
+      },
+      error: (err) => {
+        this.toast.danger(err?.message)
+        this.loading.endLoad()
+      }
+    })
+  }
+
 }

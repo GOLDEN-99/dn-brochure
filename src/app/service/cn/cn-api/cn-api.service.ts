@@ -1,5 +1,5 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { catchError, Subject, switchMap, tap, throwError } from 'rxjs';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { Subject, tap } from 'rxjs';
 import { CnOrderService } from '../cn-order/cn-order.service';
 import { ApiService } from '../../api/api.service';
 import { TMaybe } from '../../../types';
@@ -11,12 +11,12 @@ import { environment } from '../../../../environments/environment';
 })
 export class CnApiService {
 
-  private api = inject(ApiService)
-  private orderServ = inject(CnOrderService)
-  private url = environment.cnPath
+  private readonly api = inject(ApiService)
+  private readonly orderServ = inject(CnOrderService)
+  private readonly url = environment.cnPath
   wholeItemData = signal<TMaybe<TWholeItem>>(null)
 
-  private params$ = new Subject<TCNQueryParams>()
+  private readonly params$ = new Subject<TCNQueryParams>()
 
   paramsSignal = signal<TMaybe<TCNQueryParams>>(null)
 

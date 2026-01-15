@@ -15,10 +15,10 @@ import { IncomeSelectComponent } from "../income-select/income-select.component"
   styleUrl: './other-income-baseform.component.scss'
 })
 export class OtherIncomeBaseformComponent {
-  private baseFormService = inject(OiBaseformService)
+  private readonly baseFormService = inject(OiBaseformService)
   state = this.baseFormService.baseformState
   searchProductParam = this.baseFormService.searchProductParam
-  private updator = this.baseFormService.updateOneField
+  private readonly updator = this.baseFormService.updateOneField
   updateCompCode = this.updator('compCode')
   onCompCodeChange(compCode: string) {
     this.productList.set([])
@@ -42,7 +42,7 @@ export class OtherIncomeBaseformComponent {
   eventType = input.required<number>()
   eventTypeChange = output<number>()
   productList = this.baseFormService.productList
-  private goodCodeSet = new Set<string>()
+  private readonly goodCodeSet = new Set<string>()
 
   handleAdd(product: TOIProduct[]) {
     const validProduct = product.flatMap(({ goodCode, goodName }) => {

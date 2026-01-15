@@ -6,8 +6,8 @@ import { ApiService } from '../api/api.service';
 import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TFieldSelector, TObj } from '../../types';
-import { formatAnnualIncome, formatRangeInvRece, formatInvoice, formatLight, formatMonthbuy, formatMonthince, formatRangeBill, formatRangeCredit, formatReceipt } from '../../lib/other_income/other-income';
-import { TAccountReportQuery, TAnnualIncomeReport, TAnnualReport, TInvocieReport, TLightBoxReport, TMonthBuyReport, TMonthInceReport, TQueryWithMonth, TQueryWithRange, TQueryWithYear, TRangeBillReport, TRangeCreditReport, TRangeInvReceReport, TReceiptReport } from '../../lib/other_income/other-income.type';
+import { formatAnnualIncome, formatRangeInvRece, formatInvoice, formatLight, formatMonthbuy, formatMonthince, formatRangeBill, formatRangeCredit, formatReceipt } from '../../lib/other-income/other-income';
+import { TAccountReportQuery, TAnnualIncomeReport, TAnnualReport, TIncomeListReport, TInvocieReport, TLightBoxReport, TMonthBuyReport, TMonthInceReport, TQueryWithMonth, TQueryWithRange, TQueryWithYear, TRangeBillReport, TRangeCreditReport, TRangeInvReceReport, TReceiptReport } from '../../lib/other-income/other-income.type';
 
 @Injectable({
   providedIn: 'root'
@@ -149,6 +149,11 @@ export class OiAccountReportService {
     const startDate = this._getIso({ year: start.year, month: start.month, day: 1 })
     const endDate = this._getIso({ year: end.year, month: end.month, day: 1 })
     return this._getRangeCreditReport({ compType: comp, startDate, endDate }).pipe(map(withComp))
+  }
+
+  getIncomeList(compType: number): Observable<TIncomeListReport[]> {
+    const comp = this._formatCompType(compType)
+    return this._api.get<TIncomeListReport[]>(`${this.url}/other-income/${comp}/list`)
   }
 }
 

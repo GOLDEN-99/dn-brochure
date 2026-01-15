@@ -1,0 +1,23 @@
+<div class="error-container">
+    <div class="error-icon">&#9888;</div>
+    <h1>Failed to Load Module</h1>
+
+    @if (error()) {
+        <div class="error-details">
+            <p><strong>Path:</strong> {{ error()?.path }}</p>
+            <p><strong>Error:</strong> {{ error()?.message }}</p>
+            <p><strong>Time:</strong> {{ error()?.timestamp | date:'medium' }}</p>
+
+            @if (error()?.stack) {
+                <details>
+                    <summary>Stack Trace</summary>
+                    <pre>{{ error()?.stack }}</pre>
+                </details>
+            }
+        </div>
+    } @else {
+        <p>An unknown error occurred while loading the module.</p>
+    }
+
+    <button class="retry-btn" (click)="retry()">Retry</button>
+</div>

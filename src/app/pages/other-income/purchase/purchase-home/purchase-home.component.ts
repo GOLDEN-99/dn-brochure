@@ -11,7 +11,7 @@ import { OtherIncomePurchasingQueryTabComponent } from "../../account/other-inco
   styleUrl: './purchase-home.component.scss',
 })
 export class PurchaseHomeComponent {
-  private notLightServ = inject(OiNotLightService)
+  private readonly notLightServ = inject(OiNotLightService)
   data = this.notLightServ.notLightList
 
   term = signal("")

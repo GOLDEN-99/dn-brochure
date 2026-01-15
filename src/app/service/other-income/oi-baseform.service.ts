@@ -1,11 +1,10 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { NgbCalendar, NgbDate, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { TBaseOIHead, TBaseOiInsert, TOIProduct } from '../../types';
+import { TBaseOiInsert, TOIProduct } from '../../types';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { distinctUntilChanged, filter } from 'rxjs';
-import { OiProductService } from './oi-product.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +12,10 @@ import { OiProductService } from './oi-product.service';
 export class OiBaseformService {
 
   constructor() { }
-  private calendar = inject(NgbCalendar)
-  private today = this.calendar.getToday()
-  private fdoy = new NgbDate(this.today.year, 1, 1)
-  private ldoy = new NgbDate(this.today.year, 12, 31)
+  private readonly calendar = inject(NgbCalendar)
+  private readonly today = this.calendar.getToday()
+  private readonly fdoy = new NgbDate(this.today.year, 1, 1)
+  private readonly ldoy = new NgbDate(this.today.year, 12, 31)
 
   defaultValue: TAppBaseformInsert = {
     compCode: '',
@@ -60,13 +59,13 @@ export class OiBaseformService {
     return { ...res, startDate: this.toIso(startDate), endDate: this.toIso(endDate), productList: formatList }
   }
 
-  private toIso = (date: NgbDateStruct) => {
+  private readonly toIso = (date: NgbDateStruct) => {
     const { year, month, day } = date
     return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
   }
 
-  private api = inject(ApiService)
-  private url = environment.oi
+  private readonly api = inject(ApiService)
+  private readonly url = environment.oi
   createHead = () => {
     const req = this.request
     return this.api.post<{ id: number }>(`${this.url}/other-income/contact/head`, req)

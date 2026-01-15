@@ -1,0 +1,268 @@
+<div class="container-fluid">
+  <h1 class="text-center mb-4">อัพโหลดข้อมูลแบบ Batch</h1>
+
+  <!-- Batch Type Selection -->
+  <div class="row mb-4">
+    <div class="col-md-6 mx-auto">
+      <label class="form-label">ประเภทเอกสาร</label>
+      <select
+        class="form-select"
+        [ngModel]="batchType()"
+        (ngModelChange)="batchType.set($event); onBatchTypeChange()"
+        [disabled]="uploadState() === 'processing'"
+      >
+        <option value="invoice">ใบแจ้งหนี้</option>
+        <option value="receipt">ใบเสร็จ</option>
+        <option value="credit">ใบลดหนี้</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Error Alert -->
+  @if (errorMessage()) {
+  <ngb-alert type="danger" (closed)="errorMessage.set('')">
+    {{ errorMessage() }}
+  </ngb-alert>
+  }
+
+  <!-- Initial State: File Upload -->
+  @if (uploadState() === 'initial') {
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <i class="bi bi-file-earmark-excel fs-1 text-success mb-3 d-block"></i>
+      <h5>อัพโหลดไฟล์ Excel</h5>
+      <p class="text-muted">รองรับไฟล์ .xlsx, .xls</p>
+
+      <div class="mb-3">
+        <input
+          type="file"
+          class="form-control w-50 mx-auto"
+          accept=".xlsx,.xls"
+          (change)="onFileChange($event)"
+        />
+      </div>
+
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        (click)="downloadTemplate()"
+      >
+        <i class="bi bi-download me-1"></i>
+        ดาวน์โหลด Template
+      </button>
+
+      <div class="mt-4 text-start w-75 mx-auto">
+        <h6>คอลัมน์ที่ต้องการ:</h6>
+        <ul class="small text-muted">
+          <li><strong>periodId</strong> - รหัส Period (ตัวเลข)</li>
+          <li><strong>numb</strong> - เลขที่เอกสาร</li>
+          <li>
+            <strong>date</strong> - วันที่ (รูปแบบ YYYY-MM-DD หรือ DD/MM/YYYY)
+          </li>
+          <li><strong>amount</strong> - ยอดเงิน (ตัวเลข)</li>
+          <li><strong>remark</strong> - หมายเหตุ (ไม่บังคับ)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Parsed State: Preview -->
+  @if (uploadState() === 'parsed') {
+  <div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span>
+        <i class="bi bi-file-earmark-excel me-2"></i>
+        {{ fileName() }}
+      </span>
+      <button class="btn btn-sm btn-outline-secondary" (click)="reset()">
+        <i class="bi bi-x-lg me-1"></i>
+        เลือกไฟล์ใหม่
+      </button>
+    </div>
+    <div class="card-body">
+      <!-- Summary -->
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <div class="border rounded p-3 text-center">
+            <div class="fs-4 fw-bold">{{ previewData().length }}</div>
+            <div class="text-muted small">รายการทั้งหมด</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="border rounded p-3 text-center bg-success-subtle">
+            <div class="fs-4 fw-bold text-success">
+              {{ validRows().length }}
+            </div>
+            <div class="text-muted small">ถูกต้อง</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="border rounded p-3 text-center bg-danger-subtle">
+            <div class="fs-4 fw-bold text-danger">
+              {{ invalidRows().length }}
+            </div>
+            <div class="text-muted small">ไม่ถูกต้อง</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invalid Rows Warning -->
+      @if (invalidRows().length > 0) {
+      <ngb-alert type="warning" [dismissible]="false">
+        <strong>พบข้อมูลไม่ถูกต้อง {{ invalidRows().length }} รายการ</strong>
+        <div class="small mt-1">รายการที่ไม่ถูกต้องจะถูกข้ามไป</div>
+      </ngb-alert>
+      }
+
+      <!-- Preview Table -->
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto">
+        <table class="table table-sm table-bordered table-striped">
+          <thead class="table-light sticky-top">
+            <tr>
+              <th>แถว</th>
+              @for (item of columnHeader(); track item.key) {
+              <th>{{ item.value }}</th>
+              }
+
+              <th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of previewData(); track row.rowNumber) {
+            <tr [class.table-danger]="!row.valid">
+              <td>{{ row.rowNumber }}</td>
+              <td>{{ row.periodId }}</td>
+              <td>{{ row.numb }}</td>
+              <td>{{ row.date }}</td>
+              <td class="text-end">{{ row.amount | number : "1.2-2" }}</td>
+              <td>{{ row.remark }}</td>
+              <td>
+                @if (row.valid) {
+                <span class="badge bg-success">ถูกต้อง</span>
+                } @else {
+                <span class="badge bg-danger" [title]="row.error"
+                  >ไม่ถูกต้อง</span
+                >
+                }
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button
+        class="btn btn-primary w-100"
+        [disabled]="!hasValidData()"
+        (click)="onSubmit()"
+      >
+        <i class="bi bi-upload me-2"></i>
+        อัพโหลด {{ batchTypeLabel() }} ({{ validRows().length }} รายการ)
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- Processing State -->
+  @if (uploadState() === 'processing') {
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <output class="spinner-border text-primary mb-3">
+        <span class="visually-hidden">กำลังประมวลผล...</span>
+      </output>
+      <h5>กำลังอัพโหลดข้อมูล</h5>
+      <p class="text-muted">กรุณารอสักครู่...</p>
+      <ngb-progressbar
+        class="w-75 mx-auto"
+        [value]="progressPercent()"
+        [striped]="true"
+        [animated]="true"
+      />
+    </div>
+  </div>
+  }
+
+  <!-- Complete State: Results -->
+  @if (uploadState() === 'complete' && result()) {
+  <div class="card">
+    <div class="card-header bg-success text-white">
+      <i class="bi bi-check-circle me-2"></i>
+      อัพโหลดเสร็จสิ้น
+    </div>
+    <div class="card-body">
+      <div class="row text-center">
+        <div class="col-md-3">
+          <div class="border rounded p-3">
+            <div class="fs-3 fw-bold text-success">{{ result()!.created }}</div>
+            <div class="text-muted">สร้างใหม่</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="border rounded p-3">
+            <div class="fs-3 fw-bold text-primary">{{ result()!.updated }}</div>
+            <div class="text-muted">อัพเดท</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="border rounded p-3">
+            <div class="fs-3 fw-bold text-secondary">
+              {{ result()!.skipped }}
+            </div>
+            <div class="text-muted">ข้าม</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="border rounded p-3">
+            <div class="fs-3 fw-bold text-danger">{{ result()!.failed }}</div>
+            <div class="text-muted">ล้มเหลว</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Details -->
+      @if (result()!.errors.length > 0) {
+      <div class="mt-4">
+        <h6 class="text-danger">
+          <i class="bi bi-exclamation-triangle me-1"></i>
+          รายการที่ล้มเหลว
+        </h6>
+        <div class="table-responsive" style="max-height: 200px">
+          <table class="table table-sm table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>แถว</th>
+                <th>Period ID</th>
+                <th>ข้อผิดพลาด</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (err of result()!.errors; track err.rowNumber) {
+              <tr>
+                <td>{{ err.rowNumber }}</td>
+                <td>{{ err.periodId }}</td>
+                <td>{{ err.message }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <button
+          class="btn btn-outline-danger btn-sm mt-2"
+          (click)="downloadErrorReport()"
+        >
+          <i class="bi bi-download me-1"></i>
+          ดาวน์โหลดรายงานข้อผิดพลาด
+        </button>
+      </div>
+      }
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary" (click)="reset()">
+        <i class="bi bi-plus-lg me-1"></i>
+        อัพโหลดไฟล์ใหม่
+      </button>
+    </div>
+  </div>
+  }
+</div>

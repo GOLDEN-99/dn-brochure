@@ -10,15 +10,15 @@ import { catchError, Observable, of, switchMap } from 'rxjs';
 export class BranchService {
 
   constructor() { }
-  private api = inject(ApiService)
-  private url = environment.oi
+  private readonly api = inject(ApiService)
+  private readonly url = environment.oi
   term = signal("")
-  private term$ = toObservable(this.term)
+  private readonly term$ = toObservable(this.term)
   private searchBranch(term: string): Observable<TBranchDto[]> {
     if (term === '') return of([])
     return this.api.get<TBranchDto[]>(`${this.url}/other-income/branch`, { params: { term } }).pipe(catchError(err => of([])))
   }
-  private queryBranch$ = this.term$.pipe(switchMap(t => this.searchBranch(t)))
+  private readonly queryBranch$ = this.term$.pipe(switchMap(t => this.searchBranch(t)))
   queryBranch = toSignal(this.queryBranch$, { initialValue: [] })
 }
 

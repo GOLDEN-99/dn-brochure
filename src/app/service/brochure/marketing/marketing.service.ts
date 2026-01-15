@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../../api/api.service';
 import { TBorchureHead, TColor, TGroupItemList, TItem, TItemList, TMarketingParams, TMaybe } from '../../../types';
 import { tap } from 'rxjs';
@@ -12,7 +12,7 @@ import { environment } from '../../../../environments/environment';
 export class MarketingService implements IBrochureService {
 
 
-  private setState = ({ wholeName, wholeType, zone, promotionType, promotion, isNewCustomer, fromDate, toDate }: TItemList) => {
+  private readonly setState = ({ wholeName, wholeType, zone, promotionType, promotion, isNewCustomer, fromDate, toDate }: TItemList) => {
     this.head.update(() => ({ wholeName, wholeType, zone, promotionType, isNewCustomer, fromDate, toDate }))
     const size = 12
     this.content.update(() => promotion.reduce<TItem[][]>(transformItemList(size), [[]]))
@@ -22,13 +22,13 @@ export class MarketingService implements IBrochureService {
   head = signal<TMaybe<TBorchureHead>>(null)
   content = signal<TGroupItemList>([[]])
   maxItem = signal<12>(12)
-  totalPage = computed(() => [...Array(this.content().length)].map((_, idx) => idx))
+  totalPage = computed(() => Array.from({ length: this.content().length }).map((_, idx) => idx))
   color = computed<TColor>(() => this.head()?.zone === "BKK" ? "purple" : "green")
 
 
-  private api = inject(ApiService);
+  private readonly api = inject(ApiService);
 
-  private url = environment.brochureEndpoint
+  private readonly url = environment.brochureEndpoint
 
   getBrochureList({ promoType, wholeType, isNewCustomer, isBkk, token, idPromotion }: TMarketingParams) {
     return this.api.get<TItemList>(`${this.url}/PaperPro/V2`, {
