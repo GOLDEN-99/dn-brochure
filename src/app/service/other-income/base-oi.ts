@@ -38,6 +38,7 @@ export type ManyContactResponse = {
     compType: string
     incomeName: string
     incomeType: number
+    lastAdded: string | null
 }
 
 export type ManyContactLightResponse = { totalBranch: number; totalAmount: number } & ManyContactResponse
