@@ -3,10 +3,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OiNotLightService } from '../../../../service/other-income/oi-not-light.service';
 import { DatePipe } from '@angular/common';
 import { OtherIncomePurchasingQueryTabComponent } from "../../account/other-income-purchasing-query-tab.component";
+import { NgbCalendar, NgbDate } from '@ng-bootstrap/ng-bootstrap';
+import { ManyContactResponse } from '../../../../service/other-income/base-oi';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-purchase-home',
-  imports: [RouterLink, DatePipe, OtherIncomePurchasingQueryTabComponent],
+  imports: [RouterLink, DatePipe, OtherIncomePurchasingQueryTabComponent, FormsModule],
   templateUrl: './purchase-home.component.html',
   styleUrl: './purchase-home.component.scss',
 })
@@ -39,11 +42,28 @@ export class PurchaseHomeComponent {
   }
 
 
-  private router = inject(Router)
-  private route = inject(ActivatedRoute)
+  private readonly router = inject(Router)
+  private readonly route = inject(ActivatedRoute)
   genUrl = (id: number, compType?: string) => {
     return this.router.createUrlTree([id,], { relativeTo: this.route, queryParams: { compType } })
   }
+
+  private readonly calender = inject(NgbCalendar)
+  filterStatus = signal(false)
+  private readonly fliterData = ({ year, month }: NgbDate) => (d: ManyContactResponse) => {
+    if (d.lastAdded === null) return [d]
+    const [yyyy, mm] = d.lastAdded.split('T')[0].split('-').map(Number)
+    if (yyyy === year && mm === month) return []
+    return [d]
+  }
+  rederList = computed(() => {
+    const filterStatus = this.filterStatus()
+    const data = this.data()
+    if (!filterStatus) return data
+    const today = this.calender.getToday()
+    const filterWithToday = this.fliterData(today)
+    return data.flatMap(filterWithToday)
+  })
 }
 
 

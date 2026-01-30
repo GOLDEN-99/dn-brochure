@@ -22,26 +22,33 @@
     (click)="onSearch()"
   />
   <table class="table table-striped table-bordered">
-    <thead>
+    <thead style="font-size: 12px">
       <tr>
         <th>กิจกรรม</th>
         <th>เริ่ม</th>
         <th>จบ</th>
         <th>ชื่อซัพพลายเออร์</th>
-        <th style="min-width: 84px"></th>
+        <th>เพิ่มรายเดือนเมื่อ</th>
+        <th>
+          <label style="display: flex; align-items: center; gap: 4px">
+            <input type="checkbox" [(ngModel)]="filterStatus" />
+            <span>รอเพิ่มรายเดือน</span>
+          </label>
+        </th>
       </tr>
     </thead>
-    <tbody>
-      @for (item of data(); track $index) {
-      <tr>
-        <td>{{ item.eventName }}</td>
-        <td>{{ item.startDate | date }}</td>
-        <td>{{ item.endDate | date }}</td>
-        <td>{{ item.compName }}</td>
-        <td>
-          <a [routerLink]="genUrl(item.id, item.compType)">รายละเอียด</a>
-        </td>
-      </tr>
+    <tbody style="font-size: 12px">
+      @for (item of rederList(); track $index) {
+        <tr>
+          <td>{{ item.eventName }}</td>
+          <td>{{ item.startDate | date }}</td>
+          <td>{{ item.endDate | date }}</td>
+          <td>{{ item.compName }}</td>
+          <td>{{ (item.lastAdded | date) ?? "ยังไม่เพิ่ม" }}</td>
+          <td>
+            <a [routerLink]="genUrl(item.id, item.compType)">รายละเอียด</a>
+          </td>
+        </tr>
       }
     </tbody>
   </table>
