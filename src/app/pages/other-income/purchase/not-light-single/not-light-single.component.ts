@@ -30,6 +30,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
   styleUrl: './not-light-single.component.scss'
 })
 export class NotLightSingleComponent {
+  constructor() {
+    console.log(this.isPurchase)
+  }
   private readonly router = inject(Router)
   private readonly route = inject(ActivatedRoute)
   private readonly toastService = inject(ToastService)

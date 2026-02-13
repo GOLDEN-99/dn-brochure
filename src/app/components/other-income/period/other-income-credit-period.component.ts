@@ -1,8 +1,9 @@
-import { Component, input, viewChild } from '@angular/core';
+import { Component, inject, input, signal, viewChild } from '@angular/core';
 import { TCreditNoteDto } from '../../../service/other-income/base-oi';
 import { DecimalPipe } from '@angular/common';
 import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.component";
 import { BasePeriodComponent } from './base-period.component';
+import { PeriodService } from '../../../service/other-income/period.service';
 
 @Component({
   selector: 'app-other-income-credit-period',
@@ -36,7 +37,10 @@ import { BasePeriodComponent } from './base-period.component';
               <td>{{ credit.creditAmount| number : "1.2-2" }}</td>
               <td>{{ credit.creditRemark }}</td>
               @if(canEdit()){
-                <td colspan="2">{{ credit.creditDate }}</td>
+                <td>{{ credit.creditDate }}</td>
+                @if (creditList().at(-1)?.id === credit.id) {
+                  <td><button class="btn btn-squre btn-danger" (click)="onDelete(credit.id)" [disabled]="deleting()"><i class="bi bi-trash"></i></button></td>
+                }@else{<td></td>}
               } @else {
                 <td>{{ credit.creditDate }}</td>
               }
@@ -59,16 +63,34 @@ import { BasePeriodComponent } from './base-period.component';
   styles: ''
 })
 export class OtherIncomeCreditPeriodComponent extends BasePeriodComponent {
+
+  private readonly periodService = inject(PeriodService);
+
   canEdit = input(false);
   creditList = input.required<TCreditNoteDto[]>();
   periodId = input.required<number>();
   incomeAmount = input.required<number>();
   addedAmount = input.required<number>();
   disabled = input(false);
+  deleting = signal(false);
 
-  private creditModal = viewChild('creditModal');
+  private readonly creditModal = viewChild('creditModal');
 
   openCredit() {
     this.openModal(this.creditModal());
+  }
+
+  onDelete(creditId: number) {
+    this.deleting.set(true);
+    this.periodService.deleteCreditNote(this.periodId(), creditId).subscribe({
+      next: () => {
+        this.deleting.set(false);
+        this.success.emit('ลบใบลดหนี้สำเร็จ');
+      },
+      error: (err) => {
+        this.deleting.set(false);
+        this.fail.emit(err?.error?.message ?? 'ลบใบลดหนี้ไม่สำเร็จ');
+      }
+    });
   }
 }

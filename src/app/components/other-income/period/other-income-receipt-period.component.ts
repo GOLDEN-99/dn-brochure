@@ -1,9 +1,10 @@
-import { Component, input, viewChild } from '@angular/core';
+import { Component, effect, inject, input, signal, viewChild } from '@angular/core';
 import { TReceiptItemDto } from '../../../service/other-income/base-oi';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.component';
 import { BasePeriodComponent } from './base-period.component';
+import { PeriodService } from '../../../service/other-income/period.service';
 
 @Component({
   selector: 'app-other-income-receipt-period',
@@ -38,7 +39,10 @@ import { BasePeriodComponent } from './base-period.component';
               <td>{{ inv.receAmount| number : "1.2-2" }}</td>
               <td>{{ inv.receRemark  }}</td>
               @if(canEdit()){
-                <td colspan="2">{{ inv.receDate | date}}</td>
+                <td >{{ inv.receDate | date}}</td>
+                @if (receiptList().at(-1)?.id === inv.id ) {
+                  <td><button class="btn btn-squre btn-danger" (click)="onDelete(inv.id)" [disabled]="deleting()"><i class="bi bi-trash" ></i></button></td>
+                }@else{<td></td>}
               }@else {
                 <td>{{ inv.receDate | date}}</td>
               }
@@ -62,16 +66,35 @@ import { BasePeriodComponent } from './base-period.component';
   styles: '',
 })
 export class OtherIncomeReceiptPeriodComponent extends BasePeriodComponent {
+
+  private readonly periodService = inject(PeriodService);
+
   receiptList = input.required<TReceiptItemDto[]>();
   periodId = input.required<number>();
   invAmount = input.required<number>();
   receAmount = input.required<number>();
   canEdit = input(false);
+  canEditEffect = effect(() => console.log(this.canEdit()))
   disabled = input(false);
+  deleting = signal(false);
 
-  private receiptModal = viewChild('receiptModal');
+  private readonly receiptModal = viewChild('receiptModal');
 
   openReceipt() {
     this.openModal(this.receiptModal());
+  }
+
+  onDelete(receiptId: number) {
+    this.deleting.set(true);
+    this.periodService.deleteReceipt(this.periodId(), receiptId).subscribe({
+      next: () => {
+        this.deleting.set(false);
+        this.success.emit('ลบใบเสร็จสำเร็จ');
+      },
+      error: (err) => {
+        this.deleting.set(false);
+        this.fail.emit(err?.error?.message ?? 'ลบใบเสร็จไม่สำเร็จ');
+      }
+    });
   }
 }

@@ -42,7 +42,7 @@ export class OtherIncomeMonthlyEditComponent {
   id = input.required<number>()
   canEdit = input(false)
 
-  private modalService = inject(NgbModal)
+  private readonly modalService = inject(NgbModal)
   openModal(content: any) {
     const modalRef = this.modalService.open(content)
     modalRef.result.finally(() => {

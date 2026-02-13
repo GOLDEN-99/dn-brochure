@@ -47,12 +47,18 @@ export class PeriodService {
     return this.api.post<TBatchResult>(`${this.url}/batch/credit`, req)
   }
 
-  /**
-   * Update period status manually
-   * @param periodId - The period ID
-   * @param status - The new status (2=Complete, 3=Invoice, 4=Receipt, null=auto)
-   * @returns Promise with affectedRows count
-   */
+  deleteReceipt(periodId: number, receiptId: number) {
+    return this.api.delete(`${this.url}/period/${periodId}/receipt/${receiptId}`)
+  }
+
+  deleteInvoice(periodId: number, invoiceId: number) {
+    return this.api.delete(`${this.url}/period/${periodId}/invoice/${invoiceId}`)
+  }
+
+  deleteCreditNote(periodId: number, creditNoteId: number) {
+    return this.api.delete(`${this.url}/period/${periodId}/credit/${creditNoteId}`)
+  }
+
   updatePeriodStatus(periodId: number, status: PeriodStatus | null) {
     return this.api.patch<{ affectedRows: number }>(
       `${this.url}/period/${periodId}/status`,

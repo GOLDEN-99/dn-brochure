@@ -1,9 +1,10 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, input, viewChild } from '@angular/core';
+import { Component, inject, input, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OtherIncomeInvoiceModalComponent } from './other-income-invoice-modal.component';
 import { TInviceItemDto } from '../../../service/other-income/base-oi';
 import { BasePeriodComponent } from './base-period.component';
+import { PeriodService } from '../../../service/other-income/period.service';
 
 @Component({
   selector: 'app-other-income-invoice-period',
@@ -38,7 +39,10 @@ import { BasePeriodComponent } from './base-period.component';
               <td>{{ inv.invAmount| number : "1.2-2" }}</td>
               <td>{{ inv.invRemark }}</td>
               @if(canEdit()){
-                <td colspan="2">{{ inv.invDate |date }}</td>
+                <td>{{ inv.invDate |date }}</td>
+                @if (invoiceList().at(-1)?.id === inv.id) {
+                  <td><button class="btn btn-squre btn-danger" (click)="onDelete(inv.id)" [disabled]="deleting()"><i class="bi bi-trash"></i></button></td>
+                }@else{<td></td>}
               } @else {
                 <td>{{ inv.invDate |date }}</td>
               }
@@ -61,16 +65,34 @@ import { BasePeriodComponent } from './base-period.component';
   `,
 })
 export class OtherIncomeInvoicePeriodComponent extends BasePeriodComponent {
+
+  private readonly periodService = inject(PeriodService);
+
   canEdit = input(false);
   invoiceList = input.required<TInviceItemDto[]>();
   periodId = input.required<number>();
   incomeAmount = input.required<number>();
   addedAmount = input.required<number>();
   disabled = input(false);
+  deleting = signal(false);
 
   private readonly invoiceModal = viewChild('invoiceModal');
 
   openInvoice() {
     this.openModal(this.invoiceModal());
+  }
+
+  onDelete(invoiceId: number) {
+    this.deleting.set(true);
+    this.periodService.deleteInvoice(this.periodId(), invoiceId).subscribe({
+      next: () => {
+        this.deleting.set(false);
+        this.success.emit('ลบใบแจ้งหนี้สำเร็จ');
+      },
+      error: (err) => {
+        this.deleting.set(false);
+        this.fail.emit(err?.error?.message ?? 'ลบใบแจ้งหนี้ไม่สำเร็จ');
+      }
+    });
   }
 }
