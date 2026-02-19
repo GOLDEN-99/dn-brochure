@@ -2,7 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, debounceTime, distinctUntilChanged, filter, map, Observable, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, Observable, switchMap } from 'rxjs';
 import { TEvent } from './event.service';
 import { TOIComp } from './company.service';
 import { TAccountQueryReqState } from './period-not-light.service';
@@ -15,13 +15,13 @@ export class PeriodLightService {
 
   constructor() { }
 
-  private url = environment.oi
-  private api = inject(ApiService)
+  private readonly url = environment.oi
+  private readonly api = inject(ApiService)
   params = signal<TAccountQueryReqState>({ filter: 1, compType: 1, mode: 1, eventId: 0, term: '', goodCode: '', compCode: '' })
-  private params2$ = toObservable(this.params).pipe(
-    filter(({ goodCode, compCode, eventId, mode }) => {
+  private readonly params2$ = toObservable(this.params).pipe(
+    filter(({ goodCode, eventId, mode }) => {
       switch (mode) {
-        case 1: return compCode !== ''
+        case 1: return true
         case 2: return goodCode !== ''
         case 3: return eventId !== 0
         default: return false

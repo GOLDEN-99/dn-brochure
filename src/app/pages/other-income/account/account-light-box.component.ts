@@ -65,11 +65,11 @@ import { PeriodStatus } from '../../../types/other-income';
   ]
 })
 export class AccountLightBoxComponent {
-  private periodLight = inject(PeriodLightService)
+  private readonly periodLight = inject(PeriodLightService)
   data = this.periodLight.modPeriod
   param = this.periodLight.params
-  private router = inject(Router)
-  private route = inject(ActivatedRoute)
+  private readonly router = inject(Router)
+  private readonly route = inject(ActivatedRoute)
 
   // Helper methods for template
   getStatusLabel = getPeriodStatusLabel;

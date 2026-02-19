@@ -2,7 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, debounceTime, distinctUntilChanged, filter, map, Observable, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, Observable, switchMap } from 'rxjs';
 import { TEvent } from './event.service';
 import { TIncome } from './income.service';
 import { TOIComp } from './company.service';
@@ -15,14 +15,14 @@ export class PeriodNotLightService {
 
   constructor() { }
 
-  private url = environment.oi
-  private api = inject(ApiService)
+  private readonly url = environment.oi
+  private readonly api = inject(ApiService)
 
   params = signal<TAccountQueryReqState>({ filter: 1, compType: 1, mode: 1, eventId: 0, term: '', goodCode: '', compCode: '' })
-  private params$ = toObservable(this.params).pipe(
-    filter(({ goodCode, compCode, eventId, mode }) => {
+  private readonly params$ = toObservable(this.params).pipe(
+    filter(({ goodCode, eventId, mode }) => {
       switch (mode) {
-        case 1: return compCode !== ''
+        case 1: return true
         case 2: return goodCode !== ''
         case 3: return eventId !== 0
         default: return false
@@ -46,7 +46,7 @@ export class PeriodNotLightService {
       }
     })
   )
-  private data$ = this.params$.pipe(switchMap(({ compType, ...res }) => this.getMany(compType, { ...res })))
+  private readonly data$ = this.params$.pipe(switchMap(({ compType, ...res }) => this.getMany(compType, { ...res })))
 
 
   private getMany(comp: number, params: TQueryReq): Observable<TPeriodSummary[]> {
@@ -56,7 +56,6 @@ export class PeriodNotLightService {
   periods = toSignal(this.data$, { initialValue: [] })
   modPeriod = computed(() => this.periods())
 
-  private isProduct = (incomeType: number) => [1, 2].includes(incomeType)
 }
 
 type TPeriodSummary = {

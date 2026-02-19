@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -15,8 +15,8 @@ import { FormsModule } from '@angular/forms';
         (ngModelChange)="compTypeChange.emit($event)"
         class="form-select"
       >
-        <option [ngValue]="1">DN</option>
-        <option [ngValue]="2">HU</option>
+        <option ngValue="DN">DN</option>
+        <option ngValue="HU">HU</option>
       </select>
     </div>
     <div class="mb-3 col-md">
@@ -45,14 +45,11 @@ import { FormsModule } from '@angular/forms';
         (ngModelChange)="termChange.emit($event)"
       />
     </div>
-    <div class="mb-3">
-      <button class="btn btn-primary w-100" (click)="click.emit()">ค้นหากิจกรรม</button>
-    </div>
   </div>
   `,
 })
 export class OtherIncomePurchasingQueryTabComponent {
-  compType = input<number>(1)
+  compType = input<'DN' | 'HU'>('DN')
   compTypeChange = output<number>()
 
   field = input<number>(1)
@@ -62,7 +59,4 @@ export class OtherIncomePurchasingQueryTabComponent {
   termChange = output<string>()
 
   disbleMode = input<boolean>(false)
-
-  click = output<void>()
-
 }

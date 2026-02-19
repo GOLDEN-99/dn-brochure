@@ -22,11 +22,11 @@ export class OtherIncomeHeadEditComponent {
   event = input.required<TEventProps>()
   submit = output<TApiBaseformInsert>()
   mode = input<TFilter>('all')
-  private calService = inject(NgbCalendar)
-  private today = this.calService.getToday()
-  private headForm = inject(OiBaseformService)
+  private readonly calService = inject(NgbCalendar)
+  private readonly today = this.calService.getToday()
+  private readonly headForm = inject(OiBaseformService)
   state = this.headForm.baseformState
-  private baseUpdate = this.headForm.updateOneField
+  private readonly baseUpdate = this.headForm.updateOneField
   updateEvent = this.baseUpdate('eventId')
   updatePeriod = this.baseUpdate('period')
   updateStartDate = this.baseUpdate('startDate')
@@ -35,8 +35,8 @@ export class OtherIncomeHeadEditComponent {
   updateCompName = this.baseUpdate('compName')
   updateCompCode = this.baseUpdate('compCode')
 
-  private modalService = inject(NgbModal)
-  private modal = viewChild('headModal')
+  private readonly modalService = inject(NgbModal)
+  private readonly modal = viewChild('headModal')
   openModal() {
     this.state.update(prev => {
       const { startDate, endDate, period, } = this.head()
@@ -66,6 +66,7 @@ export class OtherIncomeHeadEditComponent {
       const temp = new NgbDate(yyyy, mm, dd)
       return temp
     } catch (err) {
+      console.log(err)
       return this.today
     }
   }
