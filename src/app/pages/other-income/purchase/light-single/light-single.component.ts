@@ -8,6 +8,7 @@ import { OTHER_INCOME_PAGE_TOKEN } from '../../../../lib';
 import { OtherIncomePeriodDisplayComponent } from "../../../../components/other-income/period/other-income-period-display/other-income-period-display.component";
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { OiLightListService } from '../../../../service/other-income/oi-light-list.service';
 @Component({
   selector: 'app-light-single',
   imports: [
@@ -25,7 +26,9 @@ export class LightSingleComponent {
   private readonly modalServ = inject(NgbModal)
   private readonly pageToken = inject(OTHER_INCOME_PAGE_TOKEN)
   isPurchase = this.pageToken.isPurchase
+
   private readonly lightServ = inject(OiLightService)
+  private readonly lightList = inject(OiLightListService)
 
   private readonly deleteModal = viewChild('deleteModal')
   deleting = signal(false)
@@ -41,11 +44,13 @@ export class LightSingleComponent {
 
   onRefetch() {
     this.lightServ.refetch();
+    this.lightList.refetch();
   }
 
   onSuccess(value: string) {
     this.toastService.success(value);
     this.lightServ.refetch();
+    this.lightList.refetch();
   }
 
   onFail(value: string) {
@@ -71,6 +76,7 @@ export class LightSingleComponent {
         this.deleting.set(false)
         this.modalServ.dismissAll()
         this.toastService.success('ลบข้อมูลสำเร็จ');
+        this.lightList.refetch()
         this.router.navigate(['..'], { relativeTo: this.route })
       },
       error: (err) => {
