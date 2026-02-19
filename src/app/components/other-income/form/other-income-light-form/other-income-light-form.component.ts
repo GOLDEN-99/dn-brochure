@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../service/api/api.service';
 import { environment } from '../../../../../environments/environment';
 import { ToastService } from '../../../../service/toast/toast.service';
+import { OiLightListService } from '../../../../service/other-income/oi-light-list.service';
 
 @Component({
   selector: 'app-other-income-light-form',
@@ -46,17 +47,21 @@ export class OtherIncomeLightFormComponent {
   target = signal(0)
   targetAmount = signal(0)
 
-  private router = inject(Router)
-  private route = inject(ActivatedRoute)
-  private toastService = inject(ToastService)
+  private readonly router = inject(Router)
+  private readonly route = inject(ActivatedRoute)
+  private readonly toastService = inject(ToastService)
 
-  private api = inject(ApiService)
-  private url = environment.oi
+  private readonly api = inject(ApiService)
+  private readonly url = environment.oi
+
+  private readonly lightList = inject(OiLightListService)
+
   onSubmit() {
     const req = this.request
     this.api.post(`${this.url}/other-income/contact/light/${this.headId()}`, req).subscribe({
       next: (res) => {
         this.toastService.success('เพิ่มรายได้อื่นๆ สำเร็จ')
+        this.lightList.refetch();
         this.router.navigate(['../../'], { relativeTo: this.route })
       },
       error: (err) => {
