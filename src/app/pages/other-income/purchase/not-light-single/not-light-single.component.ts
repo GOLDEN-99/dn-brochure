@@ -13,6 +13,7 @@ import { OtherIncomeMonthlyListComponent } from "../../../../components/other-in
 import { OTHER_INCOME_PAGE_TOKEN } from '../../../../lib';
 import { OtherIncomePeriodDisplayComponent } from "../../../../components/other-income/period/other-income-period-display/other-income-period-display.component";
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { PeriodNotLightService } from '../../../../service/other-income/period-not-light.service';
 
 @Component({
   selector: 'app-not-light-single',
@@ -30,9 +31,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
   styleUrl: './not-light-single.component.scss'
 })
 export class NotLightSingleComponent {
-  constructor() {
-    console.log(this.isPurchase)
-  }
+
   private readonly router = inject(Router)
   private readonly route = inject(ActivatedRoute)
   private readonly toastService = inject(ToastService)
@@ -44,6 +43,7 @@ export class NotLightSingleComponent {
   private readonly deleteModal = viewChild('deleteModal')
   deleting = signal(false)
   data = this.notLightServ.singleRecord
+  private readonly notLightPeriod = inject(PeriodNotLightService)
   invalidValue = computed(() => this.data().length !== 1)
   currentResult = computed(() => this.data()[0])
 
@@ -61,6 +61,7 @@ export class NotLightSingleComponent {
   onSuccess(value: string) {
     this.toastService.success(value);
     this.notLightServ.refetch();
+    this.notLightPeriod.refetch();
   }
 
   onFail(value: string) {
@@ -88,6 +89,7 @@ export class NotLightSingleComponent {
         this.deleting.set(false)
         this.modalServ.dismissAll()
         this.toastService.success('ลบข้อมูลสำเร็จ');
+        this.notLightPeriod.refetch();
         this.router.navigate(['..'], { relativeTo: this.route })
       },
       error: (err) => {
