@@ -5,6 +5,7 @@ import { ApiService } from '../../../../service/api/api.service';
 import { environment } from '../../../../../environments/environment';
 import { ToastService } from '../../../../service/toast/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { OiNotLightListService } from '../../../../service/other-income/oi-not-light-list.service';
 @Component({
   selector: 'app-other-income-not-light-form',
   imports: [TargetSubformComponent, FormsModule],
@@ -13,7 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class OtherIncomeNotLightFormComponent {
 
-  private route = inject(ActivatedRoute)
+  private readonly route = inject(ActivatedRoute)
 
   headId = input<number>()
   incVat = signal(false)
@@ -34,7 +35,7 @@ export class OtherIncomeNotLightFormComponent {
     const capAmount = this.capAmount()
     if (capAmount === null) return false
     const parseCap = Number(capAmount)
-    return isNaN(parseCap) || parseCap === 0
+    return Number.isNaN(parseCap) || parseCap === 0
   })
   setCapNull = () => this.capAmount.set(null)
   setCapZero = () => this.capAmount.set(0)
@@ -46,8 +47,8 @@ export class OtherIncomeNotLightFormComponent {
     return invalidStep || invalidCap
   })
 
-  private api = inject(ApiService)
-  private url = environment.oi
+  private readonly api = inject(ApiService)
+  private readonly url = environment.oi
 
   get request() {
     const incVat = this.incVat()
@@ -66,14 +67,17 @@ export class OtherIncomeNotLightFormComponent {
       const max = typeof nextStart === 'number' ? nextStart : null
       return { min, max, rate } satisfies ReqStep
     })
-    const invalidValue = stepList.some(({ min, rate }) => isNaN(min) || isNaN(rate))
+    const invalidValue = stepList.some(({ min, rate }) => Number.isNaN(min) || Number.isNaN(rate))
     if (invalidValue) throw new Error('target ไม่ถูกต้อง')
     return {
       incVat, capAmount, stepList, stepType, isRebate, isInce, isComp, isDc
     }
   }
-  private toastService = inject(ToastService)
-  private router = inject(Router)
+  private readonly toastService = inject(ToastService)
+  private readonly router = inject(Router)
+
+  private readonly notLightList = inject(OiNotLightListService)
+
   onSubmit() {
     try {
       this.api.post<{ id: number }>(
@@ -83,6 +87,7 @@ export class OtherIncomeNotLightFormComponent {
         {
           next: (res) => {
             this.toastService.success('เพิ่มรายได้อื่นๆสำเร็จ')
+            this.notLightList.refetch()
             this.router.navigate(['../../'], { relativeTo: this.route })
           },
           error: (err) => {
