@@ -8,6 +8,7 @@ import { DecimalPipe } from '@angular/common';
 import { TOIStepItem } from '../../../../types';
 import { calFlat, calSemi, calStep } from './lib';
 import { formatLocalNumber } from '../../../../lib/formatter';
+import { OiNotLightListService } from '../../../../service/other-income/oi-not-light-list.service';
 
 @Component({
   selector: 'app-other-income-monthly-edit',
@@ -97,6 +98,8 @@ export class OtherIncomeMonthlyEditComponent {
     this.monthService.calIncome(comp, id)
   }
 
+  private readonly notLightList = inject(OiNotLightListService)
+
   onSubmit() {
     if (this.disableOnclick()) return
     this.disableOnclick.set(true)
@@ -112,6 +115,7 @@ export class OtherIncomeMonthlyEditComponent {
     this.monthService.insertNlMonth(id, { calAmount, actualAmount, startDate, reason, incomeAmount, receList, cn, eventType }).subscribe({
       next: () => {
         this.success.emit('เพิ่มรับรู้รายเดือนสำเร็จ')
+        this.notLightList.refetch()
         this.modalService.dismissAll()
       },
       error: (err) => {
