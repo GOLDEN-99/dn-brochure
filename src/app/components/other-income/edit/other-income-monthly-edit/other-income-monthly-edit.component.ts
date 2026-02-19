@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MonthlyService } from '../../../../service/other-income/monthly.service';
@@ -7,6 +7,7 @@ import { YearSelectComponent } from "../../../date-input/year-select.component";
 import { DecimalPipe } from '@angular/common';
 import { TOIStepItem } from '../../../../types';
 import { calFlat, calSemi, calStep } from './lib';
+import { formatLocalNumber } from '../../../../lib/formatter';
 
 @Component({
   selector: 'app-other-income-monthly-edit',
@@ -50,10 +51,11 @@ export class OtherIncomeMonthlyEditComponent {
       this.resetForm()
     })
   }
-  private monthService = inject(MonthlyService)
+
+  private readonly monthService = inject(MonthlyService)
   date = this.monthService.date
   isoDate = computed(() => {
-    const { year, month, day } = this.date()
+    const { year, month } = this.date()
     return `${year}-${String(month).padStart(2, '0')}-01`
   })
   onMonthChange = this.monthService.updateDate('month')
@@ -61,14 +63,32 @@ export class OtherIncomeMonthlyEditComponent {
   calIncome = this.monthService.incomeList
   summary = computed(() => this.calIncome().reduce((acc, cur) => acc + cur.calAmount, 0))
 
-  private queryReceipt = this.monthService.incomeList
-  calAmount = computed(() => this.queryReceipt().reduce((acc, { calAmount }) => acc + calAmount, 0))
-  actualAmount = signal(0)
+  // CN amount — manual input, resets to 0 on form reset
+  cn = signal(0)
+  rawCnAmount = linkedSignal(() => formatLocalNumber(this.cn()))
+
+  // Total amount — read-only, derived from fetched data
+  rawTotalAmount = linkedSignal(() => formatLocalNumber(this.summary()))
+
+  // Actual amount — defaults to summary - cn, user can override manually
+  actualAmount = linkedSignal(() => this.summary() - this.cn())
+  rawActualAmount = linkedSignal(() => formatLocalNumber(this.summary() - this.cn()))
+
   incomeAmount = computed(() => this.calWithCap()(this.actualAmount()))
 
-  dif = computed(() => this.summary() - this.actualAmount())
   reason = signal('')
-  cn = signal(0)
+  disableOnclick = signal(false)
+
+  onCnBlur(value: string) {
+    const parsed = Number.parseFloat(value.replaceAll(',', '')) || 0
+    this.cn.set(parsed)
+  }
+
+  onActualBlur(value: string) {
+    const parsed = Number.parseFloat(value.replaceAll(',', '')) || 0
+    this.actualAmount.set(parsed)
+    this.rawActualAmount.set(formatLocalNumber(parsed))
+  }
 
   onSearch() {
     const comp = this.compType()
@@ -76,7 +96,7 @@ export class OtherIncomeMonthlyEditComponent {
     if (comp !== 'DN' && comp !== 'HU') return
     this.monthService.calIncome(comp, id)
   }
-  disableOnclick = signal(false)
+
   onSubmit() {
     if (this.disableOnclick()) return
     this.disableOnclick.set(true)
@@ -90,7 +110,7 @@ export class OtherIncomeMonthlyEditComponent {
     const cn = this.cn()
     const eventType = this.eventType()
     this.monthService.insertNlMonth(id, { calAmount, actualAmount, startDate, reason, incomeAmount, receList, cn, eventType }).subscribe({
-      next: (res) => {
+      next: () => {
         this.success.emit('เพิ่มรับรู้รายเดือนสำเร็จ')
         this.modalService.dismissAll()
       },
@@ -104,7 +124,6 @@ export class OtherIncomeMonthlyEditComponent {
   resetForm = () => {
     this.cn.set(0)
     this.reason.set('')
-    this.actualAmount.set(0)
     this.disableOnclick.set(false)
   }
 }

@@ -1,31 +1,31 @@
-import { inject, Injectable, OnInit, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
 import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { TCompType, TOIStepItem } from '../../types';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, of, Subject, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, of, Subject, switchMap } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MonthlyService {
-  private url = environment.oi
-  private api = inject(ApiService)
-  private cal = inject(NgbCalendar)
-  private today = this.cal.getToday()
+  private readonly url = environment.oi
+  private readonly api = inject(ApiService)
+  private readonly cal = inject(NgbCalendar)
+  private readonly today = this.cal.getToday()
   constructor() { }
-  private id$ = new BehaviorSubject<number | null>(null)
+  private readonly id$ = new BehaviorSubject<number | null>(null)
   date = signal({ year: this.today.year, month: this.today.month, day: this.today.day })
   updateDate = (key: keyof NgbDateStruct) => (value: number) => this.date.update(prev => ({ ...prev, [key]: value }))
-  private date$ = toObservable(this.date)
-  private convertDate$ = this.date$.pipe(
+  private readonly date$ = toObservable(this.date)
+  private readonly convertDate$ = this.date$.pipe(
     map(({ month, year }) => {
       return `${year}-${String(month).padStart(2, '0')}-01`
     })
   )
-  private comp$ = new Subject<TCompType>()
-  private param$ = combineLatest([this.id$, this.convertDate$, this.comp$])
+  private readonly comp$ = new Subject<TCompType>()
+  private readonly param$ = combineLatest([this.id$, this.convertDate$, this.comp$])
 
   getMonthlyIncome({ id, month, comp }: TMonthlyReq) {
     if (id === null) return of([])
@@ -38,7 +38,7 @@ export class MonthlyService {
     this.comp$.next(comp)
     this.id$.next(id)
   }
-  private incomeList$ = this.param$
+  private readonly incomeList$ = this.param$
     .pipe(
       switchMap(([id, month, comp]) => this.getMonthlyIncome({ id, month, comp }))
     )

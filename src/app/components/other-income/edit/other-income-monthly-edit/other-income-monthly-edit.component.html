@@ -2,11 +2,11 @@
   <div class="row" style="justify-content: space-between">
     <h2 class="col-auto">รายการรับรู้รายเดือน</h2>
     @if (canEdit()) {
-    <div class="col-auto">
-      <button class="btn btn-primary" (click)="openModal(monthlyModal)">
-        เพิ่มรายได้รายเดือน
-      </button>
-    </div>
+      <div class="col-auto">
+        <button class="btn btn-primary" (click)="openModal(monthlyModal)">
+          เพิ่มรายได้รายเดือน
+        </button>
+      </div>
     }
   </div>
 </div>
@@ -28,7 +28,7 @@
     />
     <app-year-select [year]="date().year" (yearChange)="onYearChange($event)" />
     <div class="mb-3">
-      <button class="btn btn-info w-100" (click)="onSearch()">คำนวน</button>
+      <button class="btn btn-info w-100" (click)="onSearch()">ดึงยอด</button>
     </div>
     <div style="max-width: 100%; overflow-x: auto">
       <table class="table">
@@ -41,26 +41,34 @@
         </thead>
         <tbody>
           @for (inc of calIncome(); track $index) {
-          <tr>
-            <td>{{ inc.receNumb }}</td>
-            <td>{{ inc.billNumb }}</td>
-            <td>{{ inc.calAmount | number : "1.2-2" }}</td>
-          </tr>
+            <tr>
+              <td>{{ inc.receNumb }}</td>
+              <td>{{ inc.billNumb }}</td>
+              <td>{{ inc.calAmount | number: "1.2-2" }}</td>
+            </tr>
           }
           <tr>
             <td>รวม</td>
             <td></td>
-            <td>{{ summary() | number : "1.2-2" }}</td>
+            <td>{{ summary() | number: "1.2-2" }}</td>
           </tr>
         </tbody>
       </table>
     </div>
     <div class="app-form-field-inline" style="justify-content: space-between">
       <div>
+        <label for="total">ยอดรวม</label>
+      </div>
+      <div>
+        <input type="text" id="total" readonly [ngModel]="rawTotalAmount()" />
+      </div>
+    </div>
+    <div class="app-form-field-inline" style="justify-content: space-between">
+      <div>
         <label for="cn">ยอด cn</label>
       </div>
       <div>
-        <input type="number" id="cn" [(ngModel)]="cn" />
+        <input type="text" id="cn" [ngModel]="rawCnAmount()" (blur)="onCnBlur($any($event.target).value)" />
       </div>
     </div>
     <div class="app-form-field-inline" style="justify-content: space-between">
@@ -68,7 +76,7 @@
         <label for="actual">ยอดจริง</label>
       </div>
       <div>
-        <input type="number" id="actual" [(ngModel)]="actualAmount" />
+        <input type="text" id="actual" [ngModel]="rawActualAmount()" (blur)="onActualBlur($any($event.target).value)" />
       </div>
     </div>
     <div class="app-form-field-inline" style="justify-content: space-between">
@@ -84,7 +92,7 @@
         <label for="income">ประมาณการรายได้</label>
       </div>
       <div>
-        <input type="number" id="income" disabled [ngModel]="incomeAmount()" />
+        <input type="text" id="income" readonly [ngModel]="incomeAmount() | number: '1.2-2'" />
       </div>
     </div>
   </div>
