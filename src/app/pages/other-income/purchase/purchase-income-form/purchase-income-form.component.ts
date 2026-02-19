@@ -5,6 +5,7 @@ import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { OtherIncomeBaseformComponent } from "../../../../components/other-income/form/other-income-baseform/other-income-baseform.component";
 import { OiBaseformService } from '../../../../service/other-income/oi-baseform.service';
 import { ToastService } from '../../../../service/toast/toast.service';
+import { OiNotLightListService } from '../../../../service/other-income/oi-not-light-list.service';
 @Component({
   selector: 'app-purchase-income-form',
   imports: [FormsModule, NgbDatepickerModule, RouterLink, OtherIncomeBaseformComponent],
@@ -53,11 +54,11 @@ export class PurchaseIncomeFormComponent implements OnInit, OnDestroy {
     this.baseFormService.resetForm();
   }
 
-  private baseFormService = inject(OiBaseformService)
-  private baseFormDisable = this.baseFormService.disableDc
-  private comp = this.baseFormService.compData
-  private router = inject(Router)
-  private route = inject(ActivatedRoute)
+  private readonly baseFormService = inject(OiBaseformService)
+  private readonly baseFormDisable = this.baseFormService.disableDc
+  //private readonly comp = this.baseFormService.compData
+  private readonly router = inject(Router)
+  private readonly route = inject(ActivatedRoute)
   eventType = signal(-1)
   // isDcRebate = computed(() => this.isLight() === 1)
   isInce = computed(() => this.eventType() === 3)
@@ -76,14 +77,18 @@ export class PurchaseIncomeFormComponent implements OnInit, OnDestroy {
     return products === null || products.length === 0
   })
   disabled = computed(() => this.disableProduct() || this.baseFormDisable())
-  private toast = inject(ToastService)
+  private readonly toast = inject(ToastService)
   productList = this.baseFormService.productList
+
+  private readonly notLightList = inject(OiNotLightListService)
+
   onSubmit = () => {
     this.baseFormService.createHead().subscribe(
       {
         next: ({ id }) => {
           this.baseFormService.resetForm()
           if (this.isInce()) {
+            this.notLightList.refetch()
             this.router.navigate(['../'], { relativeTo: this.route })
           } else {
             this.router.navigate([id], { relativeTo: this.route })
