@@ -68,7 +68,7 @@
         <label for="cn">ยอด cn</label>
       </div>
       <div>
-        <input type="text" id="cn" [ngModel]="rawCnAmount()" (blur)="onCnBlur($any($event.target).value)" />
+        <input type="text" id="cn" [(ngModel)]="rawCnAmount" />
       </div>
     </div>
     <div class="app-form-field-inline" style="justify-content: space-between">
@@ -76,7 +76,7 @@
         <label for="actual">ยอดจริง</label>
       </div>
       <div>
-        <input type="text" id="actual" [ngModel]="rawActualAmount()" (blur)="onActualBlur($any($event.target).value)" />
+        <input type="text" id="actual" [(ngModel)]="rawActualAmount" />
       </div>
     </div>
     <div class="app-form-field-inline" style="justify-content: space-between">
@@ -92,7 +92,12 @@
         <label for="income">ประมาณการรายได้</label>
       </div>
       <div>
-        <input type="text" id="income" readonly [ngModel]="incomeAmount() | number: '1.2-2'" />
+        <input
+          type="text"
+          id="income"
+          readonly
+          [ngModel]="incomeAmount() | number: '1.2-2'"
+        />
       </div>
     </div>
   </div>

@@ -26,7 +26,7 @@ export const calStep: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | nu
         }
     }
     const result = (rawIncome / 100) - accIncome
-    return result >= 0 ? result : 0
+    return Math.max(result, 0)
 }
 
 export const calSemi: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | null, accAmount: number, accIncome: number,) => (current: number) => {
@@ -41,7 +41,7 @@ export const calSemi: TCalFn = (steps: TOIStepItem[]) => (capAmount: number | nu
         }
     }
     const result = (rawIncome / 100) - accIncome
-    return result >= 0 ? result : 0
+    return Math.max(result, 0)
 }
 
 const applyCap = (amount: number, capAmount: number | null): number => {

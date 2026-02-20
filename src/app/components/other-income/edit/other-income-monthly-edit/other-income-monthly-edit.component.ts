@@ -17,11 +17,20 @@ import { OiNotLightListService } from '../../../../service/other-income/oi-not-l
   styleUrl: './other-income-monthly-edit.component.scss'
 })
 export class OtherIncomeMonthlyEditComponent {
+
   success = output<string>()
   fail = output<string>()
+
   eventType = input.required<number>()
   stepType = input.required<number>()
   stepList = input.required<TOIStepItem[]>()
+  accIncome = input.required<number>()
+  accAmount = input.required<number>()
+  capAmount = input.required<number | null>()
+  compType = input<string | undefined>()
+  id = input.required<number>()
+  canEdit = input(false)
+
   calFunc = computed(() => {
     const steps = this.stepList()
     switch (this.stepType()) {
@@ -30,19 +39,12 @@ export class OtherIncomeMonthlyEditComponent {
       default: return calStep(steps)
     }
   })
-  accIncome = input.required<number>()
-  accAmount = input.required<number>()
-  capAmount = input.required<number | null>()
   calWithCap = computed(() => {
     const capAmount = this.capAmount()
     const accAmount = this.accAmount()
     const accIncome = this.accIncome()
     return this.calFunc()(capAmount, accAmount, accIncome)
   })
-
-  compType = input.required<string | undefined>()
-  id = input.required<number>()
-  canEdit = input(false)
 
   private readonly modalService = inject(NgbModal)
   openModal(content: any) {
@@ -65,31 +67,29 @@ export class OtherIncomeMonthlyEditComponent {
   summary = computed(() => this.calIncome().reduce((acc, cur) => acc + cur.calAmount, 0))
 
   // CN amount — manual input, resets to 0 on form reset
-  cn = signal(0)
-  rawCnAmount = linkedSignal(() => formatLocalNumber(this.cn()))
+  rawCnAmount = signal('0.00') // string cn amount for display and edit
+  cn = computed(
+    () => Number.parseFloat(this.rawCnAmount().replaceAll(',', ''))
+  ) // number cn for calculation
 
   // Total amount — read-only, derived from fetched data
   rawTotalAmount = linkedSignal(() => formatLocalNumber(this.summary()))
 
   // Actual amount — defaults to summary - cn, user can override manually
-  actualAmount = linkedSignal(() => this.summary() - this.cn())
-  rawActualAmount = linkedSignal(() => formatLocalNumber(this.summary() - this.cn()))
+  rawActualAmount = linkedSignal(
+    () => formatLocalNumber(this.summary() - this.cn())
+  ) //string for edit and display
 
-  incomeAmount = computed(() => this.calWithCap()(this.actualAmount()))
+  actualAmount = computed(
+    () => Number.parseFloat(this.rawActualAmount().replaceAll(',', ''))
+  ) // number for api call and calculation
+
+  incomeAmount = computed(
+    () => this.calWithCap()(this.actualAmount())
+  ) // number result of actualAmount -> calWithCap
 
   reason = signal('')
   disableOnclick = signal(false)
-
-  onCnBlur(value: string) {
-    const parsed = Number.parseFloat(value.replaceAll(',', '')) || 0
-    this.cn.set(parsed)
-  }
-
-  onActualBlur(value: string) {
-    const parsed = Number.parseFloat(value.replaceAll(',', '')) || 0
-    this.actualAmount.set(parsed)
-    this.rawActualAmount.set(formatLocalNumber(parsed))
-  }
 
   onSearch() {
     const comp = this.compType()
@@ -106,27 +106,34 @@ export class OtherIncomeMonthlyEditComponent {
     const id = this.id()
     const startDate = this.isoDate()
     const reason = this.reason()
-    const receList = this.calIncome().map(({ calAmount, receNumb }) => ({ calAmount, receNumb }))
+    const receList = this.calIncome()
+      .map(({ calAmount, receNumb }) => ({ calAmount, receNumb }))
     const calAmount = this.summary()
     const actualAmount = this.actualAmount()
     const incomeAmount = this.incomeAmount()
     const cn = this.cn()
     const eventType = this.eventType()
-    this.monthService.insertNlMonth(id, { calAmount, actualAmount, startDate, reason, incomeAmount, receList, cn, eventType }).subscribe({
-      next: () => {
-        this.success.emit('เพิ่มรับรู้รายเดือนสำเร็จ')
-        this.notLightList.refetch()
-        this.modalService.dismissAll()
-      },
-      error: (err) => {
-        this.fail.emit(err.message)
-        this.disableOnclick.set(false)
-      }
-    })
+    // api call
+    this.monthService
+      .insertNlMonth(id, {
+        calAmount, actualAmount, startDate,
+        reason, incomeAmount, receList,
+        cn, eventType
+      }).subscribe({
+        next: () => {
+          this.success.emit('เพิ่มรับรู้รายเดือนสำเร็จ')
+          this.notLightList.refetch()
+          this.modalService.dismissAll()
+        },
+        error: (err) => {
+          this.fail.emit(err.message)
+          this.disableOnclick.set(false)
+        }
+      })
   }
 
-  resetForm = () => {
-    this.cn.set(0)
+  resetForm() {
+    this.rawCnAmount.set('0.00')
     this.reason.set('')
     this.disableOnclick.set(false)
   }
