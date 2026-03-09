@@ -72,11 +72,13 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
   // Signals for status change loading states
   changingToRece = signal(false);
   changingToComplete = signal(false);
+  deleting = signal(false);
 
   // ViewChild for modals
   private readonly editModal = viewChild('editPeriodModal');
   private readonly confirmReceModal = viewChild('confirmReceModal');
   private readonly confirmCompleteModal = viewChild('confirmCompleteModal');
+  private readonly confirmDeleteModal = viewChild('confirmDeleteModal');
 
   /**
    * Change period status to "Waiting for Receipt" (4)
@@ -195,5 +197,23 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
     this.editPeriodName.set(this.period().periodName);
     this.editPeriodRemark.set(this.period().periodRemark);
     this.openModal(this.editModal());
+  }
+
+  openDeleteModal() {
+    this.openModal(this.confirmDeleteModal(), 'md');
+  }
+
+  confirmDeletePeriod() {
+    this.deleting.set(true);
+    this.periodService.deletePeriod(this.period().id).subscribe({
+      next: () => {
+        this.deleting.set(false);
+        this.onSuccess('ลบข้อมูลสำเร็จ');
+      },
+      error: () => {
+        this.deleting.set(false);
+        this.onFail('เกิดข้อผิดพลาดในการลบข้อมูล');
+      }
+    });
   }
 }

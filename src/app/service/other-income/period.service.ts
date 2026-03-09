@@ -65,6 +65,10 @@ export class PeriodService {
       { Status: status }
     )
   }
+
+  deletePeriod(periodId: number) {
+    return this.api.delete(`${this.url}/period/${periodId}`)
+  }
 }
 
 type TMonth = Pick<TIncomeItem, 'startDate' | 'endDate' | 'id'>

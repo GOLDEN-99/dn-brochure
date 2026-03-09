@@ -5,13 +5,23 @@
   >
     <h5 class="mb-0">{{ period().periodName }}</h5>
     @if (isPurchase() && canEdit()) {
-      <button
-        class="btn btn-sm btn-primary"
-        (click)="openEditModal()"
-        type="button"
-      >
-        แก้ไข Period
-      </button>
+      <div class="d-flex gap-2">
+        <button
+          class="btn btn-sm btn-primary"
+          (click)="openEditModal()"
+          type="button"
+        >
+          แก้ไข Period
+        </button>
+        <button
+          class="btn btn-sm btn-danger"
+          (click)="openDeleteModal()"
+          type="button"
+          title="ลบ Period"
+        >
+          <i class="bi bi-trash"></i>
+        </button>
+      </div>
     }
     <!-- if not purchase > account can update status-->
     @if (!isPurchase()) {
@@ -154,6 +164,57 @@
     </div>
   }
 </div>
+
+<!-- Confirm Delete Period Modal -->
+<ng-template #confirmDeleteModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">ยืนยันการลบ Period</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+      [disabled]="deleting()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-danger d-flex align-items-start">
+      <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
+      <div>
+        <strong>คุณต้องการลบ Period นี้ใช่หรือไม่?</strong>
+        <p class="mb-0 mt-2 small">การลบจะไม่สามารถกู้คืนข้อมูลได้</p>
+      </div>
+    </div>
+    <div class="p-2 bg-light rounded">
+      <div class="small text-muted">Period</div>
+      <div class="fw-semibold">{{ period().periodName }}</div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="modal.dismiss()"
+      [disabled]="deleting()"
+    >
+      ยกเลิก
+    </button>
+    <button
+      type="button"
+      class="btn btn-danger"
+      (click)="confirmDeletePeriod()"
+      [disabled]="deleting()"
+    >
+      @if (deleting()) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+        กำลังลบ...
+      } @else {
+        <i class="bi bi-trash me-1"></i>
+        ยืนยันลบ
+      }
+    </button>
+  </div>
+</ng-template>
 
 <!-- Edit Period Modal Template -->
 <ng-template #editPeriodModal let-modal>
