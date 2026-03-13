@@ -1,17 +1,15 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, inject, input, signal, viewChild } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { OtherIncomeInvoiceModalComponent } from './other-income-invoice-modal.component';
 import { TInviceItemDto } from '../../../service/other-income/base-oi';
 import { BasePeriodComponent } from './base-period.component';
 import { PeriodService } from '../../../service/other-income/period.service';
 
 @Component({
   selector: 'app-other-income-invoice-period',
-  imports: [FormsModule, DecimalPipe, OtherIncomeInvoiceModalComponent, DatePipe],
+  imports: [FormsModule, DecimalPipe, DatePipe],
   template: `
     <div class="mb-3">
-
         <table class="table">
           <thead>
             <tr>
@@ -19,17 +17,7 @@ import { PeriodService } from '../../../service/other-income/period.service';
               <th scope="col">ยอดใบแจ้งหนี้</th>
               <th scope="col">หมายเหตุ</th>
               <th scope="col">วันที่ใบแจ้งหนี้</th>
-              @if(canEdit()){
-              <th scope="col">
-                  <button
-                  class="btn btn-sm btn-primary me-1"
-                  (click)="openInvoice()"
-                  [disabled]="disabled()"
-                  >
-                  เพิ่มใบแจ้งหนี้
-                </button>
-              </th>
-            }
+              @if(canEdit()){ <th scope="col"></th> }
             </tr>
           </thead>
           <tbody>
@@ -51,17 +39,6 @@ import { PeriodService } from '../../../service/other-income/period.service';
           </tbody>
         </table>
       </div>
-
-    <ng-template #invoiceModal let-modal>
-      <app-other-income-invoice-modal
-        [periodId]="periodId()"
-        [incomeAmount]="incomeAmount()"
-        [addedAmount]="addedAmount()"
-        (success)="onSuccess($event)"
-        (fail)="onFail($event)"
-        (close)="modal.dismiss()"
-      />
-    </ng-template>
   `,
 })
 export class OtherIncomeInvoicePeriodComponent extends BasePeriodComponent {
@@ -75,12 +52,6 @@ export class OtherIncomeInvoicePeriodComponent extends BasePeriodComponent {
   addedAmount = input.required<number>();
   disabled = input(false);
   deleting = signal(false);
-
-  private readonly invoiceModal = viewChild('invoiceModal');
-
-  openInvoice() {
-    this.openModal(this.invoiceModal());
-  }
 
   onDelete(invoiceId: number) {
     this.deleting.set(true);

@@ -1,17 +1,15 @@
-import { Component, effect, inject, input, signal, viewChild } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { TReceiptItemDto } from '../../../service/other-income/base-oi';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { OtherIncomeReceiptModalComponent } from './other-income-receipt-modal.component';
 import { BasePeriodComponent } from './base-period.component';
 import { PeriodService } from '../../../service/other-income/period.service';
 
 @Component({
   selector: 'app-other-income-receipt-period',
-  imports: [FormsModule, DecimalPipe, OtherIncomeReceiptModalComponent, DatePipe],
+  imports: [FormsModule, DecimalPipe, DatePipe],
   template: `
     <div class="mb-3">
-
         <table class="table">
           <thead>
             <tr>
@@ -19,17 +17,7 @@ import { PeriodService } from '../../../service/other-income/period.service';
               <th scope="col">ยอดใบเสร็จ</th>
               <th scope="col">หมายเหตุ</th>
               <th scope="col">วันที่ใบเสร็จ</th>
-              @if(canEdit()){
-              <th scope="col">
-                  <button
-                  class="btn btn-sm btn-secondary"
-                  (click)="openReceipt()"
-                  [disabled]="disabled()"
-                  >
-                  เพิ่มใบเสร็จรับเงิน
-                </button>
-              </th>
-            }
+              @if(canEdit()){ <th scope="col"></th> }
             </tr>
           </thead>
           <tbody>
@@ -51,17 +39,6 @@ import { PeriodService } from '../../../service/other-income/period.service';
           </tbody>
         </table>
       </div>
-
-    <ng-template #receiptModal let-modal>
-      <app-other-income-receipt-modal
-        [periodId]="periodId()"
-        [invAmount]="invAmount()"
-        [receAmount]="receAmount()"
-        (success)="onSuccess($event)"
-        (fail)="onFail($event)"
-        (close)="modal.dismiss()"
-      />
-    </ng-template>
   `,
   styles: '',
 })
@@ -74,15 +51,8 @@ export class OtherIncomeReceiptPeriodComponent extends BasePeriodComponent {
   invAmount = input.required<number>();
   receAmount = input.required<number>();
   canEdit = input(false);
-  canEditEffect = effect(() => console.log(this.canEdit()))
   disabled = input(false);
   deleting = signal(false);
-
-  private readonly receiptModal = viewChild('receiptModal');
-
-  openReceipt() {
-    this.openModal(this.receiptModal());
-  }
 
   onDelete(receiptId: number) {
     this.deleting.set(true);

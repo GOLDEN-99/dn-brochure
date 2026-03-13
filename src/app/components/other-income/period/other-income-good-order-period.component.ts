@@ -1,5 +1,4 @@
-import { Component, input, signal, viewChild } from '@angular/core';
-import { OtherIncomeGoodOrderModalComponent } from "./other-income-good-order-modal/other-income-good-order-modal.component";
+import { Component, input } from '@angular/core';
 import { TOrderItemDto } from '../../../service/other-income/base-oi';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
@@ -7,7 +6,7 @@ import { BasePeriodComponent } from './base-period.component';
 
 @Component({
   selector: 'app-other-income-good-order-period',
-  imports: [OtherIncomeGoodOrderModalComponent, FormsModule, DecimalPipe],
+  imports: [FormsModule, DecimalPipe],
   template: `    <div class="mb-3">
         <table class="table">
           <thead>
@@ -16,17 +15,6 @@ import { BasePeriodComponent } from './base-period.component';
               <th scope="col">รายได้บันทึก</th>
               <th scope="col">ใบแจ้งหนี้ซัพ</th>
               <th scope="col">ใบเสร็จรับเงิน</th>
-              @if(canEdit()){
-              <th scope="col">
-                  <button
-                  class="btn btn-sm btn-primary me-1"
-                  (click)="openPo()"
-                  [disabled]="disabled()"
-                  >
-                  เพิ่ม po
-                </button>
-              </th>
-            }
             </tr>
           </thead>
           <tbody>
@@ -35,28 +23,12 @@ import { BasePeriodComponent } from './base-period.component';
               <td scope="row">{{ order.orderNumb }}</td>
               <td>{{ order.actualAmount | number : "1.2-2" }}</td>
               <td>{{ order.supInvNumb  }}</td>
-              @if(canEdit()){
-                <td colspan="2">{{ order.receNumb  }}</td>
-              } @else{
-                <td>{{ order.receNumb  }}</td>
-              }
+              <td>{{ order.receNumb  }}</td>
             </tr>
             }
           </tbody>
         </table>
-      </div>
-
-    <ng-template #poModal let-modal>
-      <app-other-income-good-order-modal
-        [periodAmount]="actualAmount()"
-        [compCode]="compCode()"
-        [compType]="compType()"
-        [periodId]="periodId()"
-        (success)="onSuccess($event)"
-        (fail)="onFail($event)"
-        (close)="modal.dismiss()"
-      />
-    </ng-template>`,
+      </div>`,
   styles: ``
 })
 export class OtherIncomeGoodOrderPeriodComponent extends BasePeriodComponent {
@@ -67,10 +39,4 @@ export class OtherIncomeGoodOrderPeriodComponent extends BasePeriodComponent {
   compType = input.required<string | undefined>();
   compCode = input.required<string | undefined>();
   disabled = input(false);
-
-  private poModal = viewChild('poModal');
-
-  openPo() {
-    this.openModal(this.poModal(), 'xl');
-  }
 }

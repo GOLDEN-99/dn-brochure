@@ -1,13 +1,12 @@
-import { Component, inject, input, signal, viewChild } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { TCreditNoteDto } from '../../../service/other-income/base-oi';
 import { DecimalPipe } from '@angular/common';
-import { OtherIncomeCreditModalComponent } from "./other-income-credit-modal.component";
 import { BasePeriodComponent } from './base-period.component';
 import { PeriodService } from '../../../service/other-income/period.service';
 
 @Component({
   selector: 'app-other-income-credit-period',
-  imports: [DecimalPipe, OtherIncomeCreditModalComponent],
+  imports: [DecimalPipe],
   template: `
       <div class="mb-3">
         <table class="table">
@@ -17,17 +16,7 @@ import { PeriodService } from '../../../service/other-income/period.service';
               <th scope="col">ยอดใบลดหนี้</th>
               <th scope="col">หมายเหตุ</th>
               <th scope="col">วันที่ใบลดหนี้</th>
-              @if(canEdit()){
-              <th scope="col">
-                  <button
-                  class="btn btn-sm btn-primary me-1"
-                  (click)="openCredit()"
-                  [disabled]="disabled()"
-                  >
-                  เพิ่มใบลดหนี้
-                </button>
-              </th>
-            }
+              @if(canEdit()){ <th scope="col"></th> }
             </tr>
           </thead>
           <tbody>
@@ -49,16 +38,6 @@ import { PeriodService } from '../../../service/other-income/period.service';
           </tbody>
         </table>
       </div>
-
-    <ng-template #creditModal let-modal>
-      <app-other-income-credit-modal
-      [periodId]="periodId()"
-      [incomeAmount]="incomeAmount()"
-      [addedAmount]="addedAmount()"
-      (success)="onSuccess($event)"
-      (fail)="onFail($event)"
-      (close)="modal.dismiss()" />
-    </ng-template>
   `,
   styles: ''
 })
@@ -73,12 +52,6 @@ export class OtherIncomeCreditPeriodComponent extends BasePeriodComponent {
   addedAmount = input.required<number>();
   disabled = input(false);
   deleting = signal(false);
-
-  private readonly creditModal = viewChild('creditModal');
-
-  openCredit() {
-    this.openModal(this.creditModal());
-  }
 
   onDelete(creditId: number) {
     this.deleting.set(true);

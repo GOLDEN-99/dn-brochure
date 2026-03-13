@@ -7,6 +7,11 @@ import { OtherIncomeGoodOrderPeriodComponent } from '../other-income-good-order-
 import { OtherIncomeInvoicePeriodComponent } from '../other-income-invoice-period.component';
 import { OtherIncomeReceiptPeriodComponent } from '../other-income-receipt-period.component';
 import { OtherIncomeCreditPeriodComponent } from '../other-income-credit-period.component';
+import { OtherIncomeOrderModalComponent } from '../other-income-order-modal/other-income-order-modal.component';
+import { OtherIncomeGoodOrderModalComponent } from '../other-income-good-order-modal/other-income-good-order-modal.component';
+import { OtherIncomeInvoiceModalComponent } from '../other-income-invoice-modal.component';
+import { OtherIncomeReceiptModalComponent } from '../other-income-receipt-modal.component';
+import { OtherIncomeCreditModalComponent } from '../other-income-credit-modal.component';
 import { formatLocalNumber } from '../../../../lib/formatter';
 import { PeriodStatus, TFieldSelector } from '../../../../types';
 import { PeriodService } from '../../../../service/other-income/period.service';
@@ -20,6 +25,11 @@ import { PeriodService } from '../../../../service/other-income/period.service';
     OtherIncomeInvoicePeriodComponent,
     OtherIncomeReceiptPeriodComponent,
     OtherIncomeCreditPeriodComponent,
+    OtherIncomeOrderModalComponent,
+    OtherIncomeGoodOrderModalComponent,
+    OtherIncomeInvoiceModalComponent,
+    OtherIncomeReceiptModalComponent,
+    OtherIncomeCreditModalComponent,
   ],
   templateUrl: './other-income-period-display.component.html',
   styleUrl: './other-income-period-display.component.scss'
@@ -79,6 +89,11 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
   private readonly confirmReceModal = viewChild('confirmReceModal');
   private readonly confirmCompleteModal = viewChild('confirmCompleteModal');
   private readonly confirmDeleteModal = viewChild('confirmDeleteModal');
+  private readonly orderPoModal = viewChild('orderPoModal');
+  private readonly goodOrderPoModal = viewChild('goodOrderPoModal');
+  private readonly invoiceModal = viewChild('invoiceModal');
+  private readonly creditModal = viewChild('creditModal');
+  private readonly receiptModal = viewChild('receiptModal');
 
   /**
    * Change period status to "Waiting for Receipt" (4)
@@ -152,28 +167,22 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
 
   // Selector arrays
   private readonly periodOrderSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
-    //{ label: 'ชื่อ', fn: v => v.periodName },
     { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
     { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
     { label: 'ยอด po', fn: v => formatLocalNumber(v.orderAmount) },
-    //{ label: 'หมายเหตุ', fn: v => v.periodRemark },
   ];
 
   private readonly periodReceSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
-    //{ label: 'ชื่อ', fn: v => v.periodName },
     { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
     { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
     { label: 'ยอดใบแจ้งหนี้', fn: v => formatLocalNumber(v.invAmount) },
     { label: 'ยอดใบเสร็จ', fn: v => formatLocalNumber(v.receAmount) },
-    //{ label: 'หมายเหตุ', fn: v => v.periodRemark },
   ];
 
   private readonly periodCreditSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
-    //{ label: 'ชื่อ', fn: v => v.periodName },
     { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
     { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
     { label: 'ยอดใบลดหนี้', fn: v => formatLocalNumber(v.creditAmount) },
-    //{ label: 'หมายเหตุ', fn: v => v.periodRemark },
   ];
 
   // Computed selector based on income type
@@ -216,4 +225,10 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
       }
     });
   }
+
+  openOrderPo() { this.openModal(this.orderPoModal(), 'xl'); }
+  openGoodOrderPo() { this.openModal(this.goodOrderPoModal(), 'xl'); }
+  openInvoice() { this.openModal(this.invoiceModal()); }
+  openCredit() { this.openModal(this.creditModal()); }
+  openReceipt() { this.openModal(this.receiptModal()); }
 }
