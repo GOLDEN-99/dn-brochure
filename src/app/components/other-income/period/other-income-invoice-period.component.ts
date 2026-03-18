@@ -13,11 +13,11 @@ import { PeriodService } from '../../../service/other-income/period.service';
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">ใบแจ้งหนี้</th>
-              <th scope="col">ยอดใบแจ้งหนี้</th>
-              <th scope="col">หมายเหตุ</th>
-              <th scope="col">วันที่ใบแจ้งหนี้</th>
-              @if(canEdit()){ <th scope="col"></th> }
+              <th scope="col" style="width: 20%;">ใบแจ้งหนี้</th>
+              <th scope="col" style="width: 20%;">ยอดใบแจ้งหนี้</th>
+              <th scope="col" style="width: 20%;">หมายเหตุ</th>
+              <th scope="col" style="width: 20%;">วันที่ใบแจ้งหนี้</th>
+              <th scope="col" style="width: 20%;"></th> 
             </tr>
           </thead>
           <tbody>
@@ -26,14 +26,12 @@ import { PeriodService } from '../../../service/other-income/period.service';
               <td scope="row">{{ inv.invNumb }}</td>
               <td>{{ inv.invAmount| number : "1.2-2" }}</td>
               <td>{{ inv.invRemark }}</td>
-              @if(canEdit()){
-                <td>{{ inv.invDate |date }}</td>
-                @if (invoiceList().at(-1)?.id === inv.id) {
-                  <td><button class="btn btn-squre btn-danger" (click)="onDelete(inv.id)" [disabled]="deleting()"><i class="bi bi-trash"></i></button></td>
-                }@else{<td></td>}
-              } @else {
-                <td>{{ inv.invDate |date }}</td>
-              }
+
+              <td>{{ inv.invDate |date }}</td>
+              @if (invoiceList().at(-1)?.id === inv.id) {
+                <td><button class="btn btn-squre btn-danger" (click)="onDelete(inv.id)" [disabled]="deleting() || disabled() || !canEdit()"><i class="bi bi-trash"></i></button></td>
+              }@else{<td></td>}
+
             </tr>
             }
           </tbody>

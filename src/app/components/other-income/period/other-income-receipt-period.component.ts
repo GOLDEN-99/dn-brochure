@@ -13,11 +13,11 @@ import { PeriodService } from '../../../service/other-income/period.service';
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">เลขใบเสร็จ</th>
-              <th scope="col">ยอดใบเสร็จ</th>
-              <th scope="col">หมายเหตุ</th>
-              <th scope="col">วันที่ใบเสร็จ</th>
-              @if(canEdit()){ <th scope="col"></th> }
+              <th scope="col" style="width: 20%;">เลขใบเสร็จ</th>
+              <th scope="col" style="width: 20%;">ยอดใบเสร็จ</th>
+              <th scope="col" style="width: 20%;">หมายเหตุ</th>
+              <th scope="col" style="width: 20%;">วันที่ใบเสร็จ</th>
+              <th scope="col" style="width: 20%;"></th> 
             </tr>
           </thead>
           <tbody>
@@ -26,14 +26,10 @@ import { PeriodService } from '../../../service/other-income/period.service';
               <td scope="row">{{ inv.receNumb }}</td>
               <td>{{ inv.receAmount| number : "1.2-2" }}</td>
               <td>{{ inv.receRemark  }}</td>
-              @if(canEdit()){
-                <td >{{ inv.receDate | date}}</td>
-                @if (receiptList().at(-1)?.id === inv.id ) {
-                  <td><button class="btn btn-squre btn-danger" (click)="onDelete(inv.id)" [disabled]="deleting()"><i class="bi bi-trash" ></i></button></td>
-                }@else{<td></td>}
-              }@else {
-                <td>{{ inv.receDate | date}}</td>
-              }
+              <td >{{ inv.receDate | date}}</td>
+              @if (receiptList().at(-1)?.id === inv.id ) {
+                <td><button class="btn btn-squre btn-danger" (click)="onDelete(inv.id)" [disabled]="deleting() || disabled() || !canEdit()"><i class="bi bi-trash" ></i></button></td>
+              }@else{<td></td>}
             </tr>
             }
           </tbody>

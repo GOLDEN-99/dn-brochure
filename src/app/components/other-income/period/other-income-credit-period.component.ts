@@ -12,11 +12,11 @@ import { PeriodService } from '../../../service/other-income/period.service';
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">ใบลดหนี้</th>
-              <th scope="col">ยอดใบลดหนี้</th>
-              <th scope="col">หมายเหตุ</th>
-              <th scope="col">วันที่ใบลดหนี้</th>
-              @if(canEdit()){ <th scope="col"></th> }
+              <th scope="col" style="width: 20%;">ใบลดหนี้</th>
+              <th scope="col" style="width: 20%;">ยอดใบลดหนี้</th>
+              <th scope="col" style="width: 20%;">หมายเหตุ</th>
+              <th scope="col" style="width: 20%;">วันที่ใบลดหนี้</th>
+              <th scope="col" style="width: 20%;"></th> 
             </tr>
           </thead>
           <tbody>
@@ -25,14 +25,10 @@ import { PeriodService } from '../../../service/other-income/period.service';
               <td scope="row">{{ credit.creditNumb }}</td>
               <td>{{ credit.creditAmount| number : "1.2-2" }}</td>
               <td>{{ credit.creditRemark }}</td>
-              @if(canEdit()){
-                <td>{{ credit.creditDate }}</td>
-                @if (creditList().at(-1)?.id === credit.id) {
-                  <td><button class="btn btn-squre btn-danger" (click)="onDelete(credit.id)" [disabled]="deleting()"><i class="bi bi-trash"></i></button></td>
-                }@else{<td></td>}
-              } @else {
-                <td>{{ credit.creditDate }}</td>
-              }
+              <td>{{ credit.creditDate }}</td>
+              @if (creditList().at(-1)?.id === credit.id) {
+                <td><button class="btn btn-squre btn-danger" (click)="onDelete(credit.id)" [disabled]="deleting() || disabled() || !canEdit()"><i class="bi bi-trash"></i></button></td>
+              }@else{<td></td>}
             </tr>
             }
           </tbody>
