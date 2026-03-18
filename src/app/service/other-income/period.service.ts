@@ -22,6 +22,22 @@ export class PeriodService {
     return this.api.post<any>(`${this.url}/period/${periodId}/order`, { poList: req })
   }
 
+  insertFreeItem(periodId: number, req: TOrderList[]) {
+    return this.api.post<any>(`${this.url}/period/${periodId}/free-item`, { poList: req })
+  }
+
+  insertBillDiscount(periodId: number, req: TOrderList[]) {
+    return this.api.post<any>(`${this.url}/period/${periodId}/bill-discount`, { poList: req })
+  }
+
+  deleteFreeItem(periodId: number, freeItemId: number) {
+    return this.api.delete(`${this.url}/period/${periodId}/free-item/${freeItemId}`)
+  }
+
+  deleteBillDiscount(periodId: number, billDiscountId: number) {
+    return this.api.delete(`${this.url}/period/${periodId}/bill-discount/${billDiscountId}`)
+  }
+
   insertInv(periodId: number, req: TPeriodInvReq) {
     return this.api.post<any>(`${this.url}/period/${periodId}/invoice`, req)
   }

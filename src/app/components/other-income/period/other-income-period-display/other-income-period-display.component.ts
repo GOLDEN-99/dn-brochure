@@ -169,7 +169,8 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
   private readonly periodOrderSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
     { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
     { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
-    { label: 'ยอด po', fn: v => formatLocalNumber(v.orderAmount) },
+    { label: 'ส่วนลดบิล', fn: v => formatLocalNumber(v.billDiscountAmount) },
+    { label: 'ของแถม', fn: v => formatLocalNumber(v.freeItemAmount) },
   ];
 
   private readonly periodReceSelector: TFieldSelector<TPopulatedPeriodResult>[] = [

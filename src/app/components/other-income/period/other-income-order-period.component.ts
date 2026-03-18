@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { TOrderItemDto } from '../../../service/other-income/base-oi';
+import { TBillDiscountDto } from '../../../service/other-income/base-oi';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { BasePeriodComponent } from './base-period.component';
@@ -9,13 +9,14 @@ import { BasePeriodComponent } from './base-period.component';
   imports: [FormsModule, DecimalPipe],
   template: `
     <div class="mb-3">
+        <div class="px-3 pt-2 pb-1 text-muted small fw-semibold">ส่วนลดท้ายบิล</div>
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">เลขใบ PO</th>
-              <th scope="col">รายได้บันทึก</th>
-              <th scope="col">ใบแจ้งหนี้ซัพ</th>
-              <th scope="col">ใบเสร็จรับเงิน</th>
+              <th scope="col" style="width: 25%;">เลขใบ PO</th>
+              <th scope="col" style="width: 25%;">รายได้บันทึก</th>
+              <th scope="col" style="width: 25%;">ใบแจ้งหนี้ซัพ</th>
+              <th scope="col" style="width: 25%;">ใบเสร็จรับเงิน</th>
             </tr>
           </thead>
           <tbody>
@@ -34,7 +35,7 @@ import { BasePeriodComponent } from './base-period.component';
   styles: '',
 })
 export class OtherIncomeOrderPeriodComponent extends BasePeriodComponent {
-  orderList = input.required<TOrderItemDto[]>();
+  orderList = input.required<TBillDiscountDto[]>();
   periodId = input.required<number>();
   actualAmount = input.required<number>();
   canEdit = input(false);

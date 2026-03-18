@@ -93,7 +93,7 @@ export class OtherIncomeOrderModalComponent {
   onSubmit() {
     const periodId = this.periodId()
     const poList = this.selectOrder().map(({ discount, orderNumb, receNumb, remark }) => ({ actualAmount: discount, orderNumb, receNumb, remark }))
-    this.periodService.insertPo(periodId, poList).subscribe({
+    this.periodService.insertBillDiscount(periodId, poList).subscribe({
       next: (res) => {
         this.success.emit('เพิ่ม po สำเร็จ');
       },

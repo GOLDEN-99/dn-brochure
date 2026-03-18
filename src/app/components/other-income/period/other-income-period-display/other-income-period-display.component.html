@@ -123,12 +123,11 @@
     "
   >
     <!-- ท้ายบิล (Order) -->
-
     <div style="min-width: 100%">
       <app-other-income-order-period
         [canEdit]="isPurchase()"
         [actualAmount]="period().totalIncome"
-        [orderList]="period().orderList"
+        [orderList]="period().billDiscountList"
         [periodId]="period().id"
         [compCode]="compCode()"
         [compType]="compType()"
@@ -138,12 +137,11 @@
     </div>
 
     <!-- สินค้า (Good Order) -->
-
     <div style="min-width: 100%">
       <app-other-income-good-order-period
         [canEdit]="isPurchase()"
         [actualAmount]="period().totalIncome"
-        [orderList]="period().orderList"
+        [orderList]="period().freeItemList"
         [periodId]="period().id"
         [compCode]="compCode()"
         [compType]="compType()"
@@ -153,7 +151,6 @@
     </div>
 
     <!-- Invoice -->
-
     <div style="min-width: 100%">
       <app-other-income-invoice-period
         [canEdit]="!isPurchase()"
@@ -163,24 +160,11 @@
         [addedAmount]="period().invAmount"
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
-        [disabled]="isComplete()"
-      />
-    </div>
-    <div style="min-width: 100%">
-      <app-other-income-receipt-period
-        [canEdit]="!isPurchase()"
-        [receiptList]="period().receiptList"
-        [invAmount]="period().invAmount"
-        [receAmount]="period().receAmount"
-        [periodId]="period().id"
-        (success)="onSuccess($event)"
-        (fail)="onFail($event)"
-        [disabled]="isComplete()"
+        [disabled]="incomeType() !== 3 || isComplete()"
       />
     </div>
 
     <!-- Credit Note -->
-
     <div style="min-width: 100%">
       <app-other-income-credit-period
         [canEdit]="!isPurchase()"
@@ -190,9 +174,11 @@
         [creditList]="period().creditList"
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
-        [disabled]="isComplete()"
+        [disabled]="incomeType() !== 4 || isComplete()"
       />
     </div>
+
+    <!-- Receipt -->
     <div style="min-width: 100%">
       <app-other-income-receipt-period
         [canEdit]="!isPurchase()"
@@ -202,7 +188,7 @@
         [periodId]="period().id"
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
-        [disabled]="isComplete()"
+        [disabled]="(incomeType() !== 3 && incomeType() !== 4) || isComplete()"
       />
     </div>
 

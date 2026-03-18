@@ -103,6 +103,8 @@ export type TPeriodResult = {
     invDate: string | null
     orderAmount: number
     orderDate: string | null
+    freeItemAmount: number
+    billDiscountAmount: number
     receAmount: number
     receDate: string | null
     creditAmount: number
@@ -112,6 +114,24 @@ export type TPeriodResult = {
 }
 
 export type TOrderItemDto = {
+    id: number
+    orderNumb: string
+    actualAmount: number
+    supInvNumb: string | null
+    supInvDate: string | null
+    receNumb: string | null
+}
+
+export type TFreeItemDto = {
+    id: number
+    orderNumb: string
+    actualAmount: number
+    supInvNumb: string | null
+    supInvDate: string | null
+    receNumb: string | null
+}
+
+export type TBillDiscountDto = {
     id: number
     orderNumb: string
     actualAmount: number
@@ -149,6 +169,8 @@ export type TReceiptItemDto = {
 
 export type TPopulatedPeriodResult = {
     orderList: TOrderItemDto[]
+    freeItemList: TFreeItemDto[]
+    billDiscountList: TBillDiscountDto[]
     invoiceList: TInviceItemDto[]
     receiptList: TReceiptItemDto[]
     creditList: TCreditNoteDto[]
