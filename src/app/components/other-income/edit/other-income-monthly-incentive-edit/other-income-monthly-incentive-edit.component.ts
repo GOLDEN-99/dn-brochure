@@ -53,16 +53,9 @@ export class OtherIncomeMonthlyIncentiveEditComponent {
 
   // Create-with-period form signals
   cwpStartDate = signal(this.today)
-  cwpEndDate = signal(this.today)
-  cwpCn = signal(0)
-  cwpCalAmount = signal(0)
-  cwpActualAmount = signal(0)
   cwpIncomeAmount = signal(0)
-  cwpReason = signal('')
   cwpPeriodName = signal('')
   cwpPeriodRemark = signal('')
-  cwpTotalAmount = signal(0)
-  cwpTotalIncome = signal(0)
   creatingWithPeriod = signal(false)
 
   openCreateWithPeriod(content: any) {
@@ -73,18 +66,11 @@ export class OtherIncomeMonthlyIncentiveEditComponent {
     const id = this.id()
     this.creatingWithPeriod.set(true)
     this.monthService.insertWithPeriod(id, {
-      eventType: this.eventType(),
-      cn: this.cwpCn(),
-      calAmount: this.cwpCalAmount(),
-      actualAmount: this.cwpActualAmount(),
+      eventType: 3,
       incomeAmount: this.cwpIncomeAmount(),
-      reason: this.cwpReason(),
       startDate: this._formatIso(this.cwpStartDate()),
-      endDate: this._formatIso(this.cwpEndDate()),
       periodName: this.cwpPeriodName(),
       periodRemark: this.cwpPeriodRemark(),
-      totalAmount: this.cwpTotalAmount(),
-      totalIncome: this.cwpTotalIncome(),
     }).subscribe({
       next: () => {
         this.creatingWithPeriod.set(false)

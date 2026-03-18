@@ -12,8 +12,8 @@ import { DecimalPipe } from '@angular/common';
   styleUrl: './create-period.component.scss'
 })
 export class CreatePeriodComponent {
-  private cal = inject(NgbCalendar)
-  private today = this.cal.getToday();
+  private readonly cal = inject(NgbCalendar)
+  private readonly today = this.cal.getToday();
   date = signal({ day: 1, month: this.today.month, year: this.today.year })
   incomeType = input.required<number>()
   eventType = input.required<number>()

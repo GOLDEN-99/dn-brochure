@@ -153,17 +153,9 @@ type TInsertReq = {
 }
 
 type TInsertWithPeriodReq = {
-  eventType: number
-  cn: number
-  calAmount: number
-  actualAmount: number
+  eventType: 3
   incomeAmount: number
-  reason: string
   startDate: string
-  endDate: string
   periodName: string
   periodRemark: string
-  totalAmount: number
-  totalIncome: number
-
 }
