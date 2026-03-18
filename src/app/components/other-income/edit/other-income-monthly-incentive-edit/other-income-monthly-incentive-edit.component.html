@@ -3,10 +3,15 @@
   <div class="row" style="justify-content: space-between">
     <h2 class="col-auto">รายการรับรู้รายเดือน</h2>
     @if (canEdit()) {
-    <div class="col-auto">
+    <div class="col-auto d-flex gap-2">
       <button class="btn btn-primary" (click)="openModal(monthlyModal)">
         เพิ่มรายได้รายเดือน
       </button>
+      @if (showCreateWithPeriod()) {
+        <button class="btn btn-success" (click)="openCreateWithPeriod(createWithPeriodModal)">
+          สร้างและสรุป(กรณี 1 เดือน)
+        </button>
+      }
     </div>
     }
   </div>
@@ -50,6 +55,69 @@
     </tbody>
   </table>
 </div>
+
+<ng-template #createWithPeriodModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">สร้างรายได้และสรุป Period (1 เดือน)</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()" [disabled]="creatingWithPeriod()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row mb-3">
+      <div class="col">
+        <app-date-input label="วันที่เริ่มต้น" [(date)]="cwpStartDate" />
+      </div>
+      <div class="col">
+        <app-date-input label="วันที่สิ้นสุด" [(date)]="cwpEndDate" />
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="cwpCn" class="form-label">CN</label>
+      <input id="cwpCn" type="number" class="form-control" [ngModel]="cwpCn()" (ngModelChange)="cwpCn.set(+$event)" />
+    </div>
+    <div class="mb-3">
+      <label for="cwpCalAmount" class="form-label">calAmount <span class="text-danger">*</span></label>
+      <input id="cwpCalAmount" type="number" class="form-control" [ngModel]="cwpCalAmount()" (ngModelChange)="cwpCalAmount.set(+$event)" />
+    </div>
+    <div class="mb-3">
+      <label for="cwpActualAmount" class="form-label">actualAmount <span class="text-danger">*</span></label>
+      <input id="cwpActualAmount" type="number" class="form-control" [ngModel]="cwpActualAmount()" (ngModelChange)="cwpActualAmount.set(+$event)" />
+    </div>
+    <div class="mb-3">
+      <label for="cwpIncomeAmount" class="form-label">incomeAmount <span class="text-danger">*</span></label>
+      <input id="cwpIncomeAmount" type="number" class="form-control" [ngModel]="cwpIncomeAmount()" (ngModelChange)="cwpIncomeAmount.set(+$event)" />
+    </div>
+    <div class="mb-3">
+      <label for="cwpReason" class="form-label">reason</label>
+      <input id="cwpReason" type="text" class="form-control" [ngModel]="cwpReason()" (ngModelChange)="cwpReason.set($event)" />
+    </div>
+    <div class="mb-3">
+      <label for="cwpPeriodName" class="form-label">ชื่อ Period</label>
+      <input id="cwpPeriodName" type="text" class="form-control" [ngModel]="cwpPeriodName()" (ngModelChange)="cwpPeriodName.set($event)" />
+    </div>
+    <div class="mb-3">
+      <label for="cwpPeriodRemark" class="form-label">หมายเหตุ Period</label>
+      <input id="cwpPeriodRemark" type="text" class="form-control" [ngModel]="cwpPeriodRemark()" (ngModelChange)="cwpPeriodRemark.set($event)" />
+    </div>
+    <div class="mb-3">
+      <label for="cwpTotalAmount" class="form-label">totalAmount <span class="text-danger">*</span></label>
+      <input id="cwpTotalAmount" type="number" class="form-control" [ngModel]="cwpTotalAmount()" (ngModelChange)="cwpTotalAmount.set(+$event)" />
+    </div>
+    <div class="mb-3">
+      <label for="cwpTotalIncome" class="form-label">totalIncome <span class="text-danger">*</span></label>
+      <input id="cwpTotalIncome" type="number" class="form-control" [ngModel]="cwpTotalIncome()" (ngModelChange)="cwpTotalIncome.set(+$event)" />
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()" [disabled]="creatingWithPeriod()">ยกเลิก</button>
+    <button type="button" class="btn btn-success" (click)="onCreateWithPeriod()" [disabled]="creatingWithPeriod()">
+      @if (creatingWithPeriod()) {
+        <span class="spinner-border spinner-border-sm me-1"></span>กำลังสร้าง...
+      } @else {
+        สร้างและสรุป
+      }
+    </button>
+  </div>
+</ng-template>
 
 <ng-template #monthlyModal let-modal>
   <div class="modal-header">

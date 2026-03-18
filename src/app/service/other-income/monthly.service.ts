@@ -48,6 +48,13 @@ export class MonthlyService {
     return this.api.post<any>(`${this.url}/monthly-income/${headId}/add-income`, req)
   }
 
+  insertWithPeriod(headId: number, req: TInsertWithPeriodReq) {
+    return this.api.post<{ monthlyId: number; periodId: number }>(
+      `${this.url}/monthly-income/${headId}/add-income-with-period`,
+      req
+    )
+  }
+
   insertLMonth(headId: number, createDate: string) {
     return this.api.post<any>(`${this.url}/monthly-income/${headId}/add-light-income`, { createDate })
   }
@@ -143,4 +150,20 @@ type TInsertReq = {
   cn: number
   receList: TPurchaseReceItem[]
   endDate?: string
+}
+
+type TInsertWithPeriodReq = {
+  eventType: number
+  cn: number
+  calAmount: number
+  actualAmount: number
+  incomeAmount: number
+  reason: string
+  startDate: string
+  endDate: string
+  periodName: string
+  periodRemark: string
+  totalAmount: number
+  totalIncome: number
+
 }
