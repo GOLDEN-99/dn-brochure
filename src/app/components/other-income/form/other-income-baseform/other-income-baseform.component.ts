@@ -25,7 +25,7 @@ export class OtherIncomeBaseformComponent {
     this.productList.set([])
     this.goodCodeSet.clear()
     this.updateCompCode(compCode)
-    this.updatePairId(null)
+    this.updateDualPairId(null)
   }
   updateCompName = this.updator('compName')
   updateCompType = this.updator('compType')
@@ -33,7 +33,7 @@ export class OtherIncomeBaseformComponent {
     this.productList.set([])
     this.goodCodeSet.clear()
     this.updateCompType(compType)
-    this.updatePairId(null)
+    this.updateDualPairId(null)
   }
   updateEvent = this.updator('eventId')
   updateIncome = this.updator('incomeId')
@@ -67,6 +67,7 @@ export class OtherIncomeBaseformComponent {
     if (eventType !== 1) {
       this.productList.set([])
       this.goodCodeSet.clear()
+      this.updateDualPairId(null)
     }
     this.eventTypeChange.emit(eventType)
   }
@@ -81,8 +82,8 @@ export class OtherIncomeBaseformComponent {
     }
   })
 
-  pairId = computed(() => this.baseFormService.baseformState().pairId ?? null)
-  updatePairId = this.updator('pairId')
+  pairId = computed(() => this.baseFormService.baseformState().dualPairId ?? null)
+  updateDualPairId = this.updator('dualPairId')
 }
 
 type TFilter = 'light' | 'not-light' | 'all'

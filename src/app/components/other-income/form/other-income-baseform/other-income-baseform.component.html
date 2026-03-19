@@ -76,7 +76,7 @@
         id="pairId"
         class="form-select"
         [ngModel]="pairId()"
-        (ngModelChange)="updatePairId($event)"
+        (ngModelChange)="updateDualPairId($event)"
       >
         <option [ngValue]="null">ไม่เชื่อม</option>
         @for (pair of validPair(); track pair.id) {

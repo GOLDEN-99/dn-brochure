@@ -107,7 +107,7 @@ export type TBaseOIHead<T extends TFormat> = {
     timestamp: string //iso
 }
 
-export type TBaseOiInsert<T extends TFormat> = Pick<TBaseOIHead<T>, 'eventId' | 'incomeId' | 'displayName' | 'compCode' | 'compName' | 'compType' | 'period' | 'startDate' | 'endDate'> & { pairId?: number | null }
+export type TBaseOiInsert<T extends TFormat> = Pick<TBaseOIHead<T>, 'eventId' | 'incomeId' | 'displayName' | 'compCode' | 'compName' | 'compType' | 'period' | 'startDate' | 'endDate'> & { dualPairId?: number | null }
 
 export interface IBaseOiHeadDTO {
     id?: number
