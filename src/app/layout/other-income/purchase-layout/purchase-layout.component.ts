@@ -1,6 +1,5 @@
 import { Component, inject, InjectionToken } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { takeLast } from 'rxjs';
 
 type TTabItem = {
   label: string
@@ -23,6 +22,11 @@ export const PURCHASE_TAB_TOKEN: ITabSetting = {
     {
       label: 'รายได้อื่นๆ light-box',
       link: './light',
+      exact: false
+    },
+    {
+      label: 'รายได้อื่นๆ 2 หัว',
+      link: './not-light-dual',
       exact: false
     },
     {

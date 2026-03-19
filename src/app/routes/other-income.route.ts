@@ -13,6 +13,7 @@ import { PurchasingLightHomeComponent } from '../pages/other-income/purchase/pur
 import { getOtherIncomeLightIdResolver } from '../resolvers/other-income/get-other-income-light-id.resolver';
 import { getOtherIncomeNotLightIdResolver } from '../resolvers/other-income/get-other-income-not-light-id.resolver';
 import { NotLightSingleComponent } from '../pages/other-income/purchase/not-light-single/not-light-single.component';
+import { NotLightSingleDualComponent } from '../pages/other-income/purchase/not-light-single-dual/not-light-single-dual.component';
 import { LightSingleComponent } from '../pages/other-income/purchase/light-single/light-single.component';
 import { AccountNotLightInvoiceComponent } from '../pages/other-income/account/account-not-light-invoice.component';
 import { AccountLightBoxComponent } from '../pages/other-income/account/account-light-box.component';
@@ -44,7 +45,11 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                     {
                         path: 'report',
                         component: PurchaseReportComponent
-                    }
+                    },
+                    {
+                        path: 'not-light-dual',
+                        component: NotLightSingleDualComponent
+                    },
                 ]
             },
             {
@@ -113,6 +118,7 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                 ],
                 component: NotLightSingleComponent
             },
+
             {
                 path: "account",
                 component: PurchaseLayoutComponent,
