@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DateInputComponent } from "../../../date-input/date-input.component";
 import { OiBaseformService } from '../../../../service/other-income/oi-baseform.service';
@@ -7,6 +7,7 @@ import { EventSelectComponent } from "../event-select/event-select.component";
 import { SearchProductSubformComponent } from "../search-product-subform/search-product-subform.component";
 import { TCompType, TOIProduct } from '../../../../types';
 import { IncomeSelectComponent } from "../income-select/income-select.component";
+import { OiNotLightPairService } from '../../../../service/other-income/oi-not-light-pair.service';
 
 @Component({
   selector: 'app-other-income-baseform',
@@ -24,6 +25,7 @@ export class OtherIncomeBaseformComponent {
     this.productList.set([])
     this.goodCodeSet.clear()
     this.updateCompCode(compCode)
+    this.updatePairId(null)
   }
   updateCompName = this.updator('compName')
   updateCompType = this.updator('compType')
@@ -31,6 +33,7 @@ export class OtherIncomeBaseformComponent {
     this.productList.set([])
     this.goodCodeSet.clear()
     this.updateCompType(compType)
+    this.updatePairId(null)
   }
   updateEvent = this.updator('eventId')
   updateIncome = this.updator('incomeId')
@@ -67,6 +70,19 @@ export class OtherIncomeBaseformComponent {
     }
     this.eventTypeChange.emit(eventType)
   }
+
+  private readonly pairService = inject(OiNotLightPairService)
+  validPair = computed(() => {
+    const { compType } = this.baseFormService.baseformState()
+    switch (compType) {
+      case 'DN': return this.pairService.availableDNPair()
+      case 'HU': return this.pairService.availableHUPair()
+      default: return []
+    }
+  })
+
+  pairId = computed(() => this.baseFormService.baseformState().pairId ?? null)
+  updatePairId = this.updator('pairId')
 }
 
 type TFilter = 'light' | 'not-light' | 'all'
