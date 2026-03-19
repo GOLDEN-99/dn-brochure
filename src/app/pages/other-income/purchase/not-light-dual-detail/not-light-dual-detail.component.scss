@@ -1,0 +1,62 @@
+$dn: #680dc0;
+$dn-light: #ede0fb;
+$hu: #f36e21;
+$hu-light: #fdeede;
+
+// ── Nav tabs ──────────────────────────────────────────────────────────────
+.nav-tabs .nav-link {
+  &.dn-tab {
+    color: $dn;
+    &.active {
+      color: $dn;
+      background-color: $dn-light;
+      border-color: darken($dn-light, 8%) darken($dn-light, 8%) transparent;
+    }
+    &:not(.active):hover { background-color: lighten($dn-light, 3%); }
+  }
+
+  &.hu-tab {
+    color: $hu;
+    &.active {
+      color: $hu;
+      background-color: $hu-light;
+      border-color: darken($hu-light, 8%) darken($hu-light, 8%) transparent;
+    }
+    &:not(.active):hover { background-color: lighten($hu-light, 3%); }
+  }
+}
+
+// ── Tab content panel ─────────────────────────────────────────────────────
+.tab-panel {
+  border-left: 4px solid transparent;
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.15s ease;
+
+  &--dn { border-color: $dn; }
+  &--hu { border-color: $hu; }
+}
+
+// ── Modal: section headings & fetch buttons ───────────────────────────────
+.dn-heading { color: $dn; }
+.hu-heading { color: $hu; }
+
+.btn-fetch-dn {
+  background-color: $dn-light;
+  border-color: $dn;
+  color: $dn;
+  &:hover:not(:disabled) { background-color: darken($dn-light, 6%); }
+}
+
+.btn-fetch-hu {
+  background-color: $hu-light;
+  border-color: $hu;
+  color: $hu;
+  &:hover:not(:disabled) { background-color: darken($hu-light, 6%); }
+}
+
+// ── Correction table rows ─────────────────────────────────────────────────
+.tr-dn-should  { background-color: $dn-light; }
+.tr-dn-correct { background-color: darken($dn-light, 4%); font-weight: 600; color: $dn; }
+.tr-hu-should  { background-color: $hu-light; }
+.tr-hu-correct { background-color: darken($hu-light, 4%); font-weight: 600; color: $hu; }

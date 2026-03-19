@@ -48,3 +48,30 @@ const applyCap = (amount: number, capAmount: number | null): number => {
     if (capAmount === null) return amount;
     return Math.min(amount, capAmount);
 };
+
+export const calculateWithFlatRate = (steps: TOIStepItem[]) => (target: number) => {
+    return steps[0].rate * target / 100
+}
+
+export const calculateWithStepRate = (steps: TOIStepItem[]) => (target: number) => {
+    let rawIncome = 0
+    for (const step of steps) {
+        const { min, max, rate } = step
+        const thisStep = target - min
+        if (thisStep < 0) break
+        if (max === null) {
+            rawIncome += thisStep * rate
+        } else {
+            const amount = Math.min(thisStep, max - min)
+            rawIncome += amount * rate
+        }
+    }
+    return rawIncome / 100
+}
+
+export const calculateWithSemiStepRate = (steps: TOIStepItem[]) => (target: number) => {
+    if (target === 0) return 0
+    const step = steps.find(({ min, max }) => target >= min && (max === null || target < max));
+    if (step === undefined) return 0
+    return target * step.rate / 100
+}

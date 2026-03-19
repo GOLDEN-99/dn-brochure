@@ -18,6 +18,8 @@ import { LightSingleComponent } from '../pages/other-income/purchase/light-singl
 import { AccountNotLightInvoiceComponent } from '../pages/other-income/account/account-not-light-invoice.component';
 import { AccountLightBoxComponent } from '../pages/other-income/account/account-light-box.component';
 import { handleLazyLoadError } from '../utils/lazy-load-error-handler';
+import { NotLightDualDetailComponent } from '../pages/other-income/purchase/not-light-dual-detail/not-light-dual-detail.component';
+import { getOtherIncomeNotLightDualIdResolver } from '../resolvers/other-income/get-other-income-not-light-dual-id.resolver';
 
 export const OTHER_INCOME_ROUTES: Route[] = [
     {
@@ -118,7 +120,17 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                 ],
                 component: NotLightSingleComponent
             },
-
+            {
+                path: 'purchase/not-light-dual/:dualPairId',
+                resolve: { detail: getOtherIncomeNotLightDualIdResolver },
+                providers: [
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: true }
+                    }
+                ],
+                component: NotLightDualDetailComponent
+            },
             {
                 path: "account",
                 component: PurchaseLayoutComponent,

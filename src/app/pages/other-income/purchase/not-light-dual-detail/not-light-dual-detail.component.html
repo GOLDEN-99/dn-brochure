@@ -1,0 +1,172 @@
+<section class="app-container">
+  @if (invalidValue()) {
+    <div>ไม่พบเอกสาร</div>
+  } @else {
+    @let d = detail()!;
+    @let dnSide = dn(); @let huSide = hu();
+    @let s = side();
+
+    <h2>{{ d.displayName }}</h2>
+
+    <!-- ── DN / HU tabs ─────────────────────────────────────────────────── -->
+    <ul class="nav nav-tabs mb-3 sticky-top bg-white">
+      <li class="nav-item">
+        <button
+          class="nav-link dn-tab"
+          [class.active]="activeTab() === 'DN'"
+          (click)="activeTab.set('DN')"
+        >
+          DN — {{ dnSide.company.compCode }}
+        </button>
+      </li>
+      <li class="nav-item">
+        <button
+          class="nav-link hu-tab"
+          [class.active]="activeTab() === 'HU'"
+          (click)="activeTab.set('HU')"
+        >
+          HU — {{ huSide.company.compCode }}
+        </button>
+      </li>
+    </ul>
+
+    <!-- ── Tab content ──────────────────────────────────────────────────── -->
+    <div
+      [class]="
+        activeTab() === 'DN'
+          ? 'tab-panel tab-panel--dn'
+          : 'tab-panel tab-panel--hu'
+      "
+    >
+      <app-other-income-head-edit
+        [head]="s.head"
+        [event]="s.event"
+        [income]="s.income"
+        [comp]="s.company"
+        [canEdit]="false"
+      />
+      <app-other-income-not-light-edit
+        [steps]="s.stepList"
+        [notLight]="s.notLight"
+        [canEdit]="false"
+      />
+      <app-other-income-product-edit [productList]="s.productList" />
+      <ng-container [ngTemplateOutlet]="incomeTemplate" />
+      @if (isPurchase) {
+        <app-create-period
+          [incomeType]="s.income.incomeType"
+          [eventType]="s.event.eventType"
+          [incomeList]="s.incomeList"
+          [headId]="s.head.id"
+          [compCode]="s.company.compCode"
+          [compType]="s.company.compType"
+          (success)="onSuccess($event)"
+          (fail)="onFail($event)"
+        />
+      }
+      @for (period of s.periodList; track period.id) {
+        <app-other-income-period-display
+          [period]="period"
+          [incomeType]="s.income.incomeType"
+          [canEdit]="isPurchase"
+          [isPurchase]="isPurchase"
+          [compCode]="s.company.compCode"
+          [compType]="s.company.compType"
+          (success)="onSuccess($event)"
+          (fail)="onFail($event)"
+        />
+      }
+    </div>
+
+    <ng-template #incomeTemplate>
+      <!-- ── Mixed income list ────────────────────────────────────────────── -->
+      <app-other-income-dual-monthly-list
+        [incomeList]="mergedIncomeList()"
+        (success)="onSuccess($event)"
+        (fail)="onFail($event)"
+      />
+
+      <!-- ── Calculator / Correction buttons ─────────────────────────────── -->
+      @if (isPurchase) {
+        <div class="d-flex gap-2 mb-3">
+          <button
+            class="btn btn-warning w-100"
+            (click)="openCorrectionModal(correctionModal)"
+          >
+            คำนวณปรับยอด
+          </button>
+        </div>
+      }
+    </ng-template>
+  }
+  <a
+    routerLink="other-income/purchase/not-light-dua"
+    class="btn btn-secondary w-100"
+    >กลับ</a
+  >
+</section>
+
+<!-- ── Correction modal ────────────────────────────────────────────────── -->
+<ng-template #correctionModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">คำนวณปรับยอด</h4>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <app-month-select
+      [month]="date().month"
+      (monthChange)="onMonthChange($event)"
+    />
+    <app-year-select [year]="date().year" (yearChange)="onYearChange($event)" />
+    <hr />
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          <th scope="col">dn</th>
+          <th scope="col">hu</th>
+          <th scope="col">รวม</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ยอดคำนวน</td>
+          <td>{{ dnSum().accCal | number: "1.2-2" }}</td>
+          <td>{{ huSum().accCal | number: "1.2-2" }}</td>
+          <td>{{ summary().accCal | number: "1.2-2" }}</td>
+        </tr>
+        <tr>
+          <td>รายได้ควรมี</td>
+          <td>{{ dnIncome() | number: "1.2-2" }}</td>
+          <td>{{ huIncome() | number: "1.2-2" }}</td>
+          <td>{{ combineIncome() | number: "1.2-2" }}</td>
+        </tr>
+        <tr>
+          <td>รายได้จริง</td>
+          <td>{{ dnSum().accInc | number: "1.2-2" }}</td>
+          <td>{{ huSum().accInc | number: "1.2-2" }}</td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>ส่วนต่างรายได้</td>
+          <td>{{ dnGainedIncome() | number: "1.2-2" }}</td>
+          <td>{{ huGainedIncome() | number: "1.2-2" }}</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-warning w-100"
+      (click)="onSubmitCorrection()"
+      [disabled]="disableCorrection()"
+    >
+      @if (disableCorrection()) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+      }
+      ปรับยอด
+    </button>
+  </div>
+</ng-template>
