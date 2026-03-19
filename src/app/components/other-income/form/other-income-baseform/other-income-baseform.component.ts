@@ -22,18 +22,14 @@ export class OtherIncomeBaseformComponent {
   private readonly updator = this.baseFormService.updateOneField
   updateCompCode = this.updator('compCode')
   onCompCodeChange(compCode: string) {
-    this.productList.set([])
-    this.goodCodeSet.clear()
+    this.resetProductAndPair()
     this.updateCompCode(compCode)
-    this.updateDualPairId(null)
   }
   updateCompName = this.updator('compName')
   updateCompType = this.updator('compType')
   onCompTypeChange(compType: TCompType) {
-    this.productList.set([])
-    this.goodCodeSet.clear()
+    this.resetProductAndPair()
     this.updateCompType(compType)
-    this.updateDualPairId(null)
   }
   updateEvent = this.updator('eventId')
   updateIncome = this.updator('incomeId')
@@ -63,12 +59,14 @@ export class OtherIncomeBaseformComponent {
       this.productList.update(prev => prev === null ? [] : prev.filter(p => p.goodCode !== goodCode))
     }
   }
+  private resetProductAndPair() {
+    this.productList.set([])
+    this.goodCodeSet.clear()
+    this.updateDualPairId(null)
+  }
+
   onSelectEventTypeChange(eventType: number) {
-    if (eventType !== 1) {
-      this.productList.set([])
-      this.goodCodeSet.clear()
-      this.updateDualPairId(null)
-    }
+    if (eventType !== 1) this.resetProductAndPair()
     this.eventTypeChange.emit(eventType)
   }
 
