@@ -66,30 +66,31 @@
   [compName]="formData.compName"
   (compNameChange)="updateCompName($event)"
 />
-@if (eventType() === 1 && validPair().length > 0) {
-  <div class="mb-3">
-    <label for="pairId" class="form-label">เชื่อมกับหัวร่วม (ถ้ามี)</label>
-    <select
-      name="pairId"
-      id="pairId"
-      class="form-select"
-      [ngModel]="pairId()"
-      (ngModelChange)="updatePairId($event)"
-    >
-      <option [ngValue]="null">ไม่เชื่อม</option>
-      @for (pair of validPair(); track pair.id) {
-        <option [ngValue]="pair.id">{{ pair.displayName }}</option>
-      }
-    </select>
-  </div>
-}
 @let products = productList();
-@if (products !== null && formData.compCode !== "" && eventType() === 1) {
-  <!---->
-  <app-search-product-subform
-    [comp]="searchProductParam()"
-    [selectProducts]="products"
-    (onAdd)="handleAdd($event)"
-    (onDelete)="handleDelete($event)"
-  />
+@if (eventType() === 1) {
+  @if (validPair().length > 0) {
+    <div class="mb-3">
+      <label for="pairId" class="form-label">เชื่อมกับหัวร่วม (ถ้ามี)</label>
+      <select
+        name="pairId"
+        id="pairId"
+        class="form-select"
+        [ngModel]="pairId()"
+        (ngModelChange)="updatePairId($event)"
+      >
+        <option [ngValue]="null">ไม่เชื่อม</option>
+        @for (pair of validPair(); track pair.id) {
+          <option [ngValue]="pair.id">{{ pair.displayName }}</option>
+        }
+      </select>
+    </div>
+  }
+  @if (products !== null && formData.compCode !== "") {
+    <app-search-product-subform
+      [comp]="searchProductParam()"
+      [selectProducts]="products"
+      (onAdd)="handleAdd($event)"
+      (onDelete)="handleDelete($event)"
+    />
+  }
 }
