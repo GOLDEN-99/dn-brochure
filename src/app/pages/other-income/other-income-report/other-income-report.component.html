@@ -10,7 +10,7 @@
         (ngModelChange)="changeMonth($event)"
       >
         @for (month of monthArray; track month) {
-        <option [ngValue]="month">{{ month }}</option>
+          <option [ngValue]="month">{{ month }}</option>
         }
       </select>
     </div>
@@ -23,7 +23,7 @@
         (ngModelChange)="changeYear($event)"
       >
         @for (year of yearArray; track year) {
-        <option [ngValue]="year">{{ year }}</option>
+          <option [ngValue]="year">{{ year }}</option>
         }
       </select>
     </div>
@@ -61,8 +61,7 @@
     รายงานซัพพลายเออร์ HU รายเดือน (ละเอียด)
   </button>
 </div>
-<!-- <app-other-income-order-report [year]="date().year" /> -->
-<h4>รายงานเพื่อออกใบแจ้งหนี้</h4>
+
 <div class="row">
   <div class="app-form-select col">
     <label for="month-month-buy">เดือน</label>
@@ -73,7 +72,7 @@
       (ngModelChange)="changeMonth($event)"
     >
       @for (month of monthArray; track month) {
-      <option [ngValue]="month">{{ month }}</option>
+        <option [ngValue]="month">{{ month }}</option>
       }
     </select>
   </div>
@@ -86,10 +85,19 @@
       (ngModelChange)="changeYear($event)"
     >
       @for (year of yearArray; track year) {
-      <option [ngValue]="year">{{ year }}</option>
+        <option [ngValue]="year">{{ year }}</option>
       }
     </select>
   </div>
+</div>
+<h4>รายงานเพื่อออกใบแจ้งหนี้</h4>
+<div class="row">
+  <span class="text-danger"
+    >***ใช้เพื่อออกใบแจ้งหนี้เท่านั้น ไม่ใช่เพื่อตั้งประมาณการรายเดือน***</span
+  >
+  <span class="text-danger col">DN : Samaphanhealth Co.,Ltd. </span>
+  <span class="text-danger col">HU : Paveemol Co.,Ltd. </span>
+  <span class="text-danger">rebate 12 เดือน มี period เดือนมกราคม</span>
 </div>
 <div class="row mb-3 px-3" style="gap: 1rem">
   <button class="btn btn-primary col" (click)="exportInvoice(1)">
@@ -100,6 +108,13 @@
   </button>
 </div>
 <h4>รายงานเพื่อออกใบลดหนี้</h4>
+<div class="row">
+  <span class="text-danger"
+    >***ใช้เพื่อออกใบลดหนี้เท่านั้น ไม่ใช่เพื่อตั้งประมาณการรายเดือน***</span
+  >
+  <span class="text-danger col">DN : Longmedgroup Co,.Ltd. </span>
+  <span class="text-danger">rebate 12 เดือน มี period เดือนมกราคม</span>
+</div>
 <div class="row mb-3 px-3" style="gap: 1rem">
   <button class="btn btn-primary col" (click)="exportCredit(1)">
     รายงาน DN
@@ -134,7 +149,7 @@
       (ngModelChange)="changeMonth($event)"
     >
       @for (month of monthArray; track month) {
-      <option [ngValue]="month">{{ month }}</option>
+        <option [ngValue]="month">{{ month }}</option>
       }
     </select>
   </div>
@@ -147,7 +162,7 @@
       (ngModelChange)="changeYear($event)"
     >
       @for (year of yearArray; track year) {
-      <option [ngValue]="year">{{ year }}</option>
+        <option [ngValue]="year">{{ year }}</option>
       }
     </select>
   </div>

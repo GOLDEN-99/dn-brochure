@@ -29,6 +29,24 @@ export class NotLightSingleDualComponent {
 
   isCompletePair = (pair: TPairItem) => pair.dnCompCode && pair.huCompCode
 
+  deleting = signal(false)
+
+  onDelete(pairId: number) {
+    if (this.deleting()) return
+    this.deleting.set(true)
+    this.pairServ.delete(pairId).subscribe({
+      next: () => {
+        this.toastService.success('ลบ pair สำเร็จ')
+        this.deleting.set(false)
+        this.pairServ.refetch()
+      },
+      error: (err) => {
+        this.toastService.danger(err?.message ?? 'เกิดข้อผิดพลาด')
+        this.deleting.set(false)
+      }
+    })
+  }
+
   onAdd() {
     const name = this.term().trim()
     if (!name || this.saving()) return

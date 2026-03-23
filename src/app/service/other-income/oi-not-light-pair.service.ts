@@ -42,6 +42,10 @@ export class OiNotLightPairService {
     return this.api.post<{ id: number }>(`${this.url}/other-income/pair`, { displayName })
   }
 
+  delete(pairId: number) {
+    return this.api.delete(`${this.url}/other-income/pair/${pairId}`)
+  }
+
   availableDNPair = computed(() => this.pairList().filter(({ dnHeadId }) => !dnHeadId))
 
   availableHUPair = computed(() => this.pairList().filter(({ huHeadId }) => !huHeadId))

@@ -30,6 +30,11 @@ export const PURCHASE_TAB_TOKEN: ITabSetting = {
       exact: false
     },
     {
+      label: 'รายงานประมาณการ',
+      link: './monthly-report',
+      exact: false
+    },
+    {
       label: 'report',
       link: './report',
       exact: false
@@ -55,10 +60,16 @@ export const ACCOUNT_TAB_TOKEN: ITabSetting = {
     //   exact: false
     // },
     {
+      label: 'ประมาณการ',
+      link: './monthly-report',
+      exact: false
+    },
+    {
       label: 'report',
       link: './report',
       exact: false
-    }
+    },
+
   ]
 }
 

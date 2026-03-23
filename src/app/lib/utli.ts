@@ -15,7 +15,7 @@ export const deepEqual = <T>(prev: T, current: T): boolean => {
         const prevKeys = Object.keys(prev) as Array<keyof T>;
         const currentKeys = Object.keys(current) as Array<keyof T>;
         if (prevKeys.length !== currentKeys.length) return false
-        return prevKeys.every((pk) => deepEqual(prev[pk], current[pk]) && pk in currentKeys)
+        return prevKeys.every((pk) => deepEqual(prev[pk], current[pk]) && currentKeys.includes(pk))
     }
     return prev === current;
 
@@ -38,7 +38,6 @@ export const toManyXlxs = async (filename: string, sheetList: string[], data: an
 }
 
 export const getOrElse = <In, Out = In>(fallback: Out) => catchError<In, Observable<Out>>((err) => {
-    console.log(err);
     return of(fallback)
 })
 

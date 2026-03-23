@@ -20,6 +20,7 @@ import { AccountLightBoxComponent } from '../pages/other-income/account/account-
 import { handleLazyLoadError } from '../utils/lazy-load-error-handler';
 import { NotLightDualDetailComponent } from '../pages/other-income/purchase/not-light-dual-detail/not-light-dual-detail.component';
 import { getOtherIncomeNotLightDualIdResolver } from '../resolvers/other-income/get-other-income-not-light-dual-id.resolver';
+import { AccountMonthlyReportComponent } from '../pages/other-income/account/account-monthly-report/account-monthly-report.component';
 
 export const OTHER_INCOME_ROUTES: Route[] = [
     {
@@ -51,6 +52,10 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                     {
                         path: 'not-light-dual',
                         component: NotLightSingleDualComponent
+                    },
+                    {
+                        path: 'monthly-report',
+                        component: AccountMonthlyReportComponent
                     },
                 ]
             },
@@ -156,6 +161,10 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                     {
                         path: 'report',
                         component: OtherIncomeReportComponent
+                    },
+                    {
+                        path: 'monthly-report',
+                        component: AccountMonthlyReportComponent
                     },
                     {
                         path: 'batch',

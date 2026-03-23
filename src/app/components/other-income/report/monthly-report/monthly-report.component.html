@@ -1,0 +1,29 @@
+<h2>รายงานประมาณการรายเดือน</h2>
+<div class="row">
+  <span class="text-danger"
+    >***จัดซื้อ - สามารถดูสรุปยอดรายเดือนได้ ตามกิจกรรม***</span
+  >
+  <span class="text-danger"
+    >***บัญชี - สามารถนำไปตั้งประมาณการได้ ตามกิจกรรม***</span
+  >
+</div>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-dn col" (click)="onExportDNDc()">
+    DN - DC Rebate
+  </button>
+  <button class="btn btn-hu col" (click)="onExportHUDc()">
+    HU - DC Rebate
+  </button>
+</div>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-dn col" (click)="onExportDNLight()">
+    DN - Light Box
+  </button>
+  <button class="btn btn-hu col" (click)="onExportHULight()">
+    HU - Light Box
+  </button>
+</div>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-dn col" (click)="onExportDNOther()">DN - อื่นๆ</button>
+  <button class="btn btn-hu col" (click)="onExportHUOther()">HU - อื่นๆ</button>
+</div>

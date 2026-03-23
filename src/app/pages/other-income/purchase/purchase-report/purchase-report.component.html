@@ -10,7 +10,7 @@
         (ngModelChange)="changeMonth($event)"
       >
         @for (month of monthArray; track month) {
-        <option [ngValue]="month">{{ month }}</option>
+          <option [ngValue]="month">{{ month }}</option>
         }
       </select>
     </div>
@@ -23,7 +23,7 @@
         (ngModelChange)="changeYear($event)"
       >
         @for (year of yearArray; track year) {
-        <option [ngValue]="year">{{ year }}</option>
+          <option [ngValue]="year">{{ year }}</option>
         }
       </select>
     </div>
@@ -32,6 +32,7 @@
       <input type="text" id="code" name="code" [(ngModel)]="compCode" />
     </div>
   </div>
+  <span class="text-danger">***สรุปยอดซื้อรายเดือน ตามรหัสซัพ***</span>
   <button
     class="btn btn-primary w-100 mb-3"
     [disabled]="disable1()"
@@ -46,6 +47,7 @@
   >
     รายงานซัพพลายเออร์ HU รายเดือน
   </button>
+  <span class="text-danger">***สรุปยอดซื้อรายเดือนแยกตาม PO ตามรหัสซัพ***</span>
   <button
     class="btn btn-primary w-100 mb-3"
     [disabled]="disable1()"
@@ -62,6 +64,9 @@
   </button>
 </div>
 <h4>รายปี</h4>
+<span class="text-danger"
+  >***สรุปยอดซื้อรายปี ตามรหัสซัพ pivot เป็นเดือน***</span
+>
 <div class="mb-3">
   <button
     class="btn btn-primary w-100 mb-3"
@@ -78,8 +83,13 @@
     รายงานซัพพลายเออร์ HU รายปี
   </button>
 </div>
+
 <h2>รายการรายได้อื่นๆทั้งหมด</h2>
-<h4>รายการรายได้อื่นๆ</h4>
+<span class="text-danger"
+  >***"ไม่ทราบว่าเพิ่มกิจกรรมครบหรือยัง" จึงขอรายงานเพื่อ
+  "ใช้เพื่อดูรายชื่อกิจกรรมทั้งหมด"***</span
+>
+
 <div class="row mb-3 px-3" style="gap: 1rem">
   <button class="btn btn-primary col" (click)="exportIncomeList(1)">
     รายงาน DN
@@ -111,7 +121,7 @@
       (ngModelChange)="changeMonth($event)"
     >
       @for (month of monthArray; track month) {
-      <option [ngValue]="month">{{ month }}</option>
+        <option [ngValue]="month">{{ month }}</option>
       }
     </select>
   </div>
@@ -124,7 +134,7 @@
       (ngModelChange)="changeYear($event)"
     >
       @for (year of yearArray; track year) {
-      <option [ngValue]="year">{{ year }}</option>
+        <option [ngValue]="year">{{ year }}</option>
       }
     </select>
   </div>
@@ -172,7 +182,7 @@
       (ngModelChange)="changeMonth($event)"
     >
       @for (month of monthArray; track month) {
-      <option [ngValue]="month">{{ month }}</option>
+        <option [ngValue]="month">{{ month }}</option>
       }
     </select>
   </div>
@@ -185,7 +195,7 @@
       (ngModelChange)="changeYear($event)"
     >
       @for (year of yearArray; track year) {
-      <option [ngValue]="year">{{ year }}</option>
+        <option [ngValue]="year">{{ year }}</option>
       }
     </select>
   </div>

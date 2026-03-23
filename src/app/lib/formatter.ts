@@ -4,7 +4,7 @@ export const formatLocalNumber = (v: number) => v.toLocaleString('en-US', {
 })
 
 export const customFormatMonth = (iso: string) => {
-    const [yy, mm, dd] = iso.split('T')[0].split('-')
+    const [yy, mm, _] = iso.split('T')[0].split('-')
     return `${mm}/${yy}`
 }
 
