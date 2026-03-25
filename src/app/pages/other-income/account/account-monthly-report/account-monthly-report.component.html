@@ -34,3 +34,26 @@
   (fail)="onFail($event)"
   (loading)="onFetch($event)"
 />
+<!-- <div class="mb-3">
+  <div class="row">
+    <div class="app-form-select col">
+      <label for="year-2">ปี</label>
+      <select
+        name="year-2"
+        id="year-2"
+        [ngModel]="date().year"
+        (ngModelChange)="changeYear($event)"
+      >
+        @for (year of yearArray; track year) {
+          <option [ngValue]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+  </div>
+</div> -->
+<app-contract-summary
+  [year]="fdoy()"
+  (success)="onSuccess($event)"
+  (fail)="onFail($event)"
+  (loading)="onFetch($event)"
+/>

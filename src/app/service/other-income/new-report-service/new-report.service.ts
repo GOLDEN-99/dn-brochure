@@ -3,8 +3,9 @@ import { TCompType } from '../../../types';
 import { ApiService } from '../../api/api.service';
 import { environment } from '../../../../environments/environment';
 import { XLSXReportService } from '../../xlsx-report/xlsx-report.service';
-import { catchError, map, switchMap, throwError } from 'rxjs';
+import { catchError, map, retry, switchMap, throwError } from 'rxjs';
 import { DCMonthConfig, IncentiveMonthConfig, LightBoxMonthConfig, TMonthlyReportResponse } from './monthly-report-config';
+import { AllContractConfig, TGetAllReportResponse } from './all-contract-report-config';
 
 
 @Injectable({
@@ -75,6 +76,19 @@ export class NewReportService {
       {}
     )
 
+  getContractReport(req: TGetContractRequest) {
+    const [year, _] = req.year.split('T')[0].split('-')
+    const mapper = this.xlsx.convertJsonToWorkbook(AllContractConfig);
+    const exporter = this.xlsx.exportWorkbook(`รายการรายได้อื่นๆ ${year}`)
+    return this.api.get<TGetAllReportResponse[]>(`${this.baseUrl}/contract`, { params: req })
+      .pipe(
+        map(res => mapper(res)),
+        switchMap(wb => exporter(wb)),
+        catchError(err => throwError(() => err))
+
+      )
+  }
+
 }
 
 type TValidParamValue = string | number | boolean
@@ -85,3 +99,7 @@ export type TMonthlyReportReq = {
   eventType: number | null
 }
 
+export type TGetContractRequest = {
+  compType: TCompType
+  year: string
+}

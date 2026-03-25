@@ -12,3 +12,8 @@ export const customFormatDate = (iso: string) => {
     const [yy, mm, dd] = iso.split('T')[0].split('-').map(Number)
     return `${dd}/${mm}/${yy}`
 }
+
+export const extractYearFromIso = (iso: string) => {
+    const [year, _] = iso.split('T')[0].split('-')
+    return year
+}

@@ -4,10 +4,11 @@ import { MonthlyReportComponent } from "../../../../components/other-income/repo
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../../service/toast/toast.service';
 import { LoadingService } from '../../../../service/loading/loading.service';
+import { ContractSummaryComponent } from "../../../../components/other-income/report/contract-summary/contract-summary.component";
 
 @Component({
   selector: 'app-account-monthly-report',
-  imports: [MonthlyReportComponent, FormsModule],
+  imports: [MonthlyReportComponent, FormsModule, ContractSummaryComponent],
   templateUrl: './account-monthly-report.component.html',
   styleUrl: './account-monthly-report.component.scss'
 })
@@ -46,6 +47,10 @@ export class AccountMonthlyReportComponent {
   fdom = computed(() => {
     const { year, month } = this.date()
     return `${year}-${String(month).padStart(2, "0")}-01`
+  })
+  fdoy = computed(() => {
+    const { year } = this.date()
+    return `${year}-01-01`
   })
 
   monthArray = Array.from({ length: 12 }).map((_, i) => i + 1)
