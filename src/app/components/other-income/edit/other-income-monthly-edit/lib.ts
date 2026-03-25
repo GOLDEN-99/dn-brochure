@@ -48,7 +48,7 @@ const applyCap = (amount: number, capAmount: number | null): number => {
     if (capAmount === null) return amount;
     return Math.min(amount, capAmount);
 };
-
+//simpler version
 export const calculateWithFlatRate = (steps: TOIStepItem[]) => (target: number) => {
     return steps[0].rate * target / 100
 }

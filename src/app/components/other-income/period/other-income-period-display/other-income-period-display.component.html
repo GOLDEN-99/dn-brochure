@@ -1,9 +1,10 @@
+@let currentPeriod = period();
 <div class="mb-3 border rounded">
   <!-- Header Section -->
   <div
     class="bg-light p-3 border-bottom d-flex justify-content-between align-items-center"
   >
-    <h5 class="mb-0">{{ period().periodName }}</h5>
+    <h5 class="mb-0">{{ currentPeriod.periodName }}</h5>
     <div class="d-flex gap-2">
       @if (isPurchase() && canEdit()) {
         <button
@@ -94,17 +95,17 @@
   <!-- Period Data Section -->
   <div class="p-3">
     <div class="row g-2">
-      @for (selector of headerSelector(); track $index) {
-        <div class="col-md-3 col-sm-6">
+      <!-- @for (selector of sectionHeader(); track $index) {
+        <div class="col-md-4 col-sm-12">
           <div class="p-2 bg-light rounded-2">
             <div class="small text-muted mb-1">{{ selector.label }}</div>
             <div class="fw-semibold">{{ selector.fn(period()) }}</div>
           </div>
         </div>
-      }
+      } -->
     </div>
 
-    @if (period().periodRemark) {
+    @if (currentPeriod.periodRemark) {
       <div class="mt-3 pt-2 border-top">
         <div class="small text-muted">หมายเหตุ:</div>
         <div>{{ period().periodRemark }}</div>
@@ -140,9 +141,9 @@
     <div style="min-width: 100%">
       <app-other-income-good-order-period
         [canEdit]="isPurchase()"
-        [actualAmount]="period().totalIncome"
-        [orderList]="period().freeItemList"
-        [periodId]="period().id"
+        [actualAmount]="currentPeriod.totalIncome"
+        [orderList]="currentPeriod.freeItemList"
+        [periodId]="currentPeriod.id"
         [compCode]="compCode()"
         [compType]="compType()"
         (success)="onSuccess($event)"
@@ -154,10 +155,10 @@
     <div style="min-width: 100%">
       <app-other-income-invoice-period
         [canEdit]="!isPurchase()"
-        [invoiceList]="period().invoiceList"
-        [periodId]="period().id"
-        [incomeAmount]="period().totalIncome"
-        [addedAmount]="period().invAmount"
+        [invoiceList]="currentPeriod.invoiceList"
+        [periodId]="currentPeriod.id"
+        [incomeAmount]="currentPeriod.totalIncome"
+        [addedAmount]="currentPeriod.invAmount"
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
         [disabled]="incomeType() !== 3 || isComplete()"
@@ -168,10 +169,10 @@
     <div style="min-width: 100%">
       <app-other-income-credit-period
         [canEdit]="!isPurchase()"
-        [periodId]="period().id"
-        [incomeAmount]="period().totalIncome"
-        [addedAmount]="period().creditAmount"
-        [creditList]="period().creditList"
+        [periodId]="currentPeriod.id"
+        [incomeAmount]="currentPeriod.totalIncome"
+        [addedAmount]="currentPeriod.creditAmount"
+        [creditList]="currentPeriod.creditList"
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
         [disabled]="incomeType() !== 4 || isComplete()"
@@ -182,10 +183,10 @@
     <div style="min-width: 100%">
       <app-other-income-receipt-period
         [canEdit]="!isPurchase()"
-        [receiptList]="period().receiptList"
-        [invAmount]="period().invAmount"
-        [receAmount]="period().receAmount"
-        [periodId]="period().id"
+        [receiptList]="currentPeriod.receiptList"
+        [invAmount]="currentPeriod.invAmount"
+        [receAmount]="currentPeriod.receAmount"
+        [periodId]="currentPeriod.id"
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
         [disabled]="(incomeType() !== 3 && incomeType() !== 4) || isComplete()"

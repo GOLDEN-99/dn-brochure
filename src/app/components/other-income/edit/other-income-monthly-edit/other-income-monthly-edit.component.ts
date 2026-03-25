@@ -6,7 +6,7 @@ import { MonthSelectComponent } from "../../../date-input/month-select.component
 import { YearSelectComponent } from "../../../date-input/year-select.component";
 import { DecimalPipe } from '@angular/common';
 import { TOIStepItem } from '../../../../types';
-import { calFlat, calSemi, calStep } from './lib';
+import { calculateWithFlatRate, calculateWithSemiStepRate, calculateWithStepRate, calFlat, calSemi, calStep } from './lib';
 import { formatLocalNumber } from '../../../../lib/formatter';
 import { OiNotLightListService } from '../../../../service/other-income/oi-not-light-list.service';
 
@@ -30,6 +30,33 @@ export class OtherIncomeMonthlyEditComponent {
   compType = input<string | undefined>()
   id = input.required<number>()
   canEdit = input(false)
+
+  // // refactor here
+  // // choose method
+  // calulateIncomeWithStep = computed(() => {
+  //   const steps = this.stepList()
+  //   switch (this.stepType()) {
+  //     case 1: return calculateWithFlatRate(steps)
+  //     case 2: return calculateWithSemiStepRate(steps)
+  //     default: return calculateWithStepRate(steps)
+  //   }
+  // })
+  // // restart from accumulation
+  // accumulateAmount = computed(() => this.actualAmount() + this.accAmount())
+  // // apply cap | ceiling
+  // acculmulateAmountWithCap = computed(() => {
+  //   const cap = this.capAmount()
+  //   const acc = this.accumulateAmount()
+  //   if (cap === null) return acc
+  //   return Math.min(cap, acc)
+  // })
+  // // raw income calculation
+  // expectedIncome = computed(() => {
+  //   return this.calulateIncomeWithStep()(this.acculmulateAmountWithCap())
+  // })
+  // // raw income - acculated income
+  // incomingIncome = computed(() => this.expectedIncome() - this.accIncome())
+  // // refactor end
 
   calFunc = computed(() => {
     const steps = this.stepList()

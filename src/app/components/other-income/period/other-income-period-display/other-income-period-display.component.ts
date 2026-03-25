@@ -202,6 +202,16 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
     }
   });
 
+  sectionHeader = computed<TFieldSelector<TPopulatedPeriodResult>[]>(() => [
+    { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
+    { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
+    { label: 'ส่วนลดบิล', fn: v => formatLocalNumber(v.billDiscountAmount) },
+    { label: 'ของแถม', fn: v => formatLocalNumber(v.freeItemAmount) },
+    { label: 'ยอดใบลดหนี้', fn: v => formatLocalNumber(v.creditAmount) },
+    { label: 'ยอดใบแจ้งหนี้', fn: v => formatLocalNumber(v.invAmount) },
+    { label: 'ยอดใบเสร็จ', fn: v => formatLocalNumber(v.receAmount) },
+  ])
+
   // Open edit modal
   openEditModal() {
     this.editPeriodName.set(this.period().periodName);
