@@ -5,6 +5,7 @@ import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { distinctUntilChanged, filter } from 'rxjs';
+import { IncomeService } from './income.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,13 +17,14 @@ export class OiBaseformService {
   private readonly today = this.calendar.getToday()
   private readonly fdoy = new NgbDate(this.today.year, 1, 1)
   private readonly ldoy = new NgbDate(this.today.year, 12, 31)
+  private readonly incomeServ = inject(IncomeService)
 
   defaultValue: TAppBaseformInsert = {
     compCode: '',
     compType: 'DN',
     compName: '',
     eventId: 0,
-    incomeId: 0,
+    incomeIds: [],
     period: 0,
     startDate: this.fdoy,
     endDate: this.ldoy,
@@ -52,6 +54,24 @@ export class OiBaseformService {
 
   updateManyField = <P = Partial<TAppBaseformInsert>>(patch: P) => this.baseformState.update(prev => ({ ...prev, ...patch }))
 
+  updateIncomeByType = (incomeType: number, id: number) => {
+    this.baseformState.update(prev => {
+      const otherIds = prev.incomeIds.filter(existingId => {
+        try { return this.incomeServ.getValue(existingId).incomeType !== incomeType }
+        catch { return false }
+      })
+      return { ...prev, incomeIds: id === 0 ? otherIds : [...otherIds, id] }
+    })
+  }
+
+  selectedIdForType = (type: number) => computed(() => {
+    const ids = this.baseformState().incomeIds
+    return ids.find(id => {
+      try { return this.incomeServ.getValue(id).incomeType === type }
+      catch { return false }
+    }) ?? 0
+  })
+
   get request(): TApiBaseformInsert {
     const { startDate, endDate, ...res } = this.baseformState()
     const productList = this.productList()
@@ -76,13 +96,13 @@ export class OiBaseformService {
     this.productList.set(null)
   }
   disableDc = computed(() => {
-    const { compCode, compName, eventId, incomeId } = this.baseformState()
-    return compCode === '' || compName === '' || eventId === 0 || incomeId === 0
+    const { compCode, compName, eventId, incomeIds } = this.baseformState()
+    return compCode === '' || compName === '' || eventId === 0 || incomeIds.length === 0
   })
 
   disableLight = computed(() => {
-    const { compCode, compName, eventId, incomeId } = this.baseformState()
-    return compCode === '' || compName === '' || eventId === 0 || incomeId === 0
+    const { compCode, compName, eventId, incomeIds } = this.baseformState()
+    return compCode === '' || compName === '' || eventId === 0 || incomeIds.length === 0
   })
 }
 

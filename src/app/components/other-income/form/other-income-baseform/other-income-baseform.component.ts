@@ -32,7 +32,11 @@ export class OtherIncomeBaseformComponent {
     this.updateCompType(compType)
   }
   updateEvent = this.updator('eventId')
-  updateIncome = this.updator('incomeId')
+  updateIncomeByType = this.baseFormService.updateIncomeByType
+  incomeIdType1 = this.baseFormService.selectedIdForType(1)
+  incomeIdType2 = this.baseFormService.selectedIdForType(2)
+  incomeIdType3 = this.baseFormService.selectedIdForType(3)
+  incomeIdType4 = this.baseFormService.selectedIdForType(4)
   updateName = this.updator('displayName')
   updatePeriod = this.updator('period')
   updateStartDate = this.updator('startDate')
