@@ -30,14 +30,6 @@
         >
           แก้ไข Period
         </button>
-        <button
-          class="btn btn-sm btn-danger"
-          (click)="openDeleteModal()"
-          type="button"
-          title="ลบ Period"
-        >
-          <i class="bi bi-trash"></i>
-        </button>
       }
     </div>
     <!-- if not purchase > account can update status-->
@@ -87,6 +79,14 @@
         >
           <i class="bi bi-check-circle me-1"></i>
           สำเร็จ
+        </button>
+        <button
+          class="btn btn-sm btn-danger"
+          (click)="openDeleteModal()"
+          type="button"
+          title="ลบ Period"
+        >
+          <i class="bi bi-trash"></i>
         </button>
       </div>
     }
