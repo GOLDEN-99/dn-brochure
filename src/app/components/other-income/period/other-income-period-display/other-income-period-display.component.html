@@ -95,14 +95,14 @@
   <!-- Period Data Section -->
   <div class="p-3">
     <div class="row g-2">
-      <!-- @for (selector of sectionHeader(); track $index) {
+      @for (selector of sectionHeader(); track $index) {
         <div class="col-md-4 col-sm-12">
           <div class="p-2 bg-light rounded-2">
             <div class="small text-muted mb-1">{{ selector.label }}</div>
-            <div class="fw-semibold">{{ selector.fn(period()) }}</div>
+            <div class="fw-semibold">{{ selector.value }}</div>
           </div>
         </div>
-      } -->
+      }
     </div>
 
     @if (currentPeriod.periodRemark) {

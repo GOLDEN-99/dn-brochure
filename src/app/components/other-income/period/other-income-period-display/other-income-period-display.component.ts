@@ -45,6 +45,7 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
   isPurchase = input.required<boolean>();
   compCode = input.required<string | undefined>();
   compType = input.required<string | undefined>();
+  enventType = input<number>()
 
   activeChangeToRece = computed(() => {
     const period = this.period();
@@ -202,15 +203,19 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
     }
   });
 
-  sectionHeader = computed<TFieldSelector<TPopulatedPeriodResult>[]>(() => [
-    { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
-    { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
-    { label: 'ส่วนลดบิล', fn: v => formatLocalNumber(v.billDiscountAmount) },
-    { label: 'ของแถม', fn: v => formatLocalNumber(v.freeItemAmount) },
-    { label: 'ยอดใบลดหนี้', fn: v => formatLocalNumber(v.creditAmount) },
-    { label: 'ยอดใบแจ้งหนี้', fn: v => formatLocalNumber(v.invAmount) },
-    { label: 'ยอดใบเสร็จ', fn: v => formatLocalNumber(v.receAmount) },
-  ])
+  sectionHeader = computed(() => {
+    const { totalAmount, totalIncome, billDiscountAmount, freeItemAmount, creditAmount, invAmount, receAmount } = this.period();
+    return [
+      { label: 'ยอดซื้อ', value: formatLocalNumber(totalAmount) },
+      { label: 'รายได้', value: formatLocalNumber(totalIncome) },
+      { label: 'ส่วนลดบิล', value: formatLocalNumber(billDiscountAmount) },
+      { label: 'ของแถม', value: formatLocalNumber(freeItemAmount) },
+      { label: 'ยอดใบลดหนี้', value: formatLocalNumber(creditAmount) },
+      { label: 'ยอดใบแจ้งหนี้', value: formatLocalNumber(invAmount) },
+      { label: 'ยอดใบเสร็จ', value: formatLocalNumber(receAmount) },
+    ]
+  }
+  )
 
   // Open edit modal
   openEditModal() {
