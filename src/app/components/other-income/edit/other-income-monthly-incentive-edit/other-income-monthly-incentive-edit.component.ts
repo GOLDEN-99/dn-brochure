@@ -1,11 +1,10 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, viewChild } from '@angular/core';
 import { NgbCalendar, NgbDateStruct, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MonthlyService } from '../../../../service/other-income/monthly.service';
 import { TIncomeItem } from '../../../../service/other-income/base-oi';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DateInputComponent } from "../../../date-input/date-input.component";
-
 @Component({
   selector: 'app-other-income-monthly-incentive-edit',
   imports: [DecimalPipe, FormsModule, DateInputComponent],
@@ -14,6 +13,9 @@ import { DateInputComponent } from "../../../date-input/date-input.component";
 })
 export class OtherIncomeMonthlyIncentiveEditComponent {
   incomeList = input.required<TIncomeItem[]>()
+
+  //renderList = computed(() => [...this.incomeList()].sort((a, b) => a.startDate.localeCompare(b.startDate)))
+
   success = output<string>()
   fail = output<string>()
   eventType = input.required<number>()
@@ -114,6 +116,52 @@ export class OtherIncomeMonthlyIncentiveEditComponent {
       },
       error: (err) => {
         this.fail.emit(err.message);
+      }
+    })
+  }
+
+  selectedIncome = signal<TIncomeItem | null>(null)
+  editMonth = computed(() => {
+    const selected = this.selectedIncome()
+    if (selected === null) return ''
+    return this.formatMonth(selected.startDate)
+
+  })
+  editIncome = computed(() => this.selectedIncome()?.incomeAmount ?? 0)
+  editReason = computed(() => this.selectedIncome()?.reason ?? '')
+
+  updateIncome(incomeAmount: number) {
+    this.selectedIncome.update(prev => prev === null ? prev : ({ ...prev, incomeAmount }))
+  }
+
+  updateReason(reason: string) {
+    this.selectedIncome.update(prev => prev === null ? prev : ({ ...prev, reason }))
+  }
+
+
+  private readonly editMonthlyModal = viewChild('monthlyEditModal')
+
+  onEdit(income: TIncomeItem) {
+    this.selectedIncome.set(income)
+    this.modalService
+      .open(this.editMonthlyModal())
+      .result
+      .finally(() => this.selectedIncome.set(null))
+  }
+
+  onSaveEdit() {
+    const income = this.selectedIncome()
+    if (!income) return
+    this.monthService.updateMonthly(income.id, {
+      incomeAmount: income.incomeAmount,
+      reason: income.reason,
+    }).subscribe({
+      next: () => {
+        this.success.emit('แก้ไขสำเร็จ')
+        this.modalService.dismissAll()
+      },
+      error: (err) => {
+        this.fail.emit(err?.message ?? String(err))
       }
     })
   }

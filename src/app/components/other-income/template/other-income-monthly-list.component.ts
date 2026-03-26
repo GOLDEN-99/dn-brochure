@@ -24,7 +24,7 @@ import { customFormatDate, customFormatMonth } from '../../../lib/formatter';
         @for (fn of tableMapper();let j = $index; track j) {
           <td>{{fn(income)}}</td>
         }
-        <td>
+        <td>          
           @if (incomes.length -1 === $index && income.checkDate === null) {
           <button class="btn btn-danger" (click)="onDelete(income.id)">
             <i class="bi bi-trash"></i>
@@ -35,15 +35,14 @@ import { customFormatDate, customFormatMonth } from '../../../lib/formatter';
       }
     </tbody>
   </table>
-  `,
-  styles: ''
+  `
 })
 export class OtherIncomeMonthlyListComponent {
   formatNumber = (v: number) => v.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })
-  private _dcSelector: TFieldSelector<TEnchanceIncomeItem>[] = [
+  private readonly _dcSelector: TFieldSelector<TEnchanceIncomeItem>[] = [
     { label: 'งวด', fn: v => this._formatMonth(v.startDate) },
     { label: 'ยอดคำนวน', fn: v => this.formatNumber(v.calAmount) },
     { label: 'ยอด cn', fn: v => this.formatNumber(v.cn) },
@@ -53,7 +52,7 @@ export class OtherIncomeMonthlyListComponent {
     { label: 'รายได้', fn: v => v.incomeAmount },
     { label: 'ยอดซื้อสะสม', fn: v => this.formatNumber(v.accPurchase) }
   ]
-  private _notDcSelector: TFieldSelector<TEnchanceIncomeItem>[] = [
+  private readonly _notDcSelector: TFieldSelector<TEnchanceIncomeItem>[] = [
     { label: 'เริ่ม', fn: v => this._formatDate(v.startDate) },
     { label: 'จบ', fn: v => this._formatDate(v.endDate) },
     { label: 'หมายเหตุ', fn: v => v.reason },
@@ -61,22 +60,31 @@ export class OtherIncomeMonthlyListComponent {
     { label: 'ยอดซื้อสะสม', fn: v => this.formatNumber(v.accPurchase) }
   ]
   isDc = input.required<boolean>()
-  private _selector = computed(() => this.isDc() ? this._dcSelector : this._notDcSelector)
+  private readonly _selector = computed(() => this.isDc() ? this._dcSelector : this._notDcSelector)
   tableHeader = computed(() => this._selector().map(({ label }) => label))
   tableMapper = computed(() => this._selector().map(({ fn }) => fn))
   incomeList = input.required<TIncomeItem[]>()
   computedIncomeList: Signal<TEnchanceIncomeItem[]> = computed(() => {
     const incList = this.incomeList()
     let accPurchase = 0
-    return incList.map(inc => ({
-      ...inc, accPurchase: accPurchase += inc.actualAmount
-    }))
+    const res: TEnchanceIncomeItem[] = []
+    incList.forEach(
+      (inc) => {
+        accPurchase += inc.actualAmount
+        return {
+          ...inc, accPurchase
+        }
+      })
+    return res;
   })
   success = output<string>()
   fail = output<string>()
-  private monthService = inject(MonthlyService)
-  private _formatMonth = customFormatMonth
-  private _formatDate = customFormatDate
+  private readonly monthService = inject(MonthlyService)
+  private readonly _formatMonth = customFormatMonth
+  private readonly _formatDate = customFormatDate
+  onEdit(incId: number) {
+
+  }
   onDelete(incId: number) {
     this.monthService.deleteMonthly(incId).subscribe({
       next: () => {

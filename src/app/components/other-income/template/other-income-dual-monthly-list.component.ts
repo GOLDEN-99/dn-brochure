@@ -1,6 +1,5 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { TExtendedIncomeItem, TIncomeItem } from '../../../service/other-income/base-oi';
-import { MonthlyService } from '../../../service/other-income/monthly.service';
 import { customFormatMonth } from '../../../lib/formatter';
 
 type TDualIncomeRow = TIncomeItem & { compType: 'DN' | 'HU' }
@@ -44,7 +43,6 @@ export class OtherIncomeDualMonthlyListComponent {
   success = output<string>()
   fail = output<string>()
 
-  private readonly monthService = inject(MonthlyService)
   readonly formatMonth = customFormatMonth
   readonly fmt = (v: number) => v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 

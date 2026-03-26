@@ -71,6 +71,10 @@ export class MonthlyService {
     return this.api.delete(`${this.url}/monthly-income/income-item/${monthId}`)
   }
 
+  updateMonthly(incomeId: number, req: { incomeAmount: number; reason: string }) {
+    return this.api.patch(`${this.url}/monthly-income/${incomeId}`, req)
+  }
+
   calStep = (isStep: boolean, steps: TOIStepItem[], initial?: 0) => (value: number) => {
     const factor = isStep ? 1 : 0
     const raw = steps.reduce((acc, { min, max, rate }) => {
