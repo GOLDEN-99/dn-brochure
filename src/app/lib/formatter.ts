@@ -17,3 +17,13 @@ export const extractYearFromIso = (iso: string) => {
     const [year, _] = iso.split('T')[0].split('-')
     return year
 }
+
+export const mapIncomeType = (incomeType: number) => {
+    switch (incomeType) {
+        case 1: return "สินค้าแถม"
+        case 2: return "CN ลดมากับบิล"
+        case 3: return "ใบแจ้งหนี้"
+        case 4: return "ใบลดหนี้"
+        default: return "ประเภทไม่ถูกต้อง"
+    }
+}

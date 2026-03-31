@@ -6,6 +6,7 @@ import { XLSXReportService } from '../../xlsx-report/xlsx-report.service';
 import { catchError, map, retry, switchMap, throwError } from 'rxjs';
 import { DCMonthConfig, IncentiveMonthConfig, LightBoxMonthConfig, TMonthlyReportResponse } from './monthly-report-config';
 import { AllContractConfig, TGetAllReportResponse } from './all-contract-report-config';
+import { AppendBillDiscountConfig, AppendFreeProductConfig, IssueCreditReportConfig, IssueInvoiceReportConfig, IssueReceiptReportConfig, TIssueDocumentReportResponse, TIssueReceiptReportResponse } from './issuing-document-config';
 
 
 @Injectable({
@@ -17,6 +18,8 @@ export class NewReportService {
 
   private readonly api = inject(ApiService)
   private readonly baseUrl = environment.oi + '/report/account/v2'
+
+  private readonly _oldUrl = environment.oi + '/report/account'
 
   private readonly xlsx = inject(XLSXReportService)
 
@@ -85,7 +88,62 @@ export class NewReportService {
         map(res => mapper(res)),
         switchMap(wb => exporter(wb)),
         catchError(err => throwError(() => err))
+      )
+  }
 
+  private getIssueDocumentReport(params: TGetIssueDocumentReq) {
+    return this.api.get<TIssueDocumentReportResponse[]>(`${this.baseUrl}/issue`, { params })
+  }
+
+  getIssueFreeProduct({ compType }: Pick<TGetIssueDocumentReq, 'compType'>) {
+    const mapper = this.xlsx.convertJsonToWorkbook(AppendFreeProductConfig);
+    const exporter = this.xlsx.exportWorkbook("รายงานรอแนบสินค้าแถม");
+    return this.getIssueDocumentReport({ compType, incomeType: 'products' })
+      .pipe(
+        map(res => mapper(res)),
+        switchMap(wb => exporter(wb)),
+        catchError(err => throwError(() => err))
+      )
+  }
+  getIssueBillDiscount({ compType }: Pick<TGetIssueDocumentReq, 'compType'>) {
+    const mapper = this.xlsx.convertJsonToWorkbook(AppendBillDiscountConfig);
+    const exporter = this.xlsx.exportWorkbook("รายงานรอ CN ลดมากับบิล");
+    return this.getIssueDocumentReport({ compType, incomeType: 'bills' })
+      .pipe(
+        map(res => mapper(res)),
+        switchMap(wb => exporter(wb)),
+        catchError(err => throwError(() => err))
+      )
+  }
+  getIssueInvocie({ compType }: Pick<TGetIssueDocumentReq, 'compType'>) {
+    const mapper = this.xlsx.convertJsonToWorkbook(IssueInvoiceReportConfig);
+    const exporter = this.xlsx.exportWorkbook("รายงานรอออกใบแจ้งหนี้");
+    return this.getIssueDocumentReport({ compType, incomeType: 'invoices' })
+      .pipe(
+        map(res => mapper(res)),
+        switchMap(wb => exporter(wb)),
+        catchError(err => throwError(() => err))
+      )
+  }
+  getIssueCredit({ compType }: Pick<TGetIssueDocumentReq, 'compType'>) {
+    const mapper = this.xlsx.convertJsonToWorkbook(IssueCreditReportConfig);
+    const exporter = this.xlsx.exportWorkbook("รายการรอใบลดหนี้");
+    return this.getIssueDocumentReport({ compType, incomeType: 'credit' })
+      .pipe(
+        map(res => mapper(res)),
+        switchMap(wb => exporter(wb)),
+        catchError(err => throwError(() => err))
+      )
+  }
+
+  getIssueReceipt({ compType }: { compType: string }) {
+    const mapper = this.xlsx.convertJsonToWorkbook<TIssueReceiptReportResponse>(IssueReceiptReportConfig);
+    const exporter = this.xlsx.exportWorkbook("รายงานรอรับใบเสร็จ");
+    return this.api.get<TIssueReceiptReportResponse[]>(`${this.baseUrl}/receipt`, { params: { CompType: compType } })
+      .pipe(
+        map(res => mapper(res)),
+        switchMap(wb => exporter(wb)),
+        catchError(err => throwError(() => err))
       )
   }
 
@@ -102,4 +160,14 @@ export type TMonthlyReportReq = {
 export type TGetContractRequest = {
   compType: TCompType
   year: string
+}
+
+export type TInvoiceRequest = {
+  compType: string
+  reportType: string
+}
+
+export type TGetIssueDocumentReq = {
+  compType: string
+  incomeType: string // products | bills | invoices | credit
 }

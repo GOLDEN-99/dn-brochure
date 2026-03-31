@@ -62,7 +62,13 @@
   </button>
 </div>
 
-<div class="row">
+<app-account-issuing-document-report
+  (fail)="onError($event)"
+  (loading)="onLoading($event)"
+  (success)="onSuccess($event)"
+/>
+
+<!-- <div class="row">
   <div class="app-form-select col">
     <label for="month-month-buy">เดือน</label>
     <select
@@ -89,45 +95,7 @@
       }
     </select>
   </div>
-</div>
-<h4>รายงานเพื่อออกใบแจ้งหนี้</h4>
-<div class="row">
-  <span class="text-danger"
-    >***ใช้เพื่อออกใบแจ้งหนี้เท่านั้น ไม่ใช่เพื่อตั้งประมาณการรายเดือน***</span
-  >
-  <span class="text-danger col">DN : Samaphanhealth Co.,Ltd. </span>
-  <span class="text-danger col">HU : Paveemol Co.,Ltd. </span>
-  <span class="text-danger">rebate 12 เดือน มี period เดือนมกราคม</span>
-</div>
-<div class="row mb-3 px-3" style="gap: 1rem">
-  <button class="btn btn-primary col" (click)="exportInvoice(1)">
-    รายงาน DN
-  </button>
-  <button class="btn btn-success col" (click)="exportInvoice(2)">
-    รายงาน HU
-  </button>
-</div>
-<h4>รายงานเพื่อออกใบลดหนี้</h4>
-<div class="row">
-  <span class="text-danger"
-    >***ใช้เพื่อออกใบลดหนี้เท่านั้น ไม่ใช่เพื่อตั้งประมาณการรายเดือน***</span
-  >
-  <span class="text-danger col">DN : Longmedgroup Co,.Ltd. </span>
-  <span class="text-danger">rebate 12 เดือน มี period เดือนมกราคม</span>
-</div>
-<div class="row mb-3 px-3" style="gap: 1rem">
-  <button class="btn btn-primary col" (click)="exportCredit(1)">
-    รายงาน DN
-  </button>
-  <button class="btn btn-success col" (click)="exportCredit(2)">
-    รายงาน HU
-  </button>
-</div>
-<h4>รายงานเพื่อออกใบเสร็จ</h4>
-<div class="row mb-3 px-3" style="gap: 1rem">
-  <button class="btn btn-primary col" (click)="exportRece(1)">รายงาน DN</button>
-  <button class="btn btn-success col" (click)="exportRece(2)">รายงาน HU</button>
-</div>
+</div> -->
 
 <h4>สรุปรายได้รายปี</h4>
 <div class="row mb-3 px-3" style="gap: 1rem">

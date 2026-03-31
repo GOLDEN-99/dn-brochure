@@ -8,16 +8,18 @@ import { convertToIso } from '../../../../lib';
 import { OiAccountReportService } from '../../../../service/other-income/oi-account-report.service';
 import { toXlxs } from '../../../../lib/utli';
 import { DateInputComponent } from '../../../../components/date-input/date-input.component';
+import { PurchaseAppendOrderReportComponent } from "../../../../components/other-income/report/purchase-append-order-report/purchase-append-order-report.component";
+import { AccountIssuingDocumentReportComponent } from "../../../../components/other-income/report/account-issuing-document-report/account-issuing-document-report.component";
 
 @Component({
   selector: 'app-purchase-report',
-  imports: [FormsModule, DateInputComponent],
+  imports: [FormsModule, DateInputComponent, PurchaseAppendOrderReportComponent, AccountIssuingDocumentReportComponent],
   templateUrl: './purchase-report.component.html',
   styleUrl: './purchase-report.component.scss'
 })
 export class PurchaseReportComponent {
-  private calServ = inject(NgbCalendar)
-  private today = this.calServ.getToday()
+  private readonly calServ = inject(NgbCalendar)
+  private readonly today = this.calServ.getToday()
   compCode = signal("")
   date = signal({
     day: this.today.day,
@@ -40,10 +42,9 @@ export class PurchaseReportComponent {
   }
   compType = signal("")
   disable1 = computed(() => !this.compCode())
-  private reportServ = inject(SupplierReportService)
-
-  private toast = inject(ToastService)
-  private loading = inject(LoadingService)
+  private readonly reportServ = inject(SupplierReportService)
+  private readonly toast = inject(ToastService)
+  private readonly loading = inject(LoadingService)
   exportSupplierMonth(compType: number) {
     const compCode = this.compCode()
     const { month, year } = this.date()
@@ -111,19 +112,19 @@ export class PurchaseReportComponent {
       })
   }
 
-  private _iso = convertToIso(this.today)
-  private _invName = `รายงานออกใบแจ้งหนี้วันที่-${this._iso}.xlsx`
-  private _invSheet = 'รอออกใบแจ้งหนี้'
-  private _creditName = `รายงานออกใบลดหนี้วันที่-${this._iso}.xlsx`
-  private _creditSheet = 'รอออกใบลดหนี้'
-  private _receName = `รายงานออกใบเสร็จวันที่-${this._iso}.xlsx`
-  private _receSheet = 'รอออกใบเสร็จ'
-  private _lightName = `รายงาน lightBox-${this._iso}.xlsx`
-  private _lightSheet = 'lightBox'
+  private readonly _iso = convertToIso(this.today)
+  private readonly _invName = `รายงานออกใบแจ้งหนี้วันที่-${this._iso}.xlsx`
+  private readonly _invSheet = 'รอออกใบแจ้งหนี้'
+  private readonly _creditName = `รายงานออกใบลดหนี้วันที่-${this._iso}.xlsx`
+  private readonly _creditSheet = 'รอออกใบลดหนี้'
+  private readonly _receName = `รายงานออกใบเสร็จวันที่-${this._iso}.xlsx`
+  private readonly _receSheet = 'รอออกใบเสร็จ'
+  private readonly _lightName = `รายงาน lightBox-${this._iso}.xlsx`
+  private readonly _lightSheet = 'lightBox'
 
 
   yearDis = this.reportServ.displayYear
-  private accReport = inject(OiAccountReportService)
+  private readonly accReport = inject(OiAccountReportService)
   exportInvoice(compType: number) {
     this.loading.startLoad()
     this.accReport.exportInvoiceReport(compType, 'invoice').subscribe({
@@ -276,4 +277,20 @@ export class PurchaseReportComponent {
     })
   }
 
+
+  onLoading(isloading: boolean) {
+    if (isloading) {
+      this.loading.startLoad()
+      return
+    }
+    this.loading.endLoad()
+  }
+
+  onError(err: string) {
+    this.toast.danger(err);
+  }
+
+  onSuccess(msg: string) {
+    this.toast.success(msg)
+  }
 }

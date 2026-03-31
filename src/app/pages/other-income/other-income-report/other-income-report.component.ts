@@ -8,10 +8,11 @@ import { convertToIso } from '../../../lib';
 import { LoadingService } from '../../../service/loading/loading.service';
 import { toXlxs } from '../../../lib/utli';
 import { DateInputComponent } from "../../../components/date-input/date-input.component";
+import { AccountIssuingDocumentReportComponent } from "../../../components/other-income/report/account-issuing-document-report/account-issuing-document-report.component";
 
 @Component({
   selector: 'app-other-income-report',
-  imports: [FormsModule, DateInputComponent],
+  imports: [FormsModule, DateInputComponent, AccountIssuingDocumentReportComponent],
   templateUrl: './other-income-report.component.html',
   styleUrl: './other-income-report.component.scss'
 })
@@ -90,6 +91,7 @@ export class OtherIncomeReportComponent {
       complete: () => this.loading.endLoad()
     })
   }
+
   exportLight(compType: number) {
     this.loading.startLoad()
     this.accReport.exportLightReport(compType, this.date()).subscribe({
@@ -215,5 +217,23 @@ export class OtherIncomeReportComponent {
           this.loading.endLoad();
         }
       })
+  }
+
+
+  onLoading(loading: boolean) {
+    if (loading) {
+      this.loading.startLoad()
+      return
+    }
+    this.loading.endLoad();
+  }
+
+
+  onSuccess(msg: string) {
+    this.toast.success(msg)
+  }
+
+  onError(err: string) {
+    this.toast.danger(err)
   }
 }
