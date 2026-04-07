@@ -1,0 +1,60 @@
+<section class="p-3 container-md">
+  <div class="row">
+    <div class="col">
+      <div class="app-form-field-inline">
+        <div><label for="search-branch-group">ค้นหา กลุ่มสาขา</label></div>
+        <div>
+          <input
+            type="text"
+            id="search-branch-group"
+            placeholder="กรอกชื่อกลุ่มสาขา"
+            [(ngModel)]="serachTerm"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <button
+        class="btn btn-success"
+        [disabled]="canNotAdd()"
+        (click)="onCreate()"
+      >
+        เพิ่มกลุ่มสาขา
+      </button>
+    </div>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ชื่อกลุ่มสาขา</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @let group = renderGroup();
+      @if (group.length === 0) {
+        <tr>
+          <td colspan="2" class="text-center">ไม่มีข้อมูล</td>
+        </tr>
+      } @else {
+        @for (g of group; track $index) {
+          <tr>
+            <td>{{ g.name }}</td>
+            <td>
+              <div>
+                <a class="btn btn-primary me-3" [routerLink]="g.id + ''">
+                  แก้ไข
+                </a>
+                <button class="btn btn-danger" (click)="onDelete(g.id)">
+                  ลบ
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</section>

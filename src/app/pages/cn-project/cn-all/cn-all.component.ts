@@ -25,6 +25,14 @@ export class CnAllComponent extends BaseSubmitCn implements OnInit, OnDestroy {
     this.imageServ.invalidImage()
     || this.totalprice() === 0
     || this.remarkServ.cnType() !== 'whole'
+    || this.orderServ.previousCNCount() > 0
+  )
+
+  alterText = computed(() => {
+    const prev = this.orderServ.previousCNCount()
+    if (prev > 0) return `เคย cn ไปแล้ว ${prev} ครั้ง`
+    return ""
+  }
   )
 
 }

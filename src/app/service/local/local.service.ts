@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { TMaybe } from '../../types';
-import { TComp, TModifiedComp } from '../../types/ibob-supplier.type';
 import { loginPraser } from './local-lib';
 
 @Injectable({
@@ -10,31 +8,31 @@ export class LocalService {
 
   constructor() { }
 
-  private addTime = (factor: number) => (value: number) => {
-    const current = (new Date()).getTime()
+  private readonly addTime = (factor: number) => (value: number) => {
+    const current = Date.now()
     return current + factor * value
   }
 
-  private addDay = this.addTime(24 * 60 * 60 * 1000)
-  private addHour = this.addTime(60 * 60 * 1000)
-  private addMin = this.addTime(60 * 1000)
+  private readonly addDay = this.addTime(24 * 60 * 60 * 1000)
+  private readonly addHour = this.addTime(60 * 60 * 1000)
+  private readonly addMin = this.addTime(60 * 1000)
 
-  private isExp = (exp: number) => {
-    const unix = (new Date()).getTime()
+  private readonly isExp = (exp: number) => {
+    const unix = Date.now()
     return unix > exp
   }
 
-  private setItem = (key: string, exp: () => number) =>
+  private readonly setItem = (key: string, exp: () => number) =>
     (value: unknown) => {
       const txt = JSON.stringify({ data: value, exp: exp() })
       localStorage.setItem(key, txt)
     }
 
-  private getItem = <T>(praser: (value: unknown) => T | null) => (key: string) => () => {
+  private readonly getItem = <T>(praser: (value: unknown) => T | null) => (key: string) => () => {
     try {
       const txtData = localStorage.getItem(key)
       if (!txtData) throw new Error(`no data with key ${key}`)
-      const { data, exp } = JSON.parse(txtData) as any
+      const { data, exp } = JSON.parse(txtData)
       if (this.isExp(exp)) throw new Error('expired data')
       const prasedData = praser(data)
       return prasedData
@@ -44,7 +42,7 @@ export class LocalService {
     }
   }
 
-  private jwtPraser = (data: unknown) => {
+  private readonly jwtPraser = (data: unknown) => {
     const str = String(data)
     const tokenPart = str.split('.')
     if (tokenPart.length !== 3) return null

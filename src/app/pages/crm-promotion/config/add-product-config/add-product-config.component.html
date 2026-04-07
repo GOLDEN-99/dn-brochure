@@ -1,0 +1,247 @@
+<div class="d-flex align-items-center gap-2 mb-3">
+  <a class="btn btn-outline-secondary btn-sm" routerLink="..">
+    <i class="bi bi-arrow-left me-1"></i>กลับ
+  </a>
+  <h5 class="mb-0 fw-semibold">เพิ่มสินค้า</h5>
+</div>
+
+@let filter = filterOptions();
+
+<!-- Filter panel -->
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body">
+    <div class="row g-3">
+      <!-- compName free text -->
+      <div class="col-12 col-md-6">
+        <label
+          for="comp-name"
+          class="form-label fw-semibold text-muted small mb-1"
+          >บริษัท</label
+        >
+        <input
+          id="comp-name"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="ค้นหาชื่อบริษัท..."
+          [ngModel]="filter.compName"
+          (ngModelChange)="setCompName($event)"
+        />
+      </div>
+
+      <!-- หมวดหมู่ typeahead -->
+      <div class="col-12 col-md-6">
+        <label
+          for="filter-cate"
+          class="form-label fw-semibold text-muted small mb-1"
+          >หมวดหมู่</label
+        >
+        <input
+          id="filter-cate"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="พิมพ์เพื่อค้นหา..."
+          [ngModel]="cateInput()"
+          (ngModelChange)="cateInput.set($event)"
+          [ngbTypeahead]="searchCate"
+          [inputFormatter]="formatCate"
+          [resultFormatter]="formatCate"
+          (selectItem)="onSelectCate($event)"
+        />
+        <div class="d-flex flex-wrap gap-1 mt-1">
+          @for (code of filter.productCate; track code) {
+            <span class="badge bg-primary d-flex align-items-center gap-1">
+              {{ getCateDesc(code) }}
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                style="font-size: 0.6rem"
+                [attr.aria-label]="'ลบ ' + getCateDesc(code)"
+                (click)="removeTag('productCate', code)"
+              ></button>
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- ประเภท typeahead -->
+      <div class="col-12 col-md-6">
+        <label
+          for="filter-type"
+          class="form-label fw-semibold text-muted small mb-1"
+          >ประเภท</label
+        >
+        <input
+          id="filter-type"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="พิมพ์เพื่อค้นหา..."
+          [ngModel]="typeInput()"
+          (ngModelChange)="typeInput.set($event)"
+          [ngbTypeahead]="searchType"
+          [inputFormatter]="formatType"
+          [resultFormatter]="formatType"
+          (selectItem)="onSelectType($event)"
+        />
+        <div class="d-flex flex-wrap gap-1 mt-1">
+          @for (code of filter.productType; track code) {
+            <span class="badge bg-success d-flex align-items-center gap-1">
+              {{ getTypeDesc(code) }}
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                style="font-size: 0.6rem"
+                [attr.aria-label]="'ลบ ' + getTypeDesc(code)"
+                (click)="removeTag('productType', code)"
+              ></button>
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- กลุ่มสินค้า typeahead -->
+      <div class="col-12 col-md-6">
+        <label
+          for="filter-group"
+          class="form-label fw-semibold text-muted small mb-1"
+          >กลุ่มสินค้า</label
+        >
+        <input
+          id="filter-group"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="พิมพ์เพื่อค้นหา..."
+          [ngModel]="groupInput()"
+          (ngModelChange)="groupInput.set($event)"
+          [ngbTypeahead]="searchGroup"
+          [inputFormatter]="formatGroup"
+          [resultFormatter]="formatGroup"
+          (selectItem)="onSelectGroup($event)"
+        />
+        <div class="d-flex flex-wrap gap-1 mt-1">
+          @for (code of filter.productGroup; track code) {
+            <span class="badge bg-secondary d-flex align-items-center gap-1">
+              {{ getGroupDesc(code) }}
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                style="font-size: 0.6rem"
+                [attr.aria-label]="'ลบ ' + getGroupDesc(code)"
+                (click)="removeTag('productGroup', code)"
+              ></button>
+            </span>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Product table -->
+<div class="card border-0 shadow-sm">
+  <div
+    class="card-header bg-white border-bottom d-flex align-items-center justify-content-between"
+  >
+    <span class="fw-semibold">
+      ผลการค้นหา
+      <span class="badge bg-secondary ms-2">{{
+        filteredProducts().length
+      }}</span>
+    </span>
+    <span class="text-muted small">เลือกแล้ว {{ selectedCount() }} รายการ</span>
+  </div>
+  <div style="max-height: 500px; overflow-y: auto">
+    <table
+      class="table table-hover mb-0"
+      style="table-layout: fixed; width: 100%"
+    >
+      <colgroup>
+        <col style="width: 48px" />
+        <col style="width: 140px" />
+        <col />
+        <col style="width: 360px" />
+        <col style="width: 120px" />
+      </colgroup>
+      <thead class="table-light" style="position: sticky; top: 0; z-index: 1">
+        <tr>
+          <th></th>
+          <th style="cursor: pointer; user-select: none" (click)="toggleSort('sku')" (keydown.enter)="toggleSort('sku')">
+            บาร์โค้ด
+            @if (sortCol() === 'sku') {
+              <i class="bi" [class.bi-sort-up]="sortDir() === 'asc'" [class.bi-sort-down]="sortDir() === 'desc'"></i>
+            } @else {
+              <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+            }
+          </th>
+          <th style="cursor: pointer; user-select: none" (click)="toggleSort('goodName')" (keydown.enter)="toggleSort('goodName')">
+            ชื่อสินค้า
+            @if (sortCol() === 'goodName') {
+              <i class="bi" [class.bi-sort-up]="sortDir() === 'asc'" [class.bi-sort-down]="sortDir() === 'desc'"></i>
+            } @else {
+              <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+            }
+          </th>
+          <th style="cursor: pointer; user-select: none" (click)="toggleSort('compName')" (keydown.enter)="toggleSort('compName')">
+            บริษัท
+            @if (sortCol() === 'compName') {
+              <i class="bi" [class.bi-sort-up]="sortDir() === 'asc'" [class.bi-sort-down]="sortDir() === 'desc'"></i>
+            } @else {
+              <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+            }
+          </th>
+          <th style="cursor: pointer; user-select: none" (click)="toggleSort('cateDesc')" (keydown.enter)="toggleSort('cateDesc')">
+            หมวด
+            @if (sortCol() === 'cateDesc') {
+              <i class="bi" [class.bi-sort-up]="sortDir() === 'asc'" [class.bi-sort-down]="sortDir() === 'desc'"></i>
+            } @else {
+              <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+            }
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of filteredProducts(); track item.goodCode + item.compCode) {
+          <tr
+            style="cursor: pointer"
+            (click)="toggleSelect(item.goodCode)"
+            (keydown.space)="toggleSelect(item.goodCode)"
+          >
+            <td>
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [checked]="isSelected(item.goodCode)"
+                (click)="$event.stopPropagation()"
+                (keydown)="$event.stopPropagation()"
+                readonly
+              />
+            </td>
+            <td class="text-truncate">{{ item.sku }}</td>
+            <td class="text-truncate">{{ item.goodName }}</td>
+            <td class="text-truncate">{{ item.compName }}</td>
+            <td class="text-truncate">{{ item.cateDesc }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="text-center text-muted py-5">
+              <i class="bi bi-inbox d-block fs-3 mb-1"></i>
+              ไม่มีข้อมูล
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer bg-white d-flex justify-content-end gap-2">
+    <a class="btn btn-secondary" routerLink="..">ยกเลิก</a>
+    <button
+      class="btn btn-primary"
+      [disabled]="selectedCount() === 0 || saving()"
+      (click)="confirmAdd()"
+    >
+      @if (saving()) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+      }
+      ยืนยัน ({{ selectedCount() }})
+    </button>
+  </div>
+</div>

@@ -16,12 +16,12 @@ export class GoodItemComponent {
     const { useItem, lot } = this.item()
     const totalCnItem = lot.reduce((acc, { check, returnAmou }) => check ? acc + returnAmou : acc, 0)
     const totalItem = lot.reduce((acc, { goodAmou }) => acc + goodAmou, 0)
-    const res = totalItem < totalCnItem + useItem
-    return res
+    return totalItem < totalCnItem + useItem
   })
 
-  invalidClass = computed(() => this.invalid()
-    ? 'good-item border-bottom bg-danger'
-    : 'good-item border-bottom'
+  invalidClass = computed(
+    () => this.invalid()
+      ? 'good-item border-bottom bg-danger'
+      : 'good-item border-bottom'
   )
 }

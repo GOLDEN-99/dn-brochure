@@ -17,16 +17,16 @@ export class CnOrderService {
       error: (err) => { console.log(err); this.itemList.update(() => []) }
     })
   }
-  private api = inject(ApiService)
-  private url = environment.cnPath
-  private getOrder = (wholeNumb: string) =>
+  private readonly api = inject(ApiService)
+  private readonly url = environment.cnPath
+  private readonly getOrder = (wholeNumb: string) =>
     this.api.get<TOrderRes>(`${this.url}/GetOrder`, { params: { WholeNumb: wholeNumb } })
       .pipe(
         tap(this.setOrderHead),
         map(({ goodList }) => goodList.map(this.mapCheck)),
         catchError((err) => throwError(() => err))
       )
-  private wholeNumb$ = new Subject<string>()
+  private readonly wholeNumb$ = new Subject<string>()
 
   fetch = (wholeNumber: string) => this.wholeNumb$.next(wholeNumber)
 
@@ -43,6 +43,8 @@ export class CnOrderService {
   handleSelect = (id: number, check: boolean) => {
     this.itemList.update(prev => prev.map((i, idx) => idx === id ? ({ ...i, check }) : i))
   }
+  previousCNCount = computed(() => this.itemList().reduce((acc, { useItem }) => acc + useItem, 0))
+
 
   addedItem = signal<TAppGoodItem[]>([])
   selectAddedItem = computed(() => this.addedItem().filter(({ check }) => check))

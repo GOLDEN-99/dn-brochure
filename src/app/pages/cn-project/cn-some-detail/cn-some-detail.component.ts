@@ -34,4 +34,5 @@ export class CnSomeDetailComponent extends BaseSubmitCn implements OnInit, OnDes
     || this.remarkServ.cnType() !== 'some'
     || this.orderServ.invalidByGoodReuturnAmou()
   )
+
 }

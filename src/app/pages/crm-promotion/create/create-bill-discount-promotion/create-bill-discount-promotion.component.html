@@ -1,0 +1,210 @@
+<section class="m-3">
+  <span>{{ pageName() }}</span>
+  @let state = formState();
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="card-title">ข้อมูลทั่วไป</h2>
+
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="app-form-field">
+            <label for="pro-name">ชื่อโปรโมชั่น </label>
+
+            <input
+              type="text"
+              name="pro-name"
+              id="pro-name"
+              [ngModel]="state.promotionName"
+            />
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="app-form-field">
+            <label for="source">โปรโมชั่นของ</label>
+
+            <select
+              class="form-select"
+              name="source"
+              id="source"
+              [ngModel]="state.source"
+              (ngModelChange)="handleChangeSource($event)"
+            >
+              <option value="HU">Health up</option>
+              <option value="SUPPLIER">Supplier</option>
+              <option value="BOTH">BOTH</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-lg-3">
+          <div class="app-form-field">
+            <label for="priority"> ใช้ร่วมกับโปรโมชั่นอื่น </label>
+            <select name="priority" id="priority" class="form-select">
+              <option value="0">ใช้ร่วมกันได้</option>
+              <option value="1">priority 1</option>
+              <option value="2">priority 2</option>
+              <option value="3">priority 3</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="app-form-field">
+            <label for="order">ลำดับการคำนวน</label>
+            <select name="order" id="order" class="form-select">
+              <option value="0">ลำดับสุดท้าย</option>
+              <option value="1" [disabled]="state.source === 'HU'">
+                ลำดับก่อนสุดท้าย
+              </option>
+              <option value="2" [disabled]="state.source === 'HU'">
+                ลำดับกลาง
+              </option>
+              <option value="3" [disabled]="state.source === 'HU'">
+                ลำดับแรก
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- datetime-->
+        <div class="col-lg-6">
+          <app-date-input label="ตั้งแต่" [date]="state.startDate" />
+        </div>
+        <div class="col-lg-6">
+          <app-date-input label="สิ้นสุด" [date]="state.endDate" />
+        </div>
+      </div>
+      <div class="app-form-field">
+        <label for="pro-desc">รายละเอียด</label>
+        <textarea name="pro-desc" id="pro-desc" [ngModel]="state.promotionName">
+        </textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="card-title">เงื่อนไข</h2>
+
+      <div class="row">
+        <div class="col">
+          <!---->
+          <div class="row">
+            <div class="col-4">
+              <app-day-checkboox
+                [activeDay]="state.activeDay"
+                (changeActiveDay)="onFormStateChange('activeDay', $event)"
+              />
+            </div>
+            <div class="col-8">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="limit-time"
+                  [ngModel]="state.limitTime"
+                  (ngModelChange)="toggleTime($event)"
+                />
+                <label class="form-check-label" for="limit-time"
+                  >จำกัดช่วงเวลา</label
+                >
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <div
+                  class="app-form-field-inline col-lg"
+                  style="margin-top: 0; margin-bottom: 0"
+                >
+                  <div>
+                    <label for="start-time" style="width: 24px">เริ่ม</label>
+                  </div>
+                  <div>
+                    <ngb-timepicker
+                      [spinners]="false"
+                      [disabled]="!state.limitTime"
+                      [ngModel]="state.startTime"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="app-form-field-inline col-lg"
+                  style="margin-top: 0; margin-bottom: 0"
+                >
+                  <div>
+                    <label for="start-time" style="width: 24px">จบ</label>
+                  </div>
+                  <div>
+                    <ngb-timepicker
+                      [spinners]="false"
+                      [disabled]="!state.limitTime"
+                      [ngModel]="state.endTime"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <app-member-checkbox
+            [members]="state.members"
+            (changeMembers)="onFormStateChange('members', $event)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="card-title">จำกัดการใช้งาน</h2>
+      <div class="row">
+        <div class="col">
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="is-branch-spec"
+              [ngModel]="state.isBranchSpecific"
+              (ngModelChange)="toggleBranch($event)"
+            />
+            <label class="form-check-label" for="is-branch-spec"
+              >จำกัดสาขา</label
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  @if (showProductPicker()) {
+    <div class="card mb-3">
+      <div class="card-body">
+        <h2 class="card-title">สินค้าที่ร่วมรายการ</h2>
+      </div>
+    </div>
+  }
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="card-title">ส่วนลด</h2>
+      <app-benefit-list
+        [promotionType]="state.promotionType"
+        [thresholdType]="state.thresholdType"
+        [benefitType]="state.benefitType"
+        [benefitList]="formState().promotionBenefit"
+        (deleteByIndex)="onDeleteBenefit($event)"
+      />
+      <div style="height: 16px"></div>
+      <app-benefit-input
+        [promotionType]="state.promotionType"
+        [thresholdType]="state.thresholdType"
+        [benefitType]="state.benefitType"
+        (addBenefit)="onAddBenefit($event)"
+      />
+    </div>
+  </div>
+
+  @if (showPWP()) {
+    <div class="card mb-3">
+      <div class="card-body"><h2 class="card-title">สินค้าแลกซื้อ</h2></div>
+    </div>
+  }
+</section>

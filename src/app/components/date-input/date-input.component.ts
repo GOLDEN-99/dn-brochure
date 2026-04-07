@@ -48,7 +48,7 @@ import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bo
   styles: ''
 })
 export class DateInputComponent {
-  private calendar = inject(NgbCalendar)
+  private readonly calendar = inject(NgbCalendar)
   id = Math.floor(Math.random() * 1000)
   date = input<NgbDateStruct>(this.calendar.getToday())
   label = input.required<string>()
