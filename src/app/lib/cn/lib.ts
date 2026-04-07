@@ -47,7 +47,7 @@ export abstract class BaseSubmitCn implements ISubmitMethodCn, ISubmitCnProps {
             if (!p) return
             const { saleCode, wholeCode, wholeNumb } = p
             this.toast.success('สำเร็จ')
-            this.router.navigate(['cn', saleCode, wholeCode, wholeNumb, isWRR, 'complete'])
+            this.router.navigate(['cn', saleCode, wholeCode, wholeNumb, isWRR || '0', 'complete'])
         },
         error: () => {
             this.toast.danger('เกิดข้อผิดพลาด')

@@ -1,8 +1,7 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CnApiService } from '../../../service/cn/cn-api/cn-api.service';
 import { CnRemarkService } from '../../../service/cn/cn-remark/cn-remark.service';
 import { CnOrderService } from '../../../service/cn/cn-order/cn-order.service';
-import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-cn-complete',
@@ -11,18 +10,18 @@ import { DecimalPipe } from '@angular/common';
   styleUrl: './cn-complete.component.scss'
 })
 export class CnCompleteComponent {
-  private cnApi = inject(CnApiService)
+  private readonly cnApi = inject(CnApiService)
   head = this.cnApi.prependReq
   query = this.cnApi.paramsSignal
   cusStat = this.cnApi.cusStat
   response = this.cnApi.wholeItemData
-  private remarkServ = inject(CnRemarkService)
+  private readonly remarkServ = inject(CnRemarkService)
   cnType = this.remarkServ.cnType
   isShow = this.cnApi.showBank
   motive = this.remarkServ.remarkOpt
   prob = this.remarkServ.prob
   showBankRef = [{ id: '0', stat: 'ไม่โอนคืน' }, { id: '1', stat: 'โอนคืน' }]
-  private orderService = inject(CnOrderService)
+  private readonly orderService = inject(CnOrderService)
   showList = computed(() =>
     this.cnType() === 'whole'
       ? this.orderService.wholeBillItem()
