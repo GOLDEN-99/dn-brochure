@@ -15,7 +15,7 @@ export class CnApiService {
   private readonly orderServ = inject(CnOrderService)
   private readonly url = environment.cnPath
   wholeItemData = signal<TMaybe<TWholeItem>>(null)
-
+  cannotCnWhole = computed(() => this.orderServ.previousCNCount() > 0)
   private readonly params$ = new Subject<TCNQueryParams>()
 
   paramsSignal = signal<TMaybe<TCNQueryParams>>(null)
