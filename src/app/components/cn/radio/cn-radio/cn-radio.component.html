@@ -23,9 +23,12 @@
     />
     <label class="form-check-label" for="cnWhole"> CN ทั้งบิล </label>
     @if (cannotCNWhole()) {
-      <div class="text-danger">
-        ไม่สามารถ cn ทั้งบิลได้เนื่องจากเคยทำ cn บารายการไปแล้ว
-      </div>
+      <i
+        class="bi bi-info-circle ms-1" style="color: #333"
+        [ngbTooltip]="'ไม่สามารถ CN ทั้งบิลได้ เนื่องจากมี CN บางรายการแล้ว'"
+        placement="end"
+        triggers="hover click"
+      ></i>
     }
   </div>
 </div>
