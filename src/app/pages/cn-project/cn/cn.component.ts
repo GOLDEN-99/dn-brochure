@@ -1,4 +1,4 @@
-import { Component, computed, inject, model } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { WholeHeadComponent } from '../../../components/cn/whole-head/whole-head.component';
@@ -22,9 +22,9 @@ export class CnComponent {
     this.router.navigateByUrl(this.endPoint())
   }
 
-  private remarkServ = inject(CnRemarkService)
+  private readonly remarkServ = inject(CnRemarkService)
   remarkList = this.remarkServ.withFallback
-  private cnApi = inject(CnApiService)
+  private readonly cnApi = inject(CnApiService)
 
   remarkOption = this.remarkServ.remarkOpt
   setRemarkOpt = this.remarkServ.setRemarkOption
@@ -37,7 +37,7 @@ export class CnComponent {
 
   cnType = this.remarkServ.cnType
 
-  disable = computed(() => this.remarkServ.calDisable())
+  disable = computed(() => this.remarkServ.calDisable() || ((this.cnType() === 'whole') && this.cnApi.cannotCnWhole()))
 
   endPoint = computed(() => this.cnType() ?? 'upload')
   btnClass = computed(
