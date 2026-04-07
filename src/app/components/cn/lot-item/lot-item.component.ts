@@ -20,6 +20,7 @@ export class LotItemComponent {
 
   onCheck(check: boolean) {
     this.check.emit(check)
+    this.amount.emit(1)
   }
 
   onChange(goodAmou: number) {
