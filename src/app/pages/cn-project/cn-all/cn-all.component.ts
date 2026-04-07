@@ -30,7 +30,7 @@ export class CnAllComponent extends BaseSubmitCn implements OnInit, OnDestroy {
 
   alterText = computed(() => {
     const prev = this.orderServ.previousCNCount()
-    if (prev > 0) return `เคย cn ไปแล้ว ${prev} ครั้ง`
+    if (prev > 0) return `เคย cn ไปแล้ว ${prev} ชิ้น ไม่สามารถ cn ทั้งรายการได้`
     return ""
   }
   )

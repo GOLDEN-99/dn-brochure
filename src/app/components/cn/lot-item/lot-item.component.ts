@@ -12,7 +12,7 @@ import { CnOrderService } from '../../../service/cn/cn-order/cn-order.service';
 })
 export class LotItemComponent {
   lotItem = input.required<TAppLot>()
-  private orderServ = inject(CnOrderService)
+  private readonly orderServ = inject(CnOrderService)
   baseHandler = this.orderServ.handleCheckLot
 
   check = output<boolean>()
