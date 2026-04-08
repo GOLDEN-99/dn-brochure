@@ -1,12 +1,12 @@
 <div mb-3>
-  @let headValue = head();@let incomeValue = income();@let eventValue =
-  event();@let compValue = comp();
+  @let headValue = head();@let incomeValue = headIncomeList();
+  @let eventValue = event();@let compValue = comp();
   <div class="row" style="justify-content: space-between">
     <h2 class="col-auto">รายการรายได้อื่นๆ</h2>
-    @if(canEdit()){
-    <div class="col-auto">
-      <button class="btn btn-primary" (click)="openModal()">แก้ไข</button>
-    </div>
+    @if (canEdit()) {
+      <div class="col-auto">
+        <button class="btn btn-primary" (click)="openModal()">แก้ไข</button>
+      </div>
     }
   </div>
   <div class="row">
@@ -27,7 +27,13 @@
   </div>
   <div class="row">
     <div class="col">วิธีการรับรู้</div>
-    <div class="col">{{ incomeValue.incomeName }}</div>
+    <div class="col">
+      <div class="d-flex flex-column">
+        @for (income of incomeValue; track income.id) {
+          <span>{{ income.incomeName }}</span>
+        }
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="col">เริ่ม</div>

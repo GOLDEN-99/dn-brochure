@@ -188,7 +188,7 @@ export type NotLightSingle = {
     periodList: TPopulatedPeriodResult[]
     company: TOIComp
     event: TEvent
-    income: TIncome
+    //income: TIncome
     headIncomeList: TIncome[]
 }
 

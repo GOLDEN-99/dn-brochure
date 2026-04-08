@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, input, output, viewChild } from '@angular/core';
+import { Component, inject, input, output, signal, viewChild } from '@angular/core';
 import { TCompType } from '../../../../types';
 import { NgbCalendar, NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OiBaseformService, TApiBaseformInsert } from '../../../../service/other-income/oi-baseform.service';
@@ -7,6 +7,7 @@ import { EventSelectComponent } from "../../form/event-select/event-select.compo
 import { FormsModule } from '@angular/forms';
 import { DateInputComponent } from "../../../date-input/date-input.component";
 import { SearchCompSubformComponent } from "../../form/search-comp-subform/search-comp-subform.component";
+import { TIncome } from '../../../../service/other-income/income.service';
 
 @Component({
   selector: 'app-other-income-head-edit',
@@ -16,11 +17,11 @@ import { SearchCompSubformComponent } from "../../form/search-comp-subform/searc
 })
 export class OtherIncomeHeadEditComponent {
   canEdit = input(false)
+  headIncomeList = input.required<TIncome[]>()
   head = input.required<TEditHeadProps>()
   comp = input.required<TCompProps>()
-  income = input.required<TIncomeProps>()
   event = input.required<TEventProps>()
-  submit = output<TApiBaseformInsert>()
+  editData = output<TApiBaseformInsert>()
   mode = input<TFilter>('all')
   private readonly calService = inject(NgbCalendar)
   private readonly today = this.calService.getToday()
@@ -56,7 +57,7 @@ export class OtherIncomeHeadEditComponent {
   }
 
   submitForm() {
-    this.submit.emit(this.headForm.request);
+    this.editData.emit(this.headForm.request);
     this.modalService.dismissAll();
   }
 

@@ -41,8 +41,8 @@ export class CreatePeriodComponent {
   canEdit = input(false)
   isProduct = input(true)
 
-  private modalServ = inject(NgbModal)
-  private periodModal = viewChild('periodModal')
+  private readonly modalServ = inject(NgbModal)
+  private readonly periodModal = viewChild('periodModal')
   openPeriod() {
     const incomeList = this.incomeList()
     const modIncome = incomeList
@@ -55,7 +55,7 @@ export class CreatePeriodComponent {
   }
 
   formateDate(iso: string) {
-    const [yy, mm, dd] = iso.split('T')[0].split('-')
+    const [yy, mm, _] = iso.split('T')[0].split('-')
     return `${mm}/${yy}`
   }
   get period() {
@@ -66,7 +66,7 @@ export class CreatePeriodComponent {
     const summary = this.sum()
     return { periodName, periodRemark, ...summary, monthlyList }
   }
-  private periodservice = inject(PeriodService)
+  private readonly periodservice = inject(PeriodService)
   onAddPeriod() {
     const req = this.period
     const headId = this.headId()

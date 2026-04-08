@@ -5,10 +5,10 @@
     @let e = currentResult();@let branches = e.branchList;
     @let periods = e.periodList;
     <app-other-income-head-edit
+      [headIncomeList]="e.headIncomeList"
       [head]="e.head"
       [comp]="e.company"
       [event]="e.event"
-      [income]="e.income"
       [canEdit]="false"
     />
     <app-other-income-light-edit

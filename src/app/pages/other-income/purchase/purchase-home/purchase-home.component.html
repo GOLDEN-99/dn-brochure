@@ -37,7 +37,7 @@
       </tr>
     </thead>
     <tbody style="font-size: 12px">
-      @for (item of rederList(); track $index) {
+      @for (item of rederList(); track item.id) {
         <tr>
           <td>{{ item.eventName }}</td>
           <td>{{ item.startDate | date }}</td>

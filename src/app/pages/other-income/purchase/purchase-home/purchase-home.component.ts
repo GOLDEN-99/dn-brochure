@@ -18,7 +18,8 @@ export class PurchaseHomeComponent {
   mode = this.notLightServ.mode
   queryKey = this.notLightServ.queryKey
   compType = this.notLightServ.compType
-  filterStatus = this.notLightServ.filterStatus
+  get filterStatus() { return this.notLightServ.filterStatus() }
+  set filterStatus(v: boolean) { this.notLightServ.filterStatus.set(v) }
   rederList = this.notLightServ.notLightList
 
   private readonly router = inject(Router)

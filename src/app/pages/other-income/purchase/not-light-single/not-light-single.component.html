@@ -6,9 +6,9 @@
     @let e = currentResult(); @let comp = e.company;@let incomes = e.incomeList;
     @let periods = e.periodList;@let h = e.head;
     <app-other-income-head-edit
+      [headIncomeList]="e.headIncomeList"
       [head]="e.head"
       [event]="e.event"
-      [income]="e.income"
       [comp]="e.company"
       [canEdit]="false"
     />
