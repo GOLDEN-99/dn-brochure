@@ -10,7 +10,8 @@ import { PeriodService } from '../../../service/other-income/period.service';
   imports: [FormsModule, DecimalPipe, DatePipe],
   template: `
     <div class="mb-3">
-        <table class="table">
+        <div class="px-3 py-2 text-muted small fw-semibold border-bottom">ใบแจ้งหนี้</div>
+        <table class="table table-sm table-hover">
           <thead>
             <tr>
               <th scope="col" style="width: 20%;">ใบแจ้งหนี้</th>

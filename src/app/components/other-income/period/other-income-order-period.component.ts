@@ -9,8 +9,8 @@ import { BasePeriodComponent } from './base-period.component';
   imports: [FormsModule, DecimalPipe],
   template: `
     <div class="mb-3">
-        <div class="px-3 pt-2 pb-1 text-muted small fw-semibold">ส่วนลดท้ายบิล</div>
-        <table class="table">
+        <div class="px-3 py-2 text-muted small fw-semibold border-bottom">ส่วนลดท้ายบิล</div>
+        <table class="table table-sm table-hover">
           <thead>
             <tr>
               <th scope="col" style="width: 25%;">เลขใบ PO</th>

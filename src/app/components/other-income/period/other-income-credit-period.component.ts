@@ -1,15 +1,16 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { TCreditNoteDto } from '../../../service/other-income/base-oi';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { BasePeriodComponent } from './base-period.component';
 import { PeriodService } from '../../../service/other-income/period.service';
 
 @Component({
   selector: 'app-other-income-credit-period',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, DatePipe],
   template: `
       <div class="mb-3">
-        <table class="table">
+        <div class="px-3 py-2 text-muted small fw-semibold border-bottom">ใบลดหนี้</div>
+        <table class="table table-sm table-hover">
           <thead>
             <tr>
               <th scope="col" style="width: 20%;">ใบลดหนี้</th>
@@ -25,7 +26,7 @@ import { PeriodService } from '../../../service/other-income/period.service';
               <td scope="row">{{ credit.creditNumb }}</td>
               <td>{{ credit.creditAmount| number : "1.2-2" }}</td>
               <td>{{ credit.creditRemark }}</td>
-              <td>{{ credit.creditDate }}</td>
+              <td>{{ credit.creditDate | date }}</td>
               @if (creditList().at(-1)?.id === credit.id) {
                 <td><button class="btn btn-squre btn-danger" (click)="onDelete(credit.id)" [disabled]="deleting() || disabled() || !canEdit()"><i class="bi bi-trash"></i></button></td>
               }@else{<td></td>}
