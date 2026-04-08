@@ -15,6 +15,7 @@ import { OtherIncomeCreditModalComponent } from '../other-income-credit-modal.co
 import { formatLocalNumber } from '../../../../lib/formatter';
 import { PeriodStatus, TFieldSelector } from '../../../../types';
 import { PeriodService } from '../../../../service/other-income/period.service';
+import { TIncome } from '../../../../service/other-income/income.service';
 
 @Component({
   selector: 'app-other-income-period-display',
@@ -39,22 +40,32 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
   private readonly periodService = inject(PeriodService);
 
   // Inputs
+  possibleIncome = input.required<TIncome[]>()
   period = input.required<TPopulatedPeriodResult>();
-  incomeType = input.required<number>();
   canEdit = input.required<boolean>();
   isPurchase = input.required<boolean>();
   compCode = input.required<string | undefined>();
   compType = input.required<string | undefined>();
   enventType = input<number>()
 
+  readonly incomeTypes = computed(() => {
+    const list = this.possibleIncome();
+    return {
+      hasType1: list.some(i => i.incomeType === 1),
+      hasType2: list.some(i => i.incomeType === 2),
+      hasType3: list.some(i => i.incomeType === 3),
+      hasType4: list.some(i => i.incomeType === 4),
+    }
+  })
+
   activeChangeToRece = computed(() => {
     const period = this.period();
-    const incomeType = this.incomeType();
     const { periodStatus, creditList, invoiceList } = period
+    const { hasType3, hasType4 } = this.incomeTypes()
     return periodStatus === 3
       && (
-        (incomeType === 4 && creditList.length !== 0)
-        || (incomeType === 3 && invoiceList.length !== 0)
+        (hasType4 && creditList.length !== 0)
+        || (hasType3 && invoiceList.length !== 0)
       );
   })
 
@@ -187,35 +198,34 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
     { label: 'ยอดใบลดหนี้', fn: v => formatLocalNumber(v.creditAmount) },
   ];
 
-  // Computed selector based on income type
+  // Computed selector based on possible income types
   headerSelector = computed(() => {
-    switch (this.incomeType()) {
-      case 1:
-        return this.periodOrderSelector;
-      case 2:
-        return this.periodOrderSelector;
-      case 3:
-        return this.periodReceSelector;
-      case 4:
-        return this.periodCreditSelector;
-      default:
-        return [];
-    }
+    const { hasType1, hasType2, hasType3, hasType4 } = this.incomeTypes()
+    if (hasType3) return this.periodReceSelector;
+    if (hasType4) return this.periodCreditSelector;
+    if (hasType1 || hasType2) return this.periodOrderSelector;
+    return [];
   });
 
   sectionHeader = computed(() => {
     const { totalAmount, totalIncome, billDiscountAmount, freeItemAmount, creditAmount, invAmount, receAmount } = this.period();
-    return [
-      { label: 'ยอดซื้อ', value: formatLocalNumber(totalAmount) },
-      { label: 'รายได้', value: formatLocalNumber(totalIncome) },
-      { label: 'ส่วนลดบิล', value: formatLocalNumber(billDiscountAmount) },
-      { label: 'ของแถม', value: formatLocalNumber(freeItemAmount) },
-      { label: 'ยอดใบลดหนี้', value: formatLocalNumber(creditAmount) },
-      { label: 'ยอดใบแจ้งหนี้', value: formatLocalNumber(invAmount) },
-      { label: 'ยอดใบเสร็จ', value: formatLocalNumber(receAmount) },
-    ]
-  }
-  )
+    const { hasType3, hasType4 } = this.incomeTypes()
+    const eventType = this.enventType() ?? 3
+    const incomeSourceDetail = eventType === 3
+      ? [{ label: 'รายได้', value: formatLocalNumber(totalIncome) }]
+      : [{ label: 'ยอดซื้อ', value: formatLocalNumber(totalAmount) }, { label: 'รายได้', value: formatLocalNumber(totalIncome) }]
+    const incomeDetail = this.possibleIncome().flatMap(({ incomeType }: { incomeType: number }) => {
+      switch (incomeType) {
+        case 1: return [{ label: 'ส่วนลดบิล', value: formatLocalNumber(billDiscountAmount) }]
+        case 2: return [{ label: 'ของแถม', value: formatLocalNumber(freeItemAmount) }]
+        case 3: return [{ label: 'ยอดใบแจ้งหนี้', value: formatLocalNumber(invAmount) }]
+        case 4: return [{ label: 'ยอดใบลดหนี้', value: formatLocalNumber(creditAmount) }]
+        default: return []
+      }
+    })
+    const rece = hasType3 || hasType4 ? [{ label: 'ยอดใบเสร็จ', value: formatLocalNumber(receAmount) }] : []
+    return [...incomeSourceDetail, ...incomeDetail, ...rece]
+  })
 
   // Open edit modal
   openEditModal() {

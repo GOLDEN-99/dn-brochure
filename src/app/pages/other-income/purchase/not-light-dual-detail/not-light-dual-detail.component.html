@@ -54,7 +54,6 @@
       <ng-container [ngTemplateOutlet]="incomeTemplate" />
       @if (isPurchase) {
         <app-create-period
-          [incomeType]="s.income.incomeType"
           [eventType]="s.event.eventType"
           [incomeList]="s.incomeList"
           [headId]="s.head.id"
@@ -67,7 +66,7 @@
       @for (period of s.periodList; track period.id) {
         <app-other-income-period-display
           [period]="period"
-          [incomeType]="s.income.incomeType"
+          [possibleIncome]="s.headIncomeList"
           [canEdit]="isPurchase"
           [isPurchase]="isPurchase"
           [compCode]="s.company.compCode"

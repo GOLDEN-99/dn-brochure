@@ -13,9 +13,6 @@ import { DateInputComponent } from "../../../date-input/date-input.component";
 })
 export class OtherIncomeMonthlyIncentiveEditComponent {
   incomeList = input.required<TIncomeItem[]>()
-
-  //renderList = computed(() => [...this.incomeList()].sort((a, b) => a.startDate.localeCompare(b.startDate)))
-
   success = output<string>()
   fail = output<string>()
   eventType = input.required<number>()

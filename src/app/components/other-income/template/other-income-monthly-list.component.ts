@@ -71,9 +71,7 @@ export class OtherIncomeMonthlyListComponent {
     incList.forEach(
       (inc) => {
         accPurchase += inc.actualAmount
-        return {
-          ...inc, accPurchase
-        }
+        res.push({ ...inc, accPurchase })
       })
     return res;
   })

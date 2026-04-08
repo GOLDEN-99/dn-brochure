@@ -1,38 +1,40 @@
 <section class="app-container">
   @if (invalidValue()) {
-  <div>ไม่พบเอกสาร</div>
-  } @else { @let e = currentResult();@let branches = e.branchList;@let periods =
-  e.periodList;
-  <app-other-income-head-edit
-    [head]="e.head"
-    [comp]="e.company"
-    [event]="e.event"
-    [income]="e.income"
-    [canEdit]="false"
-  />
-  <app-other-income-light-edit
-    [eventDetail]="e.light"
-    [totalIncome]="e.head.accIncome"
-  />
-  <app-other-income-branch
-    [periodId]="periodId()"
-    [canEdit]="isPurchase"
-    [lightId]="e.light.id"
-    [branchList]="branches"
-    (refetch)="onRefetch()"
-  />
-  @for (period of periods; track period.id) {
-  <app-other-income-period-display
-    [period]="period"
-    [incomeType]="e.income.incomeType"
-    [canEdit]="isPurchase"
-    [isPurchase]="isPurchase"
-    [compCode]="e.company.compCode"
-    [compType]="e.company.compType"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-  />
-  } }
+    <div>ไม่พบเอกสาร</div>
+  } @else {
+    @let e = currentResult();@let branches = e.branchList;
+    @let periods = e.periodList;
+    <app-other-income-head-edit
+      [head]="e.head"
+      [comp]="e.company"
+      [event]="e.event"
+      [income]="e.income"
+      [canEdit]="false"
+    />
+    <app-other-income-light-edit
+      [eventDetail]="e.light"
+      [totalIncome]="e.head.accIncome"
+    />
+    <app-other-income-branch
+      [periodId]="periodId()"
+      [canEdit]="isPurchase"
+      [lightId]="e.light.id"
+      [branchList]="branches"
+      (refetch)="onRefetch()"
+    />
+    @for (period of periods; track period.id) {
+      <app-other-income-period-display
+        [possibleIncome]="e.headIncomeList"
+        [period]="period"
+        [canEdit]="isPurchase"
+        [isPurchase]="isPurchase"
+        [compCode]="e.company.compCode"
+        [compType]="e.company.compType"
+        (success)="onSuccess($event)"
+        (fail)="onFail($event)"
+      />
+    }
+  }
 
   <button (click)="onDelete()" class="btn btn-danger w-100">ลบ</button>
   <a routerLink=".." class="btn btn-secondary w-100 mt-2">กลับ</a>
@@ -75,10 +77,12 @@
       [disabled]="deleting()"
     >
       @if (deleting()) {
-      <span class="spinner-border spinner-border-sm me-1"></span>
-      กำลังลบ... } @else {
-      <i class="bi bi-trash me-1"></i>
-      ยืนยันลบ }
+        <span class="spinner-border spinner-border-sm me-1"></span>
+        กำลังลบ...
+      } @else {
+        <i class="bi bi-trash me-1"></i>
+        ยืนยันลบ
+      }
     </button>
   </div>
 </ng-template>

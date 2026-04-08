@@ -17,19 +17,19 @@ export class OiLightService {
       .pipe(catchError(err => { console.log(err); return of([]); }))
   }
 
-  private fetch$ = new BehaviorSubject<boolean>(true)
+  private readonly fetch$ = new BehaviorSubject<boolean>(true)
   refetch() {
     this.fetch$.next(true)
   }
-  private id$ = new Subject<number>()
-  private comp2$ = new Subject<string>()
-  private param$ = combineLatest([this.fetch$, this.id$, this.comp2$])
+  private readonly id$ = new Subject<number>()
+  private readonly comp2$ = new Subject<string>()
+  private readonly param$ = combineLatest([this.fetch$, this.id$, this.comp2$])
   fetchById(id: number, compType: string) {
     this.id$.next(id)
     this.comp2$.next(compType)
   }
 
-  private singleRecord$ = this.param$.pipe(switchMap(([_, id, sharedComp]) => this.getById(id, sharedComp)))
+  private readonly singleRecord$ = this.param$.pipe(switchMap(([_, id, sharedComp]) => this.getById(id, sharedComp)))
   singleRecord = toSignal(this.singleRecord$, { initialValue: [] })
 
   create(req: {}) {

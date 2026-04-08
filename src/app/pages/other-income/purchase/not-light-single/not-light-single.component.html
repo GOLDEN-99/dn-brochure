@@ -58,7 +58,6 @@
     <!---->
     @if (isPurchase) {
       <app-create-period
-        [incomeType]="e.income.incomeType"
         [eventType]="e.event.eventType"
         [incomeList]="incomes"
         [headId]="e.head.id"
@@ -71,8 +70,8 @@
     <!---->
     @for (period of periods; track period.id) {
       <app-other-income-period-display
+        [possibleIncome]="e.headIncomeList"
         [period]="period"
-        [incomeType]="e.income.incomeType"
         [canEdit]="isPurchase"
         [isPurchase]="isPurchase"
         [compCode]="comp.compCode"
