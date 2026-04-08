@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, map, Subject, switchMap, tap, throwError } from 'rxjs';
 import { ApiService } from '../../api/api.service';
 import { TAppGoodItem, TGoodItem, TOrderRes, TPrependOrder } from '../../../types/cn.type';
@@ -111,22 +111,14 @@ export class CnOrderService {
   handleCheckLot = baseCheckLot(this.itemList)
   handleCheckLotAdded = baseCheckLot(this.addedItem)
 
-  private setOrderHead = ({ goodList, ...res }: TOrderRes) =>
+  private readonly setOrderHead = ({ goodList, ...res }: TOrderRes) =>
     this.orderHead.update(prev => prev === null ? res : ({ ...prev, ...res }))
 
-  private mapCheck = ({ lot, ...res }: TGoodItem): TAppGoodItem =>
+  private readonly mapCheck = ({ lot, ...res }: TGoodItem): TAppGoodItem =>
     ({ ...res, check: false, lot: lot.map(l => ({ ...l, check: false, returnAmou: 0 })) })
 }
 
-type TPrependItem = {
-  lotNumber: string;
-  goodAmou: string;
-  goodCode: string;
-  expiDate: string;
-  unitPrice: number;
-  unitCode: string;
-  subTotal: number
-}
+
 
 
 interface TCurrentRef {

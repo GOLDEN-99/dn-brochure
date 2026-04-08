@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TAppGoodItem } from '../../../types/cn.type';
 import { CnOrderService } from '../../../service/cn/cn-order/cn-order.service';
@@ -11,12 +11,16 @@ import { SearchBarcodeService } from '../../../service/cn/search-barcode/search-
   styleUrl: './search-product.component.scss'
 })
 export class SearchProductComponent {
-  private orderServ = inject(CnOrderService)
-  private searchService = inject(SearchBarcodeService)
+  private readonly orderServ = inject(CnOrderService)
+  private readonly searchService = inject(SearchBarcodeService)
   onSearch = this.searchService.onSearch
   search = this.searchService.search
-  productList = this.searchService.products
-
+  private readonly productRef = computed(() => new Set(this.orderServ.totalItem().map(o => o.goodCode)))
+  productList = computed(() => {
+    const ref = this.productRef()
+    return this.searchService.products().filter(p => !ref.has(p.goodCode))
+  }
+  )
   addItem(item: TAppGoodItem) {
     this.orderServ.addedItem.update(prev => [...prev, item])
   }

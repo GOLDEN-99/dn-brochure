@@ -10,21 +10,23 @@
   />
 </div>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th style="width: 10%"></th>
-      <th>รหัสและชื่อสินค้า</th>
-    </tr>
-  </thead>
-  <tbody>
-    @for (item of products; track $index) {
-    <tr>
-      <td>
-        <input type="checkbox" (input)="addItem(item)" />
-      </td>
-      <td>{{ "(" + item.barCode + ") " + item.goodName }}</td>
-    </tr>
-    }
-  </tbody>
-</table>
+@if (products.length !== 0) {
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 10%"></th>
+        <th>รหัสและชื่อสินค้า</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of products; track $index) {
+        <tr>
+          <td>
+            <input type="checkbox" (input)="addItem(item)" />
+          </td>
+          <td>{{ "(" + item.barCode + ") " + item.goodName }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
