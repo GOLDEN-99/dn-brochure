@@ -4,15 +4,15 @@
   <app-remark-select />
   <!---->
   @if (showResult()) {
-  <app-result-select />
+    <app-result-select />
   }
   <!---->
   @if (showCn()) {
-  <app-cn-radio />
+    <app-cn-radio />
   }
   <div class="app-form-field">
     <label for="note">หมายเหตุ</label>
-    <input type="text" name="note" id="note" [(ngModel)]="remark" />
+    <textarea name="note" id="note" [(ngModel)]="remark"></textarea>
   </div>
 </form>
 <a [className]="btnClass()" role="button" [routerLink]="endPoint()">ถัดไป</a>

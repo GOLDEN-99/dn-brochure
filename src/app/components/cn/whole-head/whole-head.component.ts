@@ -1,4 +1,4 @@
-import { Component, computed, inject, model } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CnApiService } from '../../../service/cn/cn-api/cn-api.service';
 import { StatSelectComponent } from "../select/stat-select/stat-select.component";
@@ -10,7 +10,7 @@ import { StatSelectComponent } from "../select/stat-select/stat-select.component
   styleUrl: './whole-head.component.scss'
 })
 export class WholeHeadComponent {
-  private cnApi = inject(CnApiService)
+  private readonly cnApi = inject(CnApiService)
   params = this.cnApi.paramsSignal
   wholeRes = this.cnApi.wholeItemData
   isShow = this.cnApi.showBank
