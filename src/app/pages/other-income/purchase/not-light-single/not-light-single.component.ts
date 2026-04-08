@@ -14,6 +14,7 @@ import { OTHER_INCOME_PAGE_TOKEN } from '../../../../lib';
 import { OtherIncomePeriodDisplayComponent } from "../../../../components/other-income/period/other-income-period-display/other-income-period-display.component";
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PeriodNotLightService } from '../../../../service/other-income/period-not-light.service';
+import { OiNotLightListService } from '../../../../service/other-income/oi-not-light-list.service';
 
 @Component({
   selector: 'app-not-light-single',
@@ -39,6 +40,7 @@ export class NotLightSingleComponent {
   private readonly _pageToken = inject(OTHER_INCOME_PAGE_TOKEN)
   isPurchase = this._pageToken.isPurchase
   private readonly notLightServ = inject(OiNotLightService)
+  private readonly oiListService = inject(OiNotLightListService)
 
   private readonly deleteModal = viewChild('deleteModal')
   deleting = signal(false)
@@ -60,6 +62,7 @@ export class NotLightSingleComponent {
 
   onSuccess(value: string) {
     this.toastService.success(value);
+    this.oiListService.refetch();
     this.notLightServ.refetch();
     this.notLightPeriod.refetch();
   }
