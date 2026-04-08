@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { ToastService } from '../../service/toast/toast.service';
 import { LoadingService } from '../../service/loading/loading.service';
 import { CnApiService } from '../../service/cn/cn-api/cn-api.service';
@@ -11,12 +11,13 @@ import { UploadImageService } from '../../service/cn/cn-upload-image/upload-imag
   styleUrl: './uploader.component.scss'
 })
 export class UploaderComponent {
-  private cnApi = inject(CnApiService)
-  private toast = inject(ToastService)
-  private loadingServ = inject(LoadingService)
+  private readonly cnApi = inject(CnApiService)
+  private readonly toast = inject(ToastService)
+  private readonly loadingServ = inject(LoadingService)
   wholeNumb = computed(() => this.cnApi.paramsSignal()?.wholeNumb)
-  private uploadServ = inject(UploadImageService)
+  private readonly uploadServ = inject(UploadImageService)
   fileList = this.uploadServ.image
+  disabled = input(false)
 
   uploadSingle(img: string) { // accept blob here
     const wholeNumb = this.wholeNumb()

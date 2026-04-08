@@ -1,6 +1,7 @@
 <div class="mb-3 uploader">
   <div>
     <input
+      [disabled]="disabled()"
       #fileInput
       id="fileInput"
       name="fileInput"
@@ -10,7 +11,11 @@
     />
     <label for="fileInput" class="me-3">แนบรูปภาพ</label>
 
-    <button (click)="fileInput.click()" class="btn btn-outline-dark me-3">
+    <button
+      (click)="fileInput.click()"
+      class="btn btn-outline-dark me-3"
+      [disabled]="disabled()"
+    >
       <i class="bi bi-cloud-upload"></i>
     </button>
 
@@ -19,18 +24,18 @@
   @let lst = fileList();
   <!---->
   @if (lst.length !== 0) {
-  <!--  -->
-  <div class="preview-container">
-    @for (link of lst; track $index) {
-    <div class="img-wrapper">
-      <img [src]="link" alt="receipt image" />
+    <!--  -->
+    <div class="preview-container">
+      @for (link of lst; track $index) {
+        <div class="img-wrapper">
+          <img [src]="link" alt="receipt image" />
 
-      <button
-        (click)="removeImage(link)"
-        class="btn btn-close rounded-circle"
-      ></button>
+          <button
+            (click)="removeImage(link)"
+            class="btn btn-close rounded-circle"
+          ></button>
+        </div>
+      }
     </div>
-    }
-  </div>
   }
 </div>
