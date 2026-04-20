@@ -1,6 +1,5 @@
 import { Component, computed, input } from '@angular/core';
-import { TAppGoodItem, TGoodItem } from '../../../types/cn.type';
-import { LotItemComponent } from '../lot-item/lot-item.component';
+import { TAppGoodItem } from '../../../types/cn.type';
 
 @Component({
   selector: 'app-good-item',

@@ -12,26 +12,26 @@
   }}</label>
 </div>
 @if (lot.check) {
-<div class="row g-3 align-items-center">
-  <div class="col-auto">
-    <label
-      class="col-form-label"
-      [htmlFor]="'amount' + lot.goodCode + lot.expiDate + lot.lotNumber"
-      >ระบุจำนวน</label
-    >
+  <div class="row g-3 align-items-center pb-3 border-bottom">
+    <div class="col-auto">
+      <label
+        class="col-form-label"
+        [htmlFor]="'amount' + lot.goodCode + lot.expiDate + lot.lotNumber"
+        >ระบุจำนวน</label
+      >
+    </div>
+    <div class="col-auto">
+      <input
+        style="width: 180px"
+        [className]="invalidClass()"
+        type="number"
+        [id]="'amount' + lot.goodCode + lot.expiDate + lot.lotNumber"
+        name="amount"
+        [ngModel]="lot.returnAmou"
+        (ngModelChange)="onChange($event)"
+        min="1"
+        [max]="maxValue()"
+      />
+    </div>
   </div>
-  <div class="col-auto">
-    <input
-      style="width: 180px"
-      [className]="invalidClass()"
-      type="number"
-      [id]="'amount' + lot.goodCode + lot.expiDate + lot.lotNumber"
-      name="amount"
-      [ngModel]="lot.returnAmou"
-      (ngModelChange)="onChange($event)"
-      min="1"
-      [max]="maxValue()"
-    />
-  </div>
-</div>
 }

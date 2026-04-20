@@ -55,6 +55,7 @@ export class CnOrderService {
   totalItem = computed(() => [...this.itemList(), ...this.addedItem()])
   totalSelected = computed(() => this.totalItem().filter(({ check }) => check))
   totalCnt = computed(() => this.totalSelected().length)
+  invalidTotalCnt = computed(() => this.totalCnt() === 0)
   selectedLotItem = computed(
     () => this.totalSelected().flatMap(
       ({ unitCode, unitPrice, lot, goodCode, goodName }) =>
