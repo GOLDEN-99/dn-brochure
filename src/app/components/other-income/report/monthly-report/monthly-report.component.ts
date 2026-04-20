@@ -5,7 +5,7 @@ import { NewReportService } from '../../../../service/other-income/new-report-se
   selector: 'app-monthly-report',
   imports: [],
   templateUrl: './monthly-report.component.html',
-  styleUrl: './monthly-report.component.scss'
+  styles: ''
 })
 export class MonthlyReportComponent {
   month = input.required<string>();
