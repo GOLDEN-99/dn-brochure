@@ -1,4 +1,4 @@
-import { customFormatMonth, formatLocalNumber } from "../../../lib/formatter"
+import { customFormatDate, customFormatMonth, formatLocalNumber } from "../../../lib/formatter"
 import { TAoaConfig } from "../../xlsx-report/xlsx-report.service"
 
 export const DCMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
@@ -10,8 +10,8 @@ export const DCMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
         { header: 'วิธีรับรู้รายได้', valueMapper: v => v.incomeList.join(' ,') },
         { header: 'เดือน', valueMapper: (v) => customFormatMonth(v.startDate) },
-        { header: 'เริ่มกิจกรรม', valueMapper: v => v.eventStart },
-        { header: 'จบกิจกรรม', valueMapper: v => v.eventEnd },
+        { header: 'เริ่มกิจกรรม', valueMapper: v => customFormatDate(v.eventStart) },
+        { header: 'จบกิจกรรม', valueMapper: v => customFormatDate(v.eventEnd) },
         { header: 'ยอดซื้อ', valueMapper: (v) => formatLocalNumber(v.actualAmount) },
         { header: 'ยอด CN', valueMapper: (v) => v.cn },
         { header: 'ยอด คำนวน', valueMapper: (v) => formatLocalNumber(v.calAmount) },
@@ -29,8 +29,8 @@ export const LightBoxMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
         { header: 'วิธีรับรู้รายได้', valueMapper: v => v.incomeList.join(' ,') },
         { header: 'เดือน', valueMapper: (v) => customFormatMonth(v.startDate) },
-        { header: 'เริ่มกิจกรรม', valueMapper: v => v.eventStart },
-        { header: 'จบกิจกรรม', valueMapper: v => v.eventEnd },
+        { header: 'เริ่มกิจกรรม', valueMapper: v => customFormatDate(v.eventStart) },
+        { header: 'จบกิจกรรม', valueMapper: v => customFormatDate(v.eventEnd) },
         { header: 'ประมาณการรายได้', valueMapper: (v) => formatLocalNumber(v.incomeAmount) },
         { header: 'หมายเหตุ', valueMapper: (v) => v.incomeRemark },
     ]
@@ -45,8 +45,8 @@ export const IncentiveMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
         { header: 'วิธีรับรู้รายได้', valueMapper: v => v.incomeList.join(' ,') },
         { header: 'เดือน', valueMapper: (v) => customFormatMonth(v.startDate) },
-        { header: 'เริ่มกิจกรรม', valueMapper: v => v.eventStart },
-        { header: 'จบกิจกรรม', valueMapper: v => v.eventEnd },
+        { header: 'เริ่มกิจกรรม', valueMapper: v => customFormatDate(v.eventStart) },
+        { header: 'จบกิจกรรม', valueMapper: v => customFormatDate(v.eventEnd) },
         { header: 'ประมาณการรายได้', valueMapper: (v) => formatLocalNumber(v.incomeAmount) },
         { header: 'หมายเหตุ', valueMapper: (v) => v.incomeRemark },
     ]
