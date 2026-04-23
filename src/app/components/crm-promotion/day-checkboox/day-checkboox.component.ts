@@ -13,7 +13,7 @@ export class DayCheckbooxComponent {
   allowEveryDay = computed(() => this.activeDay().reduce((acc, cur) => acc && cur, true))
   changeActiveDay = output<TDayState>()
   readonly dateRef = [
-    "อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัส", "ศุกร์", "เสาร์", "อาทิตย์"
+    "อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัส", "ศุกร์", "เสาร์"
   ]
 
 

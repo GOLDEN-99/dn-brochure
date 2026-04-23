@@ -23,7 +23,7 @@ export class EditBranchConfigComponent {
   private readonly branchInGroup$ = toObservable(this.branchGroupId).pipe(
     map(Number),
     filter(v => !Number.isNaN(v)),
-    switchMap(groupId => this.branchConfig.getAllBrnachGroup(groupId))
+    switchMap(groupId => this.branchConfig.getByGroupId(groupId))
   )
   currentBranchInGroup = toSignal(this.branchInGroup$, { initialValue: [] })
   currentBranchSet = computed(() => new Set(this.currentBranchInGroup().map(b => b.branchCode)))

@@ -1,0 +1,15 @@
+<h4>สินค้าแถม</h4>
+<div>
+  <app-product-picker
+    [exclusionPool]="rewardPool()"
+    (productAdd)="onAddProduct($event)"
+  />
+</div>
+@let rewards = rewardPool();
+@if (rewards.length !== 0) {
+  <div class="row">
+    @for (reward of rewards; track reward.goodCode) {
+      <span>{{ reward | productName }}</span>
+    }
+  </div>
+}

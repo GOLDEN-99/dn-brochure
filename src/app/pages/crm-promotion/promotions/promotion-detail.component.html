@@ -1,0 +1,260 @@
+<section class="m-3">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <a
+      class="btn btn-sm btn-outline-secondary"
+      routerLink="/crm-promotion/promotions"
+    >
+      <i class="bi bi-arrow-left"></i> กลับ
+    </a>
+    <h1 class="m-0">รายละเอียดโปรโมชั่น</h1>
+  </div>
+
+  @if (detail(); as d) {
+    <!-- Header -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <h2 class="m-0">{{ d.promotionName }}</h2>
+          <span
+            class="badge"
+            [class.bg-success]="d.promotionStatus === 'ACTIVE'"
+            [class.bg-secondary]="d.promotionStatus !== 'ACTIVE'"
+          >
+            {{ d.promotionStatus }}
+          </span>
+        </div>
+        @if (d.promotionDesc) {
+          <p class="text-muted mb-2">{{ d.promotionDesc }}</p>
+        }
+        <div class="row g-2">
+          <div class="col-auto">
+            <span class="badge bg-light text-dark border">{{
+              d.promotionType
+            }}</span>
+          </div>
+          <div class="col-auto">
+            <span class="badge bg-light text-dark border">{{ d.action }}</span>
+          </div>
+          <div class="col-auto">
+            <span class="badge bg-light text-dark border">{{
+              d.thresholdType
+            }}</span>
+          </div>
+          @if (d.isRepeat) {
+            <div class="col-auto">
+              <span class="badge bg-info text-dark">Repeat</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">กำหนดเวลา</h5>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="text-muted small">วันเริ่มต้น</div>
+            <div>{{ d.startdate | date: "dd/MM/yyyy" }}</div>
+          </div>
+          <div class="col-md-3">
+            <div class="text-muted small">วันสิ้นสุด</div>
+            <div>{{ d.enddate | date: "dd/MM/yyyy" }}</div>
+          </div>
+          <div class="col-md-3">
+            <div class="text-muted small">Priority / Order</div>
+            <div>{{ d.promotionPriority }} / {{ d.promotionOrder }}</div>
+          </div>
+          @if (d.limitTime) {
+            <div class="col-md-3">
+              <div class="text-muted small">ช่วงเวลา</div>
+              <div>{{ d.startTime }} – {{ d.endTime }}</div>
+            </div>
+          }
+        </div>
+        <div class="mt-2">
+          <div class="text-muted small mb-1">วันที่ใช้งาน</div>
+          <div class="d-flex gap-1">
+            @for (day of ["จ", "อ", "พ", "พฤ", "ศ", "ส", "อา"]; track $index) {
+              <span
+                class="badge"
+                [class.bg-primary]="d.activeDays[$index] === '1'"
+                [class.bg-light]="d.activeDays[$index] !== '1'"
+                [class.text-dark]="d.activeDays[$index] !== '1'"
+              >
+                {{ day }}
+              </span>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter List -->
+    @if (d.filterList.length > 0) {
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">เงื่อนไขสินค้า (Filter)</h5>
+          @for (f of d.filterList; track $index) {
+            <div class="mb-3">
+              <div class="d-flex gap-2 align-items-center mb-1">
+                <span class="badge bg-secondary">{{ f.filterType }}</span>
+                @if (f.filterValue > 0) {
+                  <span class="text-muted small"
+                    >Value: {{ f.filterValue }}</span
+                  >
+                }
+              </div>
+              <table class="table table-sm mb-0">
+                <colgroup>
+                  <col />
+                  <col style="width: 160px" />
+                </colgroup>
+                <thead class="table-light">
+                  <tr>
+                    <th>ชื่อสินค้า</th>
+                    <th>บาร์โค้ด 6 หลัก</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (p of f.productList; track p.goodCode) {
+                    <tr>
+                      <td>{{ p.goodName }}</td>
+                      <td>{{ p.sku }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Reward Pool: GIFT -->
+    @if (d.action === "GIFT" && d.rewardPool.length > 0) {
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">สินค้าแถม</h5>
+          <table class="table table-sm mb-0">
+            <colgroup>
+              <col />
+              <col style="width: 160px" />
+            </colgroup>
+            <thead class="table-light">
+              <tr>
+                <th>ชื่อสินค้า</th>
+                <th>บาร์โค้ด 6 หลัก</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of d.rewardPool; track r.goodCode) {
+                <tr>
+                  <td>{{ r.goodName }}</td>
+                  <td>{{ r.sku }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- Reward Pool: PWP -->
+    @if (d.action === "PWP" && d.rewardPool.length > 0) {
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">สิทธิแลกซื้อ</h5>
+          <table class="table table-sm mb-0">
+            <colgroup>
+              <col />
+              <col style="width: 100px" />
+              <col style="width: 130px" />
+              <col style="width: 120px" />
+            </colgroup>
+            <thead class="table-light">
+              <tr>
+                <th>ชื่อสินค้า</th>
+                <th>บาร์โค้ด 6 หลัก</th>
+                <th>Benefit Type</th>
+                <th>Benefit Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of d.rewardPool; track r.goodCode) {
+                <tr>
+                  <td>{{ r.goodName }}</td>
+                  <td>{{ r.sku }}</td>
+                  <td>{{ r.itemBenefitType }}</td>
+                  <td>{{ r.itemBenefitValue }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- Tiers -->
+    @if (d.tiers.length > 0) {
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">เงื่อนไขส่วนลด (Tiers)</h5>
+          <table class="table table-sm mb-0">
+            <colgroup>
+              <col style="width: 50%" />
+              <col style="width: 50%" />
+            </colgroup>
+            <thead class="table-light">
+              <tr>
+                <th>{{ d.thresholdType | promotionThreshold }}</th>
+                <th>{{ d.action | promotionBenefitName }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (tier of d.tiers; track $index) {
+                <tr>
+                  <td>{{ tier.thresholdValue }}</td>
+                  <td>{{ tier.rewardValue }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- Branches -->
+    @if (d.isBranchSpecific && d.branches.length > 0) {
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">สาขาที่เข้าร่วม</h5>
+          <div class="d-flex flex-wrap gap-2">
+            @for (b of d.branches; track b.branchCode) {
+              <span class="badge bg-light text-dark border">{{
+                b.branchName
+              }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Members -->
+    @if (d.isMemberSpecific && d.members.length > 0) {
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">สมาชิกที่เข้าร่วม</h5>
+          <div class="d-flex flex-wrap gap-2">
+            @for (m of d.members; track m.id) {
+              <span class="badge bg-light text-dark border">{{ m.memberName }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  } @else {
+    <div class="text-center text-muted py-5">กำลังโหลด...</div>
+  }
+</section>

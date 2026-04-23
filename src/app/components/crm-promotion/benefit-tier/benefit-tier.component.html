@@ -1,0 +1,43 @@
+@let current = tier();
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div class="flex-grow-1 d-flex gap-3">
+    <div>
+      <div class="form-field">
+        <label [htmlFor]="'tier-thres-' + id" class="form-label">{{
+          thresholdType() | promotionThreshold
+        }}</label>
+        <input
+          class="form-control"
+          type="number"
+          [name]="'tier-thres-' + id"
+          [id]="'tier-thres-' + id"
+          [ngModel]="current.thresholdValue"
+          (ngModelChange)="onChangeThreshold($event)"
+        />
+      </div>
+    </div>
+    <div>
+      <div class="form-field">
+        <label [htmlFor]="'tier-reward-' + id" class="form-label">{{
+          action() | promotionBenefitName
+        }}</label>
+        <input
+          class="form-control"
+          type="number"
+          [name]="'tier-reward-' + id"
+          [id]="'tier-reward-' + id"
+          [ngModel]="current.rewardValue"
+          (ngModelChange)="onChangeReward($event)"
+        />
+      </div>
+    </div>
+  </div>
+  <!--action btn-->
+  @if (canDelete()) {
+    <span>
+      <button class="btn btn-danger btn-squre" (click)="onDeleteTier()">
+        <i class="bi bi-x"></i>
+      </button>
+    </span>
+  }
+</div>

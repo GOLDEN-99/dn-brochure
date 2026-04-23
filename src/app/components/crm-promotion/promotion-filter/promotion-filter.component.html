@@ -1,0 +1,49 @@
+@let state = filterCondition();
+
+<app-product-picker
+  [exclusionPool]="state.productList"
+  (productAdd)="onUpdateProductList($event)"
+/>
+<div class="row mb-3">
+  @if (state.filterType !== "EXIST") {
+    <div class="col-md">
+      <div>
+        <label
+          class="form-label fw-semibold text-muted small mb-1"
+          [htmlFor]="'threshold-value-' + id"
+          >{{ state.filterType | promotionThreshold }}</label
+        >
+        <input
+          [name]="'threshold-value-' + id"
+          [id]="'threshold-value-' + id"
+          type="number"
+          class="form-control form-control-sm"
+          [ngModel]="state.filterValue"
+          (ngModelChange)="onFilterValueChange($event)"
+        />
+      </div>
+    </div>
+  }
+  <div class="col-md d-flex flex-column gap-2">
+    @for (product of currentProductList(); track product.goodCode) {
+      <div class="d-flex justify-content-between align-items-end">
+        <span class="form-control-plaintext">{{ product | productName }}</span>
+
+        <span>
+          <button
+            class="btn btn-danger btn-squre"
+            (click)="onRemoveProduct(product.goodCode)"
+          >
+            <i class="bi bi-x"></i>
+          </button>
+        </span>
+      </div>
+    }
+  </div>
+</div>
+
+<div class="d-flex justify-content-end">
+  <button class="btn btn-danger btn-squre" (click)="onDelete()">
+    <i class="bi bi-trash"></i>
+  </button>
+</div>

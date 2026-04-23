@@ -3,7 +3,7 @@ import { TCompType } from '../../../types';
 import { ApiService } from '../../api/api.service';
 import { environment } from '../../../../environments/environment';
 import { XLSXReportService } from '../../xlsx-report/xlsx-report.service';
-import { catchError, map, retry, switchMap, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 import { DCMonthConfig, IncentiveMonthConfig, LightBoxMonthConfig, TMonthlyReportResponse } from './monthly-report-config';
 import { AllContractConfig, TGetAllReportResponse } from './all-contract-report-config';
 import { AppendBillDiscountConfig, AppendFreeProductConfig, IssueCreditReportConfig, IssueInvoiceReportConfig, IssueReceiptReportConfig, TIssueDocumentReportResponse, TIssueReceiptReportResponse } from './issuing-document-config';
@@ -33,7 +33,7 @@ export class NewReportService {
     const exporter = this.xlsx.exportWorkbook(`ประมาณการ dc rebate ${req.month}`)
     return this.getMonthReport({ ...req, eventType: 1 })
       .pipe(
-        map(res => mapper(res)),
+        switchMap(res => mapper(res)),
         switchMap(wb => exporter(wb)),
         catchError(err => throwError(() => err))
       )
@@ -44,7 +44,7 @@ export class NewReportService {
     const exporter = this.xlsx.exportWorkbook(`ประมาณการ light box ${req.month}`)
     return this.getMonthReport({ ...req, eventType: 2 })
       .pipe(
-        map(res => mapper(res)),
+        switchMap(res => mapper(res)),
         switchMap(wb => exporter(wb)),
         catchError(err => throwError(() => err))
       )
@@ -55,7 +55,7 @@ export class NewReportService {
     const exporter = this.xlsx.exportWorkbook(`ประมาณการ incentive ${req.month}`)
     return this.getMonthReport({ ...req, eventType: 3 })
       .pipe(
-        map(res => mapper(res)),
+        switchMap(res => mapper(res)),
         switchMap(wb => exporter(wb)),
         catchError(err => throwError(() => err))
       )
@@ -85,7 +85,7 @@ export class NewReportService {
     const exporter = this.xlsx.exportWorkbook(`รายการรายได้อื่นๆ ${year}`)
     return this.api.get<TGetAllReportResponse[]>(`${this.baseUrl}/contract`, { params: req })
       .pipe(
-        map(res => mapper(res)),
+        switchMap(res => mapper(res)),
         switchMap(wb => exporter(wb)),
         catchError(err => throwError(() => err))
       )
@@ -100,7 +100,7 @@ export class NewReportService {
     const exporter = this.xlsx.exportWorkbook("รายงานรอแนบสินค้าแถม");
     return this.getIssueDocumentReport({ compType, incomeType: 'products' })
       .pipe(
-        map(res => mapper(res)),
+        switchMap(res => mapper(res)),
         switchMap(wb => exporter(wb)),
         catchError(err => throwError(() => err))
       )
@@ -110,7 +110,7 @@ export class NewReportService {
     const exporter = this.xlsx.exportWorkbook("รายงานรอ CN ลดมากับบิล");
     return this.getIssueDocumentReport({ compType, incomeType: 'bills' })
       .pipe(
-        map(res => mapper(res)),
+        switchMap(res => mapper(res)),
         switchMap(wb => exporter(wb)),
         catchError(err => throwError(() => err))
       )
@@ -120,7 +120,7 @@ export class NewReportService {
     const exporter = this.xlsx.exportWorkbook("รายงานรอออกใบแจ้งหนี้");
     return this.getIssueDocumentReport({ compType, incomeType: 'invoices' })
       .pipe(
-        map(res => mapper(res)),
+        switchMap(res => mapper(res)),
         switchMap(wb => exporter(wb)),
         catchError(err => throwError(() => err))
       )
@@ -130,7 +130,7 @@ export class NewReportService {
     const exporter = this.xlsx.exportWorkbook("รายการรอใบลดหนี้");
     return this.getIssueDocumentReport({ compType, incomeType: 'credit' })
       .pipe(
-        map(res => mapper(res)),
+        switchMap(res => mapper(res)),
         switchMap(wb => exporter(wb)),
         catchError(err => throwError(() => err))
       )
@@ -141,7 +141,7 @@ export class NewReportService {
     const exporter = this.xlsx.exportWorkbook("รายงานรอรับใบเสร็จ");
     return this.api.get<TIssueReceiptReportResponse[]>(`${this.baseUrl}/receipt`, { params: { CompType: compType } })
       .pipe(
-        map(res => mapper(res)),
+        switchMap(res => mapper(res)),
         switchMap(wb => exporter(wb)),
         catchError(err => throwError(() => err))
       )

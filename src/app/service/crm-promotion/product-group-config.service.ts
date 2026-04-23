@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, filter, map, of, Subject, switchMap } from 'rxjs';
+import { catchError, filter, map, of, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { ProductConfigService } from './product-config.service';
 
 @Injectable()
@@ -12,8 +12,7 @@ export class ProductGroupConfigService {
   private readonly productInGroup$ = toObservable(this.groupId).pipe(
     map(Number),
     filter(v => !Number.isNaN(v)),
-    switchMap(id => this.productConfig.getAllProductGroup(id)),
-    catchError(() => of([]))
+    switchMap(id => this.productConfig.getAllProductGroup(id).pipe(catchError(() => of([]))))
   )
 
   readonly currentProductInGroup = toSignal(this.productInGroup$, { initialValue: [] })
@@ -23,8 +22,13 @@ export class ProductGroupConfigService {
 
   // lazy-loaded — call loadAllProducts() once when the add page opens
   private readonly loadAllProducts$ = new Subject<void>()
+  readonly allProduct$ = this.loadAllProducts$.pipe(
+    take(1),
+    switchMap(() => this.productConfig.fetchAllProducts()),
+    shareReplay(1)
+  )
   readonly allProducts = toSignal(
-    this.loadAllProducts$.pipe(switchMap(() => this.productConfig.fetchAllProducts())),
+    this.allProduct$,
     { initialValue: [] }
   )
 

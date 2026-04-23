@@ -1,72 +1,106 @@
 import { NgbDateStruct, NgbTimeStruct } from "@ng-bootstrap/ng-bootstrap"
 
-export type TPromotionFormState = {
+type TPromotionBrnach = {
+    // branch lock
+    isBranchSpecific: boolean
+    branches: TBranch[]
+}
+
+type TPromotionMember = {
+    // member lock
+    isMemberSpecific: boolean
+    members: TMember[]
+}
+
+type TPromotionDatetime = {
+    // dow lock
+    activeDay: [boolean, boolean, boolean, boolean, boolean, boolean, boolean], // 1111111
+    // time of day lock
+    limitTime: boolean
+    startTime: NgbTimeStruct
+    endTime: NgbTimeStruct
+}
+
+type TPromotionMaster = {
     promotionName: string,
     promotionDesc: string,
     promotionType: string,
     source: string,
-    thresholdType: string,
-    benefitType: string // BATH | PERCENT | PRICE
-    isMemberSpecific: boolean
-    isBranchSpecific: boolean
+    // promotion lock
+    //promotionStatus: "ACTIVE",
     startDate: NgbDateStruct
     endDate: NgbDateStruct
-    //promotionStatus: "ACTIVE",
     promotionPriority: number
     promotionOrder: number
-    activeDay: [boolean, boolean, boolean, boolean, boolean, boolean, boolean], // 1111111
-    limitTime: boolean
-    startTime: NgbTimeStruct
-    endTime: NgbTimeStruct
-    promotionBenefit: TPromotionBenefit[]
-    members: TMember
-    branches: TBranch[]
-    pwpPool: TPWPPool[]
-    inlinePool: TInlinePool[]
 }
 
-export type TPromotionHead = {}
+export type TPromotionTier = {
+    thresholdValue: number
+    rewardValue: number
+}
 
 export type TPromotionBenefit = {
-    thresholdBath: number,
-    thresholdCount: number,
-    benefitBath: number,
-    benefitPercent: number,
-    benefitPrice: number,
-    pwpCount: number,
+    action: string
+    thresholdType: string
+    isRepeat: boolean
+    tiers: TPromotionTier[]
+    rewardPool: TProductRewardPool[]
 }
+
+export type TBenefitOption = {
+    action: string
+    label: string
+}
+
+export type TBenefitThreshold = {
+    threshold: string
+    label: string
+}
+
+export type TPromotionFormState = {
+    filterList: TPromotionFilterState[]
+} & TPromotionBenefit & TPromotionMaster & TPromotionBrnach & TPromotionMember & TPromotionDatetime
 
 export type TBranch = {
     branchCode: string
     branchName: string
 }
+export type TPromotionProductBase = {
+    goodCode: string
+    goodName: string
+    sku: string
+}
+
+export type TProductRewardPool = {
+    itemBenefitType: string
+    itemBenefitValue: number
+} & TPromotionProductBase
+
+export type TFilterProduct = {
+    op: string
+    products: TPromotionProductBase[]
+}
+
 // for fix bundle +/- count per group
 export type TProductPool = {
-    goodCode: string
-    goodName: string
-    sku: string
     poolGroup: number
-}
+} & TPromotionProductBase
 
 export type TPWPPool = {
-    goodCode: string
-    goodName: string
-    sku: string
     pwpPrice: number
-}
+} & TPromotionProductBase
 
 export type TInlinePool = {
-    goodCode: string
-    goodName: string
-    sku: string
-    discount: number
-}
+    benefitBath: number,
+    benefitPercent: number,
+    benefitPrice: number,
+    pwpCount: number,
+} & TPromotionProductBase
 
 export type TDayState = [boolean, boolean, boolean, boolean, boolean, boolean, boolean]
 
-export type TMember = [boolean, boolean, boolean, boolean, boolean, boolean, boolean]
 
-export type TPromotionVariationCongif = Pick<TPromotionFormState, 'promotionType' | 'benefitType' | 'thresholdType'>
+export type TPromotionVariationConfig = Pick<TPromotionFormState, 'promotionType' | 'action' | 'thresholdType' | 'isRepeat' | 'filterList' | 'tiers'>
 
 export type TBranchDetail = {
     branchCode: string
@@ -103,6 +137,12 @@ export type TBranchGroupDetail = {
     branchGroupDesc: string
 }
 
+export type TMember = {
+    id: number
+    memberName: string
+    custType: string
+}
+
 export type TProductDetail = {
     goodCode: string
     sku: string
@@ -131,4 +171,95 @@ export type TProductType = {
 export type TProductGroup = {
     groupCode: string
     groupDesc: string
+}
+
+export type TPromotionFilterBase = {
+    filterType: string
+    filterValue: number
+}
+
+export type TPromotionFilterForm = {
+    productList: Record<string, TPromotionProductBase>
+} & TPromotionFilterBase
+
+export type TPromotionFilterState = {
+    productList: TPromotionProductBase[]
+} & TPromotionFilterBase
+
+type TCreatePromotionRewardPool = {
+    goodCode: string
+    itemBenefitType: string
+    itemBenefitValue: number
+}
+
+type TCreatePromotionFilter = {
+    productList: string[]
+} & TPromotionFilterBase
+
+export type TPromotionListItem = {
+    id: number
+    promotionName: string
+    promotionType: string
+    action: string
+    thresholdType: string
+    isRepeat: boolean
+    promotionStatus: string
+    startdate: string
+    enddate: string
+    promotionPriority: number
+    promotionOrder: number
+}
+
+export type TPromotionDetail = {
+    id: number
+    promotionName: string
+    promotionDesc: string
+    promotionType: string
+    action: string
+    thresholdType: string
+    isRepeat: boolean
+    isBranchSpecific: boolean
+    isMemberSpecific: boolean
+    startdate: string
+    enddate: string
+    limitTime: boolean
+    startTime: string
+    endTime: string
+    activeDays: string
+    promotionStatus: string
+    promotionPriority: number
+    promotionOrder: number
+    tiers: TPromotionTier[]
+    filterList: {
+        filterType: string
+        filterValue: number
+        productList: TPromotionProductBase[]
+    }[]
+    rewardPool: TProductRewardPool[]
+    branches: TBranch[]
+    members: TMember[]
+}
+
+export type TCreatePromotionRequest = {
+    promotionName: string
+    promotionDesc: string
+    promotionType: string
+    promotionOrder: number
+    promotionPriority: number
+    startDate: string
+    endDate: string
+    isBranchSpecific: boolean
+    branches: string[]
+    isMemberSpecific: boolean
+    members: number[]
+    limitTime: boolean
+    startTime: string
+    endTime: string
+    activeDay: string
+    filterList: TCreatePromotionFilter[]
+    action: string
+    thresholdType: string
+    isRepeat: boolean
+    tiers: TPromotionTier[]
+    rewardPool: TCreatePromotionRewardPool[]
 }

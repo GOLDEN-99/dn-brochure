@@ -1,6 +1,9 @@
 <section class="m-3">
-  <span>{{ pageName() }}</span>
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <h1 class="m-0">{{ pageName() }}</h1>
+  </div>
   @let state = formState();
+  <!--promotion master-->
   <div class="card mb-3">
     <div class="card-body">
       <h2 class="card-title">ข้อมูลทั่วไป</h2>
@@ -15,6 +18,7 @@
               name="pro-name"
               id="pro-name"
               [ngModel]="state.promotionName"
+              (ngModelChange)="onFormStateChange('promotionName', $event)"
             />
           </div>
         </div>
@@ -39,26 +43,38 @@
         <div class="col-lg-3">
           <div class="app-form-field">
             <label for="priority"> ใช้ร่วมกับโปรโมชั่นอื่น </label>
-            <select name="priority" id="priority" class="form-select">
-              <option value="0">ใช้ร่วมกันได้</option>
-              <option value="1">priority 1</option>
-              <option value="2">priority 2</option>
-              <option value="3">priority 3</option>
+            <select
+              name="priority"
+              id="priority"
+              class="form-select"
+              [ngModel]="state.promotionPriority"
+              (ngModelChange)="onFormStateChange('promotionPriority', +$event)"
+            >
+              <option [value]="0">ใช้ร่วมกันได้</option>
+              <option [value]="1">priority 1</option>
+              <option [value]="2">priority 2</option>
+              <option [value]="3">priority 3</option>
             </select>
           </div>
         </div>
         <div class="col-lg-3">
           <div class="app-form-field">
             <label for="order">ลำดับการคำนวน</label>
-            <select name="order" id="order" class="form-select">
-              <option value="0">ลำดับสุดท้าย</option>
-              <option value="1" [disabled]="state.source === 'HU'">
+            <select
+              name="order"
+              id="order"
+              class="form-select"
+              [ngModel]="state.promotionOrder"
+              (ngModelChange)="onFormStateChange('promotionOrder', +$event)"
+            >
+              <option [value]="0">ลำดับสุดท้าย</option>
+              <option [value]="1" [disabled]="state.source === 'HU'">
                 ลำดับก่อนสุดท้าย
               </option>
-              <option value="2" [disabled]="state.source === 'HU'">
+              <option [value]="2" [disabled]="state.source === 'HU'">
                 ลำดับกลาง
               </option>
-              <option value="3" [disabled]="state.source === 'HU'">
+              <option [value]="3" [disabled]="state.source === 'HU'">
                 ลำดับแรก
               </option>
             </select>
@@ -67,144 +83,242 @@
 
         <!-- datetime-->
         <div class="col-lg-6">
-          <app-date-input label="ตั้งแต่" [date]="state.startDate" />
+          <app-date-input
+            label="ตั้งแต่"
+            [date]="state.startDate"
+            (dateChange)="onFormStateChange('startDate', $event)"
+          />
         </div>
         <div class="col-lg-6">
-          <app-date-input label="สิ้นสุด" [date]="state.endDate" />
+          <app-date-input
+            label="สิ้นสุด"
+            [date]="state.endDate"
+            (dateChange)="onFormStateChange('endDate', $event)"
+          />
         </div>
       </div>
       <div class="app-form-field">
         <label for="pro-desc">รายละเอียด</label>
-        <textarea name="pro-desc" id="pro-desc" [ngModel]="state.promotionName">
+        <textarea
+          name="pro-desc"
+          id="pro-desc"
+          [ngModel]="state.promotionDesc"
+          (ngModelChange)="onFormStateChange('promotionDesc', $event)"
+        >
         </textarea>
       </div>
     </div>
   </div>
-
+  <!--day of week-->
   <div class="card mb-3">
     <div class="card-body">
-      <h2 class="card-title">เงื่อนไข</h2>
-
-      <div class="row">
-        <div class="col">
-          <!---->
-          <div class="row">
-            <div class="col-4">
-              <app-day-checkboox
-                [activeDay]="state.activeDay"
-                (changeActiveDay)="onFormStateChange('activeDay', $event)"
-              />
-            </div>
-            <div class="col-8">
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="limit-time"
-                  [ngModel]="state.limitTime"
-                  (ngModelChange)="toggleTime($event)"
-                />
-                <label class="form-check-label" for="limit-time"
-                  >จำกัดช่วงเวลา</label
-                >
-              </div>
-              <div class="d-flex flex-wrap gap-2">
-                <div
-                  class="app-form-field-inline col-lg"
-                  style="margin-top: 0; margin-bottom: 0"
-                >
-                  <div>
-                    <label for="start-time" style="width: 24px">เริ่ม</label>
-                  </div>
-                  <div>
-                    <ngb-timepicker
-                      [spinners]="false"
-                      [disabled]="!state.limitTime"
-                      [ngModel]="state.startTime"
-                    />
-                  </div>
-                </div>
-                <div
-                  class="app-form-field-inline col-lg"
-                  style="margin-top: 0; margin-bottom: 0"
-                >
-                  <div>
-                    <label for="start-time" style="width: 24px">จบ</label>
-                  </div>
-                  <div>
-                    <ngb-timepicker
-                      [spinners]="false"
-                      [disabled]="!state.limitTime"
-                      [ngModel]="state.endTime"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <app-member-checkbox
-            [members]="state.members"
-            (changeMembers)="onFormStateChange('members', $event)"
-          />
-        </div>
-      </div>
+      <h2 class="card-title">เงื่อนไขวันในสัปดาห์</h2>
+      <app-day-checkboox
+        [activeDay]="state.activeDay"
+        (changeActiveDay)="onFormStateChange('activeDay', $event)"
+      />
     </div>
   </div>
-
+  <!--time span-->
   <div class="card mb-3">
     <div class="card-body">
-      <h2 class="card-title">จำกัดการใช้งาน</h2>
+      <h2 class="card-title">เงื่อนไขตามเวลา</h2>
       <div class="row">
         <div class="col">
           <div class="form-check form-switch">
             <input
               class="form-check-input"
               type="checkbox"
-              id="is-branch-spec"
-              [ngModel]="state.isBranchSpecific"
-              (ngModelChange)="toggleBranch($event)"
+              id="limit-time"
+              [ngModel]="state.limitTime"
+              (ngModelChange)="toggleTime($event)"
             />
-            <label class="form-check-label" for="is-branch-spec"
-              >จำกัดสาขา</label
+            <label class="form-check-label" for="limit-time"
+              >จำกัดช่วงเวลา</label
             >
+          </div>
+        </div>
+        <div class="col">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <label for="start-time" style="width: 24px">เริ่ม</label>
+            </div>
+            <div class="col">
+              <ngb-timepicker
+                [spinners]="false"
+                [disabled]="!state.limitTime"
+                [ngModel]="state.startTime"
+                (ngModelChange)="onFormStateChange('startTime', $event)"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <label for="start-time" style="width: 24px">จบ</label>
+            </div>
+            <div class="col">
+              <ngb-timepicker
+                [spinners]="false"
+                [disabled]="!state.limitTime"
+                [ngModel]="state.endTime"
+                (ngModelChange)="onFormStateChange('endTime', $event)"
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  @if (showProductPicker()) {
+  <!--member-->
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="card-title">เงื่อนไขตามสมาชิก</h2>
+      <app-inline-member
+        [limitTier]="state.isMemberSpecific"
+        (limitTierChange)="onLimitTierChange($event)"
+        [members]="state.members"
+        (membersChange)="onChangeMember($event)"
+      />
+    </div>
+    <div class="d-flex flex-column px-3 pb-3 gap-3">
+      @for (member of state.members; track $index) {
+        <div class="d-flex justify-content-between">
+          <div>
+            {{ member.memberName }}
+          </div>
+          <span>
+            <button
+              class="btn btn-danger btn-squre"
+              (click)="onRemoveMember(member.id)"
+            >
+              <i class="bi bi-x"></i>
+            </button>
+          </span>
+        </div>
+      }
+    </div>
+  </div>
+  <!--branch-->
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="card-title">เงื่อนไขตามสาขา</h2>
+      <div class="row"></div>
+      <app-inline-branch-limit
+        [currentBranch]="state.branches"
+        [branchLimit]="state.isBranchSpecific"
+        (branchLimitChange)="onFormStateChange('isBranchSpecific', $event)"
+        (currentBranchChange)="onFormStateChange('branches', $event)"
+      />
+      <div class="d-flex flex-column px-3 pb-3 gap-3">
+        @for (branch of state.branches; track $index) {
+          <div class="d-flex justify-content-between">
+            <div>
+              {{ branch.branchName }}
+            </div>
+            <span>
+              <button
+                class="btn btn-danger btn-squre"
+                (click)="onRemoveBranch(branch.branchCode)"
+              >
+                <i class="bi bi-x"></i>
+              </button>
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+  <!--promotion activation-->
+  @if (showFilterOption()) {
     <div class="card mb-3">
       <div class="card-body">
-        <h2 class="card-title">สินค้าที่ร่วมรายการ</h2>
+        <div class="d-flex justify-content-between">
+          <h2 class="card-title">เงื่อนไข Promotion</h2>
+          <div class="d-flex justify-content-end gap-1">
+            @if (showItem()) {
+              <span>
+                <button
+                  class="btn btn-outline-success"
+                  (click)="onAddSkuProductExist()"
+                >
+                  เพิ่มเงื่อนไขสินค้า
+                </button>
+              </span>
+            } @else {
+              <span>
+                <button
+                  class="btn btn-outline-primary"
+                  (click)="onAddSkuProductCount()"
+                >
+                  เพิ่มเงื่อนไขตามจำนวน(ชิ้น)
+                </button>
+              </span>
+              <span>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="onAddSkuProductSubtotal()"
+                >
+                  เพิ่มเงื่อนไขตามยอด(บาท)
+                </button>
+              </span>
+            }
+          </div>
+        </div>
+        <div class="d-flex flex-column">
+          @for (filter of state.filterList; track $index) {
+            <div>
+              @if ($index > 0) {
+                <hr />
+              }
+              <app-promotion-filter
+                [filterCondition]="filter"
+                (filterConditionChange)="onChangeFilter($event, $index)"
+                (deleteConditon)="onDeleteFilter($index)"
+              />
+            </div>
+          }
+        </div>
       </div>
     </div>
   }
 
   <div class="card mb-3">
     <div class="card-body">
-      <h2 class="card-title">ส่วนลด</h2>
-      <app-benefit-list
-        [promotionType]="state.promotionType"
-        [thresholdType]="state.thresholdType"
-        [benefitType]="state.benefitType"
-        [benefitList]="formState().promotionBenefit"
-        (deleteByIndex)="onDeleteBenefit($event)"
-      />
-      <div style="height: 16px"></div>
-      <app-benefit-input
-        [promotionType]="state.promotionType"
-        [thresholdType]="state.thresholdType"
-        [benefitType]="state.benefitType"
-        (addBenefit)="onAddBenefit($event)"
-      />
+      <h2 class="card-title">สิทธิประโยชน์</h2>
+      @if (state.promotionType === "ITEM") {
+        <app-inline-benefit
+          [props]="formState()"
+          (propsChange)="onUpdateFormState($event)"
+        />
+      } @else {
+        <app-benefit-select
+          [tiers]="state.tiers"
+          (tiersChange)="onFormStateChange('tiers', $event)"
+          [thresholdType]="state.thresholdType"
+          (thresholdTypeChange)="onFormStateChange('thresholdType', $event)"
+          [action]="state.action"
+          (actionChange)="onFormStateChange('action', $event)"
+          [rewardPool]="state.rewardPool"
+          (rewardPoolChange)="onFormStateChange('rewardPool', $event)"
+          [isRepeat]="state.isRepeat"
+          (isRepeatChange)="onFormStateChange('isRepeat', $event)"
+        />
+      }
     </div>
   </div>
 
-  @if (showPWP()) {
-    <div class="card mb-3">
-      <div class="card-body"><h2 class="card-title">สินค้าแลกซื้อ</h2></div>
-    </div>
-  }
+  <button
+    class="btn btn-primary w-100"
+    [disabled]="!canSubmit()"
+    (click)="onSubmit()"
+  >
+    @if (submitting()) {
+      กำลังบันทึก...
+    } @else {
+      บันทึก
+    }
+  </button>
 </section>
+<div>{{ formState() | json }}</div>

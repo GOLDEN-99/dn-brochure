@@ -1,0 +1,5 @@
+<select [name]="timepickerName()" [id]="timepickerId()" [(ngModel)]="time">
+  @for (time of renderTime(); track time) {
+    <option [value]="time">{{ formatTime(time) }}</option>
+  }
+</select>

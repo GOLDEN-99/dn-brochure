@@ -33,7 +33,7 @@ export class BranchConfigService {
   private readonly allOldBranchGroup$ = this.api.get<TBranchGroupDetail[]>(`${this.basePath}/branch-groups`)
   allOldBranchGroup = toSignal(this.allOldBranchGroup$, { initialValue: [] })
 
-  getAllBrnachGroup(groupId: number) {
+  getByGroupId(groupId: number) {
     return this.api.get<TBranchDetail[]>(`${this.basePath}/promotion-branch-groups/${groupId}/items`)
   }
 

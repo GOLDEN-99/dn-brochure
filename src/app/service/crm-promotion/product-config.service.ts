@@ -35,6 +35,8 @@ export class ProductConfigService {
     { initialValue: [] }
   )
   allPromotionProductGroup = toSignal(this.allPromotionProductGroup$, { initialValue: [] })
+  allProduct$ = this.api.get<TProductDetail[]>(`${this.basePath}/all-products`)
+  allProduct = toSignal(this.allProduct$, { initialValue: [] })
   createPromotionProductGroup(req: { name: string }) {
     return this.api.post(`${this.basePath}/promotion-product-groups`, req)
   }

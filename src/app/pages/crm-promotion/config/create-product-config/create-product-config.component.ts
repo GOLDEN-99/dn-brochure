@@ -15,17 +15,17 @@ export class CreateProductConfigComponent {
   private readonly productConfig = inject(ProductConfigService)
   private readonly promotionProductGroup = this.productConfig.allPromotionProductGroup
   disabled = signal(false)
-  canNotAdd = computed(() => this.serachTerm() === "" || this.renderGroup().length !== 0 || this.disabled())
-  serachTerm = signal('')
+  canNotAdd = computed(() => this.searchTerm() === "" || this.renderGroup().length !== 0 || this.disabled())
+  searchTerm = signal('')
   renderGroup = computed(() => {
-    const term = this.serachTerm().toLocaleLowerCase()
+    const term = this.searchTerm().toLocaleLowerCase()
     return this.promotionProductGroup().filter(group =>
       group.name.toLocaleLowerCase().includes(term)
     )
   })
   onCreate() {
     this.disabled.set(true)
-    const name = this.serachTerm()
+    const name = this.searchTerm()
     this.productConfig.createPromotionProductGroup({ name }).subscribe({
       next: res => {
         this.toastService.success('เพิ่มกลุ่มสำเร็จ')

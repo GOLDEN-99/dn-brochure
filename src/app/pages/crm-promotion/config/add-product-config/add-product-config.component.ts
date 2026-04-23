@@ -18,9 +18,6 @@ export class AddProductConfigComponent {
   private readonly router = inject(Router)
   private readonly route = inject(ActivatedRoute)
 
-  constructor() {
-    this.groupConfig.loadAllProducts()
-  }
 
   // ── reference data ───────────────────────────────────────────────────────────
   readonly allProductCate = this.groupConfig.allProductCate

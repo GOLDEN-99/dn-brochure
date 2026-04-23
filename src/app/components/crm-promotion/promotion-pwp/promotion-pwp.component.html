@@ -1,0 +1,40 @@
+<h4>สินค้าแลกซื้อ</h4>
+<div>
+  <app-product-picker
+    [exclusionPool]="rewardPool()"
+    (productAdd)="onAddProduct($event)"
+  />
+</div>
+
+@for (reward of rewardPool(); track reward.goodCode) {
+  <div class="row mb-2">
+    <span class="col">{{ reward | productName }}</span>
+    <div class="col">
+      <select
+        class="form-select form-select-sm"
+        [ngModel]="reward.itemBenefitType"
+        (ngModelChange)="onChangeBenefitType(reward.goodCode, $event)"
+      >
+        @for (bt of pwpBenefitTypes; track bt.value) {
+          <option [value]="bt.value">{{ bt.label }}</option>
+        }
+      </select>
+    </div>
+    <div class="col">
+      <input
+        class="form-control form-control-sm"
+        type="number"
+        [ngModel]="reward.itemBenefitValue"
+        (ngModelChange)="onChangeBenefitValue(reward.goodCode, $event)"
+      />
+    </div>
+    <div class="col-auto">
+      <button
+        class="btn btn-danger btn-sm"
+        (click)="onRemoveProduct(reward.goodCode)"
+      >
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+  </div>
+}

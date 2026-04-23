@@ -1,39 +1,40 @@
 import { InjectionToken } from "@angular/core";
-import { TPromotionFormState, TPromotionVariationCongif } from "../../types/crm-promotion.type";
+import { TBenefitOption, TBenefitThreshold, TPromotionFormState, TPromotionVariationConfig } from "../../types/crm-promotion.type";
 
-export interface ICrmPageCongif {
+interface IFilterOption {
+    showFilter: boolean
+    showList: boolean
+    showBundle: boolean
+    showItem: boolean
+}
+
+interface IRewardOption {
+    rewardList: TBenefitOption[]
+    thresholdList: TBenefitThreshold[]
+}
+
+
+export interface ICrmPageConfig {
     pageName: string
+    filterOption: IFilterOption
+    rewardOption: IRewardOption
     initialData: Omit<TPromotionFormState, 'startDate' | 'endDate'>
 }
 
-export const CRM_PAGE_CONFIG = new InjectionToken<ICrmPageCongif>('CRM_PAGE_CONFIG')
 
-export const DEFAULT_CRM_DATA: Omit<TPromotionFormState, 'startDate' | 'endDate' | 'thresholdType' | 'benefitType' | 'promotionType'> = {
+export const CRM_PAGE_CONFIG = new InjectionToken<ICrmPageConfig>('CRM_PAGE_CONFIG')
+
+export const DEFAULT_CRM_DATA: Omit<TPromotionFormState, 'startDate' | 'endDate' | 'thresholdType' | 'benefitType' | 'promotionType' | 'action' | 'isRepeat' | 'filterList' | 'tiers'> = {
     promotionName: "",
     promotionDesc: "",
 
-
-    //promotionType: "1", // can fix per route
-    //thresholdType: "BATH",
-    //benefitType: "BATH",
-    promotionBenefit: [],
-    pwpPool: [],
-    inlinePool: [],
 
     source: "HU",
     promotionOrder: 0,
 
     // together
     isMemberSpecific: false,
-    members: [
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-    ],
+    members: [],
     //together
     isBranchSpecific: false,
     branches: [],
@@ -52,40 +53,47 @@ export const DEFAULT_CRM_DATA: Omit<TPromotionFormState, 'startDate' | 'endDate'
     limitTime: false,
     startTime: { hour: 10, minute: 0, second: 0 },
     endTime: { hour: 22, minute: 0, second: 0 },
+    //benefit
+    rewardPool: [],
 }
 
-export const CRM_BILL_VARIATION: TPromotionVariationCongif = {
-    promotionType: "1",
-    thresholdType: "BATH",
-    benefitType: "BATH",
+export const CRM_BILL_VARIATION: TPromotionVariationConfig = {
+    promotionType: "BILL",
+    filterList: [],
+    action: 'BILLBATHDISC',
+    thresholdType: 'BILLSUBTOTAL',
+    isRepeat: false,
+    tiers: [{ thresholdValue: 0, rewardValue: 0 }]
 }
 
-export const CRM_CATEGORY_VARIATION: TPromotionVariationCongif = {
-    promotionType: "2",
-    thresholdType: "BATH",
-    benefitType: "BATH",
+export const CRM_BUNDLE_VARIATION: TPromotionVariationConfig = {
+    promotionType: "BUNDLE",
+    filterList: [],
+    action: 'BUNDLEBATHDISC',
+    thresholdType: 'BUNDLECOUNT',
+    isRepeat: true,
+    tiers: [{ thresholdValue: 1, rewardValue: 0 }]
 }
 
-export const CRM_FIX_BUNDLE_VARIATION: TPromotionVariationCongif = {
-    promotionType: "3",
-    thresholdType: "COUNT",
-    benefitType: "PRICE",
+export const CRM_BUNDLE_REWARD: TBenefitOption[] = [
+    { action: "BUNDLEPRICE", label: "ปรับราคา SET" },
+    { action: "BUNDLEBATHDISC", label: "ลดราคา SET เป็นบาท" },
+    { action: "BUNDLEPERCENTDISC", label: "ลดราคา SET เป็นเปอร์เซ็นต์" },
+    { action: "PWP", label: "สิทธิแลกซื้อ" },
+    { action: "GIFT", label: "สินค้าแถม" }
+]
+
+export const CRM_INLINE_VARIATION: TPromotionVariationConfig = {
+    promotionType: "ITEM",
+    filterList: [{ filterType: 'EXIST', filterValue: 0, productList: [] }],
+    action: 'ITEMPERCENTDISC',
+    thresholdType: 'ITEMEXIST',
+    isRepeat: true,
+    tiers: [{ thresholdValue: 0, rewardValue: 0 }]
 }
 
-export const CRM_PICK_BUNDLE_VARIATION: TPromotionVariationCongif = {
-    promotionType: "4",
-    thresholdType: "COUNT",
-    benefitType: "PRICE",
-}
-
-export const CRM_PWP_VARIATION: TPromotionVariationCongif = {
-    promotionType: "5",
-    thresholdType: "BATH",
-    benefitType: "PRICE",
-}
-
-export const CRM_INLINE_VARIATION: TPromotionVariationCongif = {
-    promotionType: "6",
-    thresholdType: "EXIST",
-    benefitType: "BATH"
-}
+export const CRM_INLINE_REWARD: TBenefitOption[] = [
+    { action: "ITEMBATHDISC", label: "ลดสินค้าเป็นบาท" },
+    { action: "ITEMPERCENTDISC", label: "ลดสินค้าเป็นเปอร์เซ็นต์" },
+    { action: "ITEMPRICE", label: "ปรับราคาสินค้า" }
+]

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import * as XLSX from 'xlsx';
+import type * as XLSXType from 'xlsx';
 import { z } from 'zod';
 import { TPeriodCreditBatch, TPeriodInvBatch, TPeriodReceBatch } from './period.service';
+
+const xlsxPromise = import('xlsx');
 
 // ============ Zod Schemas ============
 
@@ -13,7 +15,7 @@ const excelNumber = z.union([
   })
 ]);
 
-const excelDate = z.union([
+const makeExcelDate = (XLSX: typeof XLSXType) => z.union([
   // Excel serial date number
   z.number().transform((val) => {
     const date = XLSX.SSF.parse_date_code(val);
@@ -33,12 +35,12 @@ const excelDate = z.union([
   z.any().transform(() => '')
 ]);
 
-export const BatchRowSchema = z.object({
+export const BatchRowSchema = (XLSX: typeof XLSXType) => z.object({
   periodId: excelNumber.pipe(
     z.number().int().positive({ message: 'periodId ต้องเป็นตัวเลขมากกว่า 0' })
   ),
   numb: z.string().min(1, { message: 'เลขที่เอกสารว่าง' }),
-  date: excelDate.pipe(
+  date: makeExcelDate(XLSX).pipe(
     z.string().min(1, { message: 'วันที่ไม่ถูกต้อง' })
   ),
   amount: excelNumber.pipe(
@@ -49,8 +51,9 @@ export const BatchRowSchema = z.object({
 
 // ============ Types ============
 
-export type BatchRowInput = z.input<typeof BatchRowSchema>;
-export type BatchRowOutput = z.output<typeof BatchRowSchema>;
+type TBatchRowSchema = ReturnType<typeof BatchRowSchema>;
+export type BatchRowInput = z.input<TBatchRowSchema>;
+export type BatchRowOutput = z.output<TBatchRowSchema>;
 
 export type BatchType = 'invoice' | 'receipt' | 'credit';
 
@@ -163,6 +166,7 @@ export class BatchExcelService {
    */
   async parseExcelFile(file: File): Promise<TParseResult> {
     try {
+      const XLSX = await xlsxPromise;
       const arrayBuffer = await file.arrayBuffer();
       const data = new Uint8Array(arrayBuffer);
       const workbook = XLSX.read(data, { type: 'array' });
@@ -173,7 +177,7 @@ export class BatchExcelService {
         return { success: false, error: 'ไฟล์ Excel ไม่มีข้อมูล' };
       }
 
-      const rows = this.validateRows(jsonData);
+      const rows = this.validateRows(jsonData, XLSX);
       return { success: true, data: rows };
     } catch (err) {
       console.error('Excel parse error:', err);
@@ -184,16 +188,16 @@ export class BatchExcelService {
   /**
    * Validate array of raw Excel rows
    */
-  validateRows(data: Record<string, unknown>[]): TPreviewRow[] {
-    return data.map((row, index) => this.validateRow(row, index + 2));
+  validateRows(data: Record<string, unknown>[], XLSX: typeof XLSXType): TPreviewRow[] {
+    return data.map((row, index) => this.validateRow(row, index + 2, XLSX));
   }
 
   /**
    * Validate single row and return preview row with validation result
    */
-  private validateRow(row: Record<string, unknown>, rowNumber: number): TPreviewRow {
+  private validateRow(row: Record<string, unknown>, rowNumber: number, XLSX: typeof XLSXType): TPreviewRow {
     const normalizedRow = this.normalizeRow(row);
-    const result = BatchRowSchema.safeParse(normalizedRow);
+    const result = BatchRowSchema(XLSX).safeParse(normalizedRow);
 
     if (result.success) {
       return {
@@ -248,7 +252,8 @@ export class BatchExcelService {
   /**
    * Generate and download Excel template
    */
-  downloadTemplate(batchType: BatchType): void {
+  async downloadTemplate(batchType: BatchType): Promise<void> {
+    const XLSX = await xlsxPromise;
     const headers = ['periodId', 'numb', 'date', 'amount', 'remark'];
     const exampleData: Record<BatchType, (string | number)[]> = {
       invoice: [1, 'INV-001', '2024-01-15', 1000, 'หมายเหตุ'],
@@ -265,9 +270,10 @@ export class BatchExcelService {
   /**
    * Generate and download error report
    */
-  downloadErrorReport(errors: Array<{ rowNumber: number; periodId: number; message: string }>): void {
+  async downloadErrorReport(errors: Array<{ rowNumber: number; periodId: number; message: string }>): Promise<void> {
     if (errors.length === 0) return;
 
+    const XLSX = await xlsxPromise;
     const data = errors.map(e => ({
       'Row Number': e.rowNumber,
       'Period ID': e.periodId,

@@ -1,0 +1,56 @@
+<div class="row">
+  <div class="col">
+    <div class="form-check form-switch">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        id="is-branch-spec"
+        [ngModel]="branchLimit()"
+        (ngModelChange)="toggleBranchLimit($event)"
+      />
+      <label class="form-check-label" for="is-branch-spec">จำกัดสาขา</label>
+    </div>
+  </div>
+  <div class="col">
+    <div>
+      <label
+        class="form-label fw-semibold text-muted small mb-1"
+        for="search-branch"
+        >ชื่อสาขา</label
+      >
+      <input
+        [disabled]="allowSelectBranch()"
+        id="search-branch"
+        type="text"
+        class="form-control form-control-sm"
+        placeholder="พิมพ์เพื่อค้นหา..."
+        [ngbTypeahead]="searchBranch"
+        [inputFormatter]="b => b['branchName']"
+        [resultFormatter]="b => b['branchName']"
+        (selectItem)="onSelectBranch($event)"
+        [editable]="false"
+      />
+    </div>
+  </div>
+  <div class="col">
+    <div>
+      <label
+        for="search-promotion-branch"
+        class="form-label fw-semibold text-muted small mb-1"
+        >ชื่อกลุ่มสาขา</label
+      >
+      <input
+        [disabled]="allowSelectBranch()"
+        id="search-promotion-branch"
+        type="text"
+        class="form-control form-control-sm"
+        placeholder="พิมพ์เพื่อค้นหา..."
+        [ngbTypeahead]="searchPromotionBranchGroup"
+        [inputFormatter]="pbg => pbg.name"
+        [resultFormatter]="pbg => pbg.name"
+        (selectItem)="onSelcetPromotionBranchGroup($event)"
+        [editable]="false"
+      />
+    </div>
+  </div>
+</div>

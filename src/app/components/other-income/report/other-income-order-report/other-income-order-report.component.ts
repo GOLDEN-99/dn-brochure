@@ -7,7 +7,6 @@ import { TPivot } from '../../../../service/other-income/supplier-report.service
 import { NotLightSummary } from '../../../../service/other-income/base-oi';
 import { TIncome } from '../../../../service/other-income/income.service';
 import { TEvent } from '../../../../service/other-income/event.service';
-import * as XLSX from 'xlsx'
 import { LoadingService } from '../../../../service/loading/loading.service';
 
 @Component({
@@ -60,6 +59,7 @@ export class OtherIncomeOrderReportComponent {
       ...report.map(this.mapOrderToArray(head.period))
     ])
 
+    const XLSX = await import('xlsx')
     const wb = XLSX.utils.book_new()
     aoa.forEach((a, i) => {
       const ws = XLSX.utils.aoa_to_sheet(a)

@@ -1,0 +1,77 @@
+<section class="m-3">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="m-0">รายการโปรโมชั่น</h1>
+    <div class="d-flex gap-2 align-items-center">
+      <label for="status-filter" class="mb-0">สถานะ</label>
+      <select
+        id="status-filter"
+        class="form-select form-select-sm"
+        style="width: auto"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event)"
+      >
+        <option value="">ทั้งหมด</option>
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-0">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>ชื่อโปรโมชั่น</th>
+            <th>ประเภท</th>
+            <th>Action</th>
+            <th>สถานะ</th>
+            <th>วันเริ่ม</th>
+            <th>วันสิ้นสุด</th>
+            <th>Priority</th>
+            <th>Order</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of filteredPromotions(); track p.id) {
+            <tr>
+              <td>{{ p.id }}</td>
+              <td>{{ p.promotionName }}</td>
+              <td>{{ p.promotionType }}</td>
+              <td>{{ p.action }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.bg-success]="p.promotionStatus === 'ACTIVE'"
+                  [class.bg-secondary]="p.promotionStatus !== 'ACTIVE'"
+                >
+                  {{ p.promotionStatus }}
+                </span>
+              </td>
+              <td>{{ p.startdate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ p.enddate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ p.promotionPriority | promotionPriority }}</td>
+              <td>{{ p.promotionOrder | promotionOrder }}</td>
+              <td>
+                <a
+                  class="btn btn-sm btn-outline-primary"
+                  [routerLink]="['/crm-promotion/promotions', p.id]"
+                >
+                  ดูรายละเอียด
+                </a>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="10" class="text-center text-muted py-4">
+                ไม่พบข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

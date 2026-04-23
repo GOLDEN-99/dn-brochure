@@ -1,12 +1,13 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ApiService } from '../api/api.service';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { combineLatest, combineLatestAll, filter, map, Observable, shareReplay, Subject, switchMap, tap } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, tap } from 'rxjs';
 import { NotLightSummary } from './base-oi'
-import * as XLSX from 'xlsx'
 import { TFieldSelector } from '../../types';
+
+const xlsxPromise = import('xlsx');
 
 @Injectable({
   providedIn: 'root'
@@ -80,6 +81,7 @@ export class SupplierReportService {
       .pipe(map(r => r.map(this._annualReportMapper)))
   }
   exportManySheet = async (value: any[][][], filename?: string) => {
+    const XLSX = await xlsxPromise
     const wb = XLSX.utils.book_new()
     for (let i = 0; i < value.length; i++) {
       const cur = value[i]
@@ -167,6 +169,7 @@ export class SupplierReportService {
       [],
       ...Object.entries(summary).map(([k, v]) => [k, v])
     ])
+    const XLSX = await xlsxPromise
     const wb = XLSX.utils.book_new()
     aoa.forEach((a, i) => {
       const ws = XLSX.utils.aoa_to_sheet(a)
@@ -188,6 +191,7 @@ export class SupplierReportService {
       ['', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
       ...monthly.map((mon) => Object.entries(mon).map(([_, value]) => typeof value === 'number' ? value.toFixed(2) : value))
     ])
+    const XLSX = await xlsxPromise
     const wb = XLSX.utils.book_new()
     aoa.forEach((a, i) => {
       const ws = XLSX.utils.aoa_to_sheet(a)
