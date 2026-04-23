@@ -61,14 +61,14 @@ export class ProductPickerComponent {
   //   this.productRemove.emit(goodCode)
   // }
   // handle add product from group
-  searchPromotionProductGroup(term$: Observable<string>) {
-    return term$.pipe(
+  searchPromotionProductGroup = (term$: Observable<string>) =>
+    term$.pipe(
       distinctUntilChanged(),
       debounceTime(300),
       map(t => this.promotionProductGroup().filter(p =>
         p.name.toLocaleLowerCase().includes(t))
-      ))
-  }
+      )
+    )
   formatPromotionProductGroup({ name }: TConfigGroup) {
     return name
   }

@@ -103,6 +103,7 @@ export type TDayState = [boolean, boolean, boolean, boolean, boolean, boolean, b
 export type TPromotionVariationConfig = Pick<TPromotionFormState, 'promotionType' | 'action' | 'thresholdType' | 'isRepeat' | 'filterList' | 'tiers'>
 
 export type TBranchDetail = {
+    id: number
     branchCode: string
     branchName: string
     branchGroupCode: string
@@ -144,18 +145,19 @@ export type TMember = {
 }
 
 export type TProductDetail = {
+    id: number
     goodCode: string
     sku: string
     compCode: string
     goodName: string
     compName: string
-    compName2: string
+    compName2: string | null
     cateCode: string
     cateDesc: string
     typeCode: string
     typeDesc: string
-    groupCode: string
-    groupDesc: string
+    goodGroupCode: string
+    goodGroupDesc: string
 }
 
 export type TProductCate = {

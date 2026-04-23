@@ -2,7 +2,7 @@ import { Component, DestroyRef, ElementRef, inject, signal, viewChild } from '@a
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
-import { CREATE_ROUTE_PATH, LIST_ROUTE_PATH } from '../../routes/crm-promotion.route';
+import { CREATE_ROUTE_PATH, } from '../../routes/crm-promotion.route';
 
 
 @Component({
@@ -23,11 +23,6 @@ export class CrmPromotionLayoutComponent {
     icon
   }))
 
-  readonly listObject = LIST_ROUTE_PATH.map(({ path, name, icon }) => ({
-    path: `/crm-promotion/${path}`,
-    name,
-    icon
-  }))
 
   sidebarOpen = signal(false)
   toggleSidebar = () => this.sidebarOpen.update(prev => !prev)

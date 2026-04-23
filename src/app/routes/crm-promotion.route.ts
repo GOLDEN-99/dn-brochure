@@ -11,9 +11,7 @@ export const CREATE_ROUTE_PATH = [
     { path: "create-group", name: 'group item discount', icon: 'bi bi-tags me-2' }
 ]
 
-export const LIST_ROUTE_PATH = [
-    { path: "promotions", name: 'promotion list', icon: 'bi bi-list-check me-2' }
-]
+
 
 const CREATE_ROUTE = CREATE_ROUTE_PATH.map<Route>(({ path }) => ({
     path: path,
@@ -41,9 +39,9 @@ export const CRM_PROMOTION_ROUTE: Route[] = [
                     {
                         path: "",
                         loadComponent() {
-                            return import("../pages/crm-promotion/crm-home/crm-home.component")
-                                .then(r => r.CrmHomeComponent)
-                                .catch(handleLazyLoadError('crm-promotion'))
+                            return import("../pages/crm-promotion/promotions/promotions.component")
+                                .then(r => r.PromotionsComponent)
+                                .catch(handleLazyLoadError('crm-promotion/promotions'))
                         }
                     },
                     ...CREATE_ROUTE,
@@ -101,16 +99,9 @@ export const CRM_PROMOTION_ROUTE: Route[] = [
                                 .catch(handleLazyLoadError("crm-promotion/config/promotion-set"))
                         }
                     },
+
                     {
-                        path: "promotions",
-                        loadComponent() {
-                            return import("../pages/crm-promotion/promotions/promotions.component")
-                                .then(r => r.PromotionsComponent)
-                                .catch(handleLazyLoadError('crm-promotion/promotions'))
-                        }
-                    },
-                    {
-                        path: "promotions/:id",
+                        path: ":id",
                         loadComponent() {
                             return import("../pages/crm-promotion/promotions/promotion-detail.component")
                                 .then(r => r.PromotionDetailComponent)

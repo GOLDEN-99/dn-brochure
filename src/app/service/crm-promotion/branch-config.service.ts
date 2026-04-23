@@ -38,7 +38,11 @@ export class BranchConfigService {
   }
 
   addBranchesToGroup(groupId: number, branchCodes: string[]) {
-    return this.api.post<void>(`${this.basePath}/promotion-branch-groups/${groupId}/items`, { branchCodes })
+    return this.api.post<void>(`${this.basePath}/promotion-branch-groups/${groupId}/items/batch`, { branchCodes })
+  }
+
+  deleteBranchFromGroup(listId: number) {
+    return this.api.delete(`${this.basePath}/promotion-branch-groups/items/${listId}`)
   }
 
 }

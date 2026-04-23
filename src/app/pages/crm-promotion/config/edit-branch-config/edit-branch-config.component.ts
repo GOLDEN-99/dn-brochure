@@ -1,7 +1,8 @@
 import { Component, computed, inject, input, signal, viewChild, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { filter, map, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, EMPTY, filter, map, switchMap } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BranchConfigService } from '../../../../service/crm-promotion/branch-config.service';
 
@@ -10,7 +11,7 @@ import { BranchConfigService } from '../../../../service/crm-promotion/branch-co
   selector: 'app-edit-branch-config',
   imports: [FormsModule],
   templateUrl: './edit-branch-config.component.html',
-  styleUrl: './edit-branch-config.component.scss'
+  styles: ''
 })
 export class EditBranchConfigComponent {
   private readonly branchConfig = inject(BranchConfigService)
@@ -19,12 +20,15 @@ export class EditBranchConfigComponent {
 
   // ── inputs & current group data ─────────────────────────────────────────────
   branchGroupId = input<number>()
+  private readonly branchGroup$ = toObservable(this.branchGroupId)
+  private readonly next$ = new BehaviorSubject(0);
 
-  private readonly branchInGroup$ = toObservable(this.branchGroupId).pipe(
-    map(Number),
-    filter(v => !Number.isNaN(v)),
-    switchMap(groupId => this.branchConfig.getByGroupId(groupId))
-  )
+  private readonly branchInGroup$ = combineLatest([this.next$, this.branchGroup$])
+    .pipe(
+      map(([_, id]) => Number(id)),
+      filter(v => !Number.isNaN(v)),
+      switchMap(groupId => this.branchConfig.getByGroupId(groupId))
+    )
   currentBranchInGroup = toSignal(this.branchInGroup$, { initialValue: [] })
   currentBranchSet = computed(() => new Set(this.currentBranchInGroup().map(b => b.branchCode)))
 
@@ -72,9 +76,12 @@ export class EditBranchConfigComponent {
   selectedCount = computed(() => this.selectedCodes().size)
 
   // ── modal ────────────────────────────────────────────────────────────────────
+  addError = signal<string | null>(null)
+
   openModal() {
     this.filterOptions.set({ branchName: '', branchGroupCode: [], branchZoneCode: [], branchPrice: [] })
     this.selectedCodes.set(new Set())
+    this.addError.set(null)
     this.modalService.open(this.addBranchModal(), { size: 'lg' })
   }
 
@@ -82,8 +89,34 @@ export class EditBranchConfigComponent {
     const groupId = this.branchGroupId()
     if (!groupId) return
     const codes = [...this.selectedCodes()]
-    this.branchConfig.addBranchesToGroup(groupId, codes).subscribe(() => {
+    this.addError.set(null)
+    this.branchConfig.addBranchesToGroup(groupId, codes).pipe(
+      catchError((err: HttpErrorResponse) => {
+        this.addError.set(err.error?.message ?? 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
+        return EMPTY
+      })
+    ).subscribe(() => {
+      this.next$.next(0)
       modal.close()
+    })
+  }
+
+  // ── delete ───────────────────────────────────────────────────────────────────
+  deletingId = signal<number | null>(null)
+  deleteError = signal<string | null>(null)
+
+  deleteBranch(listId: number) {
+    this.deletingId.set(listId)
+    this.deleteError.set(null)
+    this.branchConfig.deleteBranchFromGroup(listId).pipe(
+      catchError((err: HttpErrorResponse) => {
+        this.deleteError.set(err.error?.message ?? 'ลบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง')
+        this.deletingId.set(null)
+        return EMPTY
+      })
+    ).subscribe(() => {
+      this.deletingId.set(null)
+      this.next$.next(0)
     })
   }
 

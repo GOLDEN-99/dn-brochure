@@ -45,22 +45,6 @@
       }
 
       <li class="nav-item mt-3">
-        <span class="sidebar__section-label">Promotions</span>
-      </li>
-      @for (listRoute of listObject; track $index) {
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            [routerLink]="listRoute.path"
-            routerLinkActive="active"
-            (click)="closeSidebarOnMobile()"
-          >
-            <i [className]="listRoute.icon"></i> {{ listRoute.name }}
-          </a>
-        </li>
-      }
-
-      <li class="nav-item mt-3">
         <span class="sidebar__section-label">Config</span>
       </li>
       <li class="nav-item">

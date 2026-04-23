@@ -1,8 +1,12 @@
 <div class="card border-0 shadow-sm">
-  <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
+  <div
+    class="card-header bg-white border-bottom d-flex align-items-center justify-content-between"
+  >
     <span class="fw-semibold">
       สินค้าที่เลือกแล้ว
-      <span class="badge bg-primary ms-2">{{ currentProductInGroup().length }}</span>
+      <span class="badge bg-primary ms-2">{{
+        currentProductInGroup().length
+      }}</span>
     </span>
     <a class="btn btn-primary btn-sm" routerLink="add">
       <i class="bi bi-plus-lg me-1"></i>เพิ่มสินค้า
@@ -19,10 +23,18 @@
       <tbody>
         @for (item of currentProductInGroup(); track item.goodCode) {
           <tr>
-            <td class="align-middle">{{ item.goodName }}</td>
+            <td class="align-middle">{{ item | productName }}</td>
             <td>
-              <button class="btn btn-danger btn-sm btn-squre">
-                <i class="bi bi-trash"></i>
+              <button
+                class="btn btn-danger btn-sm btn-squre"
+                [disabled]="deletingId() === item.id"
+                (click)="deleteProduct(item.id)"
+              >
+                @if (deletingId() === item.id) {
+                  <span class="spinner-border spinner-border-sm"></span>
+                } @else {
+                  <i class="bi bi-trash"></i>
+                }
               </button>
             </td>
           </tr>
@@ -37,4 +49,9 @@
       </tbody>
     </table>
   </div>
+  @if (deleteError()) {
+    <div class="card-footer bg-white">
+      <div class="alert alert-danger mb-0 py-2 small">{{ deleteError() }}</div>
+    </div>
+  }
 </div>

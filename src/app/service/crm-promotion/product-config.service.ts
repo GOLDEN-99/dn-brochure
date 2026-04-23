@@ -35,8 +35,12 @@ export class ProductConfigService {
     { initialValue: [] }
   )
   allPromotionProductGroup = toSignal(this.allPromotionProductGroup$, { initialValue: [] })
-  allProduct$ = this.api.get<TProductDetail[]>(`${this.basePath}/all-products`)
-  allProduct = toSignal(this.allProduct$, { initialValue: [] })
+
+  private readonly fetchAllProductSignal = signal(0)
+  private readonly fetchAllProductSteram$ = toObservable(this.fetchAllProductSignal)
+  private readonly allPrduct$ = this.fetchAllProductSteram$.pipe(switchMap(() => this.api.get<TProductDetail[]>(`${this.basePath}/all-products`)))
+  readonly allProduct = toSignal(this.allPrduct$, { initialValue: [] })
+
   createPromotionProductGroup(req: { name: string }) {
     return this.api.post(`${this.basePath}/promotion-product-groups`, req)
   }
@@ -48,13 +52,20 @@ export class ProductConfigService {
 
   // private readonly allOldBranchGroup$ = this.api.get<TBranchGroupDetail[]>(`${this.basePath}/branch-old-groups`)
   // allOldBranchGroup = toSignal(this.allOldBranchGroup$, { initialValue: [] })
+  refetchAllProducts() {
+    this.fetchAllProductSignal.update(prev => prev + 1)
+  }
 
   getAllProductGroup(groupId: number) {
     return this.api.get<TProductDetail[]>(`${this.basePath}/promotion-product-groups/${groupId}/items`)
   }
 
   addProductToGroup(groupId: number, goodCodes: string[]) {
-    return this.api.post<void>(`${this.basePath}/promotion-product-groups/${groupId}/items`, { goodCodes })
+    return this.api.post<void>(`${this.basePath}/promotion-product-groups/${groupId}/items/batch`, { goodCodes })
+  }
+
+  deleteProductFromGroup(listId: number) {
+    return this.api.delete(`${this.basePath}/promotion-product-groups/items/${listId}`)
   }
 
 }

@@ -54,13 +54,28 @@
               <td>{{ p.enddate | date: "dd/MM/yyyy" }}</td>
               <td>{{ p.promotionPriority | promotionPriority }}</td>
               <td>{{ p.promotionOrder | promotionOrder }}</td>
-              <td>
+              <td class="d-flex gap-2">
                 <a
                   class="btn btn-sm btn-outline-primary"
-                  [routerLink]="['/crm-promotion/promotions', p.id]"
+                  [routerLink]="['/crm-promotion', p.id]"
                 >
                   ดูรายละเอียด
                 </a>
+                <button
+                  class="btn btn-sm"
+                  [class.btn-outline-danger]="p.promotionStatus === 'ACTIVE'"
+                  [class.btn-outline-success]="p.promotionStatus !== 'ACTIVE'"
+                  [disabled]="togglingId() === p.id"
+                  (click)="toggleStatus(p.id, p.promotionStatus)"
+                >
+                  {{
+                    togglingId() === p.id
+                      ? "..."
+                      : p.promotionStatus === "ACTIVE"
+                        ? "ปิด"
+                        : "เปิด"
+                  }}
+                </button>
               </td>
             </tr>
           } @empty {

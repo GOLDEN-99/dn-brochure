@@ -202,7 +202,7 @@ export class CreateBillDiscountPromotionComponent {
       next: () => {
         this.toastService.success('สร้างโปรโมชั่นสำเร็จ')
         this.promotionService.refetchPromotions()
-        this.router.navigate(['/crm-promotion/promotions'])
+        this.router.navigate(['/crm-promotion'])
       },
       error: () => {
         this.toastService.danger('เกิดข้อผิดพลาดในการสร้างโปรโมชั่น')

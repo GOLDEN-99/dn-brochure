@@ -11,6 +11,23 @@
 <div class="card border-0 shadow-sm mb-3">
   <div class="card-body">
     <div class="row g-3">
+      <!-- goodName free text -->
+      <div class="col-12 col-md-6">
+        <label
+          for="good-name"
+          class="form-label fw-semibold text-muted small mb-1"
+          >ชื่อสินค้า</label
+        >
+        <input
+          id="good-name"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="ค้นหาชื่อสินค้า..."
+          [ngModel]="filter.goodName"
+          (ngModelChange)="setGoodName($event)"
+        />
+      </div>
+
       <!-- compName free text -->
       <div class="col-12 col-md-6">
         <label
@@ -164,34 +181,66 @@
       <thead class="table-light" style="position: sticky; top: 0; z-index: 1">
         <tr>
           <th></th>
-          <th style="cursor: pointer; user-select: none" (click)="toggleSort('sku')" (keydown.enter)="toggleSort('sku')">
+          <th
+            style="cursor: pointer; user-select: none"
+            (click)="toggleSort('sku')"
+            (keydown.enter)="toggleSort('sku')"
+          >
             บาร์โค้ด
-            @if (sortCol() === 'sku') {
-              <i class="bi" [class.bi-sort-up]="sortDir() === 'asc'" [class.bi-sort-down]="sortDir() === 'desc'"></i>
+            @if (sortCol() === "sku") {
+              <i
+                class="bi"
+                [class.bi-sort-up]="sortDir() === 'asc'"
+                [class.bi-sort-down]="sortDir() === 'desc'"
+              ></i>
             } @else {
               <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
             }
           </th>
-          <th style="cursor: pointer; user-select: none" (click)="toggleSort('goodName')" (keydown.enter)="toggleSort('goodName')">
+          <th
+            style="cursor: pointer; user-select: none"
+            (click)="toggleSort('goodName')"
+            (keydown.enter)="toggleSort('goodName')"
+          >
             ชื่อสินค้า
-            @if (sortCol() === 'goodName') {
-              <i class="bi" [class.bi-sort-up]="sortDir() === 'asc'" [class.bi-sort-down]="sortDir() === 'desc'"></i>
+            @if (sortCol() === "goodName") {
+              <i
+                class="bi"
+                [class.bi-sort-up]="sortDir() === 'asc'"
+                [class.bi-sort-down]="sortDir() === 'desc'"
+              ></i>
             } @else {
               <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
             }
           </th>
-          <th style="cursor: pointer; user-select: none" (click)="toggleSort('compName')" (keydown.enter)="toggleSort('compName')">
+          <th
+            style="cursor: pointer; user-select: none"
+            (click)="toggleSort('compName')"
+            (keydown.enter)="toggleSort('compName')"
+          >
             บริษัท
-            @if (sortCol() === 'compName') {
-              <i class="bi" [class.bi-sort-up]="sortDir() === 'asc'" [class.bi-sort-down]="sortDir() === 'desc'"></i>
+            @if (sortCol() === "compName") {
+              <i
+                class="bi"
+                [class.bi-sort-up]="sortDir() === 'asc'"
+                [class.bi-sort-down]="sortDir() === 'desc'"
+              ></i>
             } @else {
               <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
             }
           </th>
-          <th style="cursor: pointer; user-select: none" (click)="toggleSort('cateDesc')" (keydown.enter)="toggleSort('cateDesc')">
+          <th
+            style="cursor: pointer; user-select: none"
+            (click)="toggleSort('cateDesc')"
+            (keydown.enter)="toggleSort('cateDesc')"
+          >
             หมวด
-            @if (sortCol() === 'cateDesc') {
-              <i class="bi" [class.bi-sort-up]="sortDir() === 'asc'" [class.bi-sort-down]="sortDir() === 'desc'"></i>
+            @if (sortCol() === "cateDesc") {
+              <i
+                class="bi"
+                [class.bi-sort-up]="sortDir() === 'asc'"
+                [class.bi-sort-down]="sortDir() === 'desc'"
+              ></i>
             } @else {
               <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
             }
@@ -231,17 +280,22 @@
       </tbody>
     </table>
   </div>
-  <div class="card-footer bg-white d-flex justify-content-end gap-2">
-    <a class="btn btn-secondary" routerLink="..">ยกเลิก</a>
-    <button
-      class="btn btn-primary"
-      [disabled]="selectedCount() === 0 || saving()"
-      (click)="confirmAdd()"
-    >
-      @if (saving()) {
-        <span class="spinner-border spinner-border-sm me-1"></span>
-      }
-      ยืนยัน ({{ selectedCount() }})
-    </button>
+  <div class="card-footer bg-white">
+    @if (saveError()) {
+      <div class="alert alert-danger py-2 mb-2">{{ saveError() }}</div>
+    }
+    <div class="d-flex justify-content-end gap-2">
+      <a class="btn btn-secondary" routerLink="..">ยกเลิก</a>
+      <button
+        class="btn btn-primary"
+        [disabled]="selectedCount() === 0 || saving()"
+        (click)="confirmAdd()"
+      >
+        @if (saving()) {
+          <span class="spinner-border spinner-border-sm me-1"></span>
+        }
+        ยืนยัน ({{ selectedCount() }})
+      </button>
+    </div>
   </div>
 </div>

@@ -28,4 +28,8 @@ export class CrmPromotionService {
   getPromotionById(id: number): Observable<TPromotionDetail> {
     return this.api.get(`${this.url}/promotions/${id}`)
   }
+
+  togglePromotionStatus(id: number, status: 'ACTIVE' | 'INACTIVE'): Observable<void> {
+    return this.api.patch(`${this.url}/promotions/${id}/status`, { status })
+  }
 }

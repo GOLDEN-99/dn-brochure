@@ -32,7 +32,6 @@ export class PromotionFilterComponent {
   }
 
   readonly filterCondition = model.required<TPromotionFilterState>()
-  readonly deleteConditon = output()
 
   readonly currentProductList = computed(() => this.filterCondition().productList)
   readonly currentProduct = computed(() => new Set(this.currentProductList().map(p => p.goodCode)))
@@ -57,7 +56,5 @@ export class PromotionFilterComponent {
   onUpdateProductList(addProductList: TPromotionProductBase[]) {
     this.filterCondition.update(({ productList, ...res }) => ({ ...res, productList: [...productList, ...addProductList] }))
   }
-  onDelete() {
-    this.deleteConditon.emit()
-  }
+
 }

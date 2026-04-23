@@ -237,7 +237,7 @@
         <div class="d-flex justify-content-between">
           <h2 class="card-title">เงื่อนไข Promotion</h2>
           <div class="d-flex justify-content-end gap-1">
-            @if (showItem()) {
+            <!-- @if (showItem()) {
               <span>
                 <button
                   class="btn btn-outline-success"
@@ -246,7 +246,8 @@
                   เพิ่มเงื่อนไขสินค้า
                 </button>
               </span>
-            } @else {
+            }  -->
+            @if (!showItem()) {
               <span>
                 <button
                   class="btn btn-outline-primary"
@@ -275,8 +276,17 @@
               <app-promotion-filter
                 [filterCondition]="filter"
                 (filterConditionChange)="onChangeFilter($event, $index)"
-                (deleteConditon)="onDeleteFilter($index)"
               />
+              @if (!showItem()) {
+                <div class="d-flex justify-content-end">
+                  <button
+                    class="btn btn-danger btn-squre"
+                    (click)="onDeleteFilter($index)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              }
             </div>
           }
         </div>
