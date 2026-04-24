@@ -5,10 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { CrmPromotionService } from '../../../service/crm-promotion/crm-promotion.service';
 import { PromotionPriorityPipe } from '../../../lib/crm-promotion/promotion-priority.pipe';
 import { PromotionOrderPipe } from '../../../lib/crm-promotion/promotion-order.pipe';
+import { PromotionBenefitNamePipe } from '../../../lib/crm-promotion/promotion-benefit-name.pipe';
 
 @Component({
   selector: 'app-promotions',
-  imports: [DatePipe, RouterLink, FormsModule, PromotionPriorityPipe, PromotionOrderPipe],
+  imports: [DatePipe, RouterLink, FormsModule, PromotionBenefitNamePipe, PromotionPriorityPipe, PromotionOrderPipe],
   templateUrl: './promotions.component.html',
 })
 export class PromotionsComponent {
