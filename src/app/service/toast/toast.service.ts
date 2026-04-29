@@ -6,8 +6,6 @@ import { Subject } from 'rxjs';
 })
 export class ToastService {
 
-  constructor() { }
-
   message$ = new Subject<TToastProps>()
 
   success(message: string) {

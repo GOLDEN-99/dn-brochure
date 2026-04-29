@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { TPeriodInvBatch, TBatchResult } from '../../period.service';
-import { TPreviewRow } from '../../batch-excel.service';
+import type { TPreviewRow } from '../../batch-excel.service';
 import { BaseBatchStrategy } from './base-batch.strategy';
 import { IBatchTypeConfig } from '../batch-strategy.interface';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class InvoiceBatchStrategy extends BaseBatchStrategy<TPeriodInvBatch> {
   readonly config: IBatchTypeConfig = {
     type: 'invoice',

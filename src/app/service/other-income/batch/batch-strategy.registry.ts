@@ -15,9 +15,7 @@ const STRATEGY_MAP: Record<BatchType, Type<IBatchStrategy<TBatchPayload>>> = {
  * Registry service for batch strategies
  * Uses lazy instantiation and caching for performance
  */
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class BatchStrategyRegistry {
   private readonly injector = inject(Injector);
   private readonly cache = new Map<BatchType, IBatchStrategy>();

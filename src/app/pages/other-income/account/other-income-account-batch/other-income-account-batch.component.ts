@@ -9,6 +9,7 @@ import {
   BatchType,
   IBatchStrategy
 } from '../../../../service/other-income/batch';
+import { InvoiceBatchStrategy, ReceiptBatchStrategy, CreditBatchStrategy } from '../../../../service/other-income/batch/strategies';
 
 type TUploadState = 'initial' | 'parsed' | 'processing' | 'complete';
 
@@ -17,7 +18,7 @@ type TUploadState = 'initial' | 'parsed' | 'processing' | 'complete';
   imports: [FormsModule, DecimalPipe, NgbAlertModule, NgbProgressbarModule],
   templateUrl: './other-income-account-batch.component.html',
   styleUrl: './other-income-account-batch.component.scss',
-  providers: [BatchExcelService]
+  providers: [BatchExcelService, BatchStrategyRegistry, InvoiceBatchStrategy, ReceiptBatchStrategy, CreditBatchStrategy]
 })
 export class OtherIncomeAccountBatchComponent {
   private readonly strategyRegistry = inject(BatchStrategyRegistry);
