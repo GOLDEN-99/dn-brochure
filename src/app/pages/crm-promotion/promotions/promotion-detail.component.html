@@ -66,7 +66,10 @@
           @if (d.limitTime) {
             <div class="col-md-3">
               <div class="text-muted small">ช่วงเวลา</div>
-              <div>{{ d.startTime }} – {{ d.endTime }}</div>
+              <div>
+                {{ d.startTime.substring(0, 5) }} –
+                {{ d.endTime.substring(0, 5) }}
+              </div>
             </div>
           }
         </div>

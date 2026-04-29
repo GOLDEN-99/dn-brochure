@@ -1,6 +1,5 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, filter, map, of, switchMap } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+
 import { ProductConfigService } from './product-config.service';
 
 @Injectable()
