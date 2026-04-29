@@ -76,7 +76,7 @@
         <div class="mt-2">
           <div class="text-muted small mb-1">วันที่ใช้งาน</div>
           <div class="d-flex gap-1">
-            @for (day of ["จ", "อ", "พ", "พฤ", "ศ", "ส", "อา"]; track $index) {
+            @for (day of ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"]; track $index) {
               <span
                 class="badge"
                 [class.bg-primary]="d.activeDays[$index] === '1'"
