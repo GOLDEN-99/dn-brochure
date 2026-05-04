@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CrmPromotionService } from '../../../service/crm-promotion/crm-promotion.service';
 import { PromotionPriorityPipe } from '../../../lib/crm-promotion/promotion-priority.pipe';
@@ -14,7 +14,7 @@ import { PromotionBenefitNamePipe } from '../../../lib/crm-promotion/promotion-b
 })
 export class PromotionsComponent {
   private readonly service = inject(CrmPromotionService)
-
+  private readonly router = inject(Router)
   statusFilter = signal('')
   togglingId = signal<number | null>(null)
 
@@ -23,6 +23,10 @@ export class PromotionsComponent {
     const s = this.statusFilter()
     return s ? list.filter(p => p.promotionStatus === s) : list
   })
+
+  onClickRow(id: number){
+    this.router.navigate(['/crm-promotion', id])
+  }
 
   toggleStatus(id: number, currentStatus: string) {
     const next = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
