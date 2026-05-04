@@ -22,7 +22,6 @@
       <table class="table table-hover mb-0">
         <thead class="table-light">
           <tr>
-            <th>#</th>
             <th>ชื่อโปรโมชั่น</th>
             <th>ประเภท</th>
             <th>Action</th>
@@ -36,7 +35,6 @@
         <tbody>
           @for (p of filteredPromotions(); track p.id) {
             <tr tabindex="0" (click)="onClickRow(p.id)">
-              <td>{{ p.id }}</td>
               <td>{{ p.promotionName }}</td>
               <td>{{ p.promotionType }}</td>
               <td>{{ p.action | promotionBenefitName }}</td>

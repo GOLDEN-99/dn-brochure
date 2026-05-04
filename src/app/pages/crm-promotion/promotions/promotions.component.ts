@@ -1,15 +1,14 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CrmPromotionService } from '../../../service/crm-promotion/crm-promotion.service';
 import { PromotionPriorityPipe } from '../../../lib/crm-promotion/promotion-priority.pipe';
-import { PromotionOrderPipe } from '../../../lib/crm-promotion/promotion-order.pipe';
 import { PromotionBenefitNamePipe } from '../../../lib/crm-promotion/promotion-benefit-name.pipe';
 
 @Component({
   selector: 'app-promotions',
-  imports: [DatePipe, RouterLink, FormsModule, PromotionBenefitNamePipe, PromotionPriorityPipe, PromotionOrderPipe],
+  imports: [DatePipe,FormsModule, PromotionBenefitNamePipe, PromotionPriorityPipe],
   templateUrl: './promotions.component.html',
 })
 export class PromotionsComponent {
