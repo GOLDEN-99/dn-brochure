@@ -6,7 +6,7 @@ import { TPromotionMaster } from '../../../../types/crm-promotion.type';
   selector: 'app-promotion-master',
   imports: [FormField],
   templateUrl: './promotion-master.component.html',
-  styleUrl: './promotion-master.component.scss',
+  styles: '',
 })
 export class PromotionMasterComponent {
   form = input.required<FieldTree<TPromotionMaster>>()

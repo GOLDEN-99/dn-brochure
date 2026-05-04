@@ -7,7 +7,7 @@ import { TTimeSpan } from '../../../types/crm-promotion.type';
   selector: 'app-timespan-picker',
   imports: [NgbTimepicker, FormsModule],
   templateUrl: './timespan-picker.component.html',
-  styleUrl: './timespan-picker.component.scss',
+  styles: '',
 })
 export class TimespanPickerComponent {
   required = input(false)

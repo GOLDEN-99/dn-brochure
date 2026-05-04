@@ -1,4 +1,4 @@
-import { apply, applyEach, applyWhen, applyWhenValue, disabled, FieldValidator, max, min, required, schema, SchemaOrSchemaFn, validate } from "@angular/forms/signals"
+import { apply, applyEach, applyWhen, applyWhenValue, disabled, FieldValidator, max, min, minLength, required, schema, SchemaOrSchemaFn, validate } from "@angular/forms/signals"
 import {
   TPromotionMaster, TPromotionDatetime,
   TPromotionMember, TPromotionBranch,
@@ -85,10 +85,8 @@ export const initialMember: TPromotionMember = {
   members: [],
 }
 export const promotionMemberSchema = schema<TPromotionMember>(_path => {
-  validate(_path, ({ valueOf }) => {
-    if (!valueOf(_path.isMemberSpecific) && valueOf(_path.members).length > 0)
-      return { kind: 'invalid member criteria', message: 'ไม่จำกัดสมาชิกต้องไม่มีรายชื่อสมาชิก' }
-    return null
+  applyWhen(_path, ({value}) => value().isMemberSpecific, (_path) => {
+    minLength(_path.members, 1, {message: 'ต้องระบุระดับสมาชิกอย่างน้อย 1 ระดับ'})
   })
   validate(_path.members, memberUniqueValidator)
 })
@@ -99,10 +97,8 @@ export const initialBranch: TPromotionBranch = {
   branches: [],
 }
 export const promotionBranchSchema = schema<TPromotionBranch>(_path => {
-  validate(_path, ({ valueOf }) => {
-    if (!valueOf(_path.isBranchSpecific) && valueOf(_path.branches).length > 0)
-      return { kind: 'invalid branch criteria', message: 'ไม่จำกัดสาขาต้องไม่มีรายชื่อสาขา' }
-    return null
+  applyWhen(_path, ({value}) => value().isBranchSpecific, (_path) => {
+    minLength(_path.branches, 1, {message: 'ต้องระบุสาขาอย่างน้อย 1 สาขา'})
   })
   validate(_path.branches, branchUniqueValidator)
 })

@@ -2,18 +2,13 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
-import { DateInputComponent } from "../../../../components/date-input/date-input.component";
-import { DayCheckbooxComponent } from "../../../../components/crm-promotion/day-checkboox/day-checkboox.component";
 import { TCreatePromotionRequest, TMember, TPromotionBenefit, TPromotionFilterState, TPromotionProductBase } from '../../../../types/crm-promotion.type';
 import { CRM_PAGE_CONFIG } from '../../../../service/crm-promotion/crm-token';
-import { InlineBranchLimitComponent } from "../../../../components/crm-promotion/inline-branch-limit/inline-branch-limit.component";
-import { InlineMemberComponent } from "../../../../components/crm-promotion/inline-member/inline-member.component";
 import { PromotionFilterComponent } from "../../../../components/crm-promotion/promotion-filter/promotion-filter.component";
 import { BenefitSelectComponent } from "../../../../components/crm-promotion/benefit-select/benefit-select.component";
 import { InlineBenefitComponent } from '../../../../components/crm-promotion/inline-benefit/inline-benefit.component';
 import { CrmPromotionService } from '../../../../service/crm-promotion/crm-promotion.service';
 import { ToastService } from '../../../../service/toast/toast.service';
-import { TimespanPickerComponent } from "../../../../components/crm-promotion/timespan-picker/timespan-picker.component";
 import { form, FormField } from '@angular/forms/signals';
 import {
   createPromotionSchema,
@@ -22,16 +17,17 @@ import {
 import { PromotionMasterComponent } from "../../../../components/crm-promotion/create-promotion-subform/promotion-master/promotion-master.component";
 import { JsonPipe } from '@angular/common';
 import { PromotionDatetimeComponent } from "../../../../components/crm-promotion/create-promotion-subform/promotion-datetime/promotion-datetime.component";
+import { PromotionLimitUsageComponent } from "../../../../components/crm-promotion/create-promotion-subform/promotion-limit-usage/promotion-limit-usage.component";
 
 @Component({
   selector: 'app-create-bill-discount-promotion',
   imports: [
     FormsModule,
-    InlineBranchLimitComponent, InlineMemberComponent,
     PromotionFilterComponent,
     BenefitSelectComponent, InlineBenefitComponent,
     PromotionMasterComponent, JsonPipe,
-    PromotionDatetimeComponent
+    PromotionDatetimeComponent,
+    PromotionLimitUsageComponent
 ],
   templateUrl: './create-bill-discount-promotion.component.html',
   styles: ''

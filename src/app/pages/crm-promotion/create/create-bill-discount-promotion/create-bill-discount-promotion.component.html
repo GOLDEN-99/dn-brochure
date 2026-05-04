@@ -22,65 +22,15 @@
     </div>
   </div>
 
-  <!--member-->
+  <!--member& branches-->
   <div class="card mb-3">
     <div class="card-body">
       <h2 class="card-title">เงื่อนไขตามสมาชิก</h2>
-      <app-inline-member
-        [limitTier]="member.isMemberSpecific"
-        (limitTierChange)="onLimitTierChange($event)"
-        [members]="member.members"
-        (membersChange)="onChangeMember($event)"
-      />
+      <app-promotion-limit-usage [branchForm]="promotionForm.promotionBranch" [memberForm]="promotionForm.promotionMember" />
     </div>
-    <div class="d-flex flex-column px-3 pb-3 gap-3">
-      @for (m of member.members; track $index) {
-        <div class="d-flex justify-content-between">
-          <div>
-            {{ m.memberName }}
-          </div>
-          <span>
-            <button
-              class="btn btn-danger btn-squre"
-              (click)="onRemoveMember(m.id)"
-            >
-              <i class="bi bi-x"></i>
-            </button>
-          </span>
-        </div>
-      }
-    </div>
+
   </div>
-  <!--branch-->
-  <div class="card mb-3">
-    <div class="card-body">
-      <h2 class="card-title">เงื่อนไขตามสาขา</h2>
-      <div class="row"></div>
-      <app-inline-branch-limit
-        [currentBranch]="branch.branches"
-        [branchLimit]="branch.isBranchSpecific"
-        (branchLimitChange)="onBranchChange('isBranchSpecific', $event)"
-        (currentBranchChange)="onBranchChange('branches', $event)"
-      />
-      <div class="d-flex flex-column pt-3 gap-3">
-        @for (b of branch.branches; track $index) {
-          <div class="d-flex justify-content-between">
-            <div>
-              {{ b.branchName }}
-            </div>
-            <span>
-              <button
-                class="btn btn-danger btn-squre"
-                (click)="onRemoveBranch(b.branchCode)"
-              >
-                <i class="bi bi-x"></i>
-              </button>
-            </span>
-          </div>
-        }
-      </div>
-    </div>
-  </div>
+
   <!--promotion activation-->
   @if (showFilterOption()) {
     <div class="card mb-3">

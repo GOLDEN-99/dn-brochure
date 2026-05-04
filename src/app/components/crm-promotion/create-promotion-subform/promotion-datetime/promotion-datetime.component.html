@@ -1,14 +1,7 @@
 @let formField = form();
 <!--dow-->
 <app-day-checkboox [(activeDay)]="formField.activeDay().controlValue" />
-@let dayactiveErr = form().activeDay().errors();
-@if (dayactiveErr.length > 0) {
-  <div class="d-flex flex-column text-danger">
-    @for (e of dayactiveErr; track $index) {
-      <span>*** {{e.message}}</span>
-    }
-  </div>
-}
+<app-form-alert-text [formState]="formField.activeDay()" />
 <hr />
 <!--time span-->
 <app-timespan-picker
@@ -16,11 +9,4 @@
   [(limitTime)]="formField.limitTime().controlValue"
   [(timeSpan)]="formField.timeSpan().controlValue"
 />
-@let timespanErr = form().timeSpan().errors();
-@if (timespanErr.length > 0) {
-  <div class="d-flex flex-column text-danger">
-    @for (e of timespanErr; track $index) {
-      <span>*** {{e.message}}</span>
-    }
-  </div>
-}
+<app-form-alert-text [formState]="formField.timeSpan()" />
