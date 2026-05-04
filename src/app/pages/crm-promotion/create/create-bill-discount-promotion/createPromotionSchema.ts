@@ -17,14 +17,15 @@ export const initialMaster: TPromotionMaster = {
   source: 'HU',
   startDate: { year: 0, month: 1, day: 1 },
   endDate: { year: 0, month: 1, day: 1 },
-  promotionPriority: 0,
-  promotionOrder: 0,
+  promotionPriority: '0',
+  promotionOrder: '0',
 }
 export const promotionMasterSchema = schema<TPromotionMaster>(_path => {
   required(_path.promotionName)
   required(_path.promotionType)
   required(_path.promotionOrder)
   required(_path.promotionPriority)
+  required(_path.source)
   //required(_path.promotionType) set from route
   required(_path.startDate)
   required(_path.endDate)
@@ -40,7 +41,7 @@ export const promotionMasterSchema = schema<TPromotionMaster>(_path => {
   })
   //validate date invalid order
   validate(_path, (ctx) => {
-    if (ctx.valueOf(_path.source) === 'HU' && ctx.valueOf(_path.promotionOrder) !== 0) return { kind: 'invalid order', message: '' }
+    if (ctx.valueOf(_path.source) === 'HU' && ctx.valueOf(_path.promotionOrder) !== '0') return { kind: 'invalid order', message: '' }
     return null
   })
 })

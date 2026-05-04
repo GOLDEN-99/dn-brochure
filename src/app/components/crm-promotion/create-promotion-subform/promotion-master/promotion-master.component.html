@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <!-- <div class="col-lg-3">
+  <div class="col-lg-3">
     <div class="app-form-field">
       <label for="priority"> ใช้ร่วมกับโปรโมชั่นอื่น </label>
       <select
@@ -27,43 +27,28 @@
         id="priority"
         class="form-select"
       >
-        <option [ngValue]="0">ใช้ร่วมกันได้</option>
-        <option [ngValue]="1">priority 1</option>
-        <option [ngValue]="2">priority 2</option>
-        <option [ngValue]="3">priority 3</option>
+        <option value="0">ใช้ร่วมกันได้</option>
+        <option value="1">priority 1</option>
+        <option value="2">priority 2</option>
+        <option value="3">priority 3</option>
       </select>
     </div>
-  </div> -->
-  <!-- <div class="col-lg-3">
-          <div class="app-form-field">
-            <label for="order">ลำดับการคำนวน</label>
-            <select
-              id="order"
-              class="form-select"
-              [formField]="master.promotionOrder"
-            >
-              <option [ngValue]="0">ลำดับสุดท้าย</option>
-              <option
-                [ngValue]="1"
-                [disabled]="formModel().promotionMaster.source === 'HU'"
-              >
-                ลำดับก่อนสุดท้าย
-              </option>
-              <option
-                [ngValue]="2"
-                [disabled]="formModel().promotionMaster.source === 'HU'"
-              >
-                ลำดับกลาง
-              </option>
-              <option
-                [ngValue]="3"
-                [disabled]="formModel().promotionMaster.source === 'HU'"
-              >
-                ลำดับแรก
-              </option>
-            </select>
-          </div>
-        </div> -->
+  </div>
+  <div class="col-lg-3">
+    <div class="app-form-field">
+      <label for="order">ลำดับการคำนวน</label>
+      <select
+        id="order"
+        class="form-select"
+        [formField]="master.promotionOrder"
+      >
+        <option value="0">ลำดับสุดท้าย</option>
+        <option value="1" [disabled]="master.source().value() === 'HU'">ลำดับก่อนสุดท้าย</option>
+        <option value="2" [disabled]="master.source().value() === 'HU'">ลำดับกลาง</option>
+        <option value="3" [disabled]="master.source().value() === 'HU'">ลำดับแรก</option>
+      </select>
+    </div>
+  </div>
 
   <!-- datetime-->
   <!-- <div class="col-lg-6">

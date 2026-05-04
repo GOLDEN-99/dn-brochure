@@ -30,8 +30,8 @@ export type TPromotionMaster = {
     //promotionStatus: "ACTIVE",
     startDate: NgbDateStruct
     endDate: NgbDateStruct
-    promotionPriority: number
-    promotionOrder: number
+    promotionPriority: string
+    promotionOrder: string
 }
 
 export type TPromotionTier = {

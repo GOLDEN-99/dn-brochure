@@ -77,7 +77,7 @@ export class CreateBillDiscountPromotionComponent {
       promotionMaster: {
         ...s.promotionMaster,
         source,
-        ...(source === 'HU' ? { promotionOrder: 0 } : {})
+        ...(source === 'HU' ? { promotionOrder: '0' } : {})
       }
     }))
   }
@@ -238,7 +238,7 @@ export class CreateBillDiscountPromotionComponent {
     return {
       promotionName: promotionName.trim(),
       promotionDesc: promotionDesc.trim(),
-      promotionType, promotionOrder, promotionPriority,
+      promotionType, promotionOrder: Number(promotionOrder), promotionPriority: Number(promotionPriority),
       startDate: this.ngbDateToIso(startDate),
       endDate: this.ngbDateToIso(endDate),
       isBranchSpecific, branches: branches.map(({ branchCode }) => branchCode),
