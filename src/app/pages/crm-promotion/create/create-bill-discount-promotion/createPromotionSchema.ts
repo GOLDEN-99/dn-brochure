@@ -1,4 +1,4 @@
-import { apply, applyEach, applyWhen, FieldValidator, max, min, required, schema, validate } from "@angular/forms/signals"
+import { apply, applyEach, applyWhen, applyWhenValue, disabled, FieldValidator, max, min, required, schema, SchemaOrSchemaFn, validate } from "@angular/forms/signals"
 import {
   TPromotionMaster, TPromotionDatetime,
   TPromotionMember, TPromotionBranch,
@@ -6,8 +6,10 @@ import {
   TProductRewardPool,
   TBranch,
   TMember,
-  TPromotionTier
+  TPromotionTier,
+  TTimeSpan
 } from "../../../../types/crm-promotion.type"
+import { NgbTimeStruct } from "@ng-bootstrap/ng-bootstrap"
 
 // ── Master ──────────────────────────────────────────────
 export const initialMaster: TPromotionMaster = {
@@ -26,6 +28,7 @@ export const promotionMasterSchema = schema<TPromotionMaster>(_path => {
   required(_path.promotionOrder)
   required(_path.promotionPriority)
   required(_path.source)
+  disabled(_path.promotionOrder, ({valueOf}) => valueOf(_path.source) === 'HU')
   //required(_path.promotionType) set from route
   required(_path.startDate)
   required(_path.endDate)
@@ -50,21 +53,30 @@ export const promotionMasterSchema = schema<TPromotionMaster>(_path => {
 export const initialDatetime: TPromotionDatetime = {
   activeDay: [true, true, true, true, true, true, true],
   limitTime: false,
-  startTime: { hour: 0, minute: 0, second: 0 },
-  endTime: { hour: 0, minute: 0, second: 0 },
+
+  timeSpan: {
+      startTime: { hour: 0, minute: 0, second: 0 },
+      endTime: { hour: 0, minute: 0, second: 0 },
+  }
 }
+
 export const promotionDatetimeSchema = schema<TPromotionDatetime>(_path => {
-  validate(_path, ({ valueOf }) => {
-    const current = valueOf(_path.limitTime)
-    // return if not limited time
-    if (!current) return null
-    const startTime = valueOf(_path.startTime)
-    const endTime = valueOf(_path.endTime)
+  validate(_path.timeSpan, ({value, valueOf}) => {
+    if(!valueOf(_path.limitTime)) return null
+    const {startTime, endTime} = value()
     const toMin = (t: { hour: number; minute: number }) => t.hour * 60 + t.minute
+    const startMin = toMin(startTime)
+    const endMin = toMin(endTime)
+    if(startMin === endMin) return { kind: 'time span error', message: 'เวลาเริ่มต้องน้อยกว่าเวลาสิ้นสุด' }
     return toMin(startTime) < toMin(endTime)
       ? null
-      : { kind: 'time span error', message: 'เวลาเริ่มต้องไม่เท่ากับเวลาสิ้นสุด' }
+      : { kind: 'time span error', message: 'เวลาเริ่มต้องน้อยกว่าเวลาสิ้นสุด' }
   })
+  validate(_path.activeDay, ({value}) => value().reduceRight((acc, cur) => acc || cur) ? null : {kind: 'active day error', message : 'ต้องกำหนดวันใช้อย่างน้อย 1 วัน'}
+  )
+  disabled(_path.timeSpan.startTime, ({valueOf}) => !valueOf(_path.limitTime))
+  disabled(_path.timeSpan.endTime, ({valueOf}) => !valueOf(_path.limitTime))
+  required(_path.timeSpan, {when: ({valueOf}) => valueOf(_path.limitTime)})
 })
 
 // ── Member ──────────────────────────────────────────────

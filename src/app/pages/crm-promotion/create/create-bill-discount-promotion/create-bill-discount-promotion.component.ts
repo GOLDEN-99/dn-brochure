@@ -21,19 +21,18 @@ import {
 } from './createPromotionSchema';
 import { PromotionMasterComponent } from "../../../../components/crm-promotion/create-promotion-subform/promotion-master/promotion-master.component";
 import { JsonPipe } from '@angular/common';
+import { PromotionDatetimeComponent } from "../../../../components/crm-promotion/create-promotion-subform/promotion-datetime/promotion-datetime.component";
 
 @Component({
   selector: 'app-create-bill-discount-promotion',
   imports: [
     FormsModule,
-    DateInputComponent, DayCheckbooxComponent,
     InlineBranchLimitComponent, InlineMemberComponent,
     PromotionFilterComponent,
     BenefitSelectComponent, InlineBenefitComponent,
-    TimespanPickerComponent,
-    FormField,
-    PromotionMasterComponent, JsonPipe
-  ],
+    PromotionMasterComponent, JsonPipe,
+    PromotionDatetimeComponent
+],
   templateUrl: './create-bill-discount-promotion.component.html',
   styles: ''
 })
@@ -231,7 +230,7 @@ export class CreateBillDiscountPromotionComponent {
   get createRequest(): TCreatePromotionRequest {
     const { promotionMaster, promotionDatetime, promotionMember, promotionBranch, promotionFilter, promotionBenefit } = this.formModel()
     const { promotionName, promotionDesc, promotionType, promotionOrder, promotionPriority, startDate, endDate } = promotionMaster
-    const { activeDay, limitTime, startTime, endTime } = promotionDatetime
+    const { activeDay, limitTime, timeSpan : {startTime, endTime } } = promotionDatetime
     const { isMemberSpecific, members } = promotionMember
     const { isBranchSpecific, branches } = promotionBranch
     const { action, thresholdType, isRepeat, tiers, rewardPool } = promotionBenefit
