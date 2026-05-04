@@ -1,4 +1,7 @@
-import { CRM_BILL_VARIATION, CRM_BUNDLE_REWARD, CRM_BUNDLE_VARIATION, CRM_INLINE_REWARD, CRM_INLINE_VARIATION, DEFAULT_CRM_DATA, ICrmPageConfig } from "../../service/crm-promotion/crm-token"
+import { CRM_BUNDLE_REWARD, CRM_INLINE_REWARD, ICrmPageConfig } from "../../service/crm-promotion/crm-token"
+import {
+    initialMaster, initialDatetime, initialMember, initialBranch, initialBenefit
+} from "../../pages/crm-promotion/create/create-bill-discount-promotion/createPromotionSchema"
 
 export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
     switch (path) {
@@ -6,13 +9,24 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
             return {
                 pageName: "ส่วนลดท้ายบิล",
                 initialData: {
-                    ...DEFAULT_CRM_DATA, ...CRM_BILL_VARIATION,
+                    promotionMaster: { ...initialMaster, promotionType: 'BILL' },
+                    promotionDatetime: initialDatetime,
+                    promotionMember: initialMember,
+                    promotionBranch: initialBranch,
+                    promotionFilter: [],
+                    promotionBenefit: {
+                        ...initialBenefit,
+                        action: 'BILLBATHDISC',
+                        thresholdType: 'BILLSUBTOTAL',
+                        isRepeat: false,
+                        tiers: [{ thresholdValue: 0, rewardValue: 0 }],
+                    },
                 },
                 filterOption: {
                     showFilter: false,
                     showBundle: false,
                     showItem: false,
-                    showList: false
+                    showList: false,
                 },
                 rewardOption: {
                     rewardList: [
@@ -31,13 +45,24 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
             return {
                 pageName: "ส่วนลดตามกลุ่ม",
                 initialData: {
-                    ...DEFAULT_CRM_DATA, ...CRM_BUNDLE_VARIATION
+                    promotionMaster: { ...initialMaster, promotionType: 'BUNDLE' },
+                    promotionDatetime: initialDatetime,
+                    promotionMember: initialMember,
+                    promotionBranch: initialBranch,
+                    promotionFilter: [],
+                    promotionBenefit: {
+                        ...initialBenefit,
+                        action: 'BUNDLEBATHDISC',
+                        thresholdType: 'BUNDLECOUNT',
+                        isRepeat: true,
+                        tiers: [{ thresholdValue: 1, rewardValue: 0 }],
+                    },
                 },
                 filterOption: {
                     showFilter: true,
                     showBundle: true,
                     showItem: false,
-                    showList: true
+                    showList: true,
                 },
                 rewardOption: {
                     rewardList: CRM_BUNDLE_REWARD,
@@ -50,13 +75,24 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
             return {
                 pageName: 'ลดรายสินค้า',
                 initialData: {
-                    ...DEFAULT_CRM_DATA, ...CRM_INLINE_VARIATION
+                    promotionMaster: { ...initialMaster, promotionType: 'ITEM' },
+                    promotionDatetime: initialDatetime,
+                    promotionMember: initialMember,
+                    promotionBranch: initialBranch,
+                    promotionFilter: [{ filterType: 'EXIST', filterValue: 0, productList: [] }],
+                    promotionBenefit: {
+                        ...initialBenefit,
+                        action: 'ITEMPERCENTDISC',
+                        thresholdType: 'ITEMEXIST',
+                        isRepeat: true,
+                        tiers: [{ thresholdValue: 0, rewardValue: 0 }],
+                    },
                 },
                 filterOption: {
                     showFilter: true,
                     showBundle: false,
                     showItem: true,
-                    showList: false
+                    showList: false,
                 },
                 rewardOption: {
                     rewardList: CRM_INLINE_REWARD,

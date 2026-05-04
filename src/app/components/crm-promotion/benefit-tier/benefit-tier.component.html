@@ -9,6 +9,7 @@
         <input
           class="form-control"
           type="number"
+          min="0"
           [name]="'tier-thres-' + id"
           [id]="'tier-thres-' + id"
           [ngModel]="current.thresholdValue"
@@ -24,6 +25,7 @@
         <input
           class="form-control"
           type="number"
+          min="0"
           [name]="'tier-reward-' + id"
           [id]="'tier-reward-' + id"
           [ngModel]="current.rewardValue"

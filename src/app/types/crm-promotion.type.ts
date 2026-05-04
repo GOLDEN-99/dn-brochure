@@ -1,18 +1,18 @@
 import { NgbDateStruct, NgbTimeStruct } from "@ng-bootstrap/ng-bootstrap"
 
-type TPromotionBrnach = {
+export type TPromotionBranch = {
     // branch lock
     isBranchSpecific: boolean
     branches: TBranch[]
 }
 
-type TPromotionMember = {
+export type TPromotionMember = {
     // member lock
     isMemberSpecific: boolean
     members: TMember[]
 }
 
-type TPromotionDatetime = {
+export type TPromotionDatetime = {
     // dow lock
     activeDay: [boolean, boolean, boolean, boolean, boolean, boolean, boolean], // 1111111
     // time of day lock
@@ -21,7 +21,7 @@ type TPromotionDatetime = {
     endTime: NgbTimeStruct
 }
 
-type TPromotionMaster = {
+export type TPromotionMaster = {
     promotionName: string,
     promotionDesc: string,
     promotionType: string,
@@ -59,7 +59,7 @@ export type TBenefitThreshold = {
 
 export type TPromotionFormState = {
     filterList: TPromotionFilterState[]
-} & TPromotionBenefit & TPromotionMaster & TPromotionBrnach & TPromotionMember & TPromotionDatetime
+} & TPromotionBenefit & TPromotionMaster & TPromotionBranch & TPromotionMember & TPromotionDatetime
 
 export type TBranch = {
     branchCode: string

@@ -54,9 +54,9 @@ export class BenefitSelectComponent {
   }
 
   onActionChange(action: string) {
-    this.thresholdType.set(this.config.initialData.thresholdType)
-    this.rewardPool.set(this.config.initialData.rewardPool)
-    this.tiers.set(this.config.initialData.tiers)
+    this.thresholdType.set(this.config.initialData.promotionBenefit.thresholdType)
+    this.rewardPool.set(this.config.initialData.promotionBenefit.rewardPool)
+    this.tiers.set(this.config.initialData.promotionBenefit.tiers)
     this.action.set(action)
   }
 

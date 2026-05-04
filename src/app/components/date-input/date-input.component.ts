@@ -31,10 +31,14 @@ import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bo
         [value]="displayDate()"
         name="dpFromDate"
         readonly
+        [required]="required()"
       />
-      <label class="form-label" [attr.for]="'date-input-' + id">{{
-        label()
-      }}</label>
+      <label class="form-label" [attr.for]="'date-input-' + id">
+        {{ label() }}
+        @if (required()) {
+          <span class="text-danger">*</span>
+        }
+      </label>
     </div>
     <button
       class="btn btn-outline-secondary bi bi-calendar3"
@@ -53,6 +57,7 @@ export class DateInputComponent {
   date = input<NgbDateStruct>(this.calendar.getToday())
   label = input.required<string>()
   disableClick = input(false)
+  required = input(false)
   thaiDate(date: NgbDateStruct | null) {
     if (!date) return "กรุณาเลือกวันที่"
     return `${date.day}/${date.month}/${date.year}`

@@ -20,7 +20,7 @@ export class InlineBenefitComponent {
   tier = computed(() => this.props().tiers[0])
 
   onActionChange(action: string) {
-    this.props.set({ tiers: this.config.initialData.tiers, action })
+    this.props.set({ tiers: this.config.initialData.promotionBenefit.tiers, action })
   }
 
   onChangeReward(rewardValue: number) {

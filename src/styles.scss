@@ -49,6 +49,14 @@ $font-family-base: $font-family-sans-serif;
   textarea {
     @extend .form-control;
   }
+  label:has(
+      + input[required],
+      + select[required],
+      + textarea[required]
+    )::after {
+    content: " *";
+    color: var(--color-red);
+  }
 }
 
 .app-form-field-inline {

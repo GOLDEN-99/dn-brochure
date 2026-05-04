@@ -1,0 +1,39 @@
+<!--dow-->
+<app-day-checkboox [(activeDay)]="form().activeDay().controlValue" />
+<div class="d-flex flex-wrap gap-3">
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      [ngModel]="allowEveryDay()"
+      (ngModelChange)="toggleEveryDay($event)"
+      id="everyday"
+    />
+    <label class="form-check-label" for="everyday"> ทุกวัน </label>
+  </div>
+
+  @for (day of activeDay(); track $index) {
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        [ngModel]="day"
+        (ngModelChange)="toggleDayByDay($event, $index)"
+        [id]="'day-' + $index"
+      />
+      <label class="form-check-label" [htmlFor]="'day-' + $index">
+        {{ "วัน" + dateRef[$index] }}
+      </label>
+    </div>
+  }
+</div>
+<hr />
+<!--time span-->
+<app-timespan-picker
+  [limitTime]="datetime.limitTime"
+  (limitTimeChange)="toggleTime($event)"
+  [startTime]="datetime.startTime"
+  (startTimeChange)="onDatetimeChange('startTime', $event)"
+  [endTime]="datetime.endTime"
+  (endTimeChange)="onDatetimeChange('endTime', $event)"
+/>

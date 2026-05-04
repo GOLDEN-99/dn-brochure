@@ -1,12 +1,15 @@
 <div class="row mb-3">
   <div class="form-field col-md">
-    <label class="form-label" for="inline-benefit-type">สิทธิ</label>
+    <label class="form-label" for="inline-benefit-type"
+      >สิทธิ<span class="text-danger">*</span></label
+    >
     <select
       name="inline-benefit-type"
       id="inline-benefit-type"
       class="form-select"
       [ngModel]="action()"
       (ngModelChange)="onActionChange($event)"
+      required
     >
       @for (opt of rewardOption(); track $index) {
         <option [value]="opt.action">{{ opt.label }}</option>
@@ -14,16 +17,19 @@
     </select>
   </div>
   <div class="form-field col-md">
-    <label class="form-label" for="inline-reward">{{
-      action() | promotionBenefitName
-    }}</label>
+    <label class="form-label" for="inline-reward"
+      >{{ action() | promotionBenefitName }}
+      <span class="text-danger">*</span></label
+    >
     <input
       class="form-control"
       name="inline-reward"
       id="inline-reward"
       type="number"
+      min="0"
       [ngModel]="tier().rewardValue"
       (ngModelChange)="onChangeReward($event)"
+      required
     />
   </div>
 </div>
