@@ -43,20 +43,36 @@
         [formField]="master.promotionOrder"
       >
         <option value="0">ลำดับสุดท้าย</option>
-        <option value="1" >ลำดับก่อนสุดท้าย</option>
-        <option value="2" >ลำดับกลาง</option>
-        <option value="3" >ลำดับแรก</option>
+        <option value="1">ลำดับก่อนสุดท้าย</option>
+        <option value="2">ลำดับกลาง</option>
+        <option value="3">ลำดับแรก</option>
       </select>
     </div>
   </div>
 
   <!-- datetime-->
-  <!-- <div class="col-lg-6">
-          <app-date-input label="ตั้งแต่" [formField]="master.endDate" />
-        </div>
-        <div class="col-lg-6">
-          <app-date-input label="สิ้นสุด" [formField]="master.startDate" />
-        </div> -->
+  <div class="col-lg-6">
+    <div class="app-form-field">
+      <label [htmlFor]="master.startDate().name()">
+        วันที่เริ่ม
+        @if (master.startDate().required()) {
+          <span class="text-danger">*</span>
+        }
+      </label>
+      <app-signal-datepicker [id]="master.startDate().name()" [formField]="master.startDate" />
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="app-form-field">
+      <label [htmlFor]="master.endDate().name()">
+        วันที่สิ้นสุด
+        @if (master.endDate().required()) {
+          <span class="text-danger">*</span>
+        }
+      </label>
+      <app-signal-datepicker [id]="master.endDate().name()" [formField]="master.endDate" />
+    </div>
+  </div>
 </div>
 <div class="app-form-field">
   <label [htmlFor]="master.promotionDesc().name()">รายละเอียด</label>
