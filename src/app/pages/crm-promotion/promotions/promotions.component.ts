@@ -5,10 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { CrmPromotionService } from '../../../service/crm-promotion/crm-promotion.service';
 import { PromotionPriorityPipe } from '../../../lib/crm-promotion/promotion-priority.pipe';
 import { PromotionBenefitNamePipe } from '../../../lib/crm-promotion/promotion-benefit-name.pipe';
+import { PromotionTypePipe } from '../../../lib/crm-promotion/promotion-type.pipe';
 
 @Component({
   selector: 'app-promotions',
-  imports: [DatePipe,FormsModule, PromotionBenefitNamePipe, PromotionPriorityPipe],
+  imports: [DatePipe, FormsModule, PromotionBenefitNamePipe, PromotionPriorityPipe, PromotionTypePipe],
   templateUrl: './promotions.component.html',
 })
 export class PromotionsComponent {
@@ -23,7 +24,7 @@ export class PromotionsComponent {
     return s ? list.filter(p => p.promotionStatus === s) : list
   })
 
-  onClickRow(id: number){
+  onClickRow(id: number) {
     this.router.navigate(['/crm-promotion', id])
   }
 
