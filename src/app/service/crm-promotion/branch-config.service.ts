@@ -21,8 +21,12 @@ export class BranchConfigService {
     switchMap(() => this.api.get<TConfigGroup[]>(`${this.basePath}/promotion-branch-groups`))
   )
   allBranchGroup = toSignal(this.allBranchGroup$, { initialValue: [] })
+  hasBranchGroup = (name: string) => {
+    const cleanName = name.trim().toLocaleLowerCase();
+    return this.allBranchGroup().some(group => group.name.toLowerCase() === cleanName)
+  }
   createBranchGroup(req: { name: string }) {
-    return this.api.post(`${this.basePath}/promotion-branch-groups`, req)
+    return this.api.post<{ id: number }>(`${this.basePath}/promotion-branch-groups`, req)
   }
   refetchBranchGroup() {
     this.refetchBranchGroupSig.update(v => v + 1)

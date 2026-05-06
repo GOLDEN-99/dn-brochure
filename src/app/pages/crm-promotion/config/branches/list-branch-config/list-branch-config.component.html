@@ -13,15 +13,6 @@
         </div>
       </div>
     </div>
-    <div class="col">
-      <button
-        class="btn btn-success"
-        [disabled]="canNotAdd()"
-        (click)="onCreate()"
-      >
-        เพิ่มกลุ่มสาขา
-      </button>
-    </div>
   </div>
 
   <table class="table">
@@ -47,9 +38,6 @@
                 <a class="btn btn-primary me-3" [routerLink]="g.id + ''">
                   แก้ไข
                 </a>
-                <button class="btn btn-danger" (click)="onDelete(g.id)">
-                  ลบ
-                </button>
               </div>
             </td>
           </tr>

@@ -1,0 +1,15 @@
+<div class="app-form-field">
+  @let nameField = form.name();
+  <label class="form-label" [htmlFor]="nameField.name()">ชื่อกลุ่มสินค้า</label>
+  <input type="text" [formField]="form.name" />
+</div>
+<div class="mb-3">
+  <app-form-alert-text [formState]="nameField" />
+</div>
+<button
+  class="btn btn-success w-100"
+  [disabled]="form().invalid()"
+  (click)="onCreate()"
+>
+  เพิ่มกลุ่มสินค้า
+</button>

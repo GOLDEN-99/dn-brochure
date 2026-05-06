@@ -48,11 +48,20 @@ export const CRM_PROMOTION_ROUTE: Route[] = [
                     {
                         path: "config-branch",
                         loadComponent() {
-                            return import("../pages/crm-promotion/config/create-branch-config/create-branch-config.component")
-                                .then(r => r.CreateBranchConfigComponent)
+                            return import("../pages/crm-promotion/config/branches/list-branch-config/list-branch-config.component")
+                                .then(r => r.ListBranchConfigComponent)
                                 .catch(handleLazyLoadError('crm-promotion/config/branch'))
                         },
                     },
+                    {
+                        path: "config-branch-create",
+                        loadComponent() {
+                            return import("../pages/crm-promotion/config/branches/create-branch-config/create-branch-config.component")
+                                .then(r => r.CreateBranchConfigComponent)
+                                .catch(handleLazyLoadError('crm-promotion/config-branch-create'))
+                        },
+                    },
+
                     {
                         path: "config-branch/:branchGroupId",
                         loadComponent() {
@@ -64,9 +73,17 @@ export const CRM_PROMOTION_ROUTE: Route[] = [
                     {
                         path: "config-product",
                         loadComponent() {
-                            return import("../pages/crm-promotion/config/create-product-config/create-product-config.component")
-                                .then(r => r.CreateProductConfigComponent)
+                            return import("../pages/crm-promotion/config/products/list-product-config/list-product-config.component")
+                                .then(r => r.ListProductConfigComponent)
                                 .catch(handleLazyLoadError("crm-promotion/config/product"))
+                        }
+                    },
+                    {
+                        path: "config-product-create",
+                        loadComponent() {
+                            return import("../pages/crm-promotion/config/products/create-product-config/create-product-config.component")
+                                .then(r => r.CreateProductConfigComponent)
+                                .catch(handleLazyLoadError("crm-promotion/config-product-create"))
                         }
                     },
                     {
@@ -91,15 +108,6 @@ export const CRM_PROMOTION_ROUTE: Route[] = [
                             }
                         ]
                     },
-                    {
-                        path: "config-promotion-set",
-                        loadComponent() {
-                            return import("../pages/crm-promotion/config/create-promotion-set-config/create-promotion-set-config.component")
-                                .then(r => r.CreatePromotionSetConfigComponent)
-                                .catch(handleLazyLoadError("crm-promotion/config/promotion-set"))
-                        }
-                    },
-
                     {
                         path: ":id",
                         loadComponent() {

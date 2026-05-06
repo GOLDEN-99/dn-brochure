@@ -36,13 +36,18 @@ export class ProductConfigService {
   )
   allPromotionProductGroup = toSignal(this.allPromotionProductGroup$, { initialValue: [] })
 
+  hasPromotionGroup(name: string) {
+    const cleanName = name.trim().toLocaleLowerCase()
+    return this.allPromotionProductGroup().some(group => group.name.toLocaleLowerCase() === cleanName)
+  }
+
   private readonly fetchAllProductSignal = signal(0)
   private readonly fetchAllProductSteram$ = toObservable(this.fetchAllProductSignal)
   private readonly allPrduct$ = this.fetchAllProductSteram$.pipe(switchMap(() => this.api.get<TProductDetail[]>(`${this.basePath}/all-products`)))
   readonly allProduct = toSignal(this.allPrduct$, { initialValue: [] })
 
   createPromotionProductGroup(req: { name: string }) {
-    return this.api.post(`${this.basePath}/promotion-product-groups`, req)
+    return this.api.post<{ id: number }>(`${this.basePath}/promotion-product-groups`, req)
   }
   refetchPromotionProductGroup() {
     this.refetchPromotionProductGroupSig.update(v => v + 1)
