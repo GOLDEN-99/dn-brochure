@@ -6,11 +6,24 @@ import { TAoaConfig } from "../../xlsx-report/xlsx-report.service"
 export const DCMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
     sheetName: "dc rebate",
     config: [
+        { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
         { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'บริษัท', valueMapper: (v) => v.compType },
         { header: 'ชื่อรายรับภายใน', valueMapper: (v) => v.displayName ?? 'ไม่ระบุ' },
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
+        {
+            header: 'ประเภทขั้นบันได', valueMapper: (v) => {
+                const st = v.steps?.stepType
+                switch (st) {
+                    case 1: return "บาทแรก"
+                    case 3: return "ขั้นบันได"
+                    case 2: return "บาทแรก"
+                    default: return "มีข้อผิดพลาด"
+                }
+            }
+        },
+        { header: 'เงื่อนไข', valueMapper: (v) => v.steps?.steps.map(({ min, rate }) => `ตั้งแต่ ${min} บาท คิด ${rate} %`).join('\n') ?? '' },
         { header: 'วิธีรับรู้รายได้', valueMapper: v => v.incomeList.join(' ,') },
         { header: 'เดือน', valueMapper: (v) => customFormatMonth(v.startDate) },
         { header: 'เริ่มกิจกรรม', valueMapper: v => customFormatDate(v.eventStart) },
@@ -38,6 +51,7 @@ export const DCMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
 export const LightBoxMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
     sheetName: "light box",
     config: [
+        { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
         { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'บริษัท', valueMapper: (v) => v.compType },
@@ -55,6 +69,7 @@ export const LightBoxMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
 export const IncentiveMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
     sheetName: "incentive",
     config: [
+        { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
         { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'บริษัท', valueMapper: (v) => v.compType },
