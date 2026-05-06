@@ -33,18 +33,6 @@ export const DCMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
         { header: 'ยอด คำนวน', valueMapper: (v) => formatLocalNumber(v.calAmount) },
         { header: 'รายได้', valueMapper: (v) => formatLocalNumber(v.incomeAmount) },
         { header: 'หมายเหตุ', valueMapper: (v) => v.incomeRemark },
-        {
-            header: 'ประเภทขั้นบันได', valueMapper: (v) => {
-                const st = v.steps?.stepType
-                switch (st) {
-                    case 1: return "บาทแรก"
-                    case 3: return "ขั้นบันได"
-                    case 2: return "บาทแรก"
-                    default: return "ไม่มีข้อผิดพลาด"
-                }
-            }
-        },
-        { header: 'เงื่อนไข', valueMapper: (v) => v.steps?.steps.map(({ min, rate }) => `ตั้งแต่ ${min} บาท คิด ${rate} %`).join('\n') ?? '' }
     ]
 }
 
