@@ -26,9 +26,11 @@
           (click)="closeSidebarOnMobile()"
         >
           <i class="bi bi-house-door me-2"></i> รายการโปรโมชั่น
+          <i class="bi bi-house-door me-2"></i> รายการโปรโมชั่น
         </a>
       </li>
       <li class="nav-item mt-3">
+        <span class="sidebar__section-label">สร้างโปรโมชั่น</span>
         <span class="sidebar__section-label">สร้างโปรโมชั่น</span>
       </li>
       @for (createRoute of createObject; track $index) {
@@ -46,6 +48,7 @@
 
       <li class="nav-item mt-3">
         <span class="sidebar__section-label">กลุ่มสาขา</span>
+        <span class="sidebar__section-label">กลุ่มสาขา</span>
       </li>
       <li class="nav-item">
         <a
@@ -54,6 +57,7 @@
           routerLinkActive="active"
           (click)="closeSidebarOnMobile()"
         >
+          <i class="bi bi-diagram-3 me-2"></i> รายการกลุ่มสาขา
           <i class="bi bi-diagram-3 me-2"></i> รายการกลุ่มสาขา
         </a>
       </li>
@@ -77,6 +81,7 @@
           routerLinkActive="active"
           (click)="closeSidebarOnMobile()"
         >
+          <i class="bi bi-box me-2"></i> รายการกลุ่มสินค้า
           <i class="bi bi-box me-2"></i> รายการกลุ่มสินค้า
         </a>
       </li>
