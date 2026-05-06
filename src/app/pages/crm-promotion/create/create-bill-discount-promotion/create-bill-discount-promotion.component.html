@@ -2,9 +2,6 @@
   <div class="d-flex align-items-center gap-2 mb-3">
     <h1 class="m-0">{{ pageName() }}</h1>
   </div>
-
-  @let member = formModel().promotionMember;
-  @let branch = formModel().promotionBranch;
   @let benefit = formModel().promotionBenefit;
   @let filters = formModel().promotionFilter;
   <!--promotion master-->
@@ -18,74 +15,27 @@
   <div class="card mb-3">
     <div class="card-body">
       <h2 class="card-title">เงื่อนไขวัน เวลา</h2>
+      <app-promotion-datetime [form]="promotionForm.promotionDatetime" />
     </div>
   </div>
 
-  <!--member-->
+  <!--member& branches-->
   <div class="card mb-3">
     <div class="card-body">
       <h2 class="card-title">เงื่อนไขตามสมาชิก</h2>
-      <app-inline-member
-        [limitTier]="member.isMemberSpecific"
-        (limitTierChange)="onLimitTierChange($event)"
-        [members]="member.members"
-        (membersChange)="onChangeMember($event)"
+      <app-promotion-limit-usage
+        [branchForm]="promotionForm.promotionBranch"
+        [memberForm]="promotionForm.promotionMember"
       />
     </div>
-    <div class="d-flex flex-column px-3 pb-3 gap-3">
-      @for (m of member.members; track $index) {
-        <div class="d-flex justify-content-between">
-          <div>
-            {{ m.memberName }}
-          </div>
-          <span>
-            <button
-              class="btn btn-danger btn-squre"
-              (click)="onRemoveMember(m.id)"
-            >
-              <i class="bi bi-x"></i>
-            </button>
-          </span>
-        </div>
-      }
-    </div>
   </div>
-  <!--branch-->
-  <div class="card mb-3">
-    <div class="card-body">
-      <h2 class="card-title">เงื่อนไขตามสาขา</h2>
-      <div class="row"></div>
-      <app-inline-branch-limit
-        [currentBranch]="branch.branches"
-        [branchLimit]="branch.isBranchSpecific"
-        (branchLimitChange)="onBranchChange('isBranchSpecific', $event)"
-        (currentBranchChange)="onBranchChange('branches', $event)"
-      />
-      <div class="d-flex flex-column pt-3 gap-3">
-        @for (b of branch.branches; track $index) {
-          <div class="d-flex justify-content-between">
-            <div>
-              {{ b.branchName }}
-            </div>
-            <span>
-              <button
-                class="btn btn-danger btn-squre"
-                (click)="onRemoveBranch(b.branchCode)"
-              >
-                <i class="bi bi-x"></i>
-              </button>
-            </span>
-          </div>
-        }
-      </div>
-    </div>
-  </div>
+
   <!--promotion activation-->
   @if (showFilterOption()) {
     <div class="card mb-3">
       <div class="card-body">
         <div class="d-flex justify-content-between">
-          <h2 class="card-title">เงื่อนไข Promotion</h2>
+          <h2 class="card-title">เงื่อนไขตามสินค้า</h2>
           <div class="d-flex justify-content-end gap-1">
             @if (!showItem()) {
               <span>
@@ -98,7 +48,7 @@
               </span>
               <span>
                 <button
-                  class="btn btn-outline-secondary"
+                  class="btn btn-outline-success"
                   (click)="onAddSkuProductSubtotal()"
                 >
                   เพิ่มเงื่อนไขตามยอด(บาท)
@@ -107,29 +57,7 @@
             }
           </div>
         </div>
-        <div class="d-flex flex-column">
-          @for (filter of filters; track $index) {
-            <div>
-              @if ($index > 0) {
-                <hr />
-              }
-              <app-promotion-filter
-                [filterCondition]="filter"
-                (filterConditionChange)="onChangeFilter($event, $index)"
-              />
-              @if (!showItem()) {
-                <div class="d-flex justify-content-end">
-                  <button
-                    class="btn btn-danger btn-squre"
-                    (click)="onDeleteFilter($index)"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
-              }
-            </div>
-          }
-        </div>
+        <app-promotion-product-filter [form]="promotionForm" />
       </div>
     </div>
   }

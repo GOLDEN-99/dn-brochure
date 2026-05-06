@@ -1,0 +1,44 @@
+@let memberFormField = memberForm();
+<app-inline-member
+  [(members)]="memberFormField.members().controlValue"
+  [(limitTier)]="memberFormField.isMemberSpecific().controlValue"
+/>
+<div class="d-flex flex-column px-3 pb-3 gap-3">
+  @for (m of memberFormField.members().value(); track $index) {
+    <div class="d-flex justify-content-between">
+      <div>
+        {{ m.memberName }}
+      </div>
+      <span>
+        <button class="btn btn-danger btn-squre" (click)="onRemoveMember(m.id)">
+          <i class="bi bi-x"></i>
+        </button>
+      </span>
+    </div>
+  }
+</div>
+<app-form-alert-text [formState]="memberFormField.members()" />
+<hr />
+@let branchFormField = branchForm();
+<app-inline-branch-limit
+  [(branchLimit)]="branchFormField.isBranchSpecific().controlValue"
+  [(currentBranch)]="branchFormField.branches().controlValue"
+/>
+<div class="d-flex flex-column pt-3 gap-3">
+  @for (b of branchFormField.branches().value(); track $index) {
+    <div class="d-flex justify-content-between">
+      <div>
+        {{ b.branchName }}
+      </div>
+      <span>
+        <button
+          class="btn btn-danger btn-squre"
+          (click)="onRemoveBranch(b.branchCode)"
+        >
+          <i class="bi bi-x"></i>
+        </button>
+      </span>
+    </div>
+  }
+</div>
+<app-form-alert-text [formState]="branchFormField.branches()" />

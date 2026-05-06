@@ -2,6 +2,8 @@ import { Component, computed, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
+let id = 0;
+
 @Component({
   selector: 'app-date-input',
   imports: [NgbDatepickerModule, FormsModule],
@@ -53,7 +55,7 @@ import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bo
 })
 export class DateInputComponent {
   private readonly calendar = inject(NgbCalendar)
-  id = Math.floor(Math.random() * 1000)
+  id = id++
   date = input<NgbDateStruct>(this.calendar.getToday())
   label = input.required<string>()
   disableClick = input(false)

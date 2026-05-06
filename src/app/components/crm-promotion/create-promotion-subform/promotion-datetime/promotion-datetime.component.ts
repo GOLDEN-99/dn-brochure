@@ -3,12 +3,13 @@ import { FieldTree } from '@angular/forms/signals';
 import { TPromotionDatetime } from '../../../../types/crm-promotion.type';
 import { DayCheckbooxComponent } from "../../day-checkboox/day-checkboox.component";
 import { TimespanPickerComponent } from "../../timespan-picker/timespan-picker.component";
+import { FormAlertTextComponent } from '../../form-alert-text.component';
 
 @Component({
   selector: 'app-promotion-datetime',
-  imports: [DayCheckbooxComponent, TimespanPickerComponent],
+  imports: [DayCheckbooxComponent, TimespanPickerComponent, FormAlertTextComponent],
   templateUrl: './promotion-datetime.component.html',
-  styleUrl: './promotion-datetime.component.scss',
+  styles: '',
 })
 export class PromotionDatetimeComponent {
   readonly dateRef = [

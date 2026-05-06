@@ -14,12 +14,16 @@
     <div class="row align-items-center">
       <div class="col-auto">
         <label for="start-time" style="width: 24px">เริ่ม</label>
+        @if (required()) {
+          <span class="text-danger">*</span>
+        }
       </div>
       <div class="col">
         <ngb-timepicker
           [spinners]="false"
           [disabled]="!limitTime()"
-          [(ngModel)]="startTime"
+          [ngModel]="timeSpan().startTime"
+          (ngModelChange)="updateTimespan('startTime', $event)"
         />
       </div>
     </div>
@@ -28,12 +32,16 @@
     <div class="row align-items-center">
       <div class="col-auto">
         <label for="start-time" style="width: 24px">จบ</label>
+        @if (required()) {
+          <span class="text-danger">*</span>
+        }
       </div>
       <div class="col">
         <ngb-timepicker
-          [spinners]="false"
+        [spinners]="false"
           [disabled]="!limitTime()"
-          [(ngModel)]="endTime"
+          [ngModel]="timeSpan().endTime"
+          (ngModelChange)="updateTimespan('endTime', $event)"
         />
       </div>
     </div>

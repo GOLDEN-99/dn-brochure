@@ -1,0 +1,23 @@
+@let filterForm = form().promotionFilter;
+
+<div class="d-flex flex-column">
+  @for (filter of filterForm; track $index) {
+    <div>
+      @if ($index > 0) {
+        <hr />
+      }
+      <app-promotion-filter [form]="filter" />
+      @if (!showItem()) {
+        <div class="d-flex justify-content-end">
+          <button
+            class="btn btn-danger btn-squre"
+            (click)="onDeleteFilter($index)"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      }
+    </div>
+  }
+</div>
+<app-form-alert-text [formState]="filterForm()" />

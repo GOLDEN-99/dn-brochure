@@ -22,26 +22,27 @@
       <table class="table table-hover mb-0">
         <thead class="table-light">
           <tr>
-            <th>#</th>
             <th>ชื่อโปรโมชั่น</th>
             <th>ประเภท</th>
             <th>Action</th>
-            <th>สถานะ</th>
             <th>วันเริ่ม</th>
             <th>วันสิ้นสุด</th>
             <th>Priority</th>
-            <th>Order</th>
+            <th>สถานะ</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           @for (p of filteredPromotions(); track p.id) {
-            <tr>
-              <td>{{ p.id }}</td>
+            <tr tabindex="0" (click)="onClickRow(p.id)">
               <td>{{ p.promotionName }}</td>
               <td>{{ p.promotionType }}</td>
               <td>{{ p.action | promotionBenefitName }}</td>
-              <td>
+
+              <td>{{ p.startdate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ p.enddate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ p.promotionPriority | promotionPriority }}</td>
+                            <td>
                 <span
                   class="badge"
                   [class.bg-success]="p.promotionStatus === 'ACTIVE'"
@@ -50,17 +51,7 @@
                   {{ p.promotionStatus }}
                 </span>
               </td>
-              <td>{{ p.startdate | date: "dd/MM/yyyy" }}</td>
-              <td>{{ p.enddate | date: "dd/MM/yyyy" }}</td>
-              <td>{{ p.promotionPriority | promotionPriority }}</td>
-              <td>{{ p.promotionOrder | promotionOrder }}</td>
               <td class="d-flex gap-2">
-                <a
-                  class="btn btn-sm btn-outline-primary"
-                  [routerLink]="['/crm-promotion', p.id]"
-                >
-                  ดูรายละเอียด
-                </a>
                 <button
                   class="btn btn-sm"
                   [class.btn-outline-danger]="p.promotionStatus === 'ACTIVE'"

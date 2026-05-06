@@ -12,13 +12,19 @@ export type TPromotionMember = {
     members: TMember[]
 }
 
+export type TTimeSpan = {
+    startTime: NgbTimeStruct
+  endTime: NgbTimeStruct
+} 
+
 export type TPromotionDatetime = {
     // dow lock
     activeDay: [boolean, boolean, boolean, boolean, boolean, boolean, boolean], // 1111111
     // time of day lock
     limitTime: boolean
-    startTime: NgbTimeStruct
-    endTime: NgbTimeStruct
+    // startTime: NgbTimeStruct
+    // endTime: NgbTimeStruct
+    timeSpan : TTimeSpan
 }
 
 export type TPromotionMaster = {
@@ -30,8 +36,8 @@ export type TPromotionMaster = {
     //promotionStatus: "ACTIVE",
     startDate: NgbDateStruct
     endDate: NgbDateStruct
-    promotionPriority: number
-    promotionOrder: number
+    promotionPriority: string
+    promotionOrder: string
 }
 
 export type TPromotionTier = {
