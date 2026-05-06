@@ -59,7 +59,16 @@ $font-family-base: $font-family-sans-serif;
   }
 }
 
-
+.form-field {
+  label:has(
+      + input[required],
+      + select[required],
+      + textarea[required]
+    )::after {
+    content: " *";
+    color: var(--color-red);
+  }
+}
 
 .app-form-field-inline {
   @extend .row, .g-3, .align-items-center, .mb-3;

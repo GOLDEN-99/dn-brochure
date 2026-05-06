@@ -1,7 +1,8 @@
-import { Component, model } from '@angular/core';
+import { Component, computed, input, model } from '@angular/core';
 import { ProductPickerComponent } from "../product-picker/product-picker.component";
 import { ProductNamePipe } from '../../../lib/crm-promotion/product-name.pipe';
-import { TProductRewardPool, TPromotionProductBase } from '../../../types/crm-promotion.type';
+import { TPromotionBenefit, TPromotionProductBase } from '../../../types/crm-promotion.type';
+import { FieldTree } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-promotion-gift',
@@ -10,8 +11,9 @@ import { TProductRewardPool, TPromotionProductBase } from '../../../types/crm-pr
   styles: '',
 })
 export class PromotionGiftComponent {
-  rewardPool = model.required<TProductRewardPool[]>()
+  rewardForm = input.required<FieldTree<TPromotionBenefit>>()
+  rewardPool = computed(() => this.rewardForm().rewardPool().value())
   onAddProduct(products: TPromotionProductBase[]) {
-    this.rewardPool.update(prev => [...prev, ...products.map(product => ({ ...product, itemBenefitType: 'PRICE', itemBenefitValue: 0 }))])
+    this.rewardForm().rewardPool().controlValue.update(prev => [...prev, ...products.map(product => ({ ...product, itemBenefitType: 'PRICE', itemBenefitValue: 0 }))])
   }
 }

@@ -1,25 +1,20 @@
 <div class="row mb-3">
   <div class="form-field col-md-4">
-    <label class="form-label" for="benefit-type">สิทธิ</label>
-    <select
-      name="benefit-type"
-      id="benefit-type"
-      class="form-select"
-      [(ngModel)]="action"
-      (ngModelChange)="onActionChange($event)"
-    >
+    <label class="form-label" [htmlFor]="form().action().name()">สิทธิ</label>
+    <select id="benefit-type" class="form-select" [formField]="form().action">
       @for (opt of rewardOption(); track $index) {
         <option [value]="opt.action">{{ opt.label }}</option>
       }
     </select>
   </div>
   <div class="form-field col-md-4">
-    <label for="benefit-thres" class="form-label">เงื่อนไขจาก</label>
+    <label [htmlFor]="form().thresholdType().name()" class="form-label"
+      >เงื่อนไขจาก</label
+    >
     <select
-      name="benefit-thrres"
-      id="benefit-thres"
+      id="benefit-threshold"
       class="form-select"
-      [(ngModel)]="thresholdType"
+      [formField]="form().thresholdType"
     >
       @for (thres of thresholdList(); track thres.threshold) {
         <option [value]="thres.threshold">{{ thres.label }}</option>
@@ -30,36 +25,43 @@
     <input
       class="form-check-input"
       type="checkbox"
-      name="is-repeat"
       id="is-repeat"
-      [ngModel]="isRepeat()"
-      (ngModelChange)="onIsRepeatChange($event)"
+      [formField]="form().isRepeat"
     />
-    <label for="is-repeat" class="form-check-label">ใช้ซ้ำ/ทุกๆ</label>
+    <label [htmlFor]="form().isRepeat().name()" class="form-check-label"
+      >ใช้ซ้ำ/ทุกๆ</label
+    >
   </div>
 </div>
 <hr />
-@for (tier of tiers(); track $index) {
+@let temp = form();
+@for (tier of temp.tiers; track tier().fieldTree().name()) {
   <app-benefit-tier
-    [action]="action()"
-    [thresholdType]="thresholdType()"
-    [tier]="tier"
-    (tierChange)="onChangeTierAt($index, $event)"
-    [canDelete]="tiers().length > 1"
+    [action]="temp.action().value()"
+    [thresholdType]="temp.thresholdType().value()"
+    [form]="tier"
+    [canDelete]="temp.tiers().value().length > 1"
     (deleteTier)="onDeleteTier($index)"
   />
 }
+<app-form-alert-text [formState]="temp.tiers()" />
 <!---->
 <div class="d-flex justify-content-end">
-  <button class="btn btn-success" (click)="addTier()" [disabled]="isRepeat()">
+  <button
+    class="btn btn-success"
+    (click)="addTier()"
+    [disabled]="form().isRepeat().value()"
+  >
     เพิ่มสิทธิประโยชน์
   </button>
 </div>
-@if (action() === "PWP") {
+@if (form().action().value() === "PWP") {
   <hr />
-  <app-promotion-pwp [(rewardPool)]="rewardPool" />
+  <app-promotion-pwp [rewardForm]="form()" />
+  <app-form-alert-text [formState]="form().rewardPool()" />
 }
-@if (action() === "GIFT") {
+@if (form().action().value() === "GIFT") {
   <hr />
-  <app-promotion-gift [(rewardPool)]="rewardPool" />
+  <app-promotion-gift [rewardForm]="form()" />
+  <app-form-alert-text [formState]="form().rewardPool()" />
 }

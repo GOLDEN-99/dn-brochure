@@ -10,12 +10,11 @@ import {
   TPromotionProductBase,
 } from '../../../../types/crm-promotion.type';
 import { CRM_PAGE_CONFIG } from '../../../../service/crm-promotion/crm-token';
-import { PromotionFilterComponent } from '../../../../components/crm-promotion/promotion-filter/promotion-filter.component';
 import { BenefitSelectComponent } from '../../../../components/crm-promotion/benefit-select/benefit-select.component';
 import { InlineBenefitComponent } from '../../../../components/crm-promotion/inline-benefit/inline-benefit.component';
 import { CrmPromotionService } from '../../../../service/crm-promotion/crm-promotion.service';
 import { ToastService } from '../../../../service/toast/toast.service';
-import { form, FormField } from '@angular/forms/signals';
+import { form } from '@angular/forms/signals';
 import {
   createPromotionSchema,
   TCreatePromotionForm,
@@ -30,7 +29,6 @@ import { PromotionProductFilterComponent } from '../../../../components/crm-prom
   selector: 'app-create-bill-discount-promotion',
   imports: [
     FormsModule,
-    PromotionFilterComponent,
     BenefitSelectComponent,
     InlineBenefitComponent,
     PromotionMasterComponent,
@@ -61,8 +59,10 @@ export class CreateBillDiscountPromotionComponent {
     ...this.config.initialData,
     promotionMaster: {
       ...this.config.initialData.promotionMaster,
-      startDate: this.today,
-      endDate: this.today,
+      dateRange: {
+        startDate: this.today,
+        endDate: this.today,
+      }
     },
   });
 
@@ -316,8 +316,9 @@ export class CreateBillDiscountPromotionComponent {
       promotionType,
       promotionOrder,
       promotionPriority,
-      startDate,
-      endDate,
+      dateRange: {
+        startDate, endDate
+      }
     } = promotionMaster;
     const {
       activeDay,

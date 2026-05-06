@@ -1,19 +1,19 @@
 <h4>สินค้าแลกซื้อ</h4>
 <div>
   <app-product-picker
-    [exclusionPool]="rewardPool()"
+    [exclusionPool]="rewards()"
     (productAdd)="onAddProduct($event)"
   />
 </div>
 
-@for (reward of rewardPool(); track reward.goodCode) {
+@for (reward of rewardForm().rewardPool; track reward().name()) {
   <div class="row mb-2">
-    <span class="col">{{ reward | productName }}</span>
+    @let current = reward();
+    <span class="col">{{ current.value() | productName }}</span>
     <div class="col">
       <select
         class="form-select form-select-sm"
-        [ngModel]="reward.itemBenefitType"
-        (ngModelChange)="onChangeBenefitType(reward.goodCode, $event)"
+        [formField]="reward.itemBenefitType"
       >
         @for (bt of pwpBenefitTypes; track bt.value) {
           <option [value]="bt.value">{{ bt.label }}</option>
@@ -24,17 +24,17 @@
       <input
         class="form-control form-control-sm"
         type="number"
-        [ngModel]="reward.itemBenefitValue"
-        (ngModelChange)="onChangeBenefitValue(reward.goodCode, $event)"
+        [formField]="reward.itemBenefitValue"
       />
     </div>
     <div class="col-auto">
       <button
         class="btn btn-danger btn-sm"
-        (click)="onRemoveProduct(reward.goodCode)"
+        (click)="onRemoveProduct(current.value().goodCode)"
       >
         <i class="bi bi-x"></i>
       </button>
     </div>
   </div>
 }
+<app-form-alert-text [formState]="rewardForm().rewardPool()" />

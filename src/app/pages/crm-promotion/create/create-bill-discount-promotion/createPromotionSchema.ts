@@ -2,7 +2,6 @@ import {
   apply,
   applyEach,
   applyWhen,
-  applyWhenValue,
   disabled,
   FieldValidator,
   max,
@@ -10,7 +9,6 @@ import {
   minLength,
   required,
   schema,
-  SchemaOrSchemaFn,
   validate,
 } from '@angular/forms/signals';
 import {
@@ -26,7 +24,12 @@ import {
   TPromotionTier,
   TTimeSpan,
 } from '../../../../types/crm-promotion.type';
-import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+
+
+const dateRangeSchema = schema<TPromotionMaster['dateRange']>((_path) => {
+  required(_path.startDate);
+  required(_path.endDate);
+});
 
 // ── Master ──────────────────────────────────────────────
 export const initialMaster: TPromotionMaster = {
@@ -34,8 +37,10 @@ export const initialMaster: TPromotionMaster = {
   promotionDesc: '',
   promotionType: 'BILL',
   source: 'HU',
-  startDate: { year: 0, month: 1, day: 1 },
-  endDate: { year: 0, month: 1, day: 1 },
+  dateRange: {
+    startDate: { year: 0, month: 1, day: 1 },
+    endDate: { year: 0, month: 1, day: 1 },
+  },
   promotionPriority: '0',
   promotionOrder: '0',
 };
@@ -50,24 +55,22 @@ export const promotionMasterSchema = schema<TPromotionMaster>((_path) => {
     ({ valueOf }) => valueOf(_path.source) === 'HU',
   );
   //required(_path.promotionType) set from route
-  required(_path.startDate);
-  required(_path.endDate);
+  apply(_path.dateRange, dateRangeSchema);
   //validate date range
-  validate(_path, ({ valueOf }) => {
-    const start = valueOf(_path.startDate);
-    const end = valueOf(_path.endDate);
-    if (start.year === 0 || end.year === 0) return null;
+  validate(_path.dateRange, ({ value }) => {
+    const { startDate: start, endDate: end } = value();
     const toNum = (d: { year: number; month: number; day: number }) =>
       d.year * 10000 + d.month * 100 + d.day;
     return toNum(start) <= toNum(end)
       ? null
       : {
-          kind: 'invalid date range',
-          message: 'วันที่เริ่มต้องไม่มากว่าวันสิ้นสุด',
-        };
+        kind: 'invalid date range',
+        message: 'วันที่เริ่มต้องไม่มากว่าวันสิ้นสุด',
+      };
   });
+
   //validate date invalid order
-  validate(_path, (ctx) => {
+  validate(_path.promotionOrder, (ctx) => {
     if (
       ctx.valueOf(_path.source) === 'HU' &&
       ctx.valueOf(_path.promotionOrder) !== '0'
@@ -88,37 +91,36 @@ export const initialDatetime: TPromotionDatetime = {
   },
 };
 
-export const promotionDatetimeSchema = schema<TPromotionDatetime>((_path) => {
-  validate(_path.timeSpan, ({ value, valueOf }) => {
-    if (!valueOf(_path.limitTime)) return null;
+const timespanSchema = schema<TTimeSpan>((_path) => {
+  validate(_path, ({ value }) => {
     const { startTime, endTime } = value();
     const toMin = (t: { hour: number; minute: number }) =>
       t.hour * 60 + t.minute;
     const startMin = toMin(startTime);
     const endMin = toMin(endTime);
-    if (startMin === endMin)
+    if (endMin === 0) {
+      if (startMin !== 0) return null
       return {
         kind: 'time span error',
-        message: 'เวลาเริ่มต้องน้อยกว่าเวลาสิ้นสุด',
+        message: 'เวลาเริ่มและเวลาสิ้นสุดต้องไม่เป็น 00:00 พร้อมกัน',
       };
-    return toMin(startTime) < toMin(endTime)
-      ? null
-      : {
-          kind: 'time span error',
-          message: 'เวลาเริ่มต้องน้อยกว่าเวลาสิ้นสุด',
-        };
-  });
+    }
+    if (startMin < endMin) return null
+    return {
+      kind: 'time span error',
+      message: 'เวลาเริ่มต้องน้อยกว่าเวลาสิ้นสุด',
+    };
+  })
+});
+
+export const promotionDatetimeSchema = schema<TPromotionDatetime>((_path) => {
+  applyWhen(_path.timeSpan, ({ valueOf }) => valueOf(_path.limitTime), timespanSchema);
   validate(_path.activeDay, ({ value }) =>
     value().reduceRight((acc, cur) => acc || cur)
       ? null
       : { kind: 'active day error', message: 'ต้องกำหนดวันใช้อย่างน้อย 1 วัน' },
   );
-  disabled(
-    _path.timeSpan.startTime,
-    ({ valueOf }) => !valueOf(_path.limitTime),
-  );
-  disabled(_path.timeSpan.endTime, ({ valueOf }) => !valueOf(_path.limitTime));
-  required(_path.timeSpan, { when: ({ valueOf }) => valueOf(_path.limitTime) });
+  disabled(_path.timeSpan, ({ valueOf }) => !valueOf(_path.limitTime));
 });
 
 // ── Member ──────────────────────────────────────────────
@@ -182,7 +184,26 @@ export const initialBenefit: TPromotionBenefit = {
   tiers: [],
   rewardPool: [],
 };
+
+
 export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
+  required(_path.action);
+  required(_path.thresholdType);
+  required(_path.isRepeat);
+  applyWhen(
+    _path,
+    ({ valueOf }) => {
+      const current = valueOf(_path.action);
+      return current === 'PWP' || current === 'GIFT'
+    },
+    (_path) => {
+      minLength(_path.rewardPool, 1, { message: 'ต้องมีสินค้าสิทธิประโยชน์อย่างน้อย 1 รายการ' })
+    }
+  );
+  //validate tiers
+  minLength(_path.tiers, 1, {
+    message: 'ต้องมีเงื่อนไขสิทธิประโยชน์อย่างน้อย 1 สิทธิ',
+  });
   applyWhen(
     _path.tiers,
     ({ valueOf }) => valueOf(_path.isRepeat),
@@ -191,22 +212,44 @@ export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
         value().length === 1
           ? null
           : {
-              kind: 'invalid tiers',
-              message: 'สิทธิประโยชน์แบบซ้ำ หรือทุกๆ ต้องมีแค่ 1 สิทธิ',
-            },
+            kind: 'invalid tiers',
+            message: 'สิทธิประโยชน์แบบซ้ำ หรือทุกๆ ต้องมีแค่ 1 สิทธิ',
+          },
       );
     },
   );
   applyEach(_path.tiers, promotionTierSchema);
-  validate(_path.rewardPool, ({ value, valueOf }) => {
-    const action = valueOf(_path.action);
-    if (action !== 'PWP' && action !== 'GIFT') return null;
-    return value().length === 0
-      ? { kind: 'reward pool empty', message: 'ต้องมีสินค้าในรายการรางวัล' }
-      : null;
+  applyEach(_path.tiers, (p) => {
+    applyWhen(
+      p.rewardValue,
+      ({ valueOf }) => valueOf(_path.action).includes("PERCENT"),
+      (p) => {
+        max(p, 100, { message: 'ต้องไม่เกิน 100 %' })
+      }
+    );
   });
+  validate(_path.tiers, ({ value }) => {
+    const rewardRef = new Set<number>();
+    const thresholdRef = new Set<number>();
+    for (const tier of value()) {
+      const { rewardValue, thresholdValue } = tier;
+      if (rewardRef.has(rewardValue)) return {
+        kind: 'duplicate reward value',
+        message: 'เงื่อนไขแต่ละระดับต้องมีจำนวนส่วนลดที่แตกต่างกัน',
+      };
+      if (thresholdRef.has(thresholdValue)) return {
+        kind: 'duplicate threshold value',
+        message: 'เงื่อนไขแต่ละระดับต้องมีจำนวนขั้นต่ำที่แตกต่างกัน',
+      }
+      rewardRef.add(rewardValue);
+      thresholdRef.add(thresholdValue);
+    }
+    return null;
+  });
+
+
   validate(_path.rewardPool, rewardPoolUniqueValidator);
-  //applyEach(_path.rewardPool, )
+
 });
 
 // ── Filter item (used as form-array item) ───────────────
@@ -247,6 +290,7 @@ export const createPromotionSchema = schema<TCreatePromotionForm>((_path) => {
   apply(_path.promotionDatetime, promotionDatetimeSchema);
   apply(_path.promotionMember, promotionMemberSchema);
   apply(_path.promotionBranch, promotionBranchSchema);
+
   applyWhen(
     _path,
     ({ valueOf }) => valueOf(_path.promotionMaster.promotionType) !== 'BILL',
@@ -286,19 +330,19 @@ export const createPromotionSchema = schema<TCreatePromotionForm>((_path) => {
 
 const uniqueValidator =
   <T, K>(fn: (value: T) => K): FieldValidator<Array<T>> =>
-  ({ value }) => {
-    const ref = new Set<K>();
-    for (const entry of value()) {
-      const key = fn(entry);
-      if (ref.has(key))
-        return {
-          kind: 'nonunique entry',
-          message: `duplicate list with key : ${key}`,
-        };
-      ref.add(key);
-    }
-    return null;
-  };
+    ({ value }) => {
+      const ref = new Set<K>();
+      for (const entry of value()) {
+        const key = fn(entry);
+        if (ref.has(key))
+          return {
+            kind: 'nonunique entry',
+            message: `duplicate list with key : ${key}`,
+          };
+        ref.add(key);
+      }
+      return null;
+    };
 
 const rewardPoolUniqueValidator = uniqueValidator<TProductRewardPool, string>(
   (p) => p.goodCode,

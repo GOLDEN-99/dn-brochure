@@ -3,7 +3,6 @@
     <h1 class="m-0">{{ pageName() }}</h1>
   </div>
   @let benefit = formModel().promotionBenefit;
-  @let filters = formModel().promotionFilter;
   <!--promotion master-->
   <div class="card mb-3">
     <div class="card-body">
@@ -71,18 +70,7 @@
           (propsChange)="onBenefitChange($event)"
         />
       } @else {
-        <app-benefit-select
-          [tiers]="benefit.tiers"
-          (tiersChange)="onBenefitChange({ tiers: $event })"
-          [thresholdType]="benefit.thresholdType"
-          (thresholdTypeChange)="onBenefitChange({ thresholdType: $event })"
-          [action]="benefit.action"
-          (actionChange)="onBenefitChange({ action: $event })"
-          [rewardPool]="benefit.rewardPool"
-          (rewardPoolChange)="onBenefitChange({ rewardPool: $event })"
-          [isRepeat]="benefit.isRepeat"
-          (isRepeatChange)="onBenefitChange({ isRepeat: $event })"
-        />
+        <app-benefit-select [form]="promotionForm.promotionBenefit" />
       }
     </div>
   </div>

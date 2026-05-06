@@ -51,29 +51,38 @@
   </div>
 
   <!-- datetime-->
+  @let dateRangeForm = master.dateRange;
   <div class="col-lg-6">
     <div class="app-form-field">
-      <label [htmlFor]="master.startDate().name()">
+      <label [htmlFor]="dateRangeForm.startDate().name()">
         วันที่เริ่ม
-        @if (master.startDate().required()) {
+        @if (dateRangeForm.startDate().required()) {
           <span class="text-danger">*</span>
         }
       </label>
-      <app-signal-datepicker [id]="master.startDate().name()" [formField]="master.startDate" />
+      <app-signal-datepicker
+        [id]="dateRangeForm.startDate().name()"
+        [formField]="dateRangeForm.startDate"
+      />
     </div>
   </div>
   <div class="col-lg-6">
     <div class="app-form-field">
-      <label [htmlFor]="master.endDate().name()">
+      <label [htmlFor]="dateRangeForm.endDate().name()">
         วันที่สิ้นสุด
-        @if (master.endDate().required()) {
+        @if (dateRangeForm.endDate().required()) {
           <span class="text-danger">*</span>
         }
       </label>
-      <app-signal-datepicker [id]="master.endDate().name()" [formField]="master.endDate" />
+      <app-signal-datepicker
+        [id]="dateRangeForm.endDate().name()"
+        [formField]="dateRangeForm.endDate"
+      />
     </div>
   </div>
+  <app-form-alert-text [formState]="dateRangeForm()" />
 </div>
+<!-- description -->
 <div class="app-form-field">
   <label [htmlFor]="master.promotionDesc().name()">รายละเอียด</label>
   <textarea [formField]="master.promotionDesc" id="pro-desc"> </textarea>

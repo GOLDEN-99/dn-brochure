@@ -1,14 +1,16 @@
-import { Component, computed, inject, model, signal } from '@angular/core';
-import { TProductRewardPool, TPromotionProductBase, TPromotionTier } from '../../../types/crm-promotion.type';
+import { Component, computed, inject, input, signal } from '@angular/core';
+import { TPromotionBenefit, TPromotionProductBase, TPromotionTier } from '../../../types/crm-promotion.type';
 import { FormsModule } from '@angular/forms';
 import { CRM_PAGE_CONFIG } from '../../../service/crm-promotion/crm-token';
 import { PromotionPwpComponent } from "../promotion-pwp/promotion-pwp.component";
 import { PromotionGiftComponent } from "../promotion-gift/promotion-gift.component";
 import { BenefitTierComponent } from "../benefit-tier/benefit-tier.component";
+import { FieldTree, FormField } from '@angular/forms/signals';
+import { FormAlertTextComponent } from "../form-alert-text.component";
 
 @Component({
   selector: 'app-benefit-select',
-  imports: [FormsModule, PromotionPwpComponent, PromotionGiftComponent, BenefitTierComponent],
+  imports: [FormsModule, PromotionPwpComponent, PromotionGiftComponent, BenefitTierComponent, FormField, FormAlertTextComponent],
   templateUrl: './benefit-select.component.html',
   styles: '',
 })
@@ -17,30 +19,26 @@ export class BenefitSelectComponent {
   private readonly config = inject(CRM_PAGE_CONFIG);
   readonly rewardOption = signal(this.config.rewardOption.rewardList)
   readonly thresholdList = signal(this.config.rewardOption.thresholdList)
-  action = model.required<string>()
-  isRepeat = model.required<boolean>()
-  thresholdType = model.required<string>()
-  rewardPool = model.required<TProductRewardPool[]>()
-  tiers = model.required<TPromotionTier[]>()
+  form = input.required<FieldTree<TPromotionBenefit>>()
+
 
   showRewardPool = computed(() => {
-    const action = this.action()
+    const action = this.form().action().value()
     return action === 'PWP' || action === 'GIFT'
   })
 
   addTier() {
-    this.tiers.update(prev => {
-      const lst = prev.at(-1)
-      return [...prev, lst ?? { thresholdValue: 0, rewardValue: 0 }]
-    })
+    this.form().tiers().controlValue.update(
+      prev => [...prev, { thresholdValue: 0, rewardValue: 0 }]
+    )
   }
   onDeleteTier(index: number) {
-    this.tiers.update(prev => prev.filter((_, i) => i !== index))
+    this.form().tiers().controlValue.update(prev => prev.filter((_, i) => i !== index))
   }
 
   onAddProduct(product: TPromotionProductBase[]) {
-    const action = this.action()
-    this.rewardPool.update(prev => [...prev, ...product.flatMap(p => {
+    const action = this.form().action().value()
+    this.form().rewardPool().controlValue.update(prev => [...prev, ...product.flatMap(p => {
       if (action === "PWP") return [{ ...p, itemBenefitType: 'PRICE', itemBenefitValue: 0 }]
       if (action === "GIFT") return [{ ...p, itemBenefitType: 'BATHDISC', itemBenefitValue: 0 }]
       return []
@@ -48,20 +46,21 @@ export class BenefitSelectComponent {
   }
   onIsRepeatChange(isRepeat: boolean) {
     if (isRepeat) {
-      this.tiers.update(prev => [prev[0]])
+      this.form().tiers().controlValue.update(prev => [prev[0]])
     }
-    this.isRepeat.set(isRepeat)
+    this.form().isRepeat().controlValue.set(isRepeat)
   }
 
   onActionChange(action: string) {
-    this.thresholdType.set(this.config.initialData.promotionBenefit.thresholdType)
-    this.rewardPool.set(this.config.initialData.promotionBenefit.rewardPool)
-    this.tiers.set(this.config.initialData.promotionBenefit.tiers)
-    this.action.set(action)
+    this.form().rewardPool().controlValue.set([])
+    this.form().thresholdType().controlValue.set(this.config.initialData.promotionBenefit.thresholdType)
+    this.form().rewardPool().controlValue.set(this.config.initialData.promotionBenefit.rewardPool)
+    this.form().tiers().controlValue.set(this.config.initialData.promotionBenefit.tiers)
+    this.form().action().controlValue.set(action)
   }
 
 
   onChangeTierAt(index: number, tier: TPromotionTier) {
-    this.tiers.update(prev => prev.map((p, i) => i === index ? tier : p))
+    this.form().tiers().controlValue.update(prev => prev.map((p, i) => i === index ? tier : p))
   }
 }
