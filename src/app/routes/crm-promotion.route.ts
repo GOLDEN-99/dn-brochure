@@ -6,9 +6,9 @@ import { provideCreatePromotionConfig } from "../factory/crm-promotion/create-pr
 import { CrmPromotionLayoutComponent } from "../layout/crm-promotion-layout/crm-promotion-layout.component";
 
 export const CREATE_ROUTE_PATH = [
-    { path: "create-inline", name: 'inline item discount', icon: 'bi bi-list-ul me-2' },
-    { path: "create-bill", name: 'bill discount', icon: 'bi bi-receipt me-2' },
-    { path: "create-group", name: 'group item discount', icon: 'bi bi-tags me-2' }
+    { path: "create-inline", name: 'ลดรายสินค้า', icon: 'bi bi-list-ul me-2' },
+    { path: "create-bill", name: 'ส่วนลดท้ายบิล', icon: 'bi bi-receipt me-2' },
+    { path: "create-group", name: 'ส่วนลดตามกลุ่มสินค้า', icon: 'bi bi-tags me-2' }
 ]
 
 

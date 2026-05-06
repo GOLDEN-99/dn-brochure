@@ -1,29 +1,22 @@
-import { Component, computed, inject, model, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { CRM_PAGE_CONFIG } from '../../../service/crm-promotion/crm-token';
-import { TPromotionFormState } from '../../../types/crm-promotion.type';
+import { TPromotionBenefit } from '../../../types/crm-promotion.type';
 import { FormsModule } from '@angular/forms';
 import { PromotionBenefitNamePipe } from '../../../lib/crm-promotion/promotion-benefit-name.pipe';
+import { FieldTree, FormField } from '@angular/forms/signals';
+import { FormAlertTextComponent } from '../form-alert-text.component';
 
 @Component({
   selector: 'app-inline-benefit',
-  imports: [FormsModule, PromotionBenefitNamePipe],
+  imports: [FormsModule, PromotionBenefitNamePipe, FormField, FormAlertTextComponent],
   templateUrl: './inline-benefit.component.html',
   styles: ''
 })
 export class InlineBenefitComponent {
   private readonly config = inject(CRM_PAGE_CONFIG);
   readonly rewardOption = signal(this.config.rewardOption.rewardList)
+  form = input.required<FieldTree<TPromotionBenefit>>()
 
-  props = model.required<Pick<TPromotionFormState, 'tiers' | 'action'>>()
+  action = computed(() => this.form().action().value())
 
-  action = computed(() => this.props().action)
-  tier = computed(() => this.props().tiers[0])
-
-  onActionChange(action: string) {
-    this.props.set({ tiers: this.config.initialData.promotionBenefit.tiers, action })
-  }
-
-  onChangeReward(rewardValue: number) {
-    this.props.update(({ tiers, action }) => ({ action, tiers: tiers.map(prev => ({ ...prev, rewardValue })) }))
-  }
 }

@@ -228,6 +228,7 @@ export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
       }
     );
   });
+  // distinct reward tier
   validate(_path.tiers, ({ value }) => {
     const rewardRef = new Set<number>();
     const thresholdRef = new Set<number>();

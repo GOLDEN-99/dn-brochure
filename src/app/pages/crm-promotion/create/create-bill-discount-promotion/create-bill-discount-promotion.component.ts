@@ -20,7 +20,6 @@ import {
   TCreatePromotionForm,
 } from './createPromotionSchema';
 import { PromotionMasterComponent } from '../../../../components/crm-promotion/create-promotion-subform/promotion-master/promotion-master.component';
-import { JsonPipe } from '@angular/common';
 import { PromotionDatetimeComponent } from '../../../../components/crm-promotion/create-promotion-subform/promotion-datetime/promotion-datetime.component';
 import { PromotionLimitUsageComponent } from '../../../../components/crm-promotion/create-promotion-subform/promotion-limit-usage/promotion-limit-usage.component';
 import { PromotionProductFilterComponent } from '../../../../components/crm-promotion/create-promotion-subform/promotion-product-filter/promotion-product-filter.component';
@@ -32,7 +31,6 @@ import { PromotionProductFilterComponent } from '../../../../components/crm-prom
     BenefitSelectComponent,
     InlineBenefitComponent,
     PromotionMasterComponent,
-    JsonPipe,
     PromotionDatetimeComponent,
     PromotionLimitUsageComponent,
     PromotionProductFilterComponent,
@@ -88,37 +86,6 @@ export class CreateBillDiscountPromotionComponent {
         source,
         ...(source === 'HU' ? { promotionOrder: '0' } : {}),
       },
-    }));
-  }
-
-  // ── Datetime ─────────────────────────────────────────────
-
-  toggleTime(eve: boolean) {
-    if (eve) {
-      this.formModel.update((s) => ({
-        ...s,
-        promotionDatetime: { ...s.promotionDatetime, limitTime: true },
-      }));
-    } else {
-      this.formModel.update((s) => ({
-        ...s,
-        promotionDatetime: {
-          ...s.promotionDatetime,
-          limitTime: false,
-          startTime: { hour: 10, minute: 0, second: 0 },
-          endTime: { hour: 22, minute: 0, second: 0 },
-        },
-      }));
-    }
-  }
-
-  onDatetimeChange<K extends keyof TCreatePromotionForm['promotionDatetime']>(
-    key: K,
-    value: TCreatePromotionForm['promotionDatetime'][K],
-  ) {
-    this.formModel.update((s) => ({
-      ...s,
-      promotionDatetime: { ...s.promotionDatetime, [key]: value },
     }));
   }
 

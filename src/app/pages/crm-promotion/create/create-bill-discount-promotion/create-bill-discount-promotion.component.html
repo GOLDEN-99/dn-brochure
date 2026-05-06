@@ -65,10 +65,7 @@
     <div class="card-body">
       <h2 class="card-title">สิทธิประโยชน์</h2>
       @if (formModel().promotionMaster.promotionType === "ITEM") {
-        <app-inline-benefit
-          [props]="benefit"
-          (propsChange)="onBenefitChange($event)"
-        />
+        <app-inline-benefit [form]="promotionForm.promotionBenefit" />
       } @else {
         <app-benefit-select [form]="promotionForm.promotionBenefit" />
       }
@@ -87,4 +84,3 @@
     }
   </button>
 </section>
-<div>{{ formModel() | json }}</div>
