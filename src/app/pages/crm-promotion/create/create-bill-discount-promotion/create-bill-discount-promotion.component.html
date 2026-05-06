@@ -23,9 +23,11 @@
   <div class="card mb-3">
     <div class="card-body">
       <h2 class="card-title">เงื่อนไขตามสมาชิก</h2>
-      <app-promotion-limit-usage [branchForm]="promotionForm.promotionBranch" [memberForm]="promotionForm.promotionMember" />
+      <app-promotion-limit-usage
+        [branchForm]="promotionForm.promotionBranch"
+        [memberForm]="promotionForm.promotionMember"
+      />
     </div>
-
   </div>
 
   <!--promotion activation-->
@@ -33,7 +35,7 @@
     <div class="card mb-3">
       <div class="card-body">
         <div class="d-flex justify-content-between">
-          <h2 class="card-title">เงื่อนไข Promotion</h2>
+          <h2 class="card-title">เงื่อนไขตามสินค้า</h2>
           <div class="d-flex justify-content-end gap-1">
             @if (!showItem()) {
               <span>
@@ -46,7 +48,7 @@
               </span>
               <span>
                 <button
-                  class="btn btn-outline-secondary"
+                  class="btn btn-outline-success"
                   (click)="onAddSkuProductSubtotal()"
                 >
                   เพิ่มเงื่อนไขตามยอด(บาท)
@@ -55,29 +57,7 @@
             }
           </div>
         </div>
-        <div class="d-flex flex-column">
-          @for (filter of filters; track $index) {
-            <div>
-              @if ($index > 0) {
-                <hr />
-              }
-              <app-promotion-filter
-                [filterCondition]="filter"
-                (filterConditionChange)="onChangeFilter($event, $index)"
-              />
-              @if (!showItem()) {
-                <div class="d-flex justify-content-end">
-                  <button
-                    class="btn btn-danger btn-squre"
-                    (click)="onDeleteFilter($index)"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
-              }
-            </div>
-          }
-        </div>
+        <app-promotion-product-filter [form]="promotionForm" />
       </div>
     </div>
   }

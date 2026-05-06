@@ -1,25 +1,24 @@
-@let state = filterCondition();
+@let filterForm = form();
 
 <app-product-picker
-  [exclusionPool]="state.productList"
+  [exclusionPool]="currentProductList()"
   (productAdd)="onUpdateProductList($event)"
 />
 <div class="row mb-3">
-  @if (state.filterType !== "EXIST") {
+  @let curFilterType = filterForm.filterType().value();
+  @if (curFilterType !== "EXIST") {
     <div class="col-md">
       <div>
         <label
           class="form-label fw-semibold text-muted small mb-1"
-          [htmlFor]="'threshold-value-' + id"
-          >{{ state.filterType | promotionThreshold }}</label
+          [htmlFor]="filterForm.filterValue().name()"
+          >{{ curFilterType | promotionThreshold }}</label
         >
         <input
-          [name]="'threshold-value-' + id"
           [id]="'threshold-value-' + id"
           type="number"
           class="form-control form-control-sm"
-          [ngModel]="state.filterValue"
-          (ngModelChange)="onFilterValueChange($event)"
+          [formField]="filterForm.filterValue"
         />
       </div>
     </div>
@@ -39,5 +38,6 @@
         </span>
       </div>
     }
+    <app-form-alert-text [formState]="filterForm.productList()" />
   </div>
 </div>
