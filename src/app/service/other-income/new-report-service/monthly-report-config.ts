@@ -8,7 +8,6 @@ export const DCMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
     config: [
         { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
-        { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'บริษัท', valueMapper: (v) => v.compType },
         { header: 'ชื่อรายรับภายใน', valueMapper: (v) => v.displayName ?? 'ไม่ระบุ' },
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
@@ -41,7 +40,6 @@ export const LightBoxMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
     config: [
         { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
-        { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'บริษัท', valueMapper: (v) => v.compType },
         { header: 'ชื่อรายรับภายใน', valueMapper: (v) => v.displayName ?? 'ไม่ระบุ' },
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
@@ -59,7 +57,6 @@ export const IncentiveMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
     config: [
         { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
-        { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'บริษัท', valueMapper: (v) => v.compType },
         { header: 'ชื่อรายรับภายใน', valueMapper: (v) => v.displayName ?? 'ไม่ระบุ' },
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
