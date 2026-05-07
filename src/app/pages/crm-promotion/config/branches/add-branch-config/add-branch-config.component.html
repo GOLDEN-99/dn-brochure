@@ -1,0 +1,220 @@
+@let filter = filterOptions();
+
+<div class="d-flex align-items-center gap-2 mb-3">
+  <a class="btn btn-outline-secondary btn-sm" routerLink="..">
+    <i class="bi bi-arrow-left me-1"></i>กลับ
+  </a>
+  <h5 class="mb-0 fw-semibold">เพิ่มสาขา</h5>
+</div>
+
+<!-- Filter panel -->
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body">
+    <div class="row g-3">
+      <!-- Branch name search -->
+      <div class="col-12 col-md-6">
+        <label
+          for="branchName"
+          class="form-label fw-semibold text-muted small mb-1"
+          >ค้นหาสาขา</label
+        >
+        <input
+          type="text"
+          id="branchName"
+          class="form-control form-control-sm"
+          placeholder="กรอกชื่อสาขา..."
+          [ngModel]="filter.branchName"
+          (ngModelChange)="onUpdateFilterOptions('branchName', $event)"
+        />
+      </div>
+
+      <!-- Checkbox filters -->
+      <div class="col-12">
+        <div class="d-flex flex-wrap gap-4 justify-content-between">
+          <!-- ระดับราคา -->
+          <div>
+            <p class="fw-semibold mb-1 text-muted small">ระดับราคา</p>
+            @let priceList = filter.branchPrice;
+            @for (level of priceLevelRef; track level) {
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  [id]="'price-' + level"
+                  [name]="'price-' + level"
+                  type="checkbox"
+                  [ngModel]="hasBranch(priceList, level)"
+                  (ngModelChange)="toggleFilter($event, 'branchPrice', level)"
+                />
+                <label class="form-check-label" [htmlFor]="'price-' + level">
+                  ระดับ {{ level }}
+                </label>
+              </div>
+            }
+          </div>
+
+          <!-- กลุ่มสาขา -->
+          <div>
+            <p class="fw-semibold mb-1 text-muted small">กลุ่มสาขา</p>
+            @let groupList = filter.branchGroupCode;
+            @for (level of allOldBranchGroup(); track level.branchGroupCode) {
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  [id]="'group-' + level.branchGroupCode"
+                  [name]="'group-' + level.branchGroupCode"
+                  type="checkbox"
+                  [ngModel]="hasBranch(groupList, level.branchGroupCode)"
+                  (ngModelChange)="
+                    toggleFilter(
+                      $event,
+                      'branchGroupCode',
+                      level.branchGroupCode
+                    )
+                  "
+                />
+                <label
+                  class="form-check-label"
+                  [htmlFor]="'group-' + level.branchGroupCode"
+                >
+                  {{ level.branchGroupDesc }}
+                </label>
+              </div>
+            }
+          </div>
+
+          <!-- ทีม -->
+          <div>
+            <p class="fw-semibold mb-1 text-muted small">ทีม</p>
+            @let zoneList = filter.branchZoneCode;
+            @for (level of allBranchZone(); track level.branchZoneCode) {
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  [id]="'zone-' + level.branchZoneCode"
+                  [name]="'zone-' + level.branchZoneCode"
+                  type="checkbox"
+                  [ngModel]="hasBranch(zoneList, level.branchZoneCode)"
+                  (ngModelChange)="
+                    toggleFilter($event, 'branchZoneCode', level.branchZoneCode)
+                  "
+                />
+                <label
+                  class="form-check-label"
+                  [htmlFor]="'zone-' + level.branchZoneCode"
+                >
+                  {{ level.branchZoneDesc }}
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Branch table -->
+<div class="card border-0 shadow-sm">
+  <div
+    class="card-header bg-white border-bottom d-flex align-items-center justify-content-between"
+  >
+    <span class="fw-semibold">
+      ผลการค้นหา
+      <span class="badge bg-secondary ms-2">{{
+        filteredBranches().length
+      }}</span>
+    </span>
+    <span class="text-muted small">เลือกแล้ว {{ selectedCount() }} รายการ</span>
+  </div>
+  <div style="max-height: 500px; overflow-y: auto">
+    <table
+      class="table table-hover mb-0"
+      style="table-layout: fixed; width: 100%"
+    >
+      <colgroup>
+        <col style="width: 24px" />
+        <col style="width: 160px" />
+        <col />
+      </colgroup>
+      <thead class="table-light" style="position: sticky; top: 0; z-index: 1">
+        <tr>
+          <th></th>
+          <th
+            style="cursor: pointer; user-select: none"
+            (click)="toggleSort('branchCode')"
+            (keydown.enter)="toggleSort('branchCode')"
+          >
+            รหัสสาขา
+            @if (sortCol() === "branchCode") {
+              <i
+                class="bi"
+                [class.bi-sort-up]="sortDir() === 'asc'"
+                [class.bi-sort-down]="sortDir() === 'desc'"
+              ></i>
+            } @else {
+              <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+            }
+          </th>
+          <th
+            style="cursor: pointer; user-select: none"
+            (click)="toggleSort('branchName')"
+            (keydown.enter)="toggleSort('branchName')"
+          >
+            ชื่อสาขา
+            @if (sortCol() === "branchName") {
+              <i
+                class="bi"
+                [class.bi-sort-up]="sortDir() === 'asc'"
+                [class.bi-sort-down]="sortDir() === 'desc'"
+              ></i>
+            } @else {
+              <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+            }
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of filteredBranches(); track item.branchCode) {
+          <tr
+            style="cursor: pointer"
+            (click)="toggleSelect(item.branchCode)"
+            (keydown.space)="toggleSelect(item.branchCode)"
+          >
+            <td>
+              @if (isSelected(item.branchCode)) {
+                <i class="bi bi-check"></i>
+              }
+            </td>
+            <td class="text-truncate">{{ item.branchCode }}</td>
+            <td class="text-truncate">{{ item.branchName }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3" class="text-center text-muted py-5">
+              <i class="bi bi-inbox d-block fs-3 mb-1"></i>
+              ไม่มีข้อมูล
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer bg-white">
+    @if (saveError()) {
+      <div class="alert alert-danger py-2 mb-2">{{ saveError() }}</div>
+    }
+    <div class="d-flex justify-content-end gap-2">
+      <a class="btn btn-secondary" routerLink="..">ยกเลิก</a>
+      <button
+        class="btn btn-primary"
+        [disabled]="selectedCount() === 0 || saving()"
+        (click)="confirmAdd()"
+      >
+        @if (saving()) {
+          <span class="spinner-border spinner-border-sm me-1"></span>
+        }
+        ยืนยัน ({{ selectedCount() }})
+      </button>
+    </div>
+  </div>
+</div>

@@ -64,11 +64,26 @@ export const CRM_PROMOTION_ROUTE: Route[] = [
 
                     {
                         path: "config-branch/:branchGroupId",
-                        loadComponent() {
-                            return import("../pages/crm-promotion/config/edit-branch-config/edit-branch-config.component")
-                                .then(r => r.EditBranchConfigComponent)
-                                .catch(handleLazyLoadError('crm-promotion/config/branch/:branchId'))
-                        },
+                        children: [
+                            {
+                                path: "",
+                                loadComponent() {
+                                    return import("../pages/crm-promotion/config/branches/edit-branch-config/edit-branch-config.component")
+                                        .then(r => r.EditBranchConfigComponent)
+                                        .catch(handleLazyLoadError('crm-promotion/config/branch/:branchId'))
+                                },
+                            },
+                            {
+                                path: "add",
+                                loadComponent() {
+                                    return import("../pages/crm-promotion/config/branches/add-branch-config/add-branch-config.component")
+                                        .then(r => r.AddBranchConfigComponent)
+                                        .catch(handleLazyLoadError('crm-promotion/config/branch/:branchId/add'))
+                                },
+                            },
+
+                        ]
+
                     },
                     {
                         path: "config-product",
@@ -93,7 +108,7 @@ export const CRM_PROMOTION_ROUTE: Route[] = [
                             {
                                 path: "",
                                 loadComponent() {
-                                    return import("../pages/crm-promotion/config/edit-product-config/edit-product-config.component")
+                                    return import("../pages/crm-promotion/config/products/edit-product-config/edit-product-config.component")
                                         .then(r => r.EditProductConfigComponent)
                                         .catch(handleLazyLoadError("crm-promotion/config/product/:productGroupId"))
                                 }
@@ -101,7 +116,7 @@ export const CRM_PROMOTION_ROUTE: Route[] = [
                             {
                                 path: "add",
                                 loadComponent() {
-                                    return import("../pages/crm-promotion/config/add-product-config/add-product-config.component")
+                                    return import("../pages/crm-promotion/config/products/add-product-config/add-product-config.component")
                                         .then(r => r.AddProductConfigComponent)
                                         .catch(handleLazyLoadError("crm-promotion/config/product/:productGroupId/add"))
                                 }

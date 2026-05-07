@@ -5,10 +5,10 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Observable, EMPTY, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, catchError, filter, switchMap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ProductGroupConfigService } from '../../../../service/crm-promotion/product-group-config.service';
-import { TProductCate, TProductType, TProductGroup } from '../../../../types/crm-promotion.type';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { ProductConfigService } from '../../../../service/crm-promotion/product-config.service';
+import { ProductConfigService } from '../../../../../service/crm-promotion/product-config.service';
+import { ProductGroupConfigService } from '../../../../../service/crm-promotion/product-group-config.service';
+import { TProductCate, TProductGroup, TProductType } from '../../../../../types/crm-promotion.type';
 
 @Component({
   selector: 'app-add-product-config',
@@ -21,9 +21,12 @@ export class AddProductConfigComponent {
   productGroupId = input<number>()
   private readonly next$ = new BehaviorSubject(0)
   private readonly productGroupId$ = toObservable(this.productGroupId)
-  private readonly currentProductInGroup$ = combineLatest([this.next$, this.productGroupId$])
+  private readonly currentProductInGroup$ = combineLatest({
+    next: this.next$,
+    productGroupId: this.productGroupId$
+  })
     .pipe(
-      map(([_, id]) => Number(id)),
+      map(({ productGroupId: id }) => Number(id)),
       filter(maybeNan => !Number.isNaN(maybeNan)),
       switchMap(id => this.productConfig.getAllProductGroup(id))
     )

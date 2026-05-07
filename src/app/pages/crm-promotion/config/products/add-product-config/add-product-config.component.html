@@ -64,7 +64,7 @@
           [resultFormatter]="formatCate"
           (selectItem)="onSelectCate($event)"
         />
-        <div class="d-flex flex-wrap gap-1 mt-1">
+        <div class="d-flex flex-wrap gap-2 mt-2">
           @for (code of filter.productCate; track code) {
             <span class="badge bg-primary d-flex align-items-center gap-1">
               {{ getCateDesc(code) }}
@@ -99,7 +99,7 @@
           [resultFormatter]="formatType"
           (selectItem)="onSelectType($event)"
         />
-        <div class="d-flex flex-wrap gap-1 mt-1">
+        <div class="d-flex flex-wrap gap-2 mt-2">
           @for (code of filter.productType; track code) {
             <span class="badge bg-success d-flex align-items-center gap-1">
               {{ getTypeDesc(code) }}
@@ -134,7 +134,7 @@
           [resultFormatter]="formatGroup"
           (selectItem)="onSelectGroup($event)"
         />
-        <div class="d-flex flex-wrap gap-1 mt-1">
+        <div class="d-flex flex-wrap gap-2 mt-2">
           @for (code of filter.productGroup; track code) {
             <span class="badge bg-secondary d-flex align-items-center gap-1">
               {{ getGroupDesc(code) }}
@@ -172,11 +172,11 @@
       style="table-layout: fixed; width: 100%"
     >
       <colgroup>
-        <col style="width: 48px" />
+        <col style="width: 24px" />
         <col style="width: 140px" />
         <col />
         <col style="width: 360px" />
-        <col style="width: 120px" />
+        <col style="width: 160px" />
       </colgroup>
       <thead class="table-light" style="position: sticky; top: 0; z-index: 1">
         <tr>
@@ -255,14 +255,9 @@
             (keydown.space)="toggleSelect(item.goodCode)"
           >
             <td>
-              <input
-                class="form-check-input"
-                type="checkbox"
-                [checked]="isSelected(item.goodCode)"
-                (click)="$event.stopPropagation()"
-                (keydown)="$event.stopPropagation()"
-                readonly
-              />
+              @if (isSelected(item.goodCode)) {
+                <i class="bi bi-check"></i>
+              }
             </td>
             <td class="text-truncate">{{ item.sku }}</td>
             <td class="text-truncate">{{ item.goodName }}</td>

@@ -1,22 +1,21 @@
-import { Component, computed, inject, input, signal, viewChild, TemplateRef } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, computed, inject, input, signal } from '@angular/core';
+import { BranchConfigService } from '../../../../../service/crm-promotion/branch-config.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, catchError, combineLatest, EMPTY, filter, map, switchMap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { BranchConfigService } from '../../../../service/crm-promotion/branch-config.service';
-
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-edit-branch-config',
-  imports: [FormsModule],
-  templateUrl: './edit-branch-config.component.html',
-  styles: ''
+  selector: 'app-add-branch-config',
+  imports: [FormsModule, RouterLink],
+  templateUrl: './add-branch-config.component.html',
+  styles: '',
 })
-export class EditBranchConfigComponent {
+export class AddBranchConfigComponent {
   private readonly branchConfig = inject(BranchConfigService)
-  private readonly modalService = inject(NgbModal)
-  private readonly addBranchModal = viewChild<TemplateRef<any>>('addBranchModal')
+  private readonly router = inject(Router)
+  private readonly route = inject(ActivatedRoute)
 
   // ── inputs & current group data ─────────────────────────────────────────────
   branchGroupId = input<number>()
@@ -38,7 +37,7 @@ export class EditBranchConfigComponent {
   readonly allBranchZone = this.branchConfig.allBranchZone
   readonly allOldBranchGroup = this.branchConfig.allOldBranchGroup
 
-  // ── filter state (modal) ─────────────────────────────────────────────────────
+  // ── filter state ─────────────────────────────────────────────────────────────
   filterOptions = signal<TBranchFilterOption>({
     branchName: '',
     branchGroupCode: [],
@@ -46,19 +45,42 @@ export class EditBranchConfigComponent {
     branchPrice: [],
   })
 
-  // ── query result — pure computed, no check state ─────────────────────────────
+  // ── sort state ───────────────────────────────────────────────────────────────
+  sortCol = signal<'branchCode' | 'branchName' | null>(null)
+  sortDir = signal<'asc' | 'desc'>('asc')
+
+  toggleSort(col: 'branchCode' | 'branchName') {
+    if (this.sortCol() === col) {
+      this.sortDir.update(d => d === 'asc' ? 'desc' : 'asc')
+    } else {
+      this.sortCol.set(col)
+      this.sortDir.set('asc')
+    }
+  }
+
+  // ── filtered branch list ─────────────────────────────────────────────────────
   filteredBranches = computed(() => {
     const { branchName, branchPrice, branchGroupCode, branchZoneCode } = this.filterOptions()
     const nameLower = branchName.toLowerCase()
-    return this.allBranches()
+    const col = this.sortCol()
+    const dir = this.sortDir()
+
+    const filtered = this.allBranches()
       .filter(b => !this.currentBranchSet().has(b.branchCode))
       .filter(b => !nameLower || b.branchName.toLowerCase().includes(nameLower))
       .filter(b => branchPrice.length === 0 || branchPrice.includes(b.branchPrice))
       .filter(b => branchGroupCode.length === 0 || branchGroupCode.includes(b.branchGroupCode))
       .filter(b => branchZoneCode.length === 0 || branchZoneCode.includes(b.branchZoneCode))
+
+    if (!col) return filtered
+
+    return [...filtered].sort((a, b) => {
+      const cmp = (a[col] ?? '').localeCompare(b[col] ?? '', 'th')
+      return dir === 'asc' ? cmp : -cmp
+    })
   })
 
-  // ── selection state — independent of filter ──────────────────────────────────
+  // ── selection state ──────────────────────────────────────────────────────────
   selectedCodes = signal<Set<string>>(new Set())
 
   isSelected(code: string) {
@@ -75,29 +97,26 @@ export class EditBranchConfigComponent {
 
   selectedCount = computed(() => this.selectedCodes().size)
 
-  // ── modal ────────────────────────────────────────────────────────────────────
-  addError = signal<string | null>(null)
+  // ── save ─────────────────────────────────────────────────────────────────────
+  saving = signal(false)
+  saveError = signal<string | null>(null)
 
-  openModal() {
-    this.filterOptions.set({ branchName: '', branchGroupCode: [], branchZoneCode: [], branchPrice: [] })
-    this.selectedCodes.set(new Set())
-    this.addError.set(null)
-    this.modalService.open(this.addBranchModal(), { size: 'lg' })
-  }
-
-  confirmAdd(modal: any) {
+  confirmAdd() {
     const groupId = this.branchGroupId()
     if (!groupId) return
     const codes = [...this.selectedCodes()]
-    this.addError.set(null)
+    if (codes.length === 0) return
+    this.saving.set(true)
+    this.saveError.set(null)
     this.branchConfig.addBranchesToGroup(groupId, codes).pipe(
       catchError((err: HttpErrorResponse) => {
-        this.addError.set(err.error?.message ?? 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
+        this.saveError.set(err.error?.message ?? 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
+        this.saving.set(false)
         return EMPTY
       })
     ).subscribe(() => {
-      this.next$.next(0)
-      modal.close()
+      this.saving.set(false)
+      this.router.navigate(['..'], { relativeTo: this.route })
     })
   }
 
