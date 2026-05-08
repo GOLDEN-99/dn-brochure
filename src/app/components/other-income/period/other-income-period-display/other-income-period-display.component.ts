@@ -58,120 +58,32 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
     }
   })
 
-  activeChangeToRece = computed(() => {
-    const period = this.period();
-    const { periodStatus, creditList, invoiceList } = period
-    const { hasType3, hasType4 } = this.incomeTypes()
-    return periodStatus === 3
-      && (
-        (hasType4 && creditList.length !== 0)
-        || (hasType3 && invoiceList.length !== 0)
-      );
-  })
-
-  activeChangeToComplete = computed(() => {
-    const period = this.period();
-    const { periodStatus, receiptList } = period
-    return periodStatus === 4 && receiptList.length !== 0
-  })
-
   disableAddInv = computed(() => {
     const period = this.period();
     const stat = period.periodStatus
-    return stat !== 3
+    return stat !== PeriodStatus.WaitForInvoice
   })
 
   disableAddReceipt = computed(() => {
     const period = this.period();
     const stat = period.periodStatus
-    return stat !== 4
+    return stat !== PeriodStatus.WaitForReceipt
   })
 
   isComplete = computed(() => {
     return this.period().periodStatus === PeriodStatus.Complete;
   })
 
-  // Signals for status change loading states
-  changingToRece = signal(false);
-  changingToComplete = signal(false);
   deleting = signal(false);
 
   // ViewChild for modals
   private readonly editModal = viewChild('editPeriodModal');
-  private readonly confirmReceModal = viewChild('confirmReceModal');
-  private readonly confirmCompleteModal = viewChild('confirmCompleteModal');
-  private readonly confirmDeleteModal = viewChild('confirmDeleteModal');
+private readonly confirmDeleteModal = viewChild('confirmDeleteModal');
   private readonly orderPoModal = viewChild('orderPoModal');
   private readonly goodOrderPoModal = viewChild('goodOrderPoModal');
   private readonly invoiceModal = viewChild('invoiceModal');
   private readonly creditModal = viewChild('creditModal');
   private readonly receiptModal = viewChild('receiptModal');
-
-  /**
-   * Change period status to "Waiting for Receipt" (4)
-   * Opens confirmation modal before making API call
-   */
-  changeToRece() {
-    this.openModal(this.confirmReceModal(), 'md');
-  }
-
-  /**
-   * Confirm and execute change to Receipt status
-   */
-  confirmChangeToRece() {
-    this.changingToRece.set(true);
-
-    this.periodService.updatePeriodStatus(
-      this.period().id,
-      PeriodStatus.Receipt
-    ).subscribe({
-      next: (result) => {
-        this.changingToRece.set(false);
-        if (result.affectedRows === 1) {
-          this.onSuccess('เปลี่ยนสถานะเป็น "รอเพิ่มใบเสร็จรับเงิน" สำเร็จ');
-        } else {
-          this.onFail('เปลี่ยนสถานะไม่สำเร็จ');
-        }
-      },
-      error: () => {
-        this.changingToRece.set(false);
-        this.onFail('เกิดข้อผิดพลาดในการเปลี่ยนสถานะ');
-      }
-    });
-  }
-
-  /**
-   * Change period status to "Complete" (2)
-   * Opens confirmation modal before making API call
-   */
-  changeToComplete() {
-    this.openModal(this.confirmCompleteModal(), 'md');
-  }
-
-  /**
-   * Confirm and execute change to Complete status
-   */
-  confirmChangeToComplete() {
-    this.changingToComplete.set(true);
-
-    this.periodService.updatePeriodStatus(
-      this.period().id,
-      PeriodStatus.Complete
-    ).subscribe({
-      next: (result) => {
-        this.changingToComplete.set(false);
-        if (result.affectedRows === 1) {
-          this.onSuccess('เปลี่ยนสถานะเป็น "สำเร็จ" สำเร็จ');
-        } else {
-          this.onFail('เปลี่ยนสถานะไม่สำเร็จ');
-        }
-      },
-      error: () => {
-        this.changingToComplete.set(false);
-        this.onFail('เกิดข้อผิดพลาดในการเปลี่ยนสถานะ');
-      }
-    });
-  }
 
   // Signals for edit modal two-way binding
   editPeriodName = signal('');

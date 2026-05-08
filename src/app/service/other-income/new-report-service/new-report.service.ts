@@ -7,6 +7,7 @@ import { catchError, switchMap, throwError } from 'rxjs';
 import { DCMonthConfig, IncentiveMonthConfig, LightBoxMonthConfig, TMonthlyReportResponse } from './monthly-report-config';
 import { AllContractConfig, TGetAllReportResponse } from './all-contract-report-config';
 import { AppendBillDiscountConfig, AppendFreeProductConfig, IssueCreditReportConfig, IssueInvoiceReportConfig, IssueReceiptReportConfig, TIssueDocumentReportResponse, TIssueReceiptReportResponse } from './issuing-document-config';
+import { PeriodDualDateConfig, TPeriodDualDateResponse } from './period-dual-date-config';
 
 
 @Injectable({
@@ -78,6 +79,17 @@ export class NewReportService {
       },
       {}
     )
+
+  getPeriodDualDate({ compType }: { compType: TCompType }) {
+    const mapper = this.xlsx.convertJsonToWorkbook<TPeriodDualDateResponse>(PeriodDualDateConfig)
+    const exporter = this.xlsx.exportWorkbook(`ตรวจสอบความแตกต่าง ${compType}`)
+    return this.api.get<TPeriodDualDateResponse[]>(`${this.baseUrl}/period-dual-date`, { params: { CompType: compType } })
+      .pipe(
+        switchMap(res => mapper(res)),
+        switchMap(wb => exporter(wb)),
+        catchError(err => throwError(() => err))
+      )
+  }
 
   getContractReport(req: TGetContractRequest) {
     const [year, _] = req.year.split('T')[0].split('-')

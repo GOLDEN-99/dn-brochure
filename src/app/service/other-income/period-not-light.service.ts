@@ -16,7 +16,7 @@ export class PeriodNotLightService {
   private readonly url = environment.oi
   private readonly api = inject(ApiService)
 
-  params = signal<TAccountQueryReqState>({ filter: 1, compType: 1, mode: 1, eventId: 0, term: '', goodCode: '', compCode: '' })
+  params = signal<TAccountQueryReqState>({ filter: 0, compType: 1, mode: 1, eventId: 0, term: '', goodCode: '', compCode: '' })
   private readonly refresh = signal(0)
   refetch() { this.refresh.update(n => n + 1) }
 

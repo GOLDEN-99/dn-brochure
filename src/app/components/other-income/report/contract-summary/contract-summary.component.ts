@@ -44,4 +44,14 @@ export class ContractSummaryComponent {
         error: this.onFail,
       })
   }
+
+  onCheckDifference(compType: TCompType) {
+    this.onFetch()
+    this.reportService
+      .getPeriodDualDate({ compType })
+      .subscribe({
+        next: this.onSuccess,
+        error: this.onFail,
+      })
+  }
 }

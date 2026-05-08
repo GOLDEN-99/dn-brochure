@@ -5,6 +5,7 @@ export const AppendBillDiscountConfig: TAoaConfig<TIssueDocumentReportResponse> 
     sheetName: "รอเพิ่ม CN ลดมากับบิล",
     config: [
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
+        { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'บริษัท', valueMapper: (v) => v.compType },
         { header: 'ชื่อรายรับภายใน', valueMapper: (v) => v.displayName ?? 'ไม่ระบุ' },
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
@@ -22,6 +23,7 @@ export const AppendFreeProductConfig: TAoaConfig<TIssueDocumentReportResponse> =
     sheetName: "รรอเพิ่ม สินค้า ",
     config: [
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
+        { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'บริษัท', valueMapper: (v) => v.compType },
         { header: 'ชื่อรายรับภายใน', valueMapper: (v) => v.displayName ?? 'ไม่ระบุ' },
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
@@ -39,6 +41,7 @@ export const IssueInvoiceReportConfig: TAoaConfig<TIssueDocumentReportResponse> 
     sheetName: "รอออกใบแจ้งหนี้",
     config: [
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
+        { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'บริษัท', valueMapper: (v) => v.compType },
         { header: 'ชื่อรายรับภายใน', valueMapper: (v) => v.displayName ?? 'ไม่ระบุ' },
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
@@ -46,6 +49,7 @@ export const IssueInvoiceReportConfig: TAoaConfig<TIssueDocumentReportResponse> 
         { header: 'ชื่อใบแจ้งหนี้', valueMapper: v => v.periodName },
         { header: 'เริ่ม', valueMapper: (v) => customFormatDate(v.periodStart) },
         { header: 'จบ', valueMapper: (v) => customFormatDate(v.periodEnd) },
+        { header: 'จ่ายเป็น', valueMapper: v => v.incomeName },
         { header: 'รายได้', valueMapper: (v) => formatLocalNumber(v.totalIncome) },
         { header: 'หมายเหตุ', valueMapper: v => v.periodRemark },
         { header: 'period_id', valueMapper: v => v.periodId }
@@ -56,6 +60,7 @@ export const IssueCreditReportConfig: TAoaConfig<TIssueDocumentReportResponse> =
     sheetName: "รอออกใบลดหนี้",
     config: [
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
+        { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'บริษัท', valueMapper: (v) => v.compType },
         { header: 'ชื่อรายรับภายใน', valueMapper: (v) => v.displayName ?? 'ไม่ระบุ' },
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
@@ -63,6 +68,7 @@ export const IssueCreditReportConfig: TAoaConfig<TIssueDocumentReportResponse> =
         { header: 'ชื่อใบแจ้งหนี้', valueMapper: v => v.periodName },
         { header: 'เริ่ม', valueMapper: (v) => customFormatDate(v.periodStart) },
         { header: 'จบ', valueMapper: (v) => customFormatDate(v.periodEnd) },
+        { header: 'จ่ายเป็น', valueMapper: v => v.incomeName },
         { header: 'รายได้', valueMapper: (v) => formatLocalNumber(v.totalIncome) },
         { header: 'หมายเหตุ', valueMapper: v => v.periodRemark },
         { header: 'period_id', valueMapper: v => v.periodId }
@@ -73,12 +79,14 @@ export const IssueReceiptReportConfig: TAoaConfig<TIssueReceiptReportResponse> =
     sheetName: "รอออกใบเสร็จ",
     config: [
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
+        { header: 'รหัสบริษัท', valueMapper: (v) => v.compCode },
         { header: 'บริษัท', valueMapper: (v) => v.compType },
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
         { header: 'ประเภทรายรับ', valueMapper: (v) => v.incomeName },
         { header: 'ชื่อ period', valueMapper: (v) => v.periodName },
         { header: 'เริ่ม', valueMapper: (v) => customFormatDate(v.periodStart) },
         { header: 'จบ', valueMapper: (v) => customFormatDate(v.periodEnd) },
+        { header: 'จ่ายเป็น', valueMapper: v => v.incomeName },
         { header: 'รายได้', valueMapper: (v) => formatLocalNumber(v.totalIncome) },
         { header: 'ประเภทรายได้', valueMapper: v => mapIncomeType(v.incomeType) },
         { header: 'เลขเอกสาร', valueMapper: (v) => v.docNumb },

@@ -205,8 +205,8 @@ export interface IOtherIncomePageToke {
 }
 
 export enum PeriodStatus {
-    All = 1,
-    Complete = 2,
-    Invoice = 3,
-    Receipt = 4
+    All = 0,
+    WaitForInvoice = 1,
+    WaitForReceipt = 2,
+    Complete = 3,
 }
