@@ -63,6 +63,25 @@ export class XLSXReportService {
     }
   }
 
+  convertTwoSheetWorkbook<A extends TObject, B extends TObject>(configA: TAoaConfig<A>, configB: TAoaConfig<B>) {
+    return function (dataA: A[], dataB: B[]) {
+      return from(xlsxPromise).pipe(
+        switchMap(XLSX => {
+          const wb = XLSX.utils.book_new()
+          const headersA = configA.config.map(c => c.header)
+          const colsA = configA.config.map(c => c.valueMapper)
+          const wsA = XLSX.utils.aoa_to_sheet([headersA, ...dataA.map(d => colsA.map(fn => fn(d)))])
+          XLSX.utils.book_append_sheet(wb, wsA, configA.sheetName)
+          const headersB = configB.config.map(c => c.header)
+          const colsB = configB.config.map(c => c.valueMapper)
+          const wsB = XLSX.utils.aoa_to_sheet([headersB, ...dataB.map(d => colsB.map(fn => fn(d)))])
+          XLSX.utils.book_append_sheet(wb, wsB, configB.sheetName)
+          return [wb]
+        })
+      )
+    }
+  }
+
 }
 
 

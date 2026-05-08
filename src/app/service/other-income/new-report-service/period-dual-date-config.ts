@@ -1,6 +1,17 @@
 import { customFormatDate, formatLocalNumber } from "../../../lib/formatter";
 import { TAoaConfig } from "../../xlsx-report/xlsx-report.service";
 
+export type TPeriodDualDateDetail = {
+    goodCode: string;
+    barcode: string;
+    receNumb: string;
+    receDate: string;
+    billDate: string;
+    orderNumb: string;
+    amount: number;
+    isLag: boolean;
+}
+
 export type TPeriodDualDateResponse = {
     periodId: number;
     periodName: string;
@@ -15,9 +26,16 @@ export type TPeriodDualDateResponse = {
     ourTotal: number;
     supplierTotal: number;
     difference: number;
-    excludeBefore: number;
-    includeAfter: number;
+    details: TPeriodDualDateDetail[];
 }
+
+export type TPeriodDualDateDetailRow = {
+    periodName: string;
+    displayName: string;
+    compName: string;
+    compType: string;
+    eventName: string;
+} & TPeriodDualDateDetail
 
 export const PeriodDualDateConfig: TAoaConfig<TPeriodDualDateResponse> = {
     sheetName: "ตรวจสอบความแตกต่าง",
@@ -32,7 +50,23 @@ export const PeriodDualDateConfig: TAoaConfig<TPeriodDualDateResponse> = {
         { header: 'ยอดบริษัท', valueMapper: (v) => formatLocalNumber(v.ourTotal) },
         { header: 'ยอด Supplier', valueMapper: (v) => formatLocalNumber(v.supplierTotal) },
         { header: 'ส่วนต่าง', valueMapper: (v) => formatLocalNumber(v.difference) },
-        { header: 'ตัดบิลข้ามงวด', valueMapper: (v) => formatLocalNumber(v.excludeBefore) },
-        { header: 'บิลช้า (15 วัน)', valueMapper: (v) => formatLocalNumber(v.includeAfter) },
+    ]
+}
+
+export const PeriodDualDateDetailConfig: TAoaConfig<TPeriodDualDateDetailRow> = {
+    sheetName: "รายละเอียด",
+    config: [
+        { header: 'งวด', valueMapper: (v) => v.periodName },
+        { header: 'ชื่อรายรับภายใน', valueMapper: (v) => v.displayName ?? 'ไม่ระบุ' },
+        { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
+        { header: 'บริษัท', valueMapper: (v) => v.compType },
+        { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
+        { header: 'รหัสสินค้า', valueMapper: (v) => v.barcode },
+        { header: 'เลขใบรับ', valueMapper: (v) => v.receNumb },
+        { header: 'วันรับ', valueMapper: (v) => customFormatDate(v.receDate) },
+        { header: 'วันบิล', valueMapper: (v) => customFormatDate(v.billDate) },
+        { header: 'เลขออร์เดอร์', valueMapper: (v) => v.orderNumb },
+        { header: 'จำนวนเงิน', valueMapper: (v) => formatLocalNumber(v.amount) },
+        { header: 'Lag', valueMapper: (v) => v.isLag ? 'ใช่' : '-' },
     ]
 }
