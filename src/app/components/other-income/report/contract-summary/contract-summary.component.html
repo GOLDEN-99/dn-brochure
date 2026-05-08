@@ -13,6 +13,22 @@
     HU - สรุปรายการ
   </button>
 </div>
+<div class="row">
+  <span class="text-danger"
+    >***บัญชี - ต้องการตรวจสอบความต่างของยอดซื้อจากวันรับเข้าเทียบกับวันที่บิล
+    supplier</span
+  >
+  <span class="text-danger"
+    >ไม่สามรถดึงข้อมูลจากเงื่อนไขของจัดซื้โดยตรงได้ เพราะ "การคำนวณมากเกินไป"
+  </span>
+  <span class="text-danger">
+    จากการคิดยอดสินค้า ณ วันที่ 2026-05-08 พบว่าเงื่อนไขทั้งหมด 539 เงื่อนไข
+    เหมือนกันหมด คือไม่หักส่วนลด และไม่รวมภาษี
+  </span>
+  <span class="text-danger"
+    >ดังนั้นจึงถอด vat ออกเท่านั้น ส่วนลดมีโอกาสไม่ตรง เพราะส่วนลด
+  </span>
+</div>
 <div class="row mb-3 px-3" style="gap: 1rem">
   <button class="btn btn-dn col" (click)="onCheckDifference('DN')">
     DN - ตรวจสอบความแตกต่าง

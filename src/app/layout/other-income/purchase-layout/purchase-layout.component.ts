@@ -1,5 +1,7 @@
-import { Component, inject, InjectionToken } from '@angular/core';
+import { afterNextRender, Component, inject, InjectionToken, TemplateRef, viewChild } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { getItem, setItem } from '../../../service/local/local-lib';
 
 type TTabItem = {
   label: string
@@ -168,6 +170,14 @@ export const QUOTA_ITEM_TOKEN = {
   ]
 }
 
+const DISMISS_KEY = 'announcement-modal-dismiss-2026-05-08'
+const fiveDaysFromNow = () => Date.now() + 120 * 24 * 60 * 60 * 1000
+const setDismissed = setItem(DISMISS_KEY, fiveDaysFromNow)
+const getDismissed = getItem<boolean, null>({
+  praser: (data: any): boolean => data === true,
+  fallback: null
+})(DISMISS_KEY)
+
 @Component({
   selector: 'app-purchase-layout',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
@@ -190,6 +200,61 @@ export const QUOTA_ITEM_TOKEN = {
         <router-outlet />
       </div>
     </div>
+
+    <ng-template #announcementModal let-modal>
+      <div class="modal-header">
+        <h2>อัพเดตระบบรายได้อื่นๆ</h2>
+      </div>
+      <div class="modal-body">
+        
+      <!---->
+        <h4>บัญชี</h4>
+        <ul>
+          <li>รายงานเพื่อแสดงยอดทีซื้อจากวันที่ของ supplier และวันที่รับเข้า</li>
+          <li>เพิ่มคำอธิบายรายได้ในรายงานเพื่ออกเอกสาร</li>
+          <li>สถานะของเอกสารเมื่อสรุปยอดบัญชี จะมีได้หลายสถานะ <br/>เช่น กรณีรายได้ 100 บาท ออกใบแจ้งหนี้ 50 บาท จะอยู่ในสถานะ รอออกใบแจ้งหนี้ และรอออกใบเสร้จรับเงินพร้อมกัน</li>
+        </ul>
+        <!---->
+        <h4>จัดซื้อ</h4>
+        <ul>
+          <li>เพิ่มตัวกรองตามกิจกรรม</li>
+        </ul>
+      <!---->
+        <h4>อื่นๆ</h4>
+        <ul>
+          <li>รอข้อมูลเพื่อทดสอบบันทึกรายการรายได้ 2 หัวจากทางจัดซื้อ</li>
+          <li>กระบวนการทำงาน
+            <ul>
+              <li>
+                เมื่อจัดซื้อเพิ่มรายเดือน บัญชีสามารถตั้งประมาณการเดือนนั้นได้ทันที ไม่ต้องรอ <u>"สรุปรอบบัญชี"</u> 
+                <br/>แต่ยอดประมาณการมีโอกาสไม่ตรงเพราะไม่สามารถ confirm supplier ทุกเดือนได้
+                <br/> ตราบใดที่ไม่สามารถ confirm supplier ภายในวันที่ 5 ของเดือน ประมาณการภายในวันที่ 5 จะไม่ตรง
+              </li>
+              <li>
+                เมื่อจะเรียกเก็บรายได้จาก supplier ทางจัดซื้อต้องกดสรุปรอบบัญชี <u> มักจะเกิดหลังปิดรอบบัญชี</u>
+                <br/> ทั้งสองหน่วยงานต้องมีระเบียบการปรับปรุงรายได้เรียกเก็บให้ชัดเจน 
+                <ol>
+                  <li>การแก้ไขยอดเดิมทำให้สับสน เพราะมีการตั้งประมาณการไปแล้ว</li>
+                  <li>การลงยอดปรับปรุง ควรทำอย่างไร ภายในช่วงไหนของเดือน</li>
+                </ol>                
+              </li>
+              <li>
+                หลังจากปรับปรุงยอดเรียบร้อย จัดซื้อต้อง <u>"สรุปรอบบัญชี"</u> บัญชีจึงสามารถออกเอกสารได้
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-info w-100"
+          (click)="dismissAnnouncement(modal)"
+        >
+          ไม่แสดงอีก
+        </button>
+      </div>
+    </ng-template>
   `,
   styles: `
     .form-wrapper {
@@ -217,6 +282,23 @@ export const QUOTA_ITEM_TOKEN = {
   `
 })
 export class PurchaseLayoutComponent {
-  private token = inject(TAB_TOKEN)
+  private readonly token = inject(TAB_TOKEN)
   tabs = this.token.tabList
+
+  private readonly modalServ = inject(NgbModal)
+  private readonly announcementModal = viewChild<TemplateRef<any>>('announcementModal')
+
+  constructor() {
+    afterNextRender(() => {
+      if (getDismissed() === null) {
+        const ref = this.announcementModal()
+        if (ref) this.modalServ.open(ref, { size: 'lg', backdrop: 'static', keyboard: false })
+      }
+    })
+  }
+
+  dismissAnnouncement(modal: any) {
+    setDismissed(true)
+    modal.close()
+  }
 }

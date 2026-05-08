@@ -60,10 +60,14 @@ export class OiNotLightListService {
     if (yyyy === year && mm === month) return []
     return [d]
   }
+  readonly eventFilter = signal('')
+
   notLightList = computed(() => {
-    const data = this.rawList()
-    if (!this.filterStatus()) return data
-    return data.flatMap(this.filterByMonth(this.calendar.getToday()))
+    let data = this.rawList()
+    if (this.filterStatus()) data = data.flatMap(this.filterByMonth(this.calendar.getToday()))
+    const ef = this.eventFilter().trim().toLowerCase()
+    if (ef) data = data.filter(d => d.eventName.toLowerCase().includes(ef))
+    return data
   })
 
 }

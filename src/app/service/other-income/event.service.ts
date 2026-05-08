@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -11,9 +11,9 @@ export class EventService {
 
   constructor() { }
 
-  private api = inject(ApiService)
-  private url = environment.oi
-  private event$ = this.api.get<TEvent[]>(`${this.url}/other-income/event`).pipe(catchError(err => { console.log(err); return of([]) }))
+  private readonly api = inject(ApiService)
+  private readonly url = environment.oi
+  private readonly event$ = this.api.get<TEvent[]>(`${this.url}/other-income/event`).pipe(catchError(err => { console.log(err); return of([]) }))
   event = toSignal(this.event$, { initialValue: [] })
 }
 
