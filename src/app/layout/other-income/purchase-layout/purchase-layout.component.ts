@@ -170,7 +170,7 @@ export const QUOTA_ITEM_TOKEN = {
   ]
 }
 
-const DISMISS_KEY = 'announcement-modal-dismiss-2026-05-08'
+const DISMISS_KEY = 'announcement-modal-dismiss-2026-05-13'
 const fiveDaysFromNow = () => Date.now() + 120 * 24 * 60 * 60 * 1000
 const setDismissed = setItem(DISMISS_KEY, fiveDaysFromNow)
 const getDismissed = getItem<boolean, null>({
@@ -213,6 +213,7 @@ const getDismissed = getItem<boolean, null>({
           <li>รายงานเพื่อแสดงยอดทีซื้อจากวันที่ของ supplier และวันที่รับเข้า</li>
           <li>เพิ่มคำอธิบายรายได้ในรายงานเพื่ออกเอกสาร</li>
           <li>สถานะของเอกสารเมื่อสรุปยอดบัญชี จะมีได้หลายสถานะ <br/>เช่น กรณีรายได้ 100 บาท ออกใบแจ้งหนี้ 50 บาท จะอยู่ในสถานะ รอออกใบแจ้งหนี้ และรอออกใบเสร้จรับเงินพร้อมกัน</li>
+          <li>แก้ไข กรณีไม่สามารถลบใบแจ้งหนี้ได้</li>
         </ul>
         <!---->
         <h4>จัดซื้อ</h4>
@@ -222,7 +223,6 @@ const getDismissed = getItem<boolean, null>({
       <!---->
         <h4>อื่นๆ</h4>
         <ul>
-          <li>รอข้อมูลเพื่อทดสอบบันทึกรายการรายได้ 2 หัวจากทางจัดซื้อ</li>
           <li>กระบวนการทำงาน
             <ul>
               <li>

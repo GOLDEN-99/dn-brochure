@@ -152,7 +152,6 @@
           [addedAmount]="currentPeriod.invAmount"
           (success)="onSuccess($event)"
           (fail)="onFail($event)"
-          [disabled]="isComplete()"
         />
       </div>
     }
@@ -168,7 +167,6 @@
           [creditList]="currentPeriod.creditList"
           (success)="onSuccess($event)"
           (fail)="onFail($event)"
-          [disabled]="isComplete()"
         />
       </div>
     }
@@ -184,7 +182,6 @@
           [periodId]="currentPeriod.id"
           (success)="onSuccess($event)"
           (fail)="onFail($event)"
-          [disabled]="isComplete()"
         />
       </div>
     }
@@ -255,7 +252,6 @@
     (close)="modal.dismiss()"
   />
 </ng-template>
-
 
 <!-- Order Po Modal -->
 <ng-template #orderPoModal let-modal>

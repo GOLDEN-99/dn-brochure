@@ -70,15 +70,13 @@ export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {
     return stat !== PeriodStatus.WaitForReceipt
   })
 
-  isComplete = computed(() => {
-    return this.period().periodStatus === PeriodStatus.Complete;
-  })
+
 
   deleting = signal(false);
 
   // ViewChild for modals
   private readonly editModal = viewChild('editPeriodModal');
-private readonly confirmDeleteModal = viewChild('confirmDeleteModal');
+  private readonly confirmDeleteModal = viewChild('confirmDeleteModal');
   private readonly orderPoModal = viewChild('orderPoModal');
   private readonly goodOrderPoModal = viewChild('goodOrderPoModal');
   private readonly invoiceModal = viewChild('invoiceModal');
