@@ -29,6 +29,10 @@ export class CrmPromotionService {
     return this.api.get(`${this.url}/promotions/${id}`)
   }
 
+  updatePromotion(id: number, req: TCreatePromotionRequest): Observable<{ message: string }> {
+    return this.api.put<{ message: string }>(`${this.url}/promotions/${id}`, req)
+  }
+
   togglePromotionStatus(id: number, status: 'ACTIVE' | 'INACTIVE'): Observable<void> {
     return this.api.patch(`${this.url}/promotions/${id}/status`, { status })
   }

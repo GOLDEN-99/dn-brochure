@@ -12,9 +12,11 @@
       <label [htmlFor]="master.source().name()">โปรโมชั่นของ</label>
 
       <select class="form-select" id="source" [formField]="master.source">
-        <option value="HU">Health up</option>
-        <option value="SUPPLIER">Supplier</option>
-        <option value="BOTH">BOTH</option>
+        @for (sourceOption of promotionSourceOptions; track $index) {
+          <option [value]="sourceOption">
+            {{ sourceOption | promotionSource }}
+          </option>
+        }
       </select>
     </div>
   </div>

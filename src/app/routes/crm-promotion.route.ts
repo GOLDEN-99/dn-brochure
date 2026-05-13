@@ -1,9 +1,11 @@
-import { Route } from "@angular/router";
+import { inject } from "@angular/core";
+import { ActivatedRouteSnapshot, Route } from "@angular/router";
 import { handleLazyLoadError } from "../utils/lazy-load-error-handler";
 import { CRM_PAGE_CONFIG } from "../service/crm-promotion/crm-token";
 import { ProductGroupConfigService } from "../service/crm-promotion/product-group-config.service";
 import { provideCreatePromotionConfig } from "../factory/crm-promotion/create-promotion";
 import { CrmPromotionLayoutComponent } from "../layout/crm-promotion-layout/crm-promotion-layout.component";
+import { CrmPromotionService } from "../service/crm-promotion/crm-promotion.service";
 
 export const CREATE_ROUTE_PATH = [
     { path: "create-inline", name: 'ลดรายสินค้า', icon: 'bi bi-list-ul me-2' },
@@ -129,6 +131,18 @@ export const CRM_PROMOTION_ROUTE: Route[] = [
                             return import("../pages/crm-promotion/promotions/promotion-detail.component")
                                 .then(r => r.PromotionDetailComponent)
                                 .catch(handleLazyLoadError('crm-promotion/promotions/:id'))
+                        }
+                    },
+                    {
+                        path: ":id/edit",
+                        resolve: {
+                            detail: (route: ActivatedRouteSnapshot) =>
+                                inject(CrmPromotionService).getPromotionById(Number(route.paramMap.get('id')))
+                        },
+                        loadComponent() {
+                            return import("../pages/crm-promotion/edit/edit-promotion.component")
+                                .then(r => r.EditPromotionComponent)
+                                .catch(handleLazyLoadError('crm-promotion/:id/edit'))
                         }
                     }
                 ]

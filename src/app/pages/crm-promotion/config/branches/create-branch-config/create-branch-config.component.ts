@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ToastService } from '../../../../../service/toast/toast.service';
 import { BranchConfigService } from '../../../../../service/crm-promotion/branch-config.service';
 import { Router } from '@angular/router';
-import { form, FormField, required, validate } from '@angular/forms/signals';
+import { form, FormField, validate } from '@angular/forms/signals';
 import { FormAlertTextComponent } from "../../../../../components/crm-promotion/form-alert-text.component";
 
 

@@ -1,15 +1,13 @@
 <section class="m-3">
-  <div class="d-flex align-items-center gap-2 mb-3">
-    <h1 class="m-0">{{ pageName() }}</h1>
-  </div>
-  <!--promotion master-->
+  <ng-content select="[slot=header]" />
+
   <div class="card mb-3">
     <div class="card-body">
       <h2 class="card-title">ข้อมูลทั่วไป</h2>
       <app-promotion-master [form]="promotionForm.promotionMaster" />
     </div>
   </div>
-  <!--day of week-->
+
   <div class="card mb-3">
     <div class="card-body">
       <h2 class="card-title">เงื่อนไขวัน เวลา</h2>
@@ -17,7 +15,6 @@
     </div>
   </div>
 
-  <!--member& branches-->
   <div class="card mb-3">
     <div class="card-body">
       <h2 class="card-title">เงื่อนไขตามสมาชิก</h2>
@@ -28,7 +25,6 @@
     </div>
   </div>
 
-  <!--promotion activation-->
   @if (showFilterOption()) {
     <div class="card mb-3">
       <div class="card-body">
@@ -36,22 +32,18 @@
           <h2 class="card-title">เงื่อนไขตามสินค้า</h2>
           <div class="d-flex justify-content-end gap-1">
             @if (!showItem()) {
-              <span>
-                <button
-                  class="btn btn-outline-primary"
-                  (click)="onAddSkuProductCount()"
-                >
-                  เพิ่มเงื่อนไขตามจำนวน(ชิ้น)
-                </button>
-              </span>
-              <span>
-                <button
-                  class="btn btn-outline-success"
-                  (click)="onAddSkuProductSubtotal()"
-                >
-                  เพิ่มเงื่อนไขตามยอด(บาท)
-                </button>
-              </span>
+              <button
+                class="btn btn-outline-primary"
+                (click)="onAddSkuProductCount()"
+              >
+                เพิ่มเงื่อนไขตามจำนวน(ชิ้น)
+              </button>
+              <button
+                class="btn btn-outline-success"
+                (click)="onAddSkuProductSubtotal()"
+              >
+                เพิ่มเงื่อนไขตามยอด(บาท)
+              </button>
             }
           </div>
         </div>
@@ -79,7 +71,7 @@
     @if (submitting()) {
       กำลังบันทึก...
     } @else {
-      บันทึก
+      {{ submitLabel() }}
     }
   </button>
 </section>

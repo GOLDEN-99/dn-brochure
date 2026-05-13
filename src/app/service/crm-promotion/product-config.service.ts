@@ -41,13 +41,6 @@ export class ProductConfigService {
     return this.allPromotionProductGroup().some(group => group.name.toLocaleLowerCase() === cleanName)
   }
 
-  getPromotionGroup(groupId: number | null | undefined) {
-    console.log(groupId)
-    const a = this.allPromotionProductGroup()
-    console.table(a)
-    return this.allPromotionProductGroup().find(g => g.id === groupId)?.name ?? 'ไม่พบกลุ่มโปรโมชั่น'
-  }
-
   private readonly fetchAllProductSignal = signal(0)
   private readonly fetchAllProductSteram$ = toObservable(this.fetchAllProductSignal)
   private readonly allPrduct$ = this.fetchAllProductSteram$.pipe(switchMap(() => this.api.get<TProductDetail[]>(`${this.basePath}/all-products`)))

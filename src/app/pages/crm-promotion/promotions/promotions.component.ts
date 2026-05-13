@@ -16,7 +16,6 @@ export class PromotionsComponent {
   private readonly service = inject(CrmPromotionService)
   private readonly router = inject(Router)
   statusFilter = signal('')
-  togglingId = signal<number | null>(null)
 
   filteredPromotions = computed(() => {
     const list = this.service.allPromotions()
@@ -28,15 +27,4 @@ export class PromotionsComponent {
     this.router.navigate(['/crm-promotion', id])
   }
 
-  toggleStatus(id: number, currentStatus: string) {
-    const next = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
-    this.togglingId.set(id)
-    this.service.togglePromotionStatus(id, next).subscribe({
-      next: () => {
-        this.service.refetchPromotions()
-        this.togglingId.set(null)
-      },
-      error: () => this.togglingId.set(null),
-    })
-  }
 }

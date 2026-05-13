@@ -32,14 +32,17 @@ const dateRangeSchema = schema<TPromotionMaster['dateRange']>((_path) => {
 });
 
 // ── Master ──────────────────────────────────────────────
+const _today = new Date();
+const _todayDate = { year: _today.getFullYear(), month: _today.getMonth() + 1, day: _today.getDate() };
+
 export const initialMaster: TPromotionMaster = {
   promotionName: '',
   promotionDesc: '',
   promotionType: 'BILL',
   source: 'HU',
   dateRange: {
-    startDate: { year: 0, month: 1, day: 1 },
-    endDate: { year: 0, month: 1, day: 1 },
+    startDate: { ..._todayDate },
+    endDate: { ..._todayDate },
   },
   promotionPriority: '0',
   promotionOrder: '0',
@@ -158,10 +161,10 @@ export const promotionBranchSchema = schema<TPromotionBranch>((_path) => {
 });
 // tier
 export const promotionTierSchema = schema<TPromotionTier>((path) => {
-  min(path.rewardValue, 0);
-  required(path.rewardValue);
-  min(path.thresholdValue, 0);
-  required(path.thresholdValue);
+  min(path.rewardValue, 0, { message: 'จำนวนขั้นต่ำต้องมากกว่าหรือเท่ากับ 0' });
+  required(path.rewardValue, { message: 'ต้องระบุจำนวนส่วนลด' });
+  min(path.thresholdValue, 0, { message: 'จำนวนขั้นต่ำต้องมากกว่าหรือเท่ากับ 0' });
+  required(path.thresholdValue, { message: 'ต้องระบุจำนวนขั้นต่ำ' });
 });
 //reward
 export const promotionRewardPercentSchema = schema<TProductRewardPool>(
@@ -170,8 +173,8 @@ export const promotionRewardPercentSchema = schema<TProductRewardPool>(
       path,
       ({ value }) => value().itemBenefitType === 'PERCENT',
       (p) => {
-        min(p.itemBenefitValue, 0);
-        max(p.itemBenefitValue, 100);
+        min(p.itemBenefitValue, 0, { message: 'ค่าส่วนลดต้องมากกว่าหรือเท่ากับ 0' });
+        max(p.itemBenefitValue, 100, { message: 'ค่าส่วนลดต้องไม่เกิน 100' });
       },
     );
   },
@@ -189,7 +192,6 @@ export const initialBenefit: TPromotionBenefit = {
 export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
   required(_path.action);
   required(_path.thresholdType);
-  required(_path.isRepeat);
   applyWhen(
     _path,
     ({ valueOf }) => {

@@ -29,7 +29,6 @@
             <th>วันสิ้นสุด</th>
             <th>Priority</th>
             <th>สถานะ</th>
-            <!-- <th></th> -->
           </tr>
         </thead>
         <tbody>
@@ -38,7 +37,6 @@
               <td>{{ p.promotionName }}</td>
               <td>{{ p.promotionType | promotionType }}</td>
               <td>{{ p.action | promotionBenefitName }}</td>
-
               <td>{{ p.startdate | date: "dd/MM/yyyy" }}</td>
               <td>{{ p.enddate | date: "dd/MM/yyyy" }}</td>
               <td>{{ p.promotionPriority | promotionPriority }}</td>
@@ -51,23 +49,6 @@
                   {{ p.promotionStatus }}
                 </span>
               </td>
-              <!-- <td class="d-flex gap-2">
-                <button
-                  class="btn btn-sm"
-                  [class.btn-outline-danger]="p.promotionStatus === 'ACTIVE'"
-                  [class.btn-outline-success]="p.promotionStatus !== 'ACTIVE'"
-                  [disabled]="togglingId() === p.id"
-                  (click)="toggleStatus(p.id, p.promotionStatus)"
-                >
-                  {{
-                    togglingId() === p.id
-                      ? "..."
-                      : p.promotionStatus === "ACTIVE"
-                        ? "ปิด"
-                        : "เปิด"
-                  }}
-                </button>
-              </td> -->
             </tr>
           } @empty {
             <tr>

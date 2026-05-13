@@ -210,6 +210,7 @@ export type TPromotionListItem = {
     id: number
     promotionName: string
     promotionType: string
+    source: string
     action: string
     thresholdType: string
     isRepeat: boolean
@@ -225,6 +226,7 @@ export type TPromotionDetail = {
     promotionName: string
     promotionDesc: string
     promotionType: string
+    source: string
     action: string
     thresholdType: string
     isRepeat: boolean

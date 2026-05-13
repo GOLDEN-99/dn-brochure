@@ -2,6 +2,8 @@ import { CRM_BUNDLE_REWARD, CRM_INLINE_REWARD, ICrmPageConfig } from "../../serv
 import {
     initialMaster, initialDatetime, initialMember, initialBranch, initialBenefit
 } from "../../pages/crm-promotion/create/create-bill-discount-promotion/createPromotionSchema"
+import { TPromotionDetail } from "../../types/crm-promotion.type"
+import { promotionDetailToForm } from "./promotion-detail-to-form"
 
 export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
     switch (path) {
@@ -101,5 +103,41 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
             }
         default:
             throw new Error("invalid path name")
+    }
+}
+
+export function provideEditPromotionConfig(detail: TPromotionDetail): ICrmPageConfig {
+    const filterOptions: Record<string, ICrmPageConfig['filterOption']> = {
+        BILL: { showFilter: false, showBundle: false, showItem: false, showList: false },
+        BUNDLE: { showFilter: true, showBundle: true, showItem: false, showList: true },
+        ITEM: { showFilter: true, showBundle: false, showItem: true, showList: false },
+    }
+    const rewardOptions: Record<string, ICrmPageConfig['rewardOption']> = {
+        BILL: {
+            rewardList: [
+                { action: "BILLBATHDISC", label: "ลดทั้งบิลเป็นบาท" },
+                { action: "BILLPERCENTDISC", label: "ลดทั้งบิลเป็นเปอร์เซ็นต์" },
+                { action: "PWP", label: "สิทธิแลกซื้อ" },
+                { action: "GIFT", label: "สินค้าแถม" },
+            ],
+            thresholdList: [
+                { threshold: "BILLSUBTOTAL", label: "ยอดบิล(บาท)" },
+                { threshold: "BILLCOUNT", label: "จำนวนสินค้า(ชิ้น)" },
+            ],
+        },
+        BUNDLE: {
+            rewardList: CRM_BUNDLE_REWARD,
+            thresholdList: [{ threshold: "BUNDLECOUNT", label: "จำนวน SET (ชุด)" }],
+        },
+        ITEM: {
+            rewardList: CRM_INLINE_REWARD,
+            thresholdList: [],
+        },
+    }
+    return {
+        pageName: "แก้ไขโปรโมชั่น",
+        initialData: promotionDetailToForm(detail),
+        filterOption: filterOptions[detail.promotionType] ?? filterOptions['BILL'],
+        rewardOption: rewardOptions[detail.promotionType] ?? rewardOptions['BILL'],
     }
 }
