@@ -3,11 +3,12 @@ import { TCompType } from '../../../types';
 import { ApiService } from '../../api/api.service';
 import { environment } from '../../../../environments/environment';
 import { XLSXReportService } from '../../xlsx-report/xlsx-report.service';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { catchError, from, switchMap, throwError } from 'rxjs';
 import { DCMonthConfig, IncentiveMonthConfig, LightBoxMonthConfig, TMonthlyReportResponse } from './monthly-report-config';
 import { AllContractConfig, TGetAllReportResponse } from './all-contract-report-config';
 import { AppendBillDiscountConfig, AppendFreeProductConfig, IssueCreditReportConfig, IssueInvoiceReportConfig, IssueReceiptReportConfig, TIssueDocumentReportResponse, TIssueReceiptReportResponse } from './issuing-document-config';
 import { PeriodDualDateConfig, PeriodDualDateDetailConfig, TPeriodDualDateDetailRow, TPeriodDualDateResponse } from './period-dual-date-config';
+import { NOT_LIGHT_SHEET_NAME, NotLightContractCols, NotLightOrderCols, TNotLightDetailResponse } from './not-light-detail-config';
 
 
 @Injectable({
@@ -158,6 +159,34 @@ export class NewReportService {
     return this.getIssueDocumentReport({ compType, incomeType: 'credit' })
       .pipe(
         switchMap(res => mapper(res)),
+        switchMap(wb => exporter(wb)),
+        catchError(err => throwError(() => err))
+      )
+  }
+
+  getNotLightDetail({ compType }: { compType: TCompType }) {
+    const exporter = this.xlsx.exportWorkbook(`ประมาณการรายได้เปรียบเทียบ ${compType} ${(new Date()).toLocaleString()}`)
+    const contractHeaders = NotLightContractCols.map(c => c.header)
+    const orderHeaders = NotLightOrderCols.map(c => c.header)
+    const blank = NotLightContractCols.map(() => '')
+    return this.api.get<TNotLightDetailResponse[]>(`${this.baseUrl}/not-light-detail`, { params: { CompType: compType } })
+      .pipe(
+        switchMap(res => from(import('xlsx') as Promise<typeof import('xlsx')>).pipe(
+          switchMap(XLSX => {
+            const headers = [...contractHeaders, ...orderHeaders]
+            const dataRows = res.flatMap(contract => {
+              const contractValues = NotLightContractCols.map(c => c.valueMapper(contract))
+              return contract.orderHistory.map((order, i) => {
+                const orderValues = NotLightOrderCols.map(c => c.valueMapper(order))
+                return [...(i === 0 ? contractValues : blank), ...orderValues]
+              })
+            })
+            const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows])
+            const wb = XLSX.utils.book_new()
+            XLSX.utils.book_append_sheet(wb, ws, NOT_LIGHT_SHEET_NAME)
+            return [wb]
+          })
+        )),
         switchMap(wb => exporter(wb)),
         catchError(err => throwError(() => err))
       )

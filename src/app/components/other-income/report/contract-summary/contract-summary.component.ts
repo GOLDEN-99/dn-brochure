@@ -54,4 +54,14 @@ export class ContractSummaryComponent {
         error: this.onFail,
       })
   }
+
+  onExportNotLightDetail(compType: TCompType) {
+    this.onFetch()
+    this.reportService
+      .getNotLightDetail({ compType })
+      .subscribe({
+        next: this.onSuccess,
+        error: this.onFail,
+      })
+  }
 }
