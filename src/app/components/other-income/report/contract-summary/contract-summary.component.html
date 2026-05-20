@@ -2,14 +2,19 @@
 <div class="row">
   <span class="text-danger">***ดูประมาณการรายได้รายเดือน DC Rebate***</span>
   <span class="text-danger"
-    >***ข้อมูล ณ วันที่ 20/05/2026 report DN 250 rows และ HU 750 rows***</span
+    >***ข้อมมูลในรายงานอาจจะเปลี่ยนทุกวัน เช่นรายงานวันที่ 1 กับรายงานวันที่ 15
+    ของเดือนเดียวกันมีโอกาสไม่ตรงกัน***</span
   >
   <span class="text-danger"
-    >***ประมาณการทั้งปี report DN จะยาว 600 row HU 1800 rows***</span
+    >***ข้อมมูลในดึงใบขายย้อนหลัง 2 ปี นับยอดซื้อตามวันรับเข้า และวันที่บิล
+    supplier ที่บันทึก***</span
   >
   <span class="text-danger"
-    >***ไม่แน่ใจว่าสามารถทำงานบน report ยาว เกือบ 2000 rows ได้จริงไหม***</span
+    >***ณ วันที่ 20/05/2026 ข้อมูลรับเข้ามีความผิดพลาดเช่น
+    รับเข้าช้ากว่าวันที่บิลซัพ 100 วัน
+    หรือวันที่รับเข้ามาก่อนวันที่บิลซับ***</span
   >
+  <span class="text-danger">***DN 20 records HU 10 records***</span>
 </div>
 <div class="row mb-3 px-3" style="gap: 1rem">
   <button class="btn btn-dn col" (click)="onExportNotLightDetail('DN')">

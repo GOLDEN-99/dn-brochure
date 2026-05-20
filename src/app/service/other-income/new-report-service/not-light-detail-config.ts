@@ -3,6 +3,7 @@ import { customFormatDate, formatLocalNumber } from "../../../lib/formatter";
 export type TNotLightDetailResponse = {
     id: number;
     displayName: string;
+    eventName: string;
     compCode: string;
     compType: string;
     compName: string;
@@ -63,6 +64,7 @@ export const NotLightContractCols: TContractCol[] = [
     { header: 'ชื่อซัพ', valueMapper: v => v.compName },
     { header: 'บริษัท', valueMapper: v => v.compType },
     { header: 'ชื่อรายรับภายใน', valueMapper: v => v.displayName ?? 'ไม่ระบุ' },
+    { header: 'กิจกรรม', valueMapper: v => v.eventName },
     { header: 'เริ่ม', valueMapper: v => customFormatDate(v.startDate) },
     { header: 'จบ', valueMapper: v => customFormatDate(v.endDate) },
     { header: 'ประเภท Step', valueMapper: v => mapStepType(v.stepType) },
@@ -75,6 +77,6 @@ export const NotLightOrderCols: TOrderCol[] = [
     { header: 'เดือน', valueMapper: v => mapMonthIndex(v.monthIndex) },
     { header: 'ยอดซื้อตามวันรับเข้า', valueMapper: v => formatLocalNumber(v.ourAmount) },
     { header: 'ยอดซื้อตามบิลซัพ', valueMapper: v => formatLocalNumber(v.supplierAmount) },
-    { header: 'รายได้ (our)', valueMapper: v => formatLocalNumber(v.ourIncome) },
-    { header: 'รายได้ (supplier)', valueMapper: v => formatLocalNumber(v.supplierIncome) },
+    { header: 'รายได้ตามวันรับเข้า', valueMapper: v => formatLocalNumber(v.ourIncome) },
+    { header: 'รายได้ตามบิลซัพ', valueMapper: v => formatLocalNumber(v.supplierIncome) },
 ]
