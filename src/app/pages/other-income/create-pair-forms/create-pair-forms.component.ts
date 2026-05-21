@@ -2,9 +2,9 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { apply, applyEach, applyWhen, applyWhenValue, form, max, min, minLength, required, Schema, SchemaFn, validate, FormField, disabled } from '@angular/forms/signals';
 import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OiNotLightPairService } from '../../../service/other-income/oi-not-light-pair.service';
-import { OtherIncomeEventSelectComponent } from '../../../other-income/components/features/other-income-event-select/other-income-event-select.component';
-import { TOtherIncomeEvent, TOtherIncomeIncome } from '../../../other-income/types/other-income.type';
-import { OtherIncomeIncomeSelectComponent } from "../../../other-income/components/features/other-income-income-select/other-income-income-select.component";
+import { OtherIncomeEventSelectComponent } from '../../../other-income/shared/components/other-income-event-select/other-income-event-select.component';
+import { TOtherIncomeEvent, TOtherIncomeIncome } from '../../../other-income/shared/types/other-income.type';
+import { OtherIncomeIncomeSelectComponent } from "../../../other-income/shared/components/other-income-income-select/other-income-income-select.component";
 import { JsonPipe } from '@angular/common';
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { SignalDatepickerComponent } from "../../../components/crm-promotion/signal-datepicker.component";
@@ -18,7 +18,7 @@ import { FormAlertTextComponent } from "../../../components/crm-promotion/form-a
   styleUrl: './create-pair-forms.component.scss',
 })
 export class CreatePairFormsComponent {
-  periodList = [1,2,3,6,12].map(period => ({period, periodName: `${period} เดือน`}))
+  periodList = [1, 2, 3, 6, 12].map(period => ({ period, periodName: `${period} เดือน` }))
   private readonly calendarService = inject(NgbCalendar)
   startOfYear: NgbDateStruct = {
     ...this.calendarService.getToday(), day: 1, month: 1
@@ -99,7 +99,7 @@ export class CreatePairFormsComponent {
   }
   private readonly stepConditionSchema: SchemaFn<TOtherIncomeStepFormState> = (schema) => {
     applyWhen(schema.cap, ({ value }) => value().isCap, this.stepCapSchema)
-    applyWhen(schema.cap, ({value}) => !value().isCap, (_s) => {disabled(_s.capAmount)})
+    applyWhen(schema.cap, ({ value }) => !value().isCap, (_s) => { disabled(_s.capAmount) })
     validate(schema.stepType, ({ value }) => value() === 0 ? { kind: 'invalid-step-type', message: 'กรุณาเลือกประเภทขั้นการคำนวน' } : null)
     applyEach(schema.steps, this.stepItemSchema)
     validate(schema.steps, ({ value }) => {
@@ -130,12 +130,12 @@ export class CreatePairFormsComponent {
   })
 
 
-  onAddStep(){
-    this.formData.update(({stepCondition: {steps, ...cond}, ...res}) => ({...res, stepCondition: {...cond, steps: [...steps, {min: 0, rate: 0}]}}))
+  onAddStep() {
+    this.formData.update(({ stepCondition: { steps, ...cond }, ...res }) => ({ ...res, stepCondition: { ...cond, steps: [...steps, { min: 0, rate: 0 }] } }))
   }
 }
 
-type TOtherIncomePeriod = {period: number, periodName: string}
+type TOtherIncomePeriod = { period: number, periodName: string }
 
 type TOtherIncomeHeadFormState = {
   period: TOtherIncomePeriod | null

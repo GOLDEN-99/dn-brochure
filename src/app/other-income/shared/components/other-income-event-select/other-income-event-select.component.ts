@@ -1,9 +1,9 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { OtherIncomeEventService } from '../../../services/other-income-event.service';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { SelectComponent } from '../../../../shared/components/select/select.component';
-import { TOtherIncomeEvent } from '../../../types/other-income.type'
+import { TOtherIncomeEvent } from '../../types/other-income.type'
 import { OptionComponent } from '../../../../shared/components/select/option.component';
+import { OtherIncomeEventService } from '../../services/other-income-event.service';
 
 @Component({
   selector: 'other-income-event-select',

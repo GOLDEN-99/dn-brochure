@@ -16,6 +16,7 @@ import { formatLocalNumber } from '../../../../lib/formatter';
 import { PeriodStatus, TFieldSelector } from '../../../../types';
 import { PeriodService } from '../../../../service/other-income/period.service';
 import { TIncome } from '../../../../service/other-income/income.service';
+import { OtherIncomeInvoiceReceiptComponent } from '../../../../other-income/account/components/other-income-invoice-receipt/other-income-invoice-receipt.component';
 
 @Component({
   selector: 'app-other-income-period-display',
@@ -31,6 +32,7 @@ import { TIncome } from '../../../../service/other-income/income.service';
     OtherIncomeInvoiceModalComponent,
     OtherIncomeReceiptModalComponent,
     OtherIncomeCreditModalComponent,
+    OtherIncomeInvoiceReceiptComponent
   ],
   templateUrl: './other-income-period-display.component.html',
   styleUrl: './other-income-period-display.component.scss'

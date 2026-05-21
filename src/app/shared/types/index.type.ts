@@ -12,4 +12,4 @@ export type TApiOpt = {
   } | boolean;
 }
 
-export type TOptionable = string | number | Record<string , unknown> | null 
+export type TOptionable = string | number | Record<string, unknown>

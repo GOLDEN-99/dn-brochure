@@ -1,0 +1,123 @@
+<div class="mb-3">
+  <div class="px-3 py-2 text-muted small fw-semibold border-bottom">
+    ใบแจ้งหนี้
+  </div>
+  <table class="table table-sm table-hover">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 20%">ใบแจ้งหนี้</th>
+        <th scope="col" style="width: 20%">ยอดใบแจ้งหนี้</th>
+        <th scope="col" style="width: 20%">หมายเหตุ</th>
+        <th scope="col" style="width: 20%">วันที่ใบแจ้งหนี้</th>
+        <th scope="col" style="width: 20%"></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (inv of invoiceList(); track inv.id) {
+        <tr>
+          <td>{{ inv.invNumb }}</td>
+          <td>{{ inv.invAmount | number: "1.2-2" }}</td>
+          <td>{{ inv.invRemark }}</td>
+          <td>{{ inv.invDate | date }}</td>
+          <td></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+<div class="mb-3">
+  <div class="px-3 py-2 text-muted small fw-semibold border-bottom">
+    ใบเสร็จรับเงิน
+  </div>
+  <table class="table table-sm table-hover">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 20%">เลขใบเสร็จ</th>
+        <th scope="col" style="width: 20%">ยอดใบเสร็จ</th>
+        <th scope="col" style="width: 20%">หมายเหตุ</th>
+        <th scope="col" style="width: 20%">วันที่ใบเสร็จ</th>
+        <th scope="col" style="width: 20%"></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (inv of receiptList(); track inv.id) {
+        <tr>
+          <td>{{ inv.receNumb }}</td>
+          <td>{{ inv.receAmount | number: "1.2-2" }}</td>
+          <td>{{ inv.receRemark }}</td>
+          <td>{{ inv.receDate | date }}</td>
+          <td></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+<div class="row mb-3">
+  <div class="col-4">
+    <label class="form-label" [htmlFor]="matchForm.invoice().name()"
+      >เลขที่ใบแจ้งหนี้</label
+    >
+    <input
+      type="text"
+      class="form-control"
+      [ngbTypeahead]="searchInvoice"
+      [resultFormatter]="formatInvoice"
+      [inputFormatter]="formatInvoice"
+      [name]="matchForm.invoice().name()"
+      [required]="matchForm.invoice().required()"
+      [(ngModel)]="matchForm.invoice().controlValue"
+    />
+    @if (matchForm.invoice().touched() || matchForm.invoice().dirty()) {
+      @for (error of matchForm.invoice().errors(); track $index) {
+        <span class="text-danger">{{ error.message }}</span>
+      }
+    }
+  </div>
+  <div class="col-4">
+    <label class="form-label" [htmlFor]="matchForm.receipt().name()"
+      >เลขที่ใบเสร็จรับเงิน</label
+    >
+    <input
+      type="text"
+      class="form-control"
+      [ngbTypeahead]="searchReceipt"
+      [resultFormatter]="formatReceipt"
+      [inputFormatter]="formatReceipt"
+      [name]="matchForm.receipt().name()"
+      [required]="matchForm.receipt().required()"
+      [(ngModel)]="matchForm.receipt().controlValue"
+    />
+    @if (matchForm.receipt().touched() || matchForm.receipt().dirty()) {
+      @for (error of matchForm.receipt().errors(); track $index) {
+        <span class="text-danger">{{ error.message }}</span>
+      }
+    }
+  </div>
+  <div class="col-4">
+    <label [htmlFor]="matchForm.matchAmount().name()" class="form-label"
+      >ยอด</label
+    >
+    <input
+      class="form-control"
+      type="text"
+      inputMode="numberic"
+      [formField]="matchForm.matchAmount"
+    />
+    @for (error of matchForm.matchAmount().errors(); track $index) {
+      <span class="invalid-feedback">{{ error.message }}</span>
+    }
+  </div>
+</div>
+<div class="d-flex justify-content-end">
+  <span
+    ><button
+      class="btn btn-success"
+      [disabled]="matchForm().invalid()"
+      (click)="onMatch()"
+    >
+      บันทึก
+    </button></span
+  >
+</div>
+<div>{{ matchForm().value() | json }}</div>
+<div>{{ matchForm().errorSummary() | json }}</div>
