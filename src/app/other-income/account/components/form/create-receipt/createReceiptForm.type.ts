@@ -8,7 +8,7 @@ export type TPartialMatchInvoice = {
     matchAmount: string
 }
 
-export type TMatchingOnCreate = {
+export type TCreateReceiptForm = {
     receNumb: string
     receAmount: string
     receRemark: string

@@ -108,6 +108,7 @@
       flex-direction: column;
       gap: 1rem;
     "
+    class="px-3"
   >
     <!-- ท้ายบิล (Order) -->
     @if (types.hasType1) {
@@ -141,21 +142,6 @@
       </div>
     }
 
-    <!-- Invoice -->
-    @if (types.hasType3) {
-      <div style="min-width: 100%">
-        <app-other-income-invoice-period
-          [canEdit]="!isPurchase()"
-          [invoiceList]="currentPeriod.invoiceList"
-          [periodId]="currentPeriod.id"
-          [incomeAmount]="currentPeriod.totalIncome"
-          [addedAmount]="currentPeriod.invAmount"
-          (success)="onSuccess($event)"
-          (fail)="onFail($event)"
-        />
-      </div>
-    }
-
     <!-- Credit Note -->
     @if (types.hasType4) {
       <div style="min-width: 100%">
@@ -165,21 +151,6 @@
           [incomeAmount]="currentPeriod.totalIncome"
           [addedAmount]="currentPeriod.creditAmount"
           [creditList]="currentPeriod.creditList"
-          (success)="onSuccess($event)"
-          (fail)="onFail($event)"
-        />
-      </div>
-    }
-
-    <!-- Receipt -->
-    @if (types.hasType3 || types.hasType4) {
-      <div style="min-width: 100%">
-        <app-other-income-receipt-period
-          [canEdit]="!isPurchase()"
-          [receiptList]="currentPeriod.receiptList"
-          [invAmount]="currentPeriod.invAmount"
-          [receAmount]="currentPeriod.receAmount"
-          [periodId]="currentPeriod.id"
           (success)="onSuccess($event)"
           (fail)="onFail($event)"
         />

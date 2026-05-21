@@ -1,0 +1,19 @@
+@let formTree = form();
+<div class="mb-3">
+  <label [htmlFor]="formTree.invDate().name()" class="form-label"
+    >วันที่ใบแจ้งหนี้</label
+  >
+  <app-signal-datepicker [formField]="formTree.invDate" />
+</div>
+<div class="app-form-field">
+  <label [htmlFor]="formTree.invNumb()">เลขที่ใบแจ้งหนี้</label>
+  <input type="text" [formField]="formTree.invNumb" />
+</div>
+<div class="app-form-field">
+  <label [htmlFor]="formTree.invAmount()">ยอดใบแจ้งหนี้</label>
+  <input type="text" [formField]="formTree.invAmount" />
+</div>
+<div class="app-form-field">
+  <label [htmlFor]="formTree.invRemark()">หมายเหตุ</label>
+  <textarea type="text" [formField]="formTree.invRemark"></textarea>
+</div>

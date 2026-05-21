@@ -7,13 +7,17 @@ import { distinctUntilChanged, map, Observable } from 'rxjs';
 import { form, FormField } from "@angular/forms/signals";
 import { FormsModule } from '@angular/forms';
 import { defaultMatching, matchingSchema } from './matchingForm/matching';
-import { createReceiptSchema, defaultCreateReceipt } from './matchingOnCreate/matchingOnCreate';
-import { TMatchingOnCreate } from './matchingOnCreate/macthingOnCreate.type';
+import { createReceiptSchema, defaultCreateReceipt } from '../form/create-receipt/matchingOnCreate';
+import { TCreateReceiptForm } from '../form/create-receipt/createReceiptForm.type';
+import { CreateInvoiceComponent } from "../form/create-invoice/create-invoice.component";
+import { createInvoiceSchema, defaultInvoice } from '../form/create-invoice/createInvoice';
+import { TCreateInvoiceForm } from '../form/create-invoice/createInvoice.type';
+import { CreateReceiptComponent } from "../form/create-receipt/create-receipt.component";
 
 
 @Component({
   selector: 'other-income-invoice-receipt',
-  imports: [DecimalPipe, DatePipe, NgbTypeahead, FormField, JsonPipe, FormsModule],
+  imports: [DecimalPipe, DatePipe, NgbTypeahead, FormField, JsonPipe, FormsModule, CreateInvoiceComponent, CreateReceiptComponent],
   templateUrl: './other-income-invoice-receipt.component.html',
   styleUrl: './other-income-invoice-receipt.component.scss',
 })
@@ -22,8 +26,14 @@ export class OtherIncomeInvoiceReceiptComponent {
   private readonly initialCreateReceipt = {
     ...defaultCreateReceipt, receDate: this.calendarService.getToday()
   }
-  createReceData = signal<TMatchingOnCreate>(this.initialCreateReceipt)
+  createReceData = signal<TCreateReceiptForm>(this.initialCreateReceipt)
   createReceForm = form(this.createReceData, createReceiptSchema)
+
+  private readonly initialCreateInvoice: TCreateInvoiceForm = {
+    ...defaultInvoice, invDate: this.calendarService.getToday()
+  }
+  createInvData = signal(this.initialCreateInvoice)
+  createInvoiceForm = form(this.createInvData, createInvoiceSchema)
 
   private readonly periodService = inject(OtherIncomeAccountPeriodService);
 

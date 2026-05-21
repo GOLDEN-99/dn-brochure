@@ -1,0 +1,64 @@
+@let formTree = form();
+<div class="mb-3">
+  <label [htmlFor]="formTree.receDate().name()" class="form-label"
+    >วันที่ใบแจ้งหนี้</label
+  >
+  <app-signal-datepicker [formField]="formTree.receDate" />
+</div>
+<div class="app-form-field">
+  <label [htmlFor]="formTree.receNumb()">เลขที่ใบแจ้งหนี้</label>
+  <input type="text" [formField]="formTree.receNumb" />
+</div>
+<div class="app-form-field">
+  <label [htmlFor]="formTree.receAmount()">ยอดใบแจ้งหนี้</label>
+  <input type="text" [formField]="formTree.receAmount" />
+</div>
+<div class="app-form-field">
+  <label [htmlFor]="formTree.receRemark()">หมายเหตุ</label>
+  <textarea type="text" [formField]="formTree.receRemark"></textarea>
+</div>
+@for (matchForm of formTree.matches; track $index) {
+  <div class="row">
+    <div class="app-form-field col-4">
+      <label class="form-label" [htmlFor]="matchForm.invoice().name()"
+        >เลขที่ใบแจ้งหนี้</label
+      >
+      <input
+        type="text"
+        class="form-control"
+        [ngbTypeahead]="searchInvoice"
+        [resultFormatter]="formatInvoice"
+        [inputFormatter]="formatInvoice"
+        [name]="matchForm.invoice().name()"
+        [required]="matchForm.invoice().required()"
+        [(ngModel)]="matchForm.invoice().controlValue"
+      />
+      @if (matchForm.invoice().touched() || matchForm.invoice().dirty()) {
+        @for (error of matchForm.invoice().errors(); track $index) {
+          <span class="text-danger">{{ error.message }}</span>
+        }
+      }
+    </div>
+    <div class="app-form-field col-4">
+      <label [htmlFor]="matchForm.matchAmount().name()" class="form-label"
+        >ยอด</label
+      >
+      <input
+        class="form-control"
+        type="text"
+        inputMode="numberic"
+        [formField]="matchForm.matchAmount"
+      />
+      @for (error of matchForm.matchAmount().errors(); track $index) {
+        <span class="invalid-feedback">{{ error.message }}</span>
+      }
+    </div>
+  </div>
+}
+<div class="d-flex justify-content-end">
+  <span
+    ><button class="btn btn-success" (click)="onAddPartialInvoice()">
+      เพิ่ม
+    </button></span
+  >
+</div>
