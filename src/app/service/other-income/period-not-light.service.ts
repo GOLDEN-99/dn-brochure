@@ -61,7 +61,7 @@ export class PeriodNotLightService {
 
 }
 
-type TPeriodSummary = {
+export type TPeriodSummary = {
   id: number
   displayName: string
   cn: string
