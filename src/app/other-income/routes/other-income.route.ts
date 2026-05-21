@@ -100,27 +100,7 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                     {
                         path: ":headId",
                         component: OtherIncomeLightFormComponent
-                    },
-                ]
-            },
-            {
-                path: 'purchase/not-light/create-pair',
-                component: BaseLayoutComponent,
-                providers: [
-                    {
-                        provide: LABEL_TOKEN,
-                        useValue: { label: "DC/Rebate 2 หัว" }
-                    },
-                    {
-                        provide: OTHER_INCOME_PAGE_TOKEN,
-                        useValue: { isPurchase: true }
                     }
-                ],
-                children: [
-                    {
-                        path: "",
-                        loadComponent: () => import('../pages/other-income/create-pair-forms/create-pair-forms.component').then(r =>r .CreatePairFormsComponent).catch(handleLazyLoadError('other-income/not-light/create-pair'))
-                    },
                 ]
             },
             {

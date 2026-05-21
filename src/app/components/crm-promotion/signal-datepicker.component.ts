@@ -23,7 +23,6 @@ import {
   NgbDatepickerModule,
   NgbDateStruct,
 } from '@ng-bootstrap/ng-bootstrap';
-import { TMaybe } from '../../types';
 import { FormsModule } from '@angular/forms';
 
 @Component({

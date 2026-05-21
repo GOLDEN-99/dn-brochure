@@ -38,6 +38,7 @@ export class OiNotLightPairService {
     return this.api.get<TPairItem[]>(`${this.url}/other-income/pair`)
   }
 
+
   create(displayName: string) {
     return this.api.post<{ id: number }>(`${this.url}/other-income/pair`, { displayName })
   }

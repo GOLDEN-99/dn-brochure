@@ -1,0 +1,11 @@
+<div class="app-form-select">
+  <label [htmlFor]="form()().name()">{{label()}}</label>
+  <app-select
+    [formField]="form()" 
+  >
+  <app-option [value]="null">กรุณาเลือก</app-option>
+  @for (income of renderIncome(); track income.id) {
+    <app-option [value]="income" >{{income.incomeName}}</app-option>
+  }
+</app-select>
+</div>

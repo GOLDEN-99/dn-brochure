@@ -1,0 +1,278 @@
+<div class="app-form-field-inline">
+  <div>
+    <label [htmlFor]="createForm.displayName().name()"
+      >ชื่อรายรับภายใน (ถ้ามี)</label
+    >
+  </div>
+  <div>
+    <input type="text" [formField]="createForm.displayName" />
+  </div>
+</div>
+<other-income-event-select [form]="createForm.head.event" [eventType]="1" />
+<div class="border rounded p-3 mb-3">
+  <p class="fw-semibold mb-2 text-muted small">รับรู้รายได้เป็น</p>
+  <div class="row row-cols-2 g-2">
+    <div class="col">
+      <other-income-income-select
+        [form]="createForm.incomes.discount"
+        [incomeType]="1"
+      />
+    </div>
+    <div class="col">
+      <other-income-income-select
+        [form]="createForm.incomes.free"
+        [incomeType]="2"
+      />
+    </div>
+    <div class="col">
+      <other-income-income-select
+        [form]="createForm.incomes.invoice"
+        [incomeType]="3"
+      />
+    </div>
+    <div class="col">
+      <other-income-income-select
+        [form]="createForm.incomes.credit"
+        [incomeType]="4"
+      />
+    </div>
+  </div>
+</div>
+<div class="form-field mb-3">
+  <label [htmlFor]="createForm.head.period().name()" class="form-label"
+    >ระยะเวลาเก็บเงินเดือน</label
+  >
+  <app-select [formField]="createForm.head.period">
+    <app-option [value]="null">กรุณาเลือก</app-option>
+    @for (period of periodList; track period.period) {
+      <app-option [value]="period">{{ period.periodName }}</app-option>
+    }
+  </app-select>
+</div>
+<div class="row">
+  <div class="col form-contro mb-3">
+    <label [htmlFor]="createForm.head.dateRange.startDate().name()"
+      >วันที่เริ่มกิจกรรม</label
+    >
+    <app-signal-datepicker
+      [id]="createForm.head.dateRange.startDate().name()"
+      [formField]="createForm.head.dateRange.startDate"
+    />
+  </div>
+  <div class="col form-contro mb-3">
+    <label [htmlFor]="createForm.head.dateRange.endDate().name()"
+      >วันที่เริ่มกิจกรรม</label
+    >
+    <app-signal-datepicker
+      [id]="createForm.head.dateRange.endDate().name()"
+      [formField]="createForm.head.dateRange.endDate"
+    />
+  </div>
+</div>
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="form-check">
+      <input
+        type="checkbox"
+        class="me-1 form-check-input"
+        [formField]="createForm.notLight.isDc"
+      />
+      <label
+        class="form-check-label"
+        [htmlFor]="createForm.notLight.isDc().name()"
+        >หักส่วนลด dc</label
+      >
+    </div>
+    <div class="form-check">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        [formField]="createForm.notLight.isRebate"
+      />
+      <label
+        class="form-check-label"
+        [htmlFor]="createForm.notLight.isRebate().name()"
+        >หักส่วนลด rebate</label
+      >
+    </div>
+    <div class="form-check">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        [formField]="createForm.notLight.isComp"
+      />
+      <label
+        class="form-check-label"
+        [htmlFor]="createForm.notLight.isComp().name()"
+        >หักส่วนลด compensate</label
+      >
+    </div>
+    <div class="form-check">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        [formField]="createForm.notLight.isInce"
+      />
+      <label
+        class="form-check-label"
+        [htmlFor]="createForm.notLight.isInce().name()"
+        >หักส่วนลด intensive</label
+      >
+    </div>
+    <div class="form-check">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        [formField]="createForm.notLight.exVat"
+      />
+      <label
+        class="form-check-label"
+        [htmlFor]="createForm.notLight.exVat().name()"
+        >หัก vat</label
+      >
+    </div>
+  </div>
+</div>
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="form-check mb-3">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        [formField]="createForm.stepCondition.cap.isCap"
+      />
+      <label
+        [htmlFor]="createForm.stepCondition.cap.isCap().name()"
+        class="form-check-label"
+        >ไม่กำหนดเพดานยอดซื้อ</label
+      >
+    </div>
+    <div class="mb-3">
+      <label
+        class="form-label"
+        [htmlFor]="createForm.stepCondition.cap.capAmount().name()"
+        >เพดานยอดซื้อ</label
+      >
+      <input
+        class="form-control"
+        type="number"
+        [formField]="createForm.stepCondition.cap.capAmount"
+      />
+    </div>
+    @for (stepForm of createForm.stepCondition.steps; track stepForm().name()) {
+      <div class="row mb-3">
+        <div class="col">
+          <label [htmlFor]="stepForm.min().name()" class="form-label"
+            >ตั้งแต่</label
+          >
+          <input
+            type="number"
+            [formField]="stepForm.min"
+            class="form-control"
+          />
+          <app-form-alert-text [formState]="stepForm.min()" />
+        </div>
+        <div class="col">
+          <label [htmlFor]="stepForm.rate().name()" class="form-label"
+            >คิดรายได้(%)</label
+          >
+          <input
+            type="number"
+            [formField]="stepForm.rate"
+            class="form-control"
+          />
+          <app-form-alert-text [formState]="stepForm.rate()" />
+        </div>
+        <div class="col-1 d-flex flex-column justify-content-end">
+          <span>
+            <button class="btn btn-danger btn-squre">
+              <i class="bi bi-trash"></i>
+            </button>
+          </span>
+        </div>
+      </div>
+    }
+    <div class="col-12">
+      <app-form-alert-text [formState]="createForm.stepCondition.steps()" />
+    </div>
+    <div>
+      <span>
+        <button class="btn btn-success btn-squre" (click)="onAddStep()">
+          <i class="bi bi-plus"></i>
+        </button>
+      </span>
+    </div>
+  </div>
+</div>
+<!-- period -->
+<!-- <div class="mb-3">
+  <label for="period" class="form-label">ระยะเวลาเก็บเงิน</label>
+  <select
+    name="period"
+    id="period"
+    class="form-select"
+    [ngModel]="formData.period"
+    (ngModelChange)="updatePeriod($event)"
+  >
+    <option [ngValue]="0" disabled>กรุณาเลือก</option>
+    <option [ngValue]="1">1 เดือน</option>
+    <option [ngValue]="2">2 เดือน</option>
+    <option [ngValue]="3">3 เดือน</option>
+    <option [ngValue]="6">6 เดือน</option>
+    <option [ngValue]="12">12 เดือน</option>
+  </select>
+</div> -->
+<!-- date picker -->
+<!-- <div class="row">
+  <div class="col">
+    <app-date-input
+      label="วันที่เริ่ม"
+      [date]="formData.startDate"
+      (dateChange)="updateStartDate($event)"
+    />
+  </div>
+  <div class="col">
+    <app-date-input
+      label="วันที่สิ้นสุด"
+      [date]="formData.endDate"
+      (dateChange)="updateEndDate($event)"
+    />
+  </div>
+</div>
+<app-search-comp-subform
+  [compType]="formData.compType"
+  (compTypeChange)="onCompTypeChange($event)"
+  [compCode]="formData.compCode"
+  (compCodeChange)="onCompCodeChange($event)"
+  [compName]="formData.compName"
+  (compNameChange)="updateCompName($event)"
+/> -->
+<!-- @let products = productList();
+@if (eventType() === 1) {
+  @if (validPair().length > 0) {
+    <div class="mb-3">
+      <label for="pairId" class="form-label">เชื่อมกับหัวร่วม (ถ้ามี)</label>
+      <select
+        name="pairId"
+        id="pairId"
+        class="form-select"
+        [ngModel]="pairId()"
+        (ngModelChange)="updateDualPairId($event)"
+      >
+        <option [ngValue]="null">ไม่เชื่อม</option>
+        @for (pair of validPair(); track pair.id) {
+          <option [ngValue]="pair.id">{{ pair.displayName }}</option>
+        }
+      </select>
+    </div>
+  }
+  @if (products !== null && formData.compCode !== "") {
+    <app-search-product-subform
+      [comp]="searchProductParam()"
+      [selectProducts]="products"
+      (onAdd)="handleAdd($event)"
+      (onDelete)="handleDelete($event)"
+    />
+  }
+} -->
+<div>{{ formData() | json }}</div>
