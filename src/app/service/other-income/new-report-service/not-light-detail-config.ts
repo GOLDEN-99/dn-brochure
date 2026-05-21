@@ -76,7 +76,7 @@ export const NotLightContractCols: TContractCol[] = [
 export const NotLightOrderCols: TOrderCol[] = [
     { header: 'เดือน', valueMapper: v => mapMonthIndex(v.monthIndex) },
     { header: 'ยอดซื้อตามวันรับเข้า', valueMapper: v => formatLocalNumber(v.ourAmount) },
-    { header: 'ยอดซื้อตามบิลซัพ', valueMapper: v => formatLocalNumber(v.supplierAmount) },
     { header: 'รายได้ตามวันรับเข้า', valueMapper: v => formatLocalNumber(v.ourIncome) },
+    { header: 'ยอดซื้อตามบิลซัพ', valueMapper: v => formatLocalNumber(v.supplierAmount) },
     { header: 'รายได้ตามบิลซัพ', valueMapper: v => formatLocalNumber(v.supplierIncome) },
 ]
