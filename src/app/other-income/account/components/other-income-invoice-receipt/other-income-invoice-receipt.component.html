@@ -19,7 +19,14 @@
           <td>{{ inv.invAmount | number: "1.2-2" }}</td>
           <td>{{ inv.invRemark }}</td>
           <td>{{ inv.invDate | date }}</td>
-          <td></td>
+          <td>
+            <button
+              class="btn btn-squre btn-danger"
+              (click)="onDeleteInvoice(inv.id)"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
         </tr>
       }
     </tbody>
@@ -40,18 +47,27 @@
       </tr>
     </thead>
     <tbody>
-      @for (inv of receiptList(); track inv.id) {
+      @for (receipt of receiptList(); track receipt.id) {
         <tr>
-          <td>{{ inv.receNumb }}</td>
-          <td>{{ inv.receAmount | number: "1.2-2" }}</td>
-          <td>{{ inv.receRemark }}</td>
-          <td>{{ inv.receDate | date }}</td>
-          <td></td>
+          <td>{{ receipt.receNumb }}</td>
+          <td>{{ receipt.receAmount | number: "1.2-2" }}</td>
+          <td>{{ receipt.receRemark }}</td>
+          <td>{{ receipt.receDate | date }}</td>
+          <td>
+            <button
+              class="btn btn-squre btn-danger"
+              (click)="onDeleteReceipt(receipt.id)"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
         </tr>
       }
     </tbody>
   </table>
 </div>
+<hr />
+<h4>จับคู่ใบแจ้งหนี้ และใบเสร็จรับเงิน</h4>
 <div class="row mb-3">
   <div class="col-4">
     <label class="form-label" [htmlFor]="matchForm.invoice().name()"
@@ -108,16 +124,14 @@
     }
   </div>
 </div>
-<div class="d-flex justify-content-end">
+<div class="d-flex justify-content-end mb-3">
   <span
     ><button
       class="btn btn-success"
       [disabled]="matchForm().invalid()"
       (click)="onMatch()"
     >
-      บันทึก
+      จับคู่
     </button></span
   >
 </div>
-<div>{{ matchForm().value() | json }}</div>
-<div>{{ matchForm().errorSummary() | json }}</div>

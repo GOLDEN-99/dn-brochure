@@ -1,32 +1,26 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { OtherIncomeAccountPeriodService } from '../../services/other-income-account-period.service';
 import { TOtherIncomeInvoice, TOtherIncomeReceipt } from '../../../shared/types/other-income.type';
-import { DatePipe, DecimalPipe, JsonPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { NgbCalendar, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { distinctUntilChanged, map, Observable } from 'rxjs';
 import { form, FormField } from "@angular/forms/signals";
 import { FormsModule } from '@angular/forms';
 import { defaultMatching, matchingSchema } from './matchingForm/matching';
-import { createReceiptSchema, defaultCreateReceipt } from '../form/create-receipt/matchingOnCreate';
-import { TCreateReceiptForm } from '../form/create-receipt/createReceiptForm.type';
-
 import { createInvoiceSchema, defaultInvoice } from '../form/create-invoice/createInvoice';
 import { TCreateInvoiceForm } from '../form/create-invoice/createInvoice.type';
 
 
 @Component({
   selector: 'other-income-invoice-receipt',
-  imports: [DecimalPipe, DatePipe, NgbTypeahead, FormField, JsonPipe, FormsModule],
+  imports: [DecimalPipe, DatePipe, NgbTypeahead, FormField, FormsModule],
   templateUrl: './other-income-invoice-receipt.component.html',
   styleUrl: './other-income-invoice-receipt.component.scss',
 })
 export class OtherIncomeInvoiceReceiptComponent {
+  success = output<string>()
+  fail = output<string>()
   private readonly calendarService = inject(NgbCalendar)
-  private readonly initialCreateReceipt = {
-    ...defaultCreateReceipt, receDate: this.calendarService.getToday()
-  }
-  createReceData = signal<TCreateReceiptForm>(this.initialCreateReceipt)
-  createReceForm = form(this.createReceData, createReceiptSchema)
 
   private readonly initialCreateInvoice: TCreateInvoiceForm = {
     ...defaultInvoice, invDate: this.calendarService.getToday()
@@ -41,7 +35,6 @@ export class OtherIncomeInvoiceReceiptComponent {
   searchReceipt = (term$: Observable<string>) => {
     return term$.pipe(
       distinctUntilChanged(),
-      //debounceTime(300),
       map(t => {
         const normalize = t.toLocaleLowerCase().trim()
         return this.receiptList().filter(({ receNumb, remainingAmount }) => remainingAmount > 0 && receNumb.toLocaleLowerCase().includes(normalize))
@@ -51,8 +44,6 @@ export class OtherIncomeInvoiceReceiptComponent {
 
 
   periodId = input.required<number>();
-  invAmount = input.required<number>();
-  receAmount = input.required<number>();
 
   invoiceList = input.required<TOtherIncomeInvoice[]>();
   formatInvoice = ({ invNumb }: TOtherIncomeInvoice) => invNumb
@@ -93,6 +84,28 @@ export class OtherIncomeInvoiceReceiptComponent {
   }
 
 
+  deleting = signal(false)
   onRefetch() { }
+
+  onDeleteInvoice(invId: number) {
+    this.deleting.set(true)
+    this.periodService.deleteInvoice(this.periodId(), invId).subscribe({
+      next: () => {
+        this.success.emit('ลำสำเร็จ');
+        this.deleting.set(false);
+      },
+      error: (err) => { this.fail.emit(err.message) }
+    })
+  }
+  onDeleteReceipt(receId: number) {
+    this.deleting.set(true)
+    this.periodService.deleteReceipt(this.periodId(), receId).subscribe({
+      next: () => {
+        this.success.emit('ลำสำเร็จ');
+        this.deleting.set(false);
+      },
+      error: (err) => { this.fail.emit(err.message) }
+    })
+  }
 }
 

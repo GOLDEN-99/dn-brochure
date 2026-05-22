@@ -161,10 +161,10 @@
     @if (types.hasType3) {
       <other-income-invoice-receipt
         [receiptList]="currentPeriod.receiptList"
-        [receAmount]="currentPeriod.receAmount"
         [invoiceList]="currentPeriod.invoiceList"
-        [invAmount]="currentPeriod.invAmount"
         [periodId]="currentPeriod.id"
+        (success)="onSuccess($event)"
+        (fail)="onFail($event)"
       />
     }
   </div>
