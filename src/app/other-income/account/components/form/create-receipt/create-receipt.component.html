@@ -25,7 +25,7 @@
   </div>
   <div class="app-form-field">
     <label for="remain-inv">ยอดใบแจ้งหนี้คงเหลือ</label>
-    <input readonly [ngModel]="remainingInvoice()" />
+    <input type="number" [formField]="createForm.remainingInvoice" />
   </div>
   <div class="app-form-field">
     <label [htmlFor]="createForm.receAmount()">ยอดใบแจ้งหนี้</label>
@@ -85,7 +85,11 @@
   <app-form-error-text [formState]="createForm.matches()" />
 </div>
 <div class="modal-footer">
-  <button class="btn btn-primary w-100" [disabled]="createForm().invalid()">
+  <button
+    class="btn btn-primary w-100"
+    [disabled]="cannotSubmit()"
+    (click)="onSubmit()"
+  >
     บันทึก
   </button>
 </div>

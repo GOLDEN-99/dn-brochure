@@ -28,10 +28,10 @@ export type TOtherIncomeCreateReceipt = {
   receDate: string
   receAmount: number
   receRemark: string
-  matches: TOtherIncomeMatchOnCreate[]
+  invoiceMatches: TOtherIncomeMatchOnCreate[]
 }
 
-export type TOtherIncomeReceipt = Omit<TOtherIncomeCreateReceipt, 'matches'> & { id: number, checkDate: string | null, matchedAmount: number, remainingAmount: number }
+export type TOtherIncomeReceipt = Omit<TOtherIncomeCreateReceipt, 'invoiceMatches'> & { id: number, checkDate: string | null, matchedAmount: number, remainingAmount: number }
 
 export type TOtherIncomeCreateCreditNote = {
   creditNumb: string

@@ -12,6 +12,7 @@ export type TCreateReceiptForm = {
     receNumb: string
     receAmount: string
     receRemark: string
+    remainingInvoice: number
     receDate: NgbDateStruct
     matches: Array<TPartialMatchInvoice>
 }

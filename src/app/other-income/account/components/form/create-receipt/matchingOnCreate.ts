@@ -1,4 +1,4 @@
-import { applyEach, required, schema, validate } from "@angular/forms/signals";
+import { applyEach, readonly, required, schema, validate } from "@angular/forms/signals";
 import { TCreateReceiptForm, TPartialMatchInvoice } from "./createReceiptForm.type";
 
 
@@ -21,7 +21,7 @@ export const partialMatchSchema = schema<TPartialMatchInvoice>((schema) => {
     })
 })
 
-export const defaultCreateReceipt: Omit<TCreateReceiptForm, 'receDate'> = {
+export const defaultCreateReceipt: Omit<TCreateReceiptForm, 'receDate' | 'remainingInvoice'> = {
     receNumb: '',
     receAmount: '0',
     receRemark: '',
@@ -31,12 +31,19 @@ export const defaultCreateReceipt: Omit<TCreateReceiptForm, 'receDate'> = {
 export const createReceiptSchema = schema<TCreateReceiptForm>((schema) => {
     required(schema.receNumb, { message: 'กรุณาใส่เลขที่ใบแจ้งหนี้' })
     required(schema.receAmount, { message: 'กรุณากรอกตัวเลข' })
+    readonly(schema.remainingInvoice)
     validate(schema.receAmount, ({ value }) => {
         const current = value()
         const parsed = Number.parseFloat(current)
         if (Number.isNaN(parsed)) return { kind: 'invalid-numeric', message: 'กรุณากรอกตัวเลข' }
         if (parsed <= 0) return { kind: 'invalid-amount', message: `ยอดจับคู่ต้องมากกว่า 0` }
         return null
+    })
+    validate(schema.receAmount, ({ value, valueOf }) => {
+        const current = value();
+        const receNumber = Number.parseFloat(current);
+        if (Number.isNaN(receNumber)) return null
+        return receNumber > valueOf(schema.remainingInvoice) ? { kind: 'max', message: 'ยอดใบเสร็จมากกว่ายอดใบแจ้งหนี้คงเหลือ' } : null
     })
     applyEach(schema.matches, partialMatchSchema)
     validate(schema.matches, ({ value, valueOf }) => {

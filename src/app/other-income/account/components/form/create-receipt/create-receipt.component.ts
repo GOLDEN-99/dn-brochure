@@ -6,7 +6,7 @@ import { TOtherIncomeInvoice } from '../../../../shared/types/other-income.type'
 import { distinctUntilChanged, map, Observable } from 'rxjs';
 import { NgbCalendar, NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
-import { createReceiptSchemaWithMaximum, defaultCreateReceipt } from './matchingOnCreate';
+import { createReceiptSchema, defaultCreateReceipt } from './matchingOnCreate';
 import { OtherIncomeAccountPeriodService } from '../../../services/other-income-account-period.service';
 import { ngbDateToIso } from '../../../../shared/libs/date-time';
 import { FormErrorTextComponent } from "../../../../../shared/components/form-error-text/form-error-text.component";
@@ -21,22 +21,23 @@ export class CreateReceiptComponent {
   closeModal = output<void>()
   success = output<any>()
   fail = output<any>()
+  submitting = signal(false)
   private readonly calendar = inject(NgbCalendar)
   private readonly accountPeriodService = inject(OtherIncomeAccountPeriodService)
   invoiceList = input.required<TOtherIncomeInvoice[]>();
   periodId = input.required<number>()
   totalInvoice = input(0)
   remainingInvoice = input(0)
-  schemaFn = computed(() => createReceiptSchemaWithMaximum(this.remainingInvoice()))
 
 
   private readonly formData = linkedSignal<TCreateReceiptForm>(() => {
     const remaining = this.remainingInvoice()
     const receDate = this.calendar.getToday()
-    return { ...defaultCreateReceipt, receDate, receAmount: String(remaining) }
+    const remainingInvoice = this.remainingInvoice()
+    return { ...defaultCreateReceipt, receDate, remainingInvoice, receAmount: String(remaining) }
   })
 
-  createForm = form(this.formData, this.schemaFn())
+  createForm = form(this.formData, createReceiptSchema)
 
   formatInvoice = ({ invNumb }: TOtherIncomeInvoice) => invNumb
   selectedInvoice = signal<TOtherIncomeInvoice | null>(null)
@@ -51,10 +52,11 @@ export class CreateReceiptComponent {
     )
   }
   onSelectInvoice({ item }: NgbTypeaheadSelectItemEvent<TOtherIncomeInvoice>) {
-    this.createForm.matches().controlValue.update(prev => [...prev, { invoice: item, matchAmount: '0' }])
+    this.createForm.matches().controlValue.update(prev => [...prev, { invoice: item, matchAmount: String(item.remainingAmount) }])
   }
 
   onSubmit() {
+    this.submitting.set(true)
     const formState = this.createForm()
     if (formState.invalid()) {
       this.fail.emit(formState.errorSummary());
@@ -66,13 +68,19 @@ export class CreateReceiptComponent {
       receDate: ngbDateToIso(receDate),
       receRemark,
       receAmount: Number.parseFloat(receAmount),
-      matches: matches.map(({ invoice, matchAmount }) => ({ invoiceId: invoice.id, matchedAmount: Number.parseFloat(matchAmount) }))
+      invoiceMatches: matches.map(({ invoice, matchAmount }) => ({ invoiceId: invoice.id, matchedAmount: Number.parseFloat(matchAmount) }))
     }).subscribe({
       next: () => {
         this.success.emit('ok')
       },
-      error: (err) => this.fail.emit(err),
-      complete: () => { }
+      error: (err) => {
+        this.fail.emit(err)
+      },
+      complete: () => {
+        this.submitting.set(false)
+      }
     })
   }
+
+  cannotSubmit = computed(() => this.createForm().invalid() || this.submitting())
 }
