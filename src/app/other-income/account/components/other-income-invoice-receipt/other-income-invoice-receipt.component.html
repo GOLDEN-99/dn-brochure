@@ -23,6 +23,7 @@
             <button
               class="btn btn-squre btn-danger"
               (click)="onDeleteInvoice(inv.id)"
+              [disabled]="cannotDeleteInvoice()"
             >
               <i class="bi bi-trash"></i>
             </button>
@@ -57,6 +58,7 @@
             <button
               class="btn btn-squre btn-danger"
               (click)="onDeleteReceipt(receipt.id)"
+              [disabled]="cannotDeleteReceipt()"
             >
               <i class="bi bi-trash"></i>
             </button>

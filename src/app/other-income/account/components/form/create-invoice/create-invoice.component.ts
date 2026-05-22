@@ -1,4 +1,4 @@
-import { Component, inject, input, linkedSignal, output } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { SignalDatepickerComponent } from "../../../../../components/crm-promotion/signal-datepicker.component";
 import { form, FormField } from "@angular/forms/signals";
 import { TCreateInvoiceForm } from './createInvoice.type';
@@ -18,6 +18,7 @@ export class CreateInvoiceComponent {
   closeModal = output<void>()
   success = output<any>()
   fail = output<any>()
+  submitting = signal(false)
   private readonly calendar = inject(NgbCalendar)
   private readonly accountPeriodService = inject(OtherIncomeAccountPeriodService)
   periodId = input.required<number>()
@@ -35,6 +36,7 @@ export class CreateInvoiceComponent {
   createForm = form(this.formData, createInvoiceSchema)
 
   onSubmit() {
+    this.submitting.set(true)
     const formState = this.createForm()
     if (formState.invalid()) {
       this.fail.emit(formState.errorSummary());
@@ -48,10 +50,15 @@ export class CreateInvoiceComponent {
       invAmount: Number.parseFloat(invAmount),
     }).subscribe({
       next: () => {
-        this.success.emit('ok')
+        this.success.emit('ok');
+        this.closeModal.emit();
       },
       error: (err) => this.fail.emit(err),
-      complete: () => { }
+      complete: () => {
+        this.submitting.set(false)
+      }
     })
   }
+
+  cannotSubmit = computed(() => this.createForm().invalid() || this.submitting())
 }

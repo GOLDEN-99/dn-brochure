@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { OtherIncomeAccountPeriodService } from '../../services/other-income-account-period.service';
 import { TOtherIncomeInvoice, TOtherIncomeReceipt } from '../../../shared/types/other-income.type';
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -20,6 +20,7 @@ import { TCreateInvoiceForm } from '../form/create-invoice/createInvoice.type';
 export class OtherIncomeInvoiceReceiptComponent {
   success = output<string>()
   fail = output<string>()
+  canDelete = input(false)
   private readonly calendarService = inject(NgbCalendar)
 
   private readonly initialCreateInvoice: TCreateInvoiceForm = {
@@ -83,9 +84,11 @@ export class OtherIncomeInvoiceReceiptComponent {
     })
   }
 
+  onRefetch() { }
 
   deleting = signal(false)
-  onRefetch() { }
+  cannotDeleteInvoice = computed(() => this.deleting() || !this.canDelete())
+  cannotDeleteReceipt = computed(() => this.deleting() || !this.canDelete())
 
   onDeleteInvoice(invId: number) {
     this.deleting.set(true)

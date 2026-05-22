@@ -160,6 +160,7 @@
     <!-- end period here -->
     @if (types.hasType3) {
       <other-income-invoice-receipt
+        [canDelete]="!isPurchase()"
         [receiptList]="currentPeriod.receiptList"
         [invoiceList]="currentPeriod.invoiceList"
         [periodId]="currentPeriod.id"
