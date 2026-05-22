@@ -149,6 +149,8 @@ export type TInviceItemDto = {
     invAmount: number
     invDate: string
     invRemark: string
+    matchedAmount: number
+    remainingAmount: number
     checkDate: string | null
 }
 
@@ -168,6 +170,8 @@ export type TReceiptItemDto = {
     receRemark: string
     receDate: string
     checkDate: string | null
+    matchedAmount: number
+    remainingAmount: number
 }
 
 export type TPopulatedPeriodResult = {

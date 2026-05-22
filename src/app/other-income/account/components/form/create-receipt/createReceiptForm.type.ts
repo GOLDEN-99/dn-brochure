@@ -4,7 +4,7 @@ import { TOtherIncomeInvoice } from "../../../../shared/types/other-income.type"
 export type TMaybeString = TOtherIncomeInvoice | string
 
 export type TPartialMatchInvoice = {
-    invoice: TMaybeString,
+    invoice: TOtherIncomeInvoice,
     matchAmount: string
 }
 

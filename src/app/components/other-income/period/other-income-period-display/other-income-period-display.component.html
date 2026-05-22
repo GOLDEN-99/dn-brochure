@@ -261,13 +261,19 @@
 
 <!-- Invoice Modal -->
 <ng-template #invoiceModal let-modal>
-  <app-other-income-invoice-modal
-    [periodId]="period().id"
-    [incomeAmount]="period().totalIncome"
-    [addedAmount]="period().invAmount"
+  <other-income-create-invoice
+    [periodId]="currentPeriod.id"
+    [totalIncome]="currentPeriod.totalIncome"
+    [remainingIncome]="
+      currentPeriod.totalIncome -
+      currentPeriod.billDiscountAmount -
+      currentPeriod.freeItemAmount -
+      currentPeriod.creditAmount -
+      currentPeriod.invAmount
+    "
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
-    (close)="modal.dismiss()"
+    (closeModal)="modal.dismiss()"
   />
 </ng-template>
 
@@ -285,12 +291,13 @@
 
 <!-- Receipt Modal -->
 <ng-template #receiptModal let-modal>
-  <app-other-income-receipt-modal
-    [periodId]="period().id"
-    [invAmount]="period().invAmount"
-    [receAmount]="period().receAmount"
+  <other-income-create-receipt
+    [periodId]="currentPeriod.id"
+    [totalInvoice]="currentPeriod.invAmount"
+    [remainingInvoice]="currentPeriod.invAmount - currentPeriod.receAmount"
+    [invoiceList]="currentPeriod.invoiceList"
+    (closeModal)="modal.dismiss()"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
-    (close)="modal.dismiss()"
   />
 </ng-template>

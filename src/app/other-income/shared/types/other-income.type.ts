@@ -17,7 +17,7 @@ export type TOtherIncomeCreateInvoice = {
   invRemark: string
 }
 
-export type TOtherIncomeInvoice = TOtherIncomeCreateInvoice & { id: number, checkDate: string | null }
+export type TOtherIncomeInvoice = TOtherIncomeCreateInvoice & { id: number, checkDate: string | null, matchedAmount: number, remainingAmount: number }
 
 export type TOtherIncomeMatching = { invoiceId: number, receiptId: number, matchedAmount: number }
 
@@ -31,7 +31,7 @@ export type TOtherIncomeCreateReceipt = {
   matches: TOtherIncomeMatchOnCreate[]
 }
 
-export type TOtherIncomeReceipt = Omit<TOtherIncomeCreateReceipt, 'matches'> & { id: number, checkDate: string | null }
+export type TOtherIncomeReceipt = Omit<TOtherIncomeCreateReceipt, 'matches'> & { id: number, checkDate: string | null, matchedAmount: number, remainingAmount: number }
 
 export type TOtherIncomeCreateCreditNote = {
   creditNumb: string

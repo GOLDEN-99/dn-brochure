@@ -9,15 +9,14 @@ import { FormsModule } from '@angular/forms';
 import { defaultMatching, matchingSchema } from './matchingForm/matching';
 import { createReceiptSchema, defaultCreateReceipt } from '../form/create-receipt/matchingOnCreate';
 import { TCreateReceiptForm } from '../form/create-receipt/createReceiptForm.type';
-import { CreateInvoiceComponent } from "../form/create-invoice/create-invoice.component";
+
 import { createInvoiceSchema, defaultInvoice } from '../form/create-invoice/createInvoice';
 import { TCreateInvoiceForm } from '../form/create-invoice/createInvoice.type';
-import { CreateReceiptComponent } from "../form/create-receipt/create-receipt.component";
 
 
 @Component({
   selector: 'other-income-invoice-receipt',
-  imports: [DecimalPipe, DatePipe, NgbTypeahead, FormField, JsonPipe, FormsModule, CreateInvoiceComponent, CreateReceiptComponent],
+  imports: [DecimalPipe, DatePipe, NgbTypeahead, FormField, JsonPipe, FormsModule],
   templateUrl: './other-income-invoice-receipt.component.html',
   styleUrl: './other-income-invoice-receipt.component.scss',
 })
@@ -45,7 +44,7 @@ export class OtherIncomeInvoiceReceiptComponent {
       //debounceTime(300),
       map(t => {
         const normalize = t.toLocaleLowerCase().trim()
-        return this.receiptList().filter(({ receNumb }) => receNumb.toLocaleLowerCase().includes(normalize))
+        return this.receiptList().filter(({ receNumb, remainingAmount }) => remainingAmount > 0 && receNumb.toLocaleLowerCase().includes(normalize))
       })
     )
   }
@@ -64,7 +63,7 @@ export class OtherIncomeInvoiceReceiptComponent {
       //debounceTime(300),
       map(t => {
         const normalize = t.toLocaleLowerCase().trim()
-        return this.invoiceList().filter(({ invNumb }) => invNumb.toLocaleLowerCase().includes(normalize))
+        return this.invoiceList().filter(({ invNumb, remainingAmount }) => remainingAmount > 0 && invNumb.toLocaleLowerCase().includes(normalize))
       })
     )
   }

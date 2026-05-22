@@ -1,19 +1,42 @@
-@let formTree = form();
-<div class="mb-3">
-  <label [htmlFor]="formTree.invDate().name()" class="form-label"
-    >วันที่ใบแจ้งหนี้</label
-  >
-  <app-signal-datepicker [formField]="formTree.invDate" />
+<div class="modal-header">
+  <h4 class="modal-title">เพิ่มใบแจ้งหนี้</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="closeModal.emit()"
+  ></button>
 </div>
-<div class="app-form-field">
-  <label [htmlFor]="formTree.invNumb()">เลขที่ใบแจ้งหนี้</label>
-  <input type="text" [formField]="formTree.invNumb" />
+<div class="modal-body">
+  <div class="mb-3">
+    <label [htmlFor]="createForm.invDate().name()" class="form-label"
+      >วันที่ใบแจ้งหนี้</label
+    >
+    <app-signal-datepicker [formField]="createForm.invDate" />
+  </div>
+  <div class="app-form-field">
+    <label [htmlFor]="createForm.invNumb()">เลขที่ใบแจ้งหนี้</label>
+    <input type="text" [formField]="createForm.invNumb" />
+  </div>
+  <div class="app-form-field">
+    <label for="total-income">รายได้ตามรอบบัญชี</label>
+    <input [ngModel]="totalIncome()" name="total-income" readonly />
+  </div>
+  <div class="app-form-field">
+    <label for="remain-income">รายได้ตามรอบบัญชีคงเหลือ</label>
+    <input [ngModel]="remainingIncome()" name="remain-income" readonly />
+  </div>
+  <div class="app-form-field">
+    <label [htmlFor]="createForm.invAmount()">ยอดใบแจ้งหนี้</label>
+    <input type="text" [formField]="createForm.invAmount" />
+  </div>
+  <div class="app-form-field">
+    <label [htmlFor]="createForm.invRemark()">หมายเหตุ</label>
+    <textarea type="text" [formField]="createForm.invRemark"></textarea>
+  </div>
 </div>
-<div class="app-form-field">
-  <label [htmlFor]="formTree.invAmount()">ยอดใบแจ้งหนี้</label>
-  <input type="text" [formField]="formTree.invAmount" />
-</div>
-<div class="app-form-field">
-  <label [htmlFor]="formTree.invRemark()">หมายเหตุ</label>
-  <textarea type="text" [formField]="formTree.invRemark"></textarea>
+<div class="modal-footer">
+  <button class="btn btn-primary w-100" [disabled]="createForm().invalid()">
+    บันทึก
+  </button>
 </div>

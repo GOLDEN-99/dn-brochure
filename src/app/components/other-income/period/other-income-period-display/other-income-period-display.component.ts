@@ -4,19 +4,17 @@ import { BasePeriodComponent } from '../base-period.component';
 import { EditPeriodModalComponent } from '../edit-period-modal/edit-period-modal.component';
 import { OtherIncomeOrderPeriodComponent } from '../other-income-order-period.component';
 import { OtherIncomeGoodOrderPeriodComponent } from '../other-income-good-order-period.component';
-import { OtherIncomeInvoicePeriodComponent } from '../other-income-invoice-period.component';
-import { OtherIncomeReceiptPeriodComponent } from '../other-income-receipt-period.component';
 import { OtherIncomeCreditPeriodComponent } from '../other-income-credit-period.component';
 import { OtherIncomeOrderModalComponent } from '../other-income-order-modal/other-income-order-modal.component';
 import { OtherIncomeGoodOrderModalComponent } from '../other-income-good-order-modal/other-income-good-order-modal.component';
-import { OtherIncomeInvoiceModalComponent } from '../other-income-invoice-modal.component';
-import { OtherIncomeReceiptModalComponent } from '../other-income-receipt-modal.component';
 import { OtherIncomeCreditModalComponent } from '../other-income-credit-modal.component';
 import { formatLocalNumber } from '../../../../lib/formatter';
 import { PeriodStatus, TFieldSelector } from '../../../../types';
 import { PeriodService } from '../../../../service/other-income/period.service';
 import { TIncome } from '../../../../service/other-income/income.service';
 import { OtherIncomeInvoiceReceiptComponent } from '../../../../other-income/account/components/other-income-invoice-receipt/other-income-invoice-receipt.component';
+import { CreateInvoiceComponent } from '../../../../other-income/account/components/form/create-invoice/create-invoice.component';
+import { CreateReceiptComponent } from "../../../../other-income/account/components/form/create-receipt/create-receipt.component";
 
 @Component({
   selector: 'app-other-income-period-display',
@@ -24,15 +22,13 @@ import { OtherIncomeInvoiceReceiptComponent } from '../../../../other-income/acc
     EditPeriodModalComponent,
     OtherIncomeOrderPeriodComponent,
     OtherIncomeGoodOrderPeriodComponent,
-    OtherIncomeInvoicePeriodComponent,
-    OtherIncomeReceiptPeriodComponent,
     OtherIncomeCreditPeriodComponent,
     OtherIncomeOrderModalComponent,
     OtherIncomeGoodOrderModalComponent,
-    OtherIncomeInvoiceModalComponent,
-    OtherIncomeReceiptModalComponent,
     OtherIncomeCreditModalComponent,
-    OtherIncomeInvoiceReceiptComponent
+    OtherIncomeInvoiceReceiptComponent,
+    CreateInvoiceComponent,
+    CreateReceiptComponent
   ],
   templateUrl: './other-income-period-display.component.html',
   styleUrl: './other-income-period-display.component.scss'

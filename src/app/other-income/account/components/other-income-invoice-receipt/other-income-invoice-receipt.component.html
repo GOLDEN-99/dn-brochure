@@ -121,11 +121,3 @@
 </div>
 <div>{{ matchForm().value() | json }}</div>
 <div>{{ matchForm().errorSummary() | json }}</div>
-
-<div>
-  <other-income-create-invoice [form]="createInvoiceForm" />
-  <other-income-create-receipt
-    [form]="createReceForm"
-    [invoiceList]="invoiceList()"
-  />
-</div>
