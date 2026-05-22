@@ -1,23 +1,23 @@
 import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
-import { SignalDatepickerComponent } from "../../../../../components/crm-promotion/signal-datepicker.component";
-import { form, FormField } from "@angular/forms/signals";
-import { TCreateInvoiceForm } from './createInvoice.type';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { OtherIncomeAccountPeriodService } from '../../../services/other-income-account-period.service';
-import { createInvoiceSchema, defaultInvoice } from './createInvoice';
+import { TCreateCreditNoteForm } from './createCreditNote.type';
+import { createCreditNoteSchema, defaultCreditNote } from './createCrediteNote';
+import { form, FormField } from '@angular/forms/signals';
 import { ngbDateToIso } from '../../../../shared/libs/date-time';
+import { SignalDatepickerComponent } from "../../../../../components/crm-promotion/signal-datepicker.component";
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'other-income-create-invoice',
+  selector: 'other-income-create-credit-note',
   imports: [SignalDatepickerComponent, FormField, FormsModule],
-  templateUrl: './create-invoice.component.html',
+  templateUrl: './create-credit-note.component.html',
   styles: '',
 })
-export class CreateInvoiceComponent {
+export class CreateCreditNoteComponent {
   closeModal = output<void>()
-  success = output<any>()
-  fail = output<any>()
+  success = output<string>()
+  fail = output<string>()
   submitting = signal(false)
   private readonly calendar = inject(NgbCalendar)
   private readonly accountPeriodService = inject(OtherIncomeAccountPeriodService)
@@ -25,28 +25,28 @@ export class CreateInvoiceComponent {
   totalIncome = input(0)
   remainingIncome = input(0)
 
-  private readonly formData = linkedSignal<TCreateInvoiceForm>(() => {
+  private readonly formData = linkedSignal<TCreateCreditNoteForm>(() => {
     const remaining = this.remainingIncome()
-    const invDate = this.calendar.getToday()
-    return { ...defaultInvoice, invDate, remainingIncome: remaining, invAmount: String(remaining) }
+    const creditDate = this.calendar.getToday()
+    return { ...defaultCreditNote, creditDate, remainingIncome: remaining, creditAmount: String(remaining) }
   })
 
-  createForm = form(this.formData, createInvoiceSchema)
+  createForm = form(this.formData, createCreditNoteSchema)
 
   onSubmit() {
     this.submitting.set(true)
     const formState = this.createForm()
     if (formState.invalid()) {
       this.submitting.set(false)
-      this.fail.emit(formState.errorSummary());
+      this.fail.emit(formState.errorSummary().map(({ message }) => message).join('\n'));
       return
     }
-    const { invNumb, invAmount, invRemark, invDate } = formState.value();
-    this.accountPeriodService.insertInv(this.periodId(), {
-      invNumb,
-      invDate: ngbDateToIso(invDate),
-      invRemark,
-      invAmount: Number.parseFloat(invAmount),
+    const { creditNumb, creditAmount, creditRemark, creditDate } = formState.value();
+    this.accountPeriodService.insertCredit(this.periodId(), {
+      creditNumb,
+      creditDate: ngbDateToIso(creditDate),
+      creditRemark,
+      creditAmount: Number.parseFloat(creditAmount),
     }).subscribe({
       next: () => {
         this.submitting.set(false)

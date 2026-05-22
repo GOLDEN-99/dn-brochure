@@ -280,10 +280,16 @@
 
 <!-- Credit Modal -->
 <ng-template #creditModal let-modal>
-  <app-other-income-credit-modal
+  <other-income-create-credit-note
     [periodId]="period().id"
-    [incomeAmount]="period().totalIncome"
-    [addedAmount]="period().creditAmount"
+    [totalIncome]="currentPeriod.totalIncome"
+    [remainingIncome]="
+      currentPeriod.totalIncome -
+      currentPeriod.billDiscountAmount -
+      currentPeriod.freeItemAmount -
+      currentPeriod.creditAmount -
+      currentPeriod.invAmount
+    "
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
     (close)="modal.dismiss()"

@@ -6,7 +6,7 @@ import { TOtherIncomeInvoice } from '../../../../shared/types/other-income.type'
 import { distinctUntilChanged, map, Observable } from 'rxjs';
 import { NgbCalendar, NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
-import { createReceiptSchema, defaultCreateReceipt } from './matchingOnCreate';
+import { createReceiptSchema, defaultCreateReceipt } from './createReceiptForm';
 import { OtherIncomeAccountPeriodService } from '../../../services/other-income-account-period.service';
 import { ngbDateToIso } from '../../../../shared/libs/date-time';
 import { FormErrorTextComponent } from "../../../../../shared/components/form-error-text/form-error-text.component";
@@ -15,7 +15,7 @@ import { FormErrorTextComponent } from "../../../../../shared/components/form-er
   selector: 'other-income-create-receipt',
   imports: [SignalDatepickerComponent, FormField, NgbTypeahead, FormsModule, FormErrorTextComponent],
   templateUrl: './create-receipt.component.html',
-  styleUrl: './create-receipt.component.scss',
+  styles: '',
 })
 export class CreateReceiptComponent {
   closeModal = output<void>()
@@ -33,18 +33,15 @@ export class CreateReceiptComponent {
   private readonly formData = linkedSignal<TCreateReceiptForm>(() => {
     const remaining = this.remainingInvoice()
     const receDate = this.calendar.getToday()
-    const remainingInvoice = this.remainingInvoice()
-    return { ...defaultCreateReceipt, receDate, remainingInvoice, receAmount: String(remaining) }
+    return { ...defaultCreateReceipt, receDate, remainingInvoice: remaining, receAmount: String(remaining) }
   })
 
   createForm = form(this.formData, createReceiptSchema)
 
   formatInvoice = ({ invNumb }: TOtherIncomeInvoice) => invNumb
-  selectedInvoice = signal<TOtherIncomeInvoice | null>(null)
   searchInvoice = (term$: Observable<string>) => {
     return term$.pipe(
       distinctUntilChanged(),
-      //debounceTime(300),
       map(t => {
         const normalize = t.toLocaleLowerCase().trim()
         return this.invoiceList().filter(({ invNumb, remainingAmount }) => remainingAmount > 0 && invNumb.toLocaleLowerCase().includes(normalize))
@@ -59,6 +56,7 @@ export class CreateReceiptComponent {
     this.submitting.set(true)
     const formState = this.createForm()
     if (formState.invalid()) {
+      this.submitting.set(false)
       this.fail.emit(formState.errorSummary());
       return
     }
@@ -71,13 +69,13 @@ export class CreateReceiptComponent {
       invoiceMatches: matches.map(({ invoice, matchAmount }) => ({ invoiceId: invoice.id, matchedAmount: Number.parseFloat(matchAmount) }))
     }).subscribe({
       next: () => {
+        this.submitting.set(false)
         this.success.emit('ok')
+        this.closeModal.emit()
       },
       error: (err) => {
-        this.fail.emit(err)
-      },
-      complete: () => {
         this.submitting.set(false)
+        this.fail.emit(err)
       }
     })
   }

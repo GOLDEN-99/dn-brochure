@@ -1,8 +1,6 @@
 import { applyEach, readonly, required, schema, validate } from "@angular/forms/signals";
 import { TCreateReceiptForm, TPartialMatchInvoice } from "./createReceiptForm.type";
-
-
-// export const defaultPartialMatch: TPartialMatchInvoice = { invoice: '', matchAmount: '0' }
+import { validateAmountField } from "../../../../../shared/libs/signal-form-custom-vaildator";
 
 export const partialMatchSchema = schema<TPartialMatchInvoice>((schema) => {
     required(schema.invoice, { message: 'กรุณาเลือกใบแจ้งหนี้' })
@@ -29,22 +27,10 @@ export const defaultCreateReceipt: Omit<TCreateReceiptForm, 'receDate' | 'remain
 }
 
 export const createReceiptSchema = schema<TCreateReceiptForm>((schema) => {
-    required(schema.receNumb, { message: 'กรุณาใส่เลขที่ใบแจ้งหนี้' })
+    required(schema.receNumb, { message: 'กรุณาใส่เลขที่ใบเสร็จ' })
     required(schema.receAmount, { message: 'กรุณากรอกตัวเลข' })
     readonly(schema.remainingInvoice)
-    validate(schema.receAmount, ({ value }) => {
-        const current = value()
-        const parsed = Number.parseFloat(current)
-        if (Number.isNaN(parsed)) return { kind: 'invalid-numeric', message: 'กรุณากรอกตัวเลข' }
-        if (parsed <= 0) return { kind: 'invalid-amount', message: `ยอดจับคู่ต้องมากกว่า 0` }
-        return null
-    })
-    validate(schema.receAmount, ({ value, valueOf }) => {
-        const current = value();
-        const receNumber = Number.parseFloat(current);
-        if (Number.isNaN(receNumber)) return null
-        return receNumber > valueOf(schema.remainingInvoice) ? { kind: 'max', message: 'ยอดใบเสร็จมากกว่ายอดใบแจ้งหนี้คงเหลือ' } : null
-    })
+    validateAmountField(schema.receAmount, schema.remainingInvoice, 'ยอดใบเสร็จมากกว่ายอดใบแจ้งหนี้คงเหลือ')
     applyEach(schema.matches, partialMatchSchema)
     validate(schema.matches, ({ value, valueOf }) => {
         const ref = new Map<string, number>()
@@ -57,10 +43,9 @@ export const createReceiptSchema = schema<TCreateReceiptForm>((schema) => {
             acc += matchNumber
             if (acc > maximum) return { kind: 'invalid-acc-match', message: 'ยอดจับคู่มากกว่ายอดใบเสร็จ' }
             const amount = ref.get(invNumb)
-            // validate each invoice remaining should be greater than match for each invoice
             if (typeof amount === 'number') {
                 const newAmount = amount - matchNumber;
-                if (newAmount < 0) return { kind: 'invalid-match', message: 'ยอดจับคู่มากกว่ายอดที่เหลือยู่' }
+                if (newAmount < 0) return { kind: 'invalid-match', message: 'ยอดจับคู่มากกว่ายอดที่เหลืออยู่' }
                 ref.set(invNumb, newAmount);
             } else {
                 ref.set(invNumb, remainingAmount - matchNumber)
@@ -71,20 +56,13 @@ export const createReceiptSchema = schema<TCreateReceiptForm>((schema) => {
 })
 
 export const createReceiptSchemaWithMaximum = (maximum: number) => schema<TCreateReceiptForm>((schema) => {
-    required(schema.receNumb, { message: 'กรุณาใส่เลขที่ใบแจ้งหนี้' })
+    required(schema.receNumb, { message: 'กรุณาใส่เลขที่ใบเสร็จ' })
     required(schema.receAmount, { message: 'กรุณากรอกตัวเลข' })
     validate(schema.receAmount, ({ value }) => {
-        const current = value();
-        const receNumber = Number.parseFloat(current);
-        if (Number.isNaN(receNumber)) return null
-        return receNumber > maximum ? { kind: 'max', message: 'ยอดใบเสร็จมากกว่ายอดใบแจ้งหนี้คงเหลือ' } : null
-    })
-    validate(schema.receAmount, ({ value }) => {
-        const current = value()
-        const parsed = Number.parseFloat(current)
+        const parsed = Number.parseFloat(value())
         if (Number.isNaN(parsed)) return { kind: 'invalid-numeric', message: 'กรุณากรอกตัวเลข' }
         if (parsed <= 0) return { kind: 'invalid-amount', message: `ยอดจับคู่ต้องมากกว่า 0` }
-        return null
+        return parsed > maximum ? { kind: 'max', message: 'ยอดใบเสร็จมากกว่ายอดใบแจ้งหนี้คงเหลือ' } : null
     })
     applyEach(schema.matches, partialMatchSchema)
     validate(schema.matches, ({ value, valueOf }) => {
@@ -98,10 +76,9 @@ export const createReceiptSchemaWithMaximum = (maximum: number) => schema<TCreat
             acc += matchNumber
             if (acc > maximum) return { kind: 'invalid-acc-match', message: 'ยอดจับคู่มากกว่ายอดใบเสร็จ' }
             const amount = ref.get(invNumb)
-            // validate each invoice remaining should be greater than match for each invoice
             if (typeof amount === 'number') {
                 const newAmount = amount - matchNumber;
-                if (newAmount < 0) return { kind: 'invalid-match', message: 'ยอดจับคู่มากกว่ายอดที่เหลือยู่' }
+                if (newAmount < 0) return { kind: 'invalid-match', message: 'ยอดจับคู่มากกว่ายอดที่เหลืออยู่' }
                 ref.set(invNumb, newAmount);
             } else {
                 ref.set(invNumb, remainingAmount - matchNumber)

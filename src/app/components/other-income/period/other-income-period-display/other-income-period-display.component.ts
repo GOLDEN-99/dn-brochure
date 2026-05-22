@@ -7,7 +7,6 @@ import { OtherIncomeGoodOrderPeriodComponent } from '../other-income-good-order-
 import { OtherIncomeCreditPeriodComponent } from '../other-income-credit-period.component';
 import { OtherIncomeOrderModalComponent } from '../other-income-order-modal/other-income-order-modal.component';
 import { OtherIncomeGoodOrderModalComponent } from '../other-income-good-order-modal/other-income-good-order-modal.component';
-import { OtherIncomeCreditModalComponent } from '../other-income-credit-modal.component';
 import { formatLocalNumber } from '../../../../lib/formatter';
 import { PeriodStatus, TFieldSelector } from '../../../../types';
 import { PeriodService } from '../../../../service/other-income/period.service';
@@ -15,6 +14,7 @@ import { TIncome } from '../../../../service/other-income/income.service';
 import { OtherIncomeInvoiceReceiptComponent } from '../../../../other-income/account/components/other-income-invoice-receipt/other-income-invoice-receipt.component';
 import { CreateInvoiceComponent } from '../../../../other-income/account/components/form/create-invoice/create-invoice.component';
 import { CreateReceiptComponent } from "../../../../other-income/account/components/form/create-receipt/create-receipt.component";
+import { CreateCreditNoteComponent } from "../../../../other-income/account/components/form/create-credit-note/create-credit-note.component";
 
 @Component({
   selector: 'app-other-income-period-display',
@@ -25,10 +25,10 @@ import { CreateReceiptComponent } from "../../../../other-income/account/compone
     OtherIncomeCreditPeriodComponent,
     OtherIncomeOrderModalComponent,
     OtherIncomeGoodOrderModalComponent,
-    OtherIncomeCreditModalComponent,
     OtherIncomeInvoiceReceiptComponent,
     CreateInvoiceComponent,
-    CreateReceiptComponent
+    CreateReceiptComponent,
+    CreateCreditNoteComponent
   ],
   templateUrl: './other-income-period-display.component.html',
   styleUrl: './other-income-period-display.component.scss'

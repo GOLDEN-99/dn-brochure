@@ -2,13 +2,11 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { OtherIncomeAccountPeriodService } from '../../services/other-income-account-period.service';
 import { TOtherIncomeInvoice, TOtherIncomeReceipt } from '../../../shared/types/other-income.type';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { NgbCalendar, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { distinctUntilChanged, map, Observable } from 'rxjs';
 import { form, FormField } from "@angular/forms/signals";
 import { FormsModule } from '@angular/forms';
 import { defaultMatching, matchingSchema } from './matchingForm/matching';
-import { createInvoiceSchema, defaultInvoice } from '../form/create-invoice/createInvoice';
-import { TCreateInvoiceForm } from '../form/create-invoice/createInvoice.type';
 
 
 @Component({
@@ -21,14 +19,6 @@ export class OtherIncomeInvoiceReceiptComponent {
   success = output<string>()
   fail = output<string>()
   canDelete = input(false)
-  private readonly calendarService = inject(NgbCalendar)
-
-  private readonly initialCreateInvoice: TCreateInvoiceForm = {
-    ...defaultInvoice, invDate: this.calendarService.getToday()
-  }
-  createInvData = signal(this.initialCreateInvoice)
-  createInvoiceForm = form(this.createInvData, createInvoiceSchema)
-
   private readonly periodService = inject(OtherIncomeAccountPeriodService);
 
   receiptList = input.required<TOtherIncomeReceipt[]>();

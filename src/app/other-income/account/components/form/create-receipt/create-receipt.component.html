@@ -11,12 +11,12 @@
 <div class="modal-body">
   <div class="mb-3">
     <label [htmlFor]="createForm.receDate().name()" class="form-label"
-      >วันที่ใบแจ้งหนี้</label
+      >วันที่ใบเสร็จ</label
     >
     <app-signal-datepicker [formField]="createForm.receDate" />
   </div>
   <div class="app-form-field">
-    <label [htmlFor]="createForm.receNumb()">เลขที่ใบแจ้งหนี้</label>
+    <label [htmlFor]="createForm.receNumb()">เลขที่ใบเสร็จ</label>
     <input type="text" [formField]="createForm.receNumb" />
   </div>
   <div class="app-form-field">
@@ -28,7 +28,7 @@
     <input type="number" [formField]="createForm.remainingInvoice" />
   </div>
   <div class="app-form-field">
-    <label [htmlFor]="createForm.receAmount()">ยอดใบแจ้งหนี้</label>
+    <label [htmlFor]="createForm.receAmount()">ยอดใบเสร็จ</label>
     <input type="text" [formField]="createForm.receAmount" />
   </div>
   <div class="app-form-field">
