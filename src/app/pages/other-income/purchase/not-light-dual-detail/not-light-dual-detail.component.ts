@@ -9,16 +9,16 @@ import { MonthlyService } from '../../../../service/other-income/monthly.service
 import { OiNotLightListService } from '../../../../service/other-income/oi-not-light-list.service';
 import { ToastService } from '../../../../service/toast/toast.service';
 import { OTHER_INCOME_PAGE_TOKEN } from '../../../../lib';
-import { calculateWithFlatRate, calculateWithSemiStepRate, calculateWithStepRate, calFlat, calSemi, calStep } from '../../../../components/other-income/edit/other-income-monthly-edit/lib';
+import { calculateWithFlatRate, calculateWithSemiStepRate, calculateWithStepRate } from '../../../../components/other-income/edit/other-income-monthly-edit/lib';
 import { OtherIncomeHeadEditComponent } from '../../../../components/other-income/edit/other-income-head-edit/other-income-head-edit.component';
 import { OtherIncomeNotLightEditComponent } from '../../../../components/other-income/edit/other-income-not-light-edit/other-income-not-light-edit.component';
 import { OtherIncomeProductEditComponent } from '../../../../components/other-income/edit/other-income-product-edit/other-income-product-edit.component';
 import { CreatePeriodComponent } from '../../../../components/other-income/create/create-period/create-period.component';
-import { OtherIncomePeriodDisplayComponent } from '../../../../components/other-income/period/other-income-period-display/other-income-period-display.component';
 import { OtherIncomeDualMonthlyListComponent } from '../../../../components/other-income/template/other-income-dual-monthly-list.component';
 import { MonthSelectComponent } from '../../../../components/date-input/month-select.component';
 import { YearSelectComponent } from '../../../../components/date-input/year-select.component';
 import { RouterLink } from "@angular/router";
+import { PeriodDisplayComponent } from "../../../../other-income/shared/components/period-display/period-display.component";
 
 @Component({
   selector: 'app-not-light-dual-detail',
@@ -26,10 +26,11 @@ import { RouterLink } from "@angular/router";
     FormsModule, DecimalPipe,
     OtherIncomeHeadEditComponent, OtherIncomeNotLightEditComponent,
     OtherIncomeProductEditComponent, CreatePeriodComponent,
-    OtherIncomePeriodDisplayComponent, OtherIncomeDualMonthlyListComponent,
+    OtherIncomeDualMonthlyListComponent,
     MonthSelectComponent, YearSelectComponent,
     NgTemplateOutlet,
-    RouterLink
+    RouterLink,
+    PeriodDisplayComponent
   ],
   templateUrl: './not-light-dual-detail.component.html',
   styleUrl: './not-light-dual-detail.component.scss'

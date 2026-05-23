@@ -71,6 +71,11 @@ export const ACCOUNT_TAB_TOKEN: ITabSetting = {
       link: './report',
       exact: false
     },
+    {
+      label: 'ตรวจใบแจ้งหนี้',
+      link: 'invoices',
+      exact: false
+    }
 
   ]
 }
@@ -233,10 +238,7 @@ const getDismissed = getItem<boolean, null>({
     .form-wrapper {
       margin: auto;
       padding: 1rem;
-      width: 100%;
-      @media (min-width: 992px) {
-        width: 920px;
-      }
+
     }
 
     a.nav-link {

@@ -68,72 +68,74 @@
     </tbody>
   </table>
 </div>
-<hr />
-<h4>จับคู่ใบแจ้งหนี้ และใบเสร็จรับเงิน</h4>
-<div class="row mb-3">
-  <div class="col-4">
-    <label class="form-label" [htmlFor]="matchForm.invoice().name()"
-      >เลขที่ใบแจ้งหนี้</label
-    >
-    <input
-      type="text"
-      class="form-control"
-      [ngbTypeahead]="searchInvoice"
-      [resultFormatter]="formatInvoice"
-      [inputFormatter]="formatInvoice"
-      [name]="matchForm.invoice().name()"
-      [required]="matchForm.invoice().required()"
-      [(ngModel)]="matchForm.invoice().controlValue"
-    />
-    @if (matchForm.invoice().touched() || matchForm.invoice().dirty()) {
-      @for (error of matchForm.invoice().errors(); track $index) {
-        <span class="text-danger">{{ error.message }}</span>
+@if (canDelete()) {
+  <hr />
+  <h4>จับคู่ใบแจ้งหนี้ และใบเสร็จรับเงิน</h4>
+  <div class="row mb-3">
+    <div class="col-4">
+      <label class="form-label" [htmlFor]="matchForm.invoice().name()"
+        >เลขที่ใบแจ้งหนี้</label
+      >
+      <input
+        type="text"
+        class="form-control"
+        [ngbTypeahead]="searchInvoice"
+        [resultFormatter]="formatInvoice"
+        [inputFormatter]="formatInvoice"
+        [name]="matchForm.invoice().name()"
+        [required]="matchForm.invoice().required()"
+        [(ngModel)]="matchForm.invoice().controlValue"
+      />
+      @if (matchForm.invoice().touched() || matchForm.invoice().dirty()) {
+        @for (error of matchForm.invoice().errors(); track $index) {
+          <span class="text-danger">{{ error.message }}</span>
+        }
       }
-    }
-  </div>
-  <div class="col-4">
-    <label class="form-label" [htmlFor]="matchForm.receipt().name()"
-      >เลขที่ใบเสร็จรับเงิน</label
-    >
-    <input
-      type="text"
-      class="form-control"
-      [ngbTypeahead]="searchReceipt"
-      [resultFormatter]="formatReceipt"
-      [inputFormatter]="formatReceipt"
-      [name]="matchForm.receipt().name()"
-      [required]="matchForm.receipt().required()"
-      [(ngModel)]="matchForm.receipt().controlValue"
-    />
-    @if (matchForm.receipt().touched() || matchForm.receipt().dirty()) {
-      @for (error of matchForm.receipt().errors(); track $index) {
-        <span class="text-danger">{{ error.message }}</span>
+    </div>
+    <div class="col-4">
+      <label class="form-label" [htmlFor]="matchForm.receipt().name()"
+        >เลขที่ใบเสร็จรับเงิน</label
+      >
+      <input
+        type="text"
+        class="form-control"
+        [ngbTypeahead]="searchReceipt"
+        [resultFormatter]="formatReceipt"
+        [inputFormatter]="formatReceipt"
+        [name]="matchForm.receipt().name()"
+        [required]="matchForm.receipt().required()"
+        [(ngModel)]="matchForm.receipt().controlValue"
+      />
+      @if (matchForm.receipt().touched() || matchForm.receipt().dirty()) {
+        @for (error of matchForm.receipt().errors(); track $index) {
+          <span class="text-danger">{{ error.message }}</span>
+        }
       }
-    }
+    </div>
+    <div class="col-4">
+      <label [htmlFor]="matchForm.matchAmount().name()" class="form-label"
+        >ยอด</label
+      >
+      <input
+        class="form-control"
+        type="text"
+        inputMode="numberic"
+        [formField]="matchForm.matchAmount"
+      />
+      @for (error of matchForm.matchAmount().errors(); track $index) {
+        <span class="invalid-feedback">{{ error.message }}</span>
+      }
+    </div>
   </div>
-  <div class="col-4">
-    <label [htmlFor]="matchForm.matchAmount().name()" class="form-label"
-      >ยอด</label
+  <div class="d-flex justify-content-end mb-3">
+    <span
+      ><button
+        class="btn btn-success"
+        [disabled]="matchForm().invalid()"
+        (click)="onMatch()"
+      >
+        จับคู่
+      </button></span
     >
-    <input
-      class="form-control"
-      type="text"
-      inputMode="numberic"
-      [formField]="matchForm.matchAmount"
-    />
-    @for (error of matchForm.matchAmount().errors(); track $index) {
-      <span class="invalid-feedback">{{ error.message }}</span>
-    }
   </div>
-</div>
-<div class="d-flex justify-content-end mb-3">
-  <span
-    ><button
-      class="btn btn-success"
-      [disabled]="matchForm().invalid()"
-      (click)="onMatch()"
-    >
-      จับคู่
-    </button></span
-  >
-</div>
+}

@@ -5,17 +5,17 @@ import { OtherIncomeLightEditComponent } from '../../../../components/other-inco
 import { OtherIncomeBranchComponent } from '../../../../components/other-income/edit/other-income-branch/other-income-branch.component';
 import { ToastService } from '../../../../service/toast/toast.service';
 import { OTHER_INCOME_PAGE_TOKEN } from '../../../../lib';
-import { OtherIncomePeriodDisplayComponent } from "../../../../components/other-income/period/other-income-period-display/other-income-period-display.component";
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OiLightListService } from '../../../../service/other-income/oi-light-list.service';
+import { PeriodDisplayComponent } from "../../../../other-income/shared/components/period-display/period-display.component";
 @Component({
   selector: 'app-light-single',
   imports: [
     OtherIncomeHeadEditComponent, OtherIncomeLightEditComponent,
     OtherIncomeBranchComponent,
-    OtherIncomePeriodDisplayComponent,
     RouterLink,
+    PeriodDisplayComponent
   ],
   templateUrl: './light-single.component.html'
 })

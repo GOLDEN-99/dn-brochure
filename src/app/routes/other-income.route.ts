@@ -119,7 +119,7 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                 children: [
                     {
                         path: "",
-                        loadComponent: () => import('../pages/other-income/create-pair-forms/create-pair-forms.component').then(r =>r .CreatePairFormsComponent).catch(handleLazyLoadError('other-income/not-light/create-pair'))
+                        loadComponent: () => import('../pages/other-income/create-pair-forms/create-pair-forms.component').then(r => r.CreatePairFormsComponent).catch(handleLazyLoadError('other-income/not-light/create-pair'))
                     },
                 ]
             },
@@ -191,6 +191,12 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                         loadComponent: () => import("../pages/other-income/account/other-income-account-batch/other-income-account-batch.component")
                             .then(r => r.OtherIncomeAccountBatchComponent)
                             .catch(handleLazyLoadError('other-income/account/batch'))
+                    },
+                    {
+                        path: 'invoices',
+                        loadComponent: () => import("../other-income/account/pages/account-invoice-page/account-invoice-page.component")
+                            .then(r => r.AccountInvoicePageComponent)
+                            .catch(handleLazyLoadError('other-income/account/invoices'))
                     }
                 ]
             },

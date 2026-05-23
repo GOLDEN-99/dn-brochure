@@ -11,10 +11,10 @@ import { ToastService } from '../../../../service/toast/toast.service';
 import { OtherIncomeMonthlyIncentiveEditComponent } from "../../../../components/other-income/edit/other-income-monthly-incentive-edit/other-income-monthly-incentive-edit.component";
 import { OtherIncomeMonthlyListComponent } from "../../../../components/other-income/template/other-income-monthly-list.component";
 import { OTHER_INCOME_PAGE_TOKEN } from '../../../../lib';
-import { OtherIncomePeriodDisplayComponent } from "../../../../components/other-income/period/other-income-period-display/other-income-period-display.component";
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PeriodNotLightService } from '../../../../service/other-income/period-not-light.service';
 import { OiNotLightListService } from '../../../../service/other-income/oi-not-light-list.service';
+import { PeriodDisplayComponent } from "../../../../other-income/shared/components/period-display/period-display.component";
 
 @Component({
   selector: 'app-not-light-single',
@@ -25,8 +25,8 @@ import { OiNotLightListService } from '../../../../service/other-income/oi-not-l
     NgbDatepickerModule, FormsModule,
     OtherIncomeMonthlyIncentiveEditComponent,
     OtherIncomeMonthlyListComponent,
-    OtherIncomePeriodDisplayComponent,
     RouterLink,
+    PeriodDisplayComponent
   ],
   templateUrl: './not-light-single.component.html',
   styleUrl: './not-light-single.component.scss'
