@@ -1,0 +1,175 @@
+<!-- Search input -->
+<div class="app-form-field mb-3">
+  <label for="searchCompName">ค้นหาชื่อบริษัท</label>
+  <div class="input-group">
+    <span class="input-group-text"><i class="bi bi-search"></i></span>
+    <input
+      #searchCompName
+      type="text"
+      class="form-control"
+      name="searchCompName"
+      placeholder="พิมพ์ชื่อบริษัท..."
+      [ngModel]="searchCompanyName()"
+      (ngModelChange)="triggerSearch($event)"
+      [disabled]="disabled()"
+      (blur)="onBlurSearchText()"
+    />
+    @if (searchCompanyName()) {
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        [disabled]="disabled()"
+        (click)="triggerSearch('')"
+      >
+        <i class="bi bi-x"></i>
+      </button>
+    }
+  </div>
+</div>
+
+<!-- Results -->
+@if (searchCompanyName()) {
+  <div class="row g-3">
+    <!-- DN results -->
+    <div class="col-6">
+      <p class="fw-semibold small mb-2">DN</p>
+      <div class="d-flex flex-column gap-1">
+        @for (dn of dnCompResult(); track dn.compCode) {
+          @let isSelectedDN = selectedDNComp()?.compCode === dn.compCode;
+          <button
+            type="button"
+            class="btn text-start py-2 px-3"
+            [class.btn-dn]="isSelectedDN"
+            [class.btn-outline-secondary]="!isSelectedDN"
+            [disabled]="disabled()"
+            (click)="onSelectDNComp(dn)"
+          >
+            <span
+              class="badge me-2"
+              [class.bg-white]="isSelectedDN"
+              [class.text-secondary]="isSelectedDN"
+              [class.bg-secondary]="!isSelectedDN"
+              >{{ dn.compCode }}</span
+            >
+            <span class="fw-medium">{{ dn.compName }}</span>
+            @if (dn.compName2) {
+              <span
+                class="ms-1 small"
+                [class.text-white]="isSelectedDN"
+                [class.text-muted]="!isSelectedDN"
+                >/ {{ dn.compName2 }}</span
+              >
+            }
+          </button>
+        } @empty {
+          <span class="text-muted small">ไม่พบบริษัท</span>
+        }
+      </div>
+    </div>
+
+    <!-- HU results -->
+    <div class="col-6">
+      <p class="fw-semibold small mb-2">HU</p>
+      <div class="d-flex flex-column gap-1">
+        @for (hu of huCompResult(); track hu.compCode) {
+          @let isSelectedHU = selectedHUComp()?.compCode === hu.compCode;
+          <button
+            type="button"
+            class="btn text-start py-2 px-3"
+            [class.btn-hu]="isSelectedHU"
+            [class.btn-outline-secondary]="!isSelectedHU"
+            [disabled]="disabled()"
+            (click)="onSelectHUComp(hu)"
+          >
+            <span
+              class="badge me-2"
+              [class.bg-white]="isSelectedHU"
+              [class.text-secondary]="isSelectedHU"
+              [class.bg-secondary]="!isSelectedHU"
+              >{{ hu.compCode }}</span
+            >
+            <span class="fw-medium">{{ hu.compName }}</span>
+            @if (hu.compName2) {
+              <span
+                class="ms-1 small"
+                [class.text-white]="isSelectedHU"
+                [class.text-muted]="!isSelectedHU"
+                >/ {{ hu.compName2 }}</span
+              >
+            }
+          </button>
+        } @empty {
+          <span class="text-muted small">ไม่พบบริษัท</span>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Selected companies -->
+<div class="row g-3 mt-1">
+  <div class="col-6">
+    <p class="fw-semibold small mb-2 text-muted">
+      DN ที่เลือก
+      <span class="text-danger">*</span>
+    </p>
+    @if (selectedDNComp(); as dn) {
+      <div class="d-flex align-items-center gap-2 border rounded px-3 py-2">
+        <span class="badge badge-dn">{{ dn.compCode }}</span>
+        <div class="flex-grow-1 lh-sm">
+          <div class="fw-medium">{{ dn.compName }}</div>
+          @if (dn.compName2) {
+            <div class="text-muted small">{{ dn.compName2 }}</div>
+          }
+        </div>
+        <button
+          type="button"
+          class="btn btn-link btn-sm text-danger p-0"
+          [disabled]="disabled()"
+          (click)="clearDNComp()"
+        >
+          <i class="bi bi-x-circle"></i>
+        </button>
+      </div>
+    } @else {
+      <div class="border rounded px-3 py-2 text-muted small fst-italic">
+        ยังไม่ได้เลือก
+      </div>
+    }
+  </div>
+  <div class="col-6">
+    <p class="fw-semibold small mb-2 text-muted">
+      HU ที่เลือก
+
+      <span class="text-danger">*</span>
+    </p>
+    @if (selectedHUComp(); as hu) {
+      <div class="d-flex align-items-center gap-2 border rounded px-3 py-2">
+        <span class="badge badge-hu">{{ hu.compCode }}</span>
+        <div class="flex-grow-1 lh-sm">
+          <div class="fw-medium">{{ hu.compName }}</div>
+          @if (hu.compName2) {
+            <div class="text-muted small">{{ hu.compName2 }}</div>
+          }
+        </div>
+        <button
+          type="button"
+          class="btn btn-link btn-sm text-danger p-0"
+          [disabled]="disabled()"
+          (click)="clearHUComp()"
+        >
+          <i class="bi bi-x-circle"></i>
+        </button>
+      </div>
+    } @else {
+      <div class="border rounded px-3 py-2 text-muted small fst-italic">
+        ยังไม่ได้เลือก
+      </div>
+    }
+  </div>
+  <div class="d-felx flex-column">
+    @for (error of errors(); track $index) {
+      <span class="text-danger">{{ error.message }}</span>
+    }
+  </div>
+</div>

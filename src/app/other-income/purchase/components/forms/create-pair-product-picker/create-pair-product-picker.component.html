@@ -1,0 +1,17 @@
+<div class="row">
+  @let productList = mergedProduct();
+  @if (productList.length !== 0) {
+    <div class="d-flex flex-column mb-3">
+      @for (product of mergedProduct(); track product.goodCode) {
+        <div>
+          <span>{{ product.goodName }}</span>
+        </div>
+      }
+    </div>
+    <div>
+      <button class="btn-success btn w-100">เพิ่มทั้งหมด</button>
+    </div>
+  } @else {
+    <div>ไม่มีสินค้าที่เพิ่มได้</div>
+  }
+</div>

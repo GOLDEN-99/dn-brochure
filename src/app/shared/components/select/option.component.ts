@@ -5,7 +5,7 @@ import { SelectService } from './select.service';
   selector: 'app-option',
   template: `
     <li>
-      <button role="option" type="button" class="dropdown-item d-flex justify-content-between align-items-center" (click)="onSelect()">
+      <button role="option" type="button" class="dropdown-item d-flex justify-content-between align-items-center" [disabled]="cannotSelect()" (click)="onSelect()">
         <ng-content />
         @if (isSelected()) {
           <span>&#10003;</span>
@@ -17,11 +17,13 @@ import { SelectService } from './select.service';
 })
 export class OptionComponent<T> {
   readonly value = input.required<T>();
-
+  readonly disabled = input(false)
   private readonly service = inject(SelectService<T>);
   private readonly el = inject(ElementRef<HTMLElement>);
 
   protected readonly isSelected = computed(() => this.service.selectedValue() === this.value());
+
+  cannotSelect = computed(() => this.isSelected() || this.disabled())
 
   protected onSelect(): void {
     const label = this.el.nativeElement.textContent?.trim() ?? '';

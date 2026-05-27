@@ -1,0 +1,59 @@
+@let createForm = headForm();
+<div class="app-form-field-inline">
+  <div>
+    <label [htmlFor]="createForm.displayName().name()"
+      >ชื่อรายรับภายใน/ชื่อหัวร่วม
+      @if (createForm.displayName().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+  </div>
+  <div>
+    <input
+      type="text"
+      [formField]="createForm.displayName"
+      [id]="createForm.displayName().name()"
+    />
+  </div>
+</div>
+<other-income-event-select [form]="createForm.event" [eventType]="1" />
+<div class="form-field mb-3">
+  <label [htmlFor]="createForm.period().name()" class="form-label"
+    >ระยะเวลาเก็บเงินเดือน
+    @if (createForm.period().required()) {
+      <span class="text-danger">*</span>
+    }
+  </label>
+  <app-select [formField]="createForm.period">
+    <app-option [value]="null">กรุณาเลือก</app-option>
+    @for (period of periodList; track period.period) {
+      <app-option [value]="period">{{ period.periodName }}</app-option>
+    }
+  </app-select>
+</div>
+<div class="row">
+  <div class="col form-contro mb-3">
+    <label [htmlFor]="createForm.dateRange.startDate().name()"
+      >วันที่เริ่มกิจกรรม
+      @if (createForm.dateRange.startDate().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <app-signal-datepicker
+      [id]="createForm.dateRange.startDate().name()"
+      [formField]="createForm.dateRange.startDate"
+    />
+  </div>
+  <div class="col form-contro mb-3">
+    <label [htmlFor]="createForm.dateRange.endDate().name()"
+      >วันที่เริ่มกิจกรรม
+      @if (createForm.dateRange.endDate().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <app-signal-datepicker
+      [id]="createForm.dateRange.endDate().name()"
+      [formField]="createForm.dateRange.endDate"
+    />
+  </div>
+</div>

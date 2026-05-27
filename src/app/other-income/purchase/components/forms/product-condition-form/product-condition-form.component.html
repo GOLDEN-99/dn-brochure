@@ -1,0 +1,56 @@
+@let createForm = productConditionForm();
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="me-1 form-check-input"
+    [formField]="createForm.isDc"
+    [id]="createForm.isDc().name()"
+  />
+  <label class="form-check-label" [htmlFor]="createForm.isDc().name()"
+    >หักส่วนลด dc</label
+  >
+</div>
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    [formField]="createForm.isRebate"
+    [id]="createForm.isRebate().name()"
+  />
+  <label class="form-check-label" [htmlFor]="createForm.isRebate().name()"
+    >หักส่วนลด rebate</label
+  >
+</div>
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    [formField]="createForm.isComp"
+    [id]="createForm.isComp().name()"
+  />
+  <label class="form-check-label" [htmlFor]="createForm.isComp().name()"
+    >หักส่วนลด compensate</label
+  >
+</div>
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    [formField]="createForm.isInce"
+    [id]="createForm.isInce().name()"
+  />
+  <label class="form-check-label" [htmlFor]="createForm.isInce().name()"
+    >หักส่วนลด intensive</label
+  >
+</div>
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    [formField]="createForm.exVat"
+    [id]="createForm.exVat().name()"
+  />
+  <label class="form-check-label" [htmlFor]="createForm.exVat().name()"
+    >หัก vat</label
+  >
+</div>

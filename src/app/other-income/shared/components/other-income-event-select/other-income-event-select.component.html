@@ -1,10 +1,13 @@
 <div class="app-form-select">
-  <label>กิจกรรม</label>
-  <app-select
-    [formField]="form()"
-  >
-  @for (event of renderEvent(); track event.id) {
-    <app-option [value]="event">{{event.eventName}}</app-option>
-  }
-</app-select>
+  <label
+    >กิจกรรม
+    @if (form()().required()) {
+      <span class="text-danger">*</span>
+    }
+  </label>
+  <app-select [formField]="form()">
+    @for (event of renderEvent(); track event.id) {
+      <app-option [value]="event">{{ event.eventName }}</app-option>
+    }
+  </app-select>
 </div>

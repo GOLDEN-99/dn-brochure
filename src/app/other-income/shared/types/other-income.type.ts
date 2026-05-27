@@ -41,3 +41,11 @@ export type TOtherIncomeCreateCreditNote = {
 }
 
 export type TOtherIncomeCreditNote = TOtherIncomeCreateCreditNote & { id: number, checkDate: string | null }
+
+export type TOtherIncomeCompany = {
+  compCode: string;
+  compName: string;
+  compType: string;
+  compName2: string;
+  compGroupCode: string;
+}

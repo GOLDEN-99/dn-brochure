@@ -1,9 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
-import { BehaviorSubject, catchError, combineLatest, filter, forkJoin, map, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, filter, of, switchMap } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { ISerachComp } from './oi.token';
 import { TCompType } from '../../types';
 
 @Injectable({
@@ -13,18 +12,18 @@ export class CompanyService {
 
   constructor() { }
 
-  private api = inject(ApiService)
-  private url = `${environment.oi}/other-income/comp`
+  private readonly api = inject(ApiService)
+  private readonly url = `${environment.oi}/other-income/comp`
   group = signal<TCompType>('DN')
   field = signal<TCompField>('name')
   term = signal('')
-  private group$ = toObservable(this.group)
-  private field$ = toObservable(this.field)
-  private term$ = toObservable(this.term)
-  private params$ = combineLatest([this.group$, this.field$, this.term$]).pipe(
+  private readonly group$ = toObservable(this.group)
+  private readonly field$ = toObservable(this.field)
+  private readonly term$ = toObservable(this.term)
+  private readonly params$ = combineLatest([this.group$, this.field$, this.term$]).pipe(
     filter(() => true)
   )
-  private dnComp$ = this.params$.pipe(switchMap(([group, field, term]) => this.fetchCtrl(group, { [field]: term })))
+  private readonly dnComp$ = this.params$.pipe(switchMap(([group, field, term]) => this.fetchCtrl(group, { [field]: term })))
 
   compList = toSignal(this.dnComp$, { initialValue: [] })
 

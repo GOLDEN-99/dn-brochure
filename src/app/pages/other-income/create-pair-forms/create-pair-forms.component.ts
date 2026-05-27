@@ -1,23 +1,61 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { apply, applyEach, applyWhen, applyWhenValue, form, max, min, minLength, required, Schema, SchemaFn, validate, FormField, disabled } from '@angular/forms/signals';
+import { apply, applyEach, applyWhen, form, max, min, minLength, required, SchemaFn, validate, FormField, disabled, readonly } from '@angular/forms/signals';
 import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OiNotLightPairService } from '../../../service/other-income/oi-not-light-pair.service';
 import { OtherIncomeEventSelectComponent } from '../../../other-income/shared/components/other-income-event-select/other-income-event-select.component';
-import { TOtherIncomeEvent, TOtherIncomeIncome } from '../../../other-income/shared/types/other-income.type';
+import { TOtherIncomeCompany, TOtherIncomeEvent, TOtherIncomeIncome } from '../../../other-income/shared/types/other-income.type';
 import { OtherIncomeIncomeSelectComponent } from "../../../other-income/shared/components/other-income-income-select/other-income-income-select.component";
 import { JsonPipe } from '@angular/common';
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { SignalDatepickerComponent } from "../../../components/crm-promotion/signal-datepicker.component";
 import { OptionComponent } from "../../../shared/components/select/option.component";
-import { FormAlertTextComponent } from "../../../components/crm-promotion/form-alert-text.component";
+import { FormsModule } from '@angular/forms';
+import { OtherIncomeSearchCompService } from '../../../other-income/purchase/services/other-income-search-comp.service';
+import { OtherIncomeSearchProductService } from '../../../other-income/purchase/services/other-income-search-product.service';
+import { StepFormComponent } from "../../../other-income/purchase/components/forms/step-form/step-form.component";
+import { CreatePairCompanyPickerComponent } from "../../../other-income/purchase/components/forms/create-pair-company-picker/create-pair-company-picker.component";
 
 @Component({
   selector: 'app-create-pair-forms',
-  imports: [FormField, OtherIncomeEventSelectComponent, OtherIncomeIncomeSelectComponent, JsonPipe, SelectComponent, SignalDatepickerComponent, OptionComponent, FormAlertTextComponent],
+  imports: [FormsModule, FormField, OtherIncomeEventSelectComponent, OtherIncomeIncomeSelectComponent, JsonPipe, SelectComponent, SignalDatepickerComponent, OptionComponent, StepFormComponent, CreatePairCompanyPickerComponent],
   templateUrl: './create-pair-forms.component.html',
   styleUrl: './create-pair-forms.component.scss',
 })
 export class CreatePairFormsComponent {
+
+
+  private readonly productService = inject(OtherIncomeSearchProductService)
+  dnCompCode = this.productService.dnCompCode
+  huCompCode = this.productService.huCompCode
+  dnProduct = this.productService.dnProductResult
+  huProduct = this.productService.huProductResult
+  // merge distincet product
+  mergedProduct = computed(() => {
+    let ref = new Set<string>();
+    let result: any[] = []
+    for (const product of this.dnProduct()) {
+      if (!ref.has(product.goodCode)) {
+        result.push(product);
+        ref.add(product.goodCode);
+      }
+    }
+    for (const product of this.huProduct()) {
+      if (!ref.has(product.goodCode)) {
+        result.push(product);
+        ref.add(product.goodCode);
+      }
+    }
+    return result;
+  })
+
+  formProductRef = computed(() => new Set(this.formData().products.map(p => p.goodCode)))
+  renderableProduct = computed(() => {
+    const containedProduct = this.formProductRef()
+    return this.mergedProduct().filter(p => !containedProduct.has(p.goodCode))
+  })
+
+
+
   periodList = [1, 2, 3, 6, 12].map(period => ({ period, periodName: `${period} เดือน` }))
   private readonly calendarService = inject(NgbCalendar)
   startOfYear: NgbDateStruct = {
@@ -113,7 +151,9 @@ export class CreatePairFormsComponent {
   }
   private readonly pairCompSchema: SchemaFn<TOtherIncomeCompFormState> = (schema) => {
     apply(schema.dnCompCode, this.compSchema)
+    readonly(schema.dnCompCode)
     apply(schema.huCompCode, this.compSchema)
+    readonly(schema.huCompCode)
   }
   createForm = form<TOtherIncomePairHead>(this.formData, (schema) => {
     required(schema.displayName, { message: 'กรุณาใส่ชื่อหัวร่วม' })
@@ -130,9 +170,7 @@ export class CreatePairFormsComponent {
   })
 
 
-  onAddStep() {
-    this.formData.update(({ stepCondition: { steps, ...cond }, ...res }) => ({ ...res, stepCondition: { ...cond, steps: [...steps, { min: 0, rate: 0 }] } }))
-  }
+
 }
 
 type TOtherIncomePeriod = { period: number, periodName: string }
@@ -206,11 +244,6 @@ type TOtherIncomePairHead = {
   incomes: TOtherIncomeIncomeFormState
 }
 
-type TOIEvent = {
-  eventId: number
-  eventName: string
-  eventType: number
-}
 
 // ### Create Pair with Not - Light in One Step
 

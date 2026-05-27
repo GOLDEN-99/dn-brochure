@@ -119,7 +119,7 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                 children: [
                     {
                         path: "",
-                        loadComponent: () => import('../pages/other-income/create-pair-forms/create-pair-forms.component').then(r => r.CreatePairFormsComponent).catch(handleLazyLoadError('other-income/not-light/create-pair'))
+                        loadComponent: () => import('../other-income/purchase/components/features/other-income-create-pair/other-income-create-pair.component').then(r => r.OtherIncomeCreatePairComponent).catch(handleLazyLoadError('other-income/not-light/create-pair'))
                     },
                 ]
             },

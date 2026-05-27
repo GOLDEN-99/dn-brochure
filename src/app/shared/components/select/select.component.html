@@ -1,5 +1,9 @@
 <div class="dropdown" role="listbox" [class.show]="service.isOpen()">
-  <button type="button" class="form-select text-start" (click)="service.toggle()">
+  <button
+    type="button"
+    class="form-select text-start"
+    (click)="service.toggle()"
+  >
     {{ service.selectedLabel() || placeholder() }}
   </button>
   @if (service.isOpen()) {
@@ -8,8 +12,10 @@
     </ul>
   }
 </div>
-<div>
-  @for (error of errors?.() ?? []; track $index) {
-    <span class="text-danger">{{error.message}}</span>
-  }
-</div>
+<!-- @if (showError()) {
+  <div>
+    @for (error of errors(); track $index) {
+      <span class="text-danger">{{ error.message }}</span>
+    }
+  </div>
+} -->

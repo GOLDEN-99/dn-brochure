@@ -1,11 +1,15 @@
+@let incomeForm = form();
 <div class="app-form-select">
-  <label [htmlFor]="form()().name()">{{label()}}</label>
-  <app-select
-    [formField]="form()" 
-  >
-  <app-option [value]="null">กรุณาเลือก</app-option>
-  @for (income of renderIncome(); track income.id) {
-    <app-option [value]="income" >{{income.incomeName}}</app-option>
-  }
-</app-select>
+  <label [htmlFor]="incomeForm().name()"
+    >{{ label() }}
+    <!---->
+    @if (incomeForm().required()) {
+      <span class="text-danger"> * </span>
+    }
+  </label>
+  <app-select [formField]="incomeForm">
+    @for (income of renderIncome(); track income.id) {
+      <app-option [value]="income">{{ income.incomeName }}</app-option>
+    }
+  </app-select>
 </div>
