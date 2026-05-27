@@ -3,6 +3,7 @@ import { ApiService } from '../../../shared/services/api.service';
 import { environment } from '../../../../environments/environment';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, debounceTime, distinctUntilChanged, filter, of, switchMap } from 'rxjs';
+import { COMP_TYPE, TOtherIncomeCompType } from '../../shared/types/other-income.type';
 
 @Injectable()
 export class OtherIncomeSearchProductService {
@@ -12,7 +13,7 @@ export class OtherIncomeSearchProductService {
 
   dnCompCode = signal('')
   private readonly dnCompCode$ = toObservable(this.dnCompCode)
-  private readonly searchDNProduct = (compCode: string) => this.api.get<TSearchProductResult[]>(`${this.url}/DN`, { params: { compCode } })
+  searchDNProduct = (compCode: string) => this.api.get<TSearchProductResult[]>(`${this.url}/DN`, { params: { compCode } })
   private readonly dnProductResult$ = this.dnCompCode$.pipe(
     debounceTime(300),
     distinctUntilChanged(),
@@ -23,13 +24,20 @@ export class OtherIncomeSearchProductService {
   dnProductResult = toSignal(this.dnProductResult$, { initialValue: [] })
 
   huCompCode = signal('')
-  private readonly huCompCode$ = toObservable(this.dnCompCode)
-  private readonly searchHUProduct = (compCode: string) => this.api.get<TSearchProductResult[]>(`${this.url}/HU`, { params: { compCode } })
+  searchProduct({ compCode, compType }: TSearchProduct) {
+    return this.api
+      .get<TSearchProductResult[]>(
+        `${this.url}/${COMP_TYPE[compType]}`,
+        { params: { compCode } }
+      ).pipe(catchError(err => of([] as TSearchProductResult[])))
+  }
+  private readonly huCompCode$ = toObservable(this.huCompCode)
+  searchHUProduct = (compCode: string) => this.api.get<TSearchProductResult[]>(`${this.url}/HU`, { params: { compCode } })
   private readonly huProductResult$ = this.huCompCode$.pipe(
     debounceTime(300),
     distinctUntilChanged(),
     filter(term => term !== ''),
-    switchMap((compCode) => this.searchDNProduct(compCode)),
+    switchMap((compCode) => this.searchHUProduct(compCode)),
     catchError(err => of([] as TSearchProductResult[]))
   )
   huProductResult = toSignal(this.huProductResult$, { initialValue: [] })
@@ -40,4 +48,9 @@ export type TSearchProductResult = {
   goodCode: string
   goodName: string
   barCode: string
+}
+
+type TSearchProduct = {
+  compType: TOtherIncomeCompType
+  compCode: string
 }

@@ -44,7 +44,9 @@
   <div class="card-body">
     <p class="fw-semibold mb-3 text-muted small">เลือกสินค้า</p>
     <other-income-create-pair-product-picker
-      [productForm]="createForm.products"
+      [dnCompCode]="formData().comps.dnComp.compCode"
+      [huCompCode]="formData().comps.huComp.compCode"
+      [(value)]="createForm.products().controlValue"
     />
   </div>
 </div>

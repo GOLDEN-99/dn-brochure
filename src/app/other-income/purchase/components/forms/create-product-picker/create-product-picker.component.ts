@@ -3,67 +3,50 @@ import { FormValueControl, ValidationError } from '@angular/forms/signals';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, map, of, switchMap } from 'rxjs';
+import { of, switchMap } from 'rxjs';
 import { OtherIncomeSearchProductService } from '../../../services/other-income-search-product.service';
+import { TOtherIncomeCompType } from '../../../../shared/types/other-income.type';
 
 @Component({
-  selector: 'other-income-create-pair-product-picker',
+  selector: 'other-income-create-product-picker',
   imports: [FormsModule],
-  templateUrl: './create-pair-product-picker.component.html',
+  templateUrl: './create-product-picker.component.html',
   styles: '',
   providers: [OtherIncomeSearchProductService],
 })
-export class CreatePairProductPickerComponent implements FormValueControl<TOtherIncomeProduct[]> {
+export class CreateProductPickerComponent implements FormValueControl<TOtherIncomeProduct[]> {
   private readonly productService = inject(OtherIncomeSearchProductService)
   private readonly modalService = inject(NgbModal)
 
-  dnCompCode = input.required<string>()
-  huCompCode = input.required<string>()
+  compCode = input.required<string>()
+  compType = input.required<TOtherIncomeCompType>()
 
   value: ModelSignal<TOtherIncomeProduct[]> = model<TOtherIncomeProduct[]>([])
   errors = input<readonly ValidationError.WithOptionalFieldTree[]>([])
   disabled = input(false)
   touched = model(false)
 
-  cannotSearch = computed(() => this.dnCompCode() === '' || this.huCompCode() === '' || this.disabled())
   productModal = viewChild<unknown>('productModal')
   openButtonRef = viewChild<ElementRef<HTMLButtonElement>>('openButton')
   focus(options?: FocusOptions): void { this.openButtonRef()?.nativeElement.focus(options) }
 
-  private readonly dnCompCode$ = toObservable(this.dnCompCode)
-  private readonly huCompCode$ = toObservable(this.huCompCode)
-
-  private readonly dnProduct$ = this.dnCompCode$.pipe(
-    switchMap(compCode => compCode === '' ? of([]) : this.productService.searchDNProduct(compCode))
-  )
-  private readonly huProduct$ = this.huCompCode$.pipe(
-    switchMap(compCode => compCode === '' ? of([]) : this.productService.searchHUProduct(compCode))
-  )
-
-  private readonly merged$ = combineLatest([this.dnProduct$, this.huProduct$]).pipe(
-    map(([dn, hu]) => {
-      const seen = new Set<string>()
-      const result: TOtherIncomeProduct[] = []
-      for (const p of dn) {
-        if (!seen.has(p.goodCode)) { seen.add(p.goodCode); result.push(p) }
-      }
-      for (const p of hu) {
-        if (!seen.has(p.goodCode)) { seen.add(p.goodCode); result.push(p) }
-      }
-      return result
+  private readonly compCode$ = toObservable(this.compCode)
+  private readonly product$ = this.compCode$.pipe(
+    switchMap(compCode => {
+      if (compCode === '') return of([])
+      return this.compType() === 'dn'
+        ? this.productService.searchDNProduct(compCode)
+        : this.productService.searchHUProduct(compCode)
     })
   )
-
-  private readonly mergedRaw = toSignal(this.merged$, { initialValue: [] })
+  private readonly rawResult = toSignal(this.product$, { initialValue: [] })
 
   pendingSelection = signal<TOtherIncomeProduct[]>([])
 
   searchResult = computed(() => {
     const selected = new Set(this.pendingSelection().map(p => p.goodCode))
-    return this.mergedRaw().map(p => ({
-      goodCode: p.goodCode,
-      goodName: p.goodName,
-      barCode: p.barCode,
+    return this.rawResult().map(p => ({
+      ...p,
       check: selected.has(p.goodCode),
     }))
   })
@@ -78,26 +61,24 @@ export class CreatePairProductPickerComponent implements FormValueControl<TOther
   }
 
   toggleProduct(goodCode: string) {
-    const raw = this.mergedRaw().find(p => p.goodCode === goodCode)
+    const raw = this.rawResult().find(p => p.goodCode === goodCode)
     if (!raw) return
     const exists = this.pendingSelection().some(p => p.goodCode === goodCode)
     this.pendingSelection.update(prev =>
-      exists
-        ? prev.filter(p => p.goodCode !== goodCode)
-        : [...prev, raw]
+      exists ? prev.filter(p => p.goodCode !== goodCode) : [...prev, raw]
     )
   }
 
   selectAll(checked: boolean) {
     if (checked) {
-      const toAdd = this.mergedRaw()
+      const toAdd = this.rawResult()
       const existing = new Set(this.pendingSelection().map(p => p.goodCode))
       this.pendingSelection.update(prev => [
         ...prev,
         ...toAdd.filter(p => !existing.has(p.goodCode)),
       ])
     } else {
-      const resultCodes = new Set(this.mergedRaw().map(p => p.goodCode))
+      const resultCodes = new Set(this.rawResult().map(p => p.goodCode))
       this.pendingSelection.update(prev => prev.filter(p => !resultCodes.has(p.goodCode)))
     }
   }

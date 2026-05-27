@@ -46,19 +46,23 @@ export class CreatePairCompanyPickerComponent implements FormValueControl<TOther
   }
   dnCompResult = this.searchCompService.dnCompResult
   onSelectDNComp(dnComp: TOtherIncomeCompany) {
+
     this.touched.set(true)
-    this.value.update(prev => ({ ...prev, dnCompCode: dnComp }))
+    this.value.update(prev => ({ ...prev, dnComp: dnComp }))
+
   }
   huCompResult = this.searchCompService.huCompResult
   onSelectHUComp(huComp: TOtherIncomeCompany) {
+
     this.touched.set(true)
-    this.value.update(prev => ({ ...prev, huCompCode: huComp }))
+    this.value.update(prev => ({ ...prev, huComp: huComp }))
+
   }
   clearDNComp() {
-    this.value.update(prev => ({ ...prev, dnCompCode: DEFAULT_COMP }))
+    this.value.update(prev => ({ ...prev, dnComp: DEFAULT_COMP }))
   }
   clearHUComp() {
-    this.value.update(prev => ({ ...prev, huCompCode: DEFAULT_COMP }))
+    this.value.update(prev => ({ ...prev, huComp: DEFAULT_COMP }))
   }
 }
 

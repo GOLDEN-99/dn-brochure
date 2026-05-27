@@ -49,3 +49,18 @@ export type TOtherIncomeCompany = {
   compName2: string;
   compGroupCode: string;
 }
+
+export const STEP_TYPE = {
+  flat: 1,
+  step: 2,
+  cumulative: 3
+} as const
+
+export type TOtherIncomeStepType = keyof typeof STEP_TYPE
+
+export const COMP_TYPE = {
+  dn: 'DN',
+  hu: 'HU',
+}
+
+export type TOtherIncomeCompType = keyof typeof COMP_TYPE
