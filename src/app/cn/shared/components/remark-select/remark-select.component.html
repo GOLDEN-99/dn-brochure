@@ -1,0 +1,32 @@
+@let remarkOpt = remarkList();
+<div class="app-form-field">
+  <label for="remark"
+    >สาเหตุ
+    @if (required()) {
+      <span class="text-danger">*</span>
+    }
+  </label>
+  <select
+    name="remark"
+    id="remark"
+    class="form-select"
+    [name]="name()"
+    [(ngModel)]="value"
+    [compareWith]="compareRemarkFn"
+    (blur)="onBlur()"
+  >
+    <option [ngValue]="null" disabled>กรุณาเลือกสาเหตุ</option>
+    @for (opt of remarkOpt; track $index) {
+      <option [ngValue]="opt">
+        {{ opt.remark }}
+      </option>
+    }
+  </select>
+  @if (touched()) {
+    <div class="d-flex flex-column">
+      @for (error of errors(); track $index) {
+        <span class="text-danger">{{ error.message }}</span>
+      }
+    </div>
+  }
+</div>

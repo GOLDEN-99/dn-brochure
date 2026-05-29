@@ -4,13 +4,14 @@ import { NotfoundComponent } from './pages/notfound/notfound.component';
 
 // Feature routes
 import { BROCHURE_ROUTES } from './routes/brochure.route';
-import { CN_ROUTES } from './routes/cn.route';
+
 import { SUPPLIER_ROUTES } from './routes/supplier.route';
 import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
 import { OTHER_INCOME_ROUTES } from './routes/other-income.route';
 import { STOCK_ITEM_ROUTES } from './routes/stock-item.route';
 import { QUOTA_ITEM_ROUTES } from './routes/quota-item.route';
 import { CRM_PROMOTION_ROUTE } from './routes/crm-promotion.route';
+import { CN_ROUTES } from './cn/routes/cn.route';
 
 export const routes: Routes = [
     // Brochure & Marketing

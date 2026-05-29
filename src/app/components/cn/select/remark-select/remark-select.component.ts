@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './remark-select.component.scss'
 })
 export class RemarkSelectComponent {
-  private remarkServ = inject(CnRemarkService)
+  private readonly remarkServ = inject(CnRemarkService)
   remarkList = this.remarkServ.withFallback
 
   remarkOption = this.remarkServ.remarkOpt

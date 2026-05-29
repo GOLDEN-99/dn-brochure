@@ -1,0 +1,7 @@
+tr[tabindex] {
+  &:hover,
+  &:focus {
+    background-color: #f0f4ff;
+    outline: none;
+  }
+}

@@ -1,0 +1,14 @@
+<section>
+  <div class="form-wrapper">
+    @if (loading()) {
+      <div class="d-flex justify-content-center py-5">
+        <output class="spinner-border"></output>
+      </div>
+    } @else {
+      <router-outlet />
+    }
+  </div>
+</section>
+<div style="text-align: center; margin: 0; opacity: 0.2">
+  version 2026-05-29
+</div>

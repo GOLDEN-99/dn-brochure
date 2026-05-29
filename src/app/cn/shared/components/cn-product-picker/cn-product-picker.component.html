@@ -1,0 +1,34 @@
+<div class="app-form-field">
+  <label for="other">สินค้าอื่นๆ</label>
+  <input
+    type="text"
+    id="other"
+    name="other"
+    [(ngModel)]="search"
+    placeholder="ค้นหาจากรหัสสินค้า"
+  />
+</div>
+@let products = renderList();
+@if (products.length !== 0) {
+  <table class="table">
+    <thead>
+      <tr>
+        <th>รหัสและชื่อสินค้า</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of products; track $index) {
+        <tr
+          (click)="addItem(item)"
+          (keydown.enter)="addItem(item)"
+          tabindex="0"
+          style="cursor: pointer"
+        >
+          <td>{{ "(" + item.barCode + ") " + item.goodName }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+} @else if (search()) {
+  <p class="no-result">ไม่พบสินค้า</p>
+}

@@ -1,4 +1,4 @@
-import { inject, input, OnInit, signal, Signal } from "@angular/core";
+import { inject, signal, Signal } from "@angular/core";
 import { CnOrderService } from "../../service/cn/cn-order/cn-order.service";
 import { CnApiService } from "../../service/cn/cn-api/cn-api.service";
 import { UploadImageService } from "../../service/cn/cn-upload-image/upload-image.service";

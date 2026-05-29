@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { ApiService } from '../../api/api.service';
@@ -11,11 +11,11 @@ import { environment } from '../../../../environments/environment';
 export class CnRemarkService {
 
 
-  private api = inject(ApiService)
+  private readonly api = inject(ApiService)
 
-  private base = environment.cnPath
+  private readonly base = environment.cnPath
 
-  private remark$ = this.api.get<TReamrk[]>(`${this.base}/GetCNRemark`)
+  private readonly remark$ = this.api.get<TReamrk[]>(`${this.base}/GetCNRemark`)
     .pipe(
       catchError(err => {
         console.log(err);
@@ -23,7 +23,7 @@ export class CnRemarkService {
       })
     )
 
-  private remarkSignal = toSignal<TReamrk[]>(this.remark$)
+  remarkSignal = toSignal<TReamrk[]>(this.remark$)
   withFallback = computed(() => {
     const r = this.remarkSignal()
     return r ? [...this.default, ...r] : this.default
@@ -62,7 +62,7 @@ export class CnRemarkService {
     return { motiveId, motive, probOption } satisfies TPrependRemark
   })
 
-  private handleRemark = (id: string): TResult[] => {
+  private readonly handleRemark = (id: string): TResult[] => {
     switch (id) {
       case '3': return [{ id: '-1', result: 'กรุณาเลือก' }, { result: 'ลูกค้าไม่รับ', id: '0' }, { result: 'ลูกค้ารับ', id: '1' }]
       case '4': return [{ id: '-1', result: 'กรุณาเลือก' }, { result: 'ลูกค้าไม่รับ', id: '0' }, { result: 'ลูกค้ารับ', id: '1' }]
@@ -75,7 +75,7 @@ export class CnRemarkService {
     }
   }
 
-  private handleShowCn = (id: string) => {
+  private readonly handleShowCn = (id: string) => {
     switch (id) {
       case '0': return false
       case '19': return false
@@ -84,7 +84,7 @@ export class CnRemarkService {
       default: return true
     }
   }
-  private default: TReamrk[] = [{ id: "0", remark: "กรุณาเลือกสาเหตุ" }]
+  private readonly default: TReamrk[] = [{ id: "0", remark: "กรุณาเลือกสาเหตุ" }]
 
   calDisable() {
     const showProb = this.showProbOption()

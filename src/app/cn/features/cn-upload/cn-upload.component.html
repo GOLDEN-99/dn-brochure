@@ -1,0 +1,29 @@
+<h1 class="text-center">CN สินค้าทั้งบิล</h1>
+<div class="app-form-field">
+  <label for="amount">จำนวนเงิน</label>
+  <input
+    type="number"
+    name="amount"
+    id="amount"
+    class="form-control"
+    [class.is-invalid]="invalidPrice()"
+    [(ngModel)]="totalPrice"
+    min="0"
+  />
+</div>
+<cn-image-uploader
+  [wholeNumb]="requestForm.metadata().value().wholeNumb"
+  [formField]="requestForm.image"
+  (success)="onSuccess($event)"
+  (fail)="onError($event)"
+/>
+<div class="btn-wrapper">
+  <a routerLink=".." class="btn btn-outline-danger">ย้อนกลับ</a>
+  <button
+    class="btn btn-primary"
+    (click)="handleSubmit()"
+    [disabled]="disabled()"
+  >
+    ยืนยัน
+  </button>
+</div>

@@ -1,0 +1,23 @@
+@let formValue = requestForm().value();
+<h1 class="text-center">CN สินค้าทั้งบิล</h1>
+<h2>{{ alterText() }}</h2>
+<div class="mb-3">รวมเป็นเงิน {{ totalPrice() | number: "1.2-2" }} บาท</div>
+<cn-image-uploader
+  [formField]="requestForm.image"
+  (fail)="onError($event)"
+  (success)="onSuccess($event)"
+  [cannotUpload]="requestForm.stepOne().invalid()"
+  [wholeNumb]="formValue.metadata.wholeNumb"
+/>
+<div class="btn-wrapper">
+  <a routerLink=".." class="btn btn-outline-danger">ย้อนกลับ</a>
+  <button
+    class="btn btn-primary"
+    [disabled]="
+      requestForm.stepOne().invalid() || requestForm.image().invalid()
+    "
+    (click)="handleSubmit()"
+  >
+    ยืนยัน
+  </button>
+</div>

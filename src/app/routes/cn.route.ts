@@ -3,12 +3,15 @@ import { CnLayoutComponent } from '../layout/cn-layout/cn-layout.component';
 import { cnResolver } from '../resolvers/cn/cn.resolver';
 import { CnComponent } from '../pages/cn-project/cn/cn.component';
 import { cnGuard } from '../guard/cn-guard.guard';
+import { CreateCancelRequestComponent } from '../cn/features/create-cancel-request/create-cancel-request.component';
+import { CnStateService } from '../cn/shared/services/cn-state.service';
 
 export const CN_ROUTES: Route[] = [
     {
         path: "cn/:saleCode/:wholeCode/:wholeNumb/:isWRR",
         component: CnLayoutComponent,
         resolve: { wholeItem: cnResolver },
+        providers: [CnStateService],
         children: [
             {
                 path: "",
@@ -19,14 +22,14 @@ export const CN_ROUTES: Route[] = [
                 loadComponent: () =>
                     import('../pages/cn-project/cn-all/cn-all.component')
                         .then(r => r.CnAllComponent),
-                canActivate: [cnGuard('whole')]
+                //canActivate: [cnGuard('whole')]
             },
             {
                 path: "some",
                 loadComponent: () =>
                     import('../pages/cn-project/cn-some/cn-some.component')
                         .then(r => r.CnSomeComponent),
-                canActivate: [cnGuard('some')]
+                //canActivate: [cnGuard('some')]
             },
             {
                 path: "some/detail",

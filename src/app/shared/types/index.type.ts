@@ -13,3 +13,5 @@ export type TApiOpt = {
 }
 
 export type TOptionable = string | number | Record<string, unknown>
+
+export type TMaybe<T> = T | null
