@@ -54,19 +54,13 @@ export const CN_ROUTES: Route[] = [
                         .then(r => r.CnUploadComponent).catch(handleLazyLoadError('cn/uplaod')),
                 canActivate: [cnGuard('uplaod')]
             },
-            // {
-            //     path: "complete",
-            //     loadComponent: () =>
-            //         import('../pages/cn-project/cn-complete/cn-complete.component')
-            //             .then(r => r.CnCompleteComponent)
-            // }
+
         ]
     },
     {
-        path: 'cn/complete',
+        path: "complete",
         loadComponent: () =>
-            import('../../pages/cn-project/cn-complete/cn-complete.component')
-                .then(r => r.CnCompleteComponent)
-                .catch(handleLazyLoadError('cn/complete'))
+            import('../features/cn-complete/cn-complete.component')
+                .then(r => r.CnCompleteComponent).catch(handleLazyLoadError('cn/complete'))
     }
 ];

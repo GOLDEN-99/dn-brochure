@@ -1,9 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../../shared/services/api.service';
 import { environment } from '../../../../environments/environment';
-import { TAppGoodItem, TAppLot, TCreateReq, TGoodItemState, TOrderRes, TWholeItem } from '../types/cn.type';
-import { catchError, combineLatest, filter, map, of, Subject, switchMap, throwError } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { TAppGoodItem, TAppLot, TCreateReq, TGoodItemState, TOrderRes, TReamrk, TWholeItem } from '../types/cn.type';
+import { catchError, combineLatest, map, of, throwError } from 'rxjs';
 import { TCNRouteParam } from '../libs/parse-cn-param';
 import { mapGoodItemToState } from '../libs/goodItem-goodState';
 
@@ -32,6 +31,8 @@ export class CnApiService {
       map(([wholeItem, order]) => ({ ...wholeItem, ...order, isWRR, saleCode: res.saleCode, returnAmount: order.goodList.reduce((acc, cur) => acc + cur.useItem, 0) })),
       catchError((err) => throwError(() => err))
     )
+
+  getRemark = () => this.api.get<TReamrk[]>(`${this.url}/GetCNRemark`)
 
 
 
