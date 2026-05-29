@@ -22,8 +22,8 @@ export class PeriodService {
     return this.api.post<any>(`${this.url}/period/${periodId}/order`, { poList: req })
   }
 
-  insertFreeItem(periodId: number, req: TOrderList[]) {
-    return this.api.post<any>(`${this.url}/period/${periodId}/free-item`, { poList: req })
+  insertFreeItem(periodId: number, req: TFreeItemReq) {
+    return this.api.post<{ id: number }>(`${this.url}/period/${periodId}/free-item`, req)
   }
 
   insertBillDiscount(periodId: number, req: TOrderList[]) {
@@ -100,6 +100,14 @@ type TCreatPeriodReq = {
 type TOrderList = {
   orderNumb: string
   receNumb: string
+  actualAmount: number
+  remark: string
+}
+
+type TFreeItemReq = {
+  orderNumb: string
+  receNumb: string
+  goodCode: string
   actualAmount: number
   remark: string
 }
