@@ -1,5 +1,5 @@
 import { TMaybe } from "../../../shared/types/index.type"
-import { TReamrk } from "../types/cn.type"
+import { TRemark } from "../types/cn.type"
 
 export const RESULT_TYPE = {
     none: 'none',
@@ -10,7 +10,7 @@ export const RESULT_TYPE = {
 
 export type TResultType = keyof typeof RESULT_TYPE
 
-export const mapRemarkToResult = (remark: TMaybe<TReamrk>): TResultType => {
+export const mapRemarkToResult = (remark: TMaybe<TRemark>): TResultType => {
     if (remark === null) return RESULT_TYPE.none
     switch (remark.id) {
         case '3': return RESULT_TYPE.notChange

@@ -1,12 +1,11 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { apply, applyEach, form, minLength, readonly, required, schema, validate } from '@angular/forms/signals';
-import { TCnType, TGoodItemState, TReamrk, TRemarkResult } from '../types/cn.type';
-import { TMaybe } from '../../../types';
+import { TReadonlyForm, TStepOne, TGoodFormItem, TCreateCancelForm } from '../types/cn.type';
 import { mapRemarkToResult } from '../libs/remark-result';
 import { mapRemarkToShowCN } from '../libs/remark-cn';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: null,
 })
 export class CnStateService {
   formState = signal<TCreateCancelForm>({
@@ -121,42 +120,3 @@ export class CnStateService {
     return 'upload'
   })
 }
-
-export type TReadonlyForm = {
-  isWRR: string
-  bankAcName: string
-  bankCode: string
-  bankNumb: string
-  code: string
-  name: string
-  wholeCode: string
-  wholeDate: string
-  wholeName: string
-  wholeNumb: string
-  saleCode: string
-}
-
-export type TStepOne = {
-  remarkOpt: TMaybe<TReamrk>
-  resultNotChange: TMaybe<TRemarkResult>
-  resultAll: TMaybe<TRemarkResult>
-  resultNotAccept: TMaybe<TRemarkResult>
-  cnType: TMaybe<TCnType>
-  remark: string
-  cnCount: number
-  cusStat: string
-}
-
-export type TGoodFormItem = {
-  good: TGoodItemState
-  amount: number
-  check: boolean
-}
-
-type TCreateCancelForm = {
-  metadata: TReadonlyForm
-  stepOne: TStepOne
-  image: string[]
-  returnList: Array<TGoodFormItem>
-}
-

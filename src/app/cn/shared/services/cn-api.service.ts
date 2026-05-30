@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../../shared/services/api.service';
 import { environment } from '../../../../environments/environment';
-import { TAppGoodItem, TAppLot, TCreateReq, TGoodItemState, TOrderRes, TReamrk, TWholeItem } from '../types/cn.type';
+import { TCreateReq, TGoodItem, TGoodItemState, TLotItem, TOrderRes, TRemark, TWholeItem } from '../types/cn.type';
 import { catchError, combineLatest, map, of, throwError } from 'rxjs';
 import { TCNRouteParam } from '../libs/parse-cn-param';
-import { mapGoodItemToState } from '../libs/goodItem-goodState';
+import { mapGoodItemToState } from '../libs/good-item.lib';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +32,7 @@ export class CnApiService {
       catchError((err) => throwError(() => err))
     )
 
-  getRemark = () => this.api.get<TReamrk[]>(`${this.url}/GetCNRemark`)
+  getRemark = () => this.api.get<TRemark[]>(`${this.url}/GetCNRemark`)
 
 
 
@@ -53,5 +53,6 @@ export class CnApiService {
 }
 
 type TSearchResult = {
-  lot: Array<Omit<TAppLot, 'goodAmou' | 'returnAmou'>>
-} & Omit<TAppGoodItem, 'lot'>
+  check: boolean
+  lot: Array<Omit<TLotItem, 'goodAmou'> & { check: boolean }>
+} & Omit<TGoodItem, 'lot'>

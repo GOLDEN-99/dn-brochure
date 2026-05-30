@@ -7,11 +7,12 @@ import { inject } from '@angular/core';
 import { TCnType } from '../shared/types/cn.type';
 
 
-export const cnGuard = (expectedCnType: TCnType | 'uplaod'): CanActivateFn => (route, state) => {
+export const cnGuard = (expectedCnType: TCnType | 'upload'): CanActivateFn => (route, state) => {
     const stateService = inject(CnStateService);
     if (stateService.endPoint() === expectedCnType) return true;
     const router = inject(Router);
-    return router.createUrlTree([route.parent?.url.map(s => s.path).join('/')]);
+    const parentPath = route.parent?.url.map(s => s.path).join('/');
+    return router.createUrlTree(parentPath ? [parentPath] : ['/']);
 }
 
 export const CN_ROUTES: Route[] = [
@@ -52,15 +53,14 @@ export const CN_ROUTES: Route[] = [
                 loadComponent: () =>
                     import('../features/cn-upload/cn-upload.component')
                         .then(r => r.CnUploadComponent).catch(handleLazyLoadError('cn/uplaod')),
-                canActivate: [cnGuard('uplaod')]
+                canActivate: [cnGuard('upload')]
             },
-
+            {
+                path: "complete",
+                loadComponent: () =>
+                    import('../features/cn-complete/cn-complete.component')
+                        .then(r => r.CnCompleteComponent).catch(handleLazyLoadError('cn/complete'))
+            }
         ]
     },
-    {
-        path: "complete",
-        loadComponent: () =>
-            import('../features/cn-complete/cn-complete.component')
-                .then(r => r.CnCompleteComponent).catch(handleLazyLoadError('cn/complete'))
-    }
 ];

@@ -3,9 +3,8 @@ import { CnApiService } from '../../services/cn-api.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { TGoodItemState } from '../../types/cn.type';
+import { TGoodFormItem, TGoodItemState } from '../../types/cn.type';
 import { FormValueControl } from '@angular/forms/signals';
-import { TGoodFormItem } from '../../services/cn-state.service';
 
 @Component({
   selector: 'cn-product-picker',

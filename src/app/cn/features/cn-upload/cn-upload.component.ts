@@ -4,7 +4,7 @@ import { FormField } from "@angular/forms/signals";
 import { CnStateService } from '../../shared/services/cn-state.service';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../service/toast/toast.service';
-import { mapStepOneFormToRequest } from '../../shared/libs/formatRequest';
+import { mapFormToApiRequest } from '../../shared/libs/format-request';
 import { CnApiService } from '../../shared/services/cn-api.service';
 import { LoadingService } from '../../../service/loading/loading.service';
 import { Router } from '@angular/router';
@@ -32,6 +32,7 @@ export class CnUploadComponent {
   disabled = computed(() =>
     this.requestForm.stepOne().invalid()
     || this.requestForm.image().invalid()
+    || this.invalidPrice()
   )
 
   onError(msg: string) {
@@ -50,7 +51,7 @@ export class CnUploadComponent {
     }
     const { metadata: { bankCode, ...meta },
       stepOne, image } = form.value()
-    const temp = mapStepOneFormToRequest(stepOne);
+    const temp = mapFormToApiRequest(stepOne);
     if (temp === null) {
       this.toast.danger('ข้อมูลหน้าแรกไม่ครบ')
       return
@@ -67,7 +68,7 @@ export class CnUploadComponent {
     }).subscribe({
       next: (res) => {
         this.toast.success('สำเร็จ')
-        this.router.navigate(['cn', 'complete'])
+        this.router.navigate(['..', 'complete'])
       },
       error: (err) => {
         this.toast.danger('เกิดข้อผิดพลาด')

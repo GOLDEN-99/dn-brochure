@@ -32,7 +32,7 @@ export type TWholeItem = {
     wholeDate: string // "03/12/2025 00:00:00"
 } & TBaseWhole & Omit<TCNQueryParams, 'saleCode'>
 
-export type TReamrk = {
+export type TRemark = {
     id: string //1
     remark: string
 }
@@ -64,9 +64,6 @@ export type TGoodItemState = TGoodItemBase & {
 }
 
 
-export type TAppLot = { check: boolean, returnAmou: number } & TLotItem
-
-export type TAppGoodItem = { check: boolean, lot: TAppLot[] } & Omit<TGoodItem, 'lot'>
 
 export type TOrderRes = {
     wholeNumb: string // "25035799",
@@ -81,35 +78,72 @@ export type TGoodItemReq = {
     unitcode: string
     unitprice: number
     subtotal: number
-    // lotNumber: TMaybe<string>
-    // expiDate: string // "2025-04-04T08:09:04.257Z"
 }
-
-export type TPrepenCnApi = {
-    cusStat: string //'0' | '1'
-    remark: string // note ,
-    bankcode: string // 0, === bankCode 
-} & TCNQueryParams & Pick<TBaseWhole, 'bankAcName' | 'bankNumb'>
-
-export type TPrependRemark = {
-    probOption: TMaybe<string>
-    motive: string // TReamrk.remark
-    motiveId: string | number // TRemark.id
-}
-
-export type TPrependImage = {
-    image: string[] // [url1, url2, ...]
-}
-
-export type TPrependOrder = {
-    totalprice: number
-    goodList: TGoodItemReq[]
-}
-
-export type TCreateReq = TPrepenCnApi & TPrependRemark & TPrependImage & TPrependOrder & { isWRR: string }
-
 
 export type TRemarkResult = {
     id: string,
     result: string
+}
+
+export interface TCreateReq {
+    // identity / billing
+    isWRR: string
+    cusStat: string
+    bankcode: string
+    bankAcName: string
+    bankNumb: string
+    saleCode: string
+    wholeCode: string
+    wholeNumb: string
+    // reason
+    motive: string           // TRemark.remark
+    motiveId: string | number // TRemark.id
+    probOption: TMaybe<string>
+    // note
+    remark: string
+    // order
+    totalprice: number
+    goodList: TGoodItemReq[]
+    // attachments
+    image: string[]
+}
+
+// ─── Form State Types ─────────────────────────────────────────────────────────
+
+export type TReadonlyForm = {
+    isWRR: string
+    bankAcName: string
+    bankCode: string
+    bankNumb: string
+    code: string
+    name: string
+    wholeCode: string
+    wholeDate: string
+    wholeName: string
+    wholeNumb: string
+    saleCode: string
+}
+
+export type TStepOne = {
+    remarkOpt: TMaybe<TRemark>
+    resultNotChange: TMaybe<TRemarkResult>
+    resultAll: TMaybe<TRemarkResult>
+    resultNotAccept: TMaybe<TRemarkResult>
+    cnType: TMaybe<TCnType>
+    remark: string
+    cnCount: number
+    cusStat: string
+}
+
+export type TGoodFormItem = {
+    good: TGoodItemState
+    amount: number
+    check: boolean
+}
+
+export type TCreateCancelForm = {
+    metadata: TReadonlyForm
+    stepOne: TStepOne
+    image: string[]
+    returnList: Array<TGoodFormItem>
 }

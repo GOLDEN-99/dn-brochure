@@ -5,8 +5,8 @@ import { ImageUploaderComponent } from "../../shared/components/image-uploader/i
 import { ToastService } from '../../../service/toast/toast.service';
 import { LoadingService } from '../../../service/loading/loading.service';
 import { FormField } from "@angular/forms/signals";
-import { mapStepOneFormToRequest } from '../../shared/libs/formatRequest';
-import { TGoodItemReq } from '../../shared/types/cn.type';
+import { mapFormToApiRequest } from '../../shared/libs/format-request';
+import { mapReturnListToGoodReq } from '../../shared/libs/good-item.lib';
 import { Router, RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 
@@ -48,22 +48,13 @@ export class WholeCancelOrderComponent {
     }
     const { metadata: { bankCode, ...meta },
       stepOne, returnList, image } = form.value()
-    const temp = mapStepOneFormToRequest(stepOne);
+    const temp = mapFormToApiRequest(stepOne);
     if (temp === null) {
       this.toast.danger('ข้อมูลหน้าแรกไม่ครบ')
       return
     }
     const totalprice = this.totalPrice()
-    const goodList: TGoodItemReq[] = returnList
-      .map(
-        ({ good: { goodCode, orderAmount, unitCode, unitPrice, subTotal } }) =>
-        ({
-          goodcode: goodCode,
-          goodAmou: orderAmount,
-          unitcode: unitCode,
-          unitprice: unitPrice,
-          subtotal: subTotal,
-        }))
+    const goodList = mapReturnListToGoodReq(returnList)
 
     this.loading.startLoad()
     this.cnClient.submit({
@@ -75,7 +66,7 @@ export class WholeCancelOrderComponent {
     }).subscribe({
       next: (res) => {
         this.toast.success('สำเร็จ')
-        this.router.navigate(['cn', 'complete'])
+        this.router.navigate(['..', 'complete'])
       },
       error: (err) => {
         this.toast.danger('เกิดข้อผิดพลาด')

@@ -1,6 +1,6 @@
 import { Component, inject, input, model } from '@angular/core';
 import { FormValueControl, ValidationError } from '@angular/forms/signals';
-import { TReamrk } from '../../types/cn.type';
+import { TRemark } from '../../types/cn.type';
 import { FormsModule } from '@angular/forms';
 import { TMaybe } from '../../../../types';
 import { CnApiService } from '../../services/cn-api.service';
@@ -12,9 +12,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
   templateUrl: './remark-select.component.html',
   styles: '',
 })
-export class RemarkSelectComponent implements FormValueControl<TMaybe<TReamrk>> {
+export class RemarkSelectComponent implements FormValueControl<TMaybe<TRemark>> {
   private readonly cnClient = inject(CnApiService)
-  value = model<TMaybe<TReamrk>>(null)
+  value = model<TMaybe<TRemark>>(null)
   remarkList = toSignal(this.cnClient.getRemark(), { initialValue: [] })
   disabled = input(false)
   readonly = input(false)

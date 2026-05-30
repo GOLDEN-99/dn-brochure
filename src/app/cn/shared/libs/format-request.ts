@@ -1,7 +1,7 @@
-import { TStepOne } from "../services/cn-state.service";
+import { TStepOne } from "../types/cn.type";
 import { mapRemarkToResult } from "./remark-result";
 
-export const mapStepOneFormToRequest = (form: TStepOne) => {
+export const mapFormToApiRequest = (form: TStepOne) => {
     const { remark, remarkOpt, resultAll, resultNotAccept, resultNotChange, cusStat } = form;
     if (remarkOpt === null) return null
     const { id: motiveId, remark: motive } = remarkOpt;
