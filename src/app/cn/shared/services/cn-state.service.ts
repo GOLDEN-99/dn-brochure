@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { apply, applyEach, applyWhen, disabled, form, min, minLength, readonly, required, schema, validate } from '@angular/forms/signals';
+import { apply, applyEach, form, minLength, readonly, required, schema, validate } from '@angular/forms/signals';
 import { TCnType, TGoodItemState, TReamrk, TRemarkResult } from '../types/cn.type';
 import { TMaybe } from '../../../types';
 import { mapRemarkToResult } from '../libs/remark-result';
@@ -70,15 +70,6 @@ export class CnStateService {
       message: 'กรุณาเลือกประเภทการ CN',
       when: ({ valueOf }) => mapRemarkToShowCN(valueOf(schema.remarkOpt))
     })
-    validate(schema.cnType, ({ value, valueOf }) => {
-      const current = value();
-      const returnAmount = valueOf(schema.cnCount)
-      return current === 'whole' && returnAmount !== 0
-        ? {
-          kind: 'invalid cn type',
-          message: `ไม่สามารถ CN ทั้งบิลได้ เคย CN ไปแล้ว ${returnAmount} ชิ้น`
-        } : null
-    })
   })
 
   goodItemSchema = schema<TGoodFormItem>((schema) => {
@@ -86,14 +77,10 @@ export class CnStateService {
       if (!valueOf(schema.check)) return null
       const amount = value()
       const orderAmount = valueOf(schema.good).orderAmount
-      const returnedAmount = valueOf(schema.good).useItem
       if (orderAmount !== 0) {
-        const maxAllowed = orderAmount - returnedAmount
-        if (amount > maxAllowed) return { kind: 'invalid amount', message: `จำนวนสูงสุดที่คืนได้คือ ${maxAllowed}` }
+        if (amount > orderAmount) return { kind: 'invalid amount', message: `จำนวนสูงสุดที่คืนได้คือ ${orderAmount}` }
       }
-      if (amount < 0) return { kind: 'invalid amount', message: 'จำนวนต้องไม่ต่ำกว่า 0' }
       return null
-
     })
   })
 
