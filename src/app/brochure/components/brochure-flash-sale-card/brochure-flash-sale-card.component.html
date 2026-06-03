@@ -1,0 +1,25 @@
+@let prop = cardProp();
+
+<div [style]="headerContainer()">
+  <div [className]="headerClass()">
+    <div [className]="textClass()">{{ prop.goodName }}</div>
+  </div>
+</div>
+<div [className]="contentClass()">
+  <div class="content-section">
+    <div style="height: 100%">
+      <div>
+        <span [className]="goodCodeClass()">{{ prop.barCode }}</span>
+      </div>
+      <div class="img-container" style="display: flex; justify-content: center">
+        <img [src]="imgUrl()" alt="product" (load)="handleOnLoad($event)" />
+      </div>
+    </div>
+  </div>
+  <div class="content-section" style="position: relative; align-items: end">
+    <div [className]="priceTextClass()">
+      {{ prop.flashPrice | number: "1.2-2" }}.-
+    </div>
+    <img src="/image/FS/price.png" alt="price" />
+  </div>
+</div>

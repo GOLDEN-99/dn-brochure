@@ -1,0 +1,44 @@
+@let cardlist = data(); @let static = isStatic();
+
+<div [className]="static ? 'static prochure' : 'prochure'">
+  <div style="position: relative">
+    @if (head().promotionType !== "Hot") {
+      <span [className]="static ? 'customer-label static' : 'customer-label'">
+        {{ isNewCustomer() }}
+      </span>
+    }
+    <img
+      [src]="headerUrl()"
+      alt="prochure header"
+      [className]="static ? 'header-image static' : 'header-image'"
+    />
+    <span [className]="static ? 'date-static' : 'date'">
+      {{ date() }}
+    </span>
+  </div>
+  <div [className]="template()">
+    @for (card of cardlist; track $index) {
+      <!---->
+      @if (card.price.quotaAmou) {
+        <brochure-special-card
+          [props]="card"
+          [isStatic]="static"
+          [color]="color()"
+        />
+      } @else {
+        <brochure-card
+          [props]="card"
+          [color]="color()"
+          [isStatic]="static"
+          [priceType]="priceType()"
+        />
+      }
+    }
+  </div>
+
+  <img
+    [src]="footerUrl()"
+    alt="prochure footer"
+    [className]="static ? 'footer-image static' : 'footer-image'"
+  />
+</div>

@@ -1,0 +1,40 @@
+<section class="container search-page">
+  <h1 class="text-center my-3 search-page-header">Brochure DN Online</h1>
+  <div class="search-form">
+    <div class="mb-3">
+      <label for="shop-code" class="form-label">ค้นหาร้านค้า</label>
+      <input
+        type="text"
+        class="form-control"
+        id="shop-code"
+        placeholder="ใส่รหัสร้านค้า"
+        [(ngModel)]="wholeCode"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="dropdown">เลือกประเภทโบรชัว</label>
+      <select
+        name="promotype"
+        id="dropdown"
+        class="form-select"
+        [(ngModel)]="promotionType"
+      >
+        <option value="" disabled selected>เลือกประเภทโบรชัว</option>
+        <option value="Monthly">โปรโมชั่น รายเดือน</option>
+        <option value="SP">special</option>
+        <option value="Hot">โปรโมชั่น hotprice</option>
+      </select>
+    </div>
+    <button
+      class="btn btn-primary w-100"
+      type="submit"
+      (click)="handleSubmit()"
+      [disabled]="disabled()"
+    >
+      ค้นหา
+    </button>
+  </div>
+</section>
+<div style="text-align: center; margin: 0; margin-top: 16px; opacity: 0.2">
+  version {{ version.version }}
+</div>

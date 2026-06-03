@@ -1,16 +1,16 @@
 import { Component, computed, input } from '@angular/core';
-import { TColor, TCardProps, TPrice } from '../../../types';
+import { TCardProps } from '../../types/brochure.type';
 import { environment } from '../../../../environments/environment';
 import { DecimalPipe } from '@angular/common';
+import { TColor } from '../../utils/param-schema';
 
 @Component({
-  selector: 'app-prochure-card',
+  selector: 'brochure-special-card',
   imports: [DecimalPipe],
-  templateUrl: './prochure-card.component.html',
-  styleUrl: './prochure-card.component.scss'
+  templateUrl: './brochure-special-card.component.html',
+  styleUrl: './brochure-special-card.component.scss',
 })
-export class ProchureCardComponent {
-  priceType = input.required<keyof TPrice>()
+export class BrochureSpecialCardComponent {
   color = input.required<TColor>()
   isStatic = input(false)
   nameStyle = computed(() => {
@@ -23,9 +23,4 @@ export class ProchureCardComponent {
   })
   props = input.required<TCardProps>()
   imageUrl = computed(() => `${environment.imagePath}/${this.props().goodCode}.jpg`)
-  displayPrice = computed(() => {
-    const prop = this.props()
-    const priceType = this.priceType()
-    return prop.price[priceType]
-  })
 }
