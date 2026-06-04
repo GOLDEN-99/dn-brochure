@@ -7,7 +7,7 @@ import { LoadingService } from '../../../service/loading/loading.service';
 import { FormField } from "@angular/forms/signals";
 import { mapFormToApiRequest } from '../../shared/libs/format-request';
 import { mapReturnListToGoodReq } from '../../shared/libs/good-item.lib';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 
 
@@ -21,6 +21,7 @@ export class WholeCancelOrderComponent {
   private readonly toast = inject(ToastService)
   private readonly loading = inject(LoadingService)
   private readonly router = inject(Router)
+  private readonly route = inject(ActivatedRoute)
   private readonly cnClient = inject(CnApiService)
   private readonly cnState = inject(CnStateService)
 
@@ -44,6 +45,7 @@ export class WholeCancelOrderComponent {
     const form = this.requestForm();
     if (form.invalid()) {
       this.toast.danger('ข้อมูลไม่ครบ')
+      form.errorSummary().forEach(({ message, kind }) => this.toast.danger(`[${kind}] : ${message}`))
       return
     }
     const { metadata: { bankCode, ...meta },
@@ -66,12 +68,12 @@ export class WholeCancelOrderComponent {
     }).subscribe({
       next: (res) => {
         this.toast.success('สำเร็จ')
-        this.router.navigate(['..', 'complete'])
+        this.router.navigate(['..', 'complete'], { relativeTo: this.route })
+        this.loading.endLoad()
       },
       error: (err) => {
         this.toast.danger('เกิดข้อผิดพลาด')
-      },
-      complete: () => {
+        this.toast.danger(err.message)
         this.loading.endLoad()
       }
     })

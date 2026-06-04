@@ -87,7 +87,10 @@ export class CnStateService {
     apply(schema.metadata, this.metaDataSchema)
     apply(schema.stepOne, this.stepOneSchema)
     applyEach(schema.returnList, this.goodItemSchema)
-    validate(schema.returnList, ({ value }) => {
+    validate(schema.returnList, ({ value, valueOf }) => {
+      const { cnType, remarkOpt } = valueOf(schema.stepOne);
+      const remarkHash = mapRemarkToShowCN(remarkOpt)
+      if (!remarkHash || cnType !== 'some') return null
       return value().some(({ check }) => check)
         ? null
         : {

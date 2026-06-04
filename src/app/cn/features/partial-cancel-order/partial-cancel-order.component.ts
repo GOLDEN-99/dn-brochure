@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { ImageUploaderComponent } from "../../shared/components/image-uploader/image-uploader.component";
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../service/toast/toast.service';
 
 import { CnStateService } from '../../shared/services/cn-state.service';
@@ -20,6 +20,7 @@ import { CnApiService } from '../../shared/services/cn-api.service';
 })
 export class PartialCancelOrderComponent {
   private readonly router = inject(Router)
+  private readonly route = inject(ActivatedRoute)
   protected toast = inject(ToastService)
   private readonly cnState = inject(CnStateService)
   private readonly cnClient = inject(CnApiService)
@@ -45,6 +46,7 @@ export class PartialCancelOrderComponent {
     const form = this.requestForm();
     if (form.invalid()) {
       this.toast.danger('ข้อมูลไม่ครบ')
+      form.errorSummary().forEach(({ message, kind }) => this.toast.danger(`[${kind}] : ${message}`))
       return
     }
     const { metadata: { bankCode, ...meta },
@@ -66,14 +68,14 @@ export class PartialCancelOrderComponent {
     }).subscribe({
       next: (res) => {
         this.toast.success('สำเร็จ')
-        this.router.navigate(['..', 'complete'])
+        this.loading.endLoad()
+        this.router.navigate(['../..', 'complete'], { relativeTo: this.route })
       },
       error: (err) => {
         this.toast.danger('เกิดข้อผิดพลาด')
-      },
-      complete: () => {
+        this.toast.danger(err.message)
         this.loading.endLoad()
-      }
+      },
     })
   }
 

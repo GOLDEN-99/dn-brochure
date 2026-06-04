@@ -7,7 +7,7 @@ import { ToastService } from '../../../service/toast/toast.service';
 import { mapFormToApiRequest } from '../../shared/libs/format-request';
 import { CnApiService } from '../../shared/services/cn-api.service';
 import { LoadingService } from '../../../service/loading/loading.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'cn-upload',
@@ -21,6 +21,7 @@ export class CnUploadComponent {
   private readonly toast = inject(ToastService)
   private readonly loading = inject(LoadingService)
   private readonly router = inject(Router)
+  private readonly route = inject(ActivatedRoute)
 
   totalPrice = signal(0)
 
@@ -47,6 +48,7 @@ export class CnUploadComponent {
     const form = this.requestForm();
     if (form.invalid()) {
       this.toast.danger('ข้อมูลไม่ครบ')
+      form.errorSummary().forEach(({ message, kind }) => this.toast.danger(`[${kind}] : ${message}`))
       return
     }
     const { metadata: { bankCode, ...meta },
@@ -68,14 +70,14 @@ export class CnUploadComponent {
     }).subscribe({
       next: (res) => {
         this.toast.success('สำเร็จ')
-        this.router.navigate(['..', 'complete'])
+        this.loading.endLoad()
+        this.router.navigate(['..', 'complete'], { relativeTo: this.route })
       },
       error: (err) => {
         this.toast.danger('เกิดข้อผิดพลาด')
-      },
-      complete: () => {
+        this.toast.danger(err.message)
         this.loading.endLoad()
-      }
+      },
     })
   }
 }
