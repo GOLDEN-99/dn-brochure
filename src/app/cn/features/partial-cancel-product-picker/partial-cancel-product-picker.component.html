@@ -12,7 +12,7 @@
   <tbody>
     @for (itemForm of requestForm.returnList; track itemForm().keyInParent()) {
       @let item = itemForm().value().good;
-      <tr>
+      <tr [class.text-muted]="itemForm.check().disabled()">
         <td>
           <div class="form-check">
             <input

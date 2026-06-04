@@ -10,7 +10,7 @@ import { CnProductPickerComponent } from "../../shared/components/cn-product-pic
   selector: 'cn-partial-cancel-product-picker',
   imports: [RouterLink, FormField, DecimalPipe, FormsModule, CnProductPickerComponent, RouterLink],
   templateUrl: './partial-cancel-product-picker.component.html',
-  styles: '',
+  styles: `tr.text-muted td { color: inherit; opacity: 0.3; }`,
 })
 export class PartialCancelProductPickerComponent {
   private readonly cnState = inject(CnStateService)
