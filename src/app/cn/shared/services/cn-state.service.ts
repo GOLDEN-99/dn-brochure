@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { apply, applyEach, form, minLength, readonly, required, schema, validate } from '@angular/forms/signals';
+import { apply, applyEach, disabled, form, minLength, readonly, required, schema, validate } from '@angular/forms/signals';
 import { TReadonlyForm, TStepOne, TGoodFormItem, TCreateCancelForm } from '../types/cn.type';
 import { mapRemarkToResult } from '../libs/remark-result';
 import { mapRemarkToShowCN } from '../libs/remark-cn';
@@ -80,6 +80,10 @@ export class CnStateService {
         if (amount > orderAmount) return { kind: 'invalid amount', message: `จำนวนสูงสุดที่คืนได้คือ ${orderAmount}` }
       }
       return null
+    })
+    disabled(schema.check, ({ valueOf }) => {
+      const { useItem, orderAmount } = valueOf(schema.good)
+      return orderAmount === 0 && useItem !== 0
     })
   })
 
