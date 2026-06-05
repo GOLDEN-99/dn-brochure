@@ -13,7 +13,7 @@ import { fetchDoorDetailResolver } from '../resolvers/ibob/fetch-door-detail.res
 import { InOutQueryComponent } from '../pages/supplier-project/in-out-query/in-out-query.component';
 import { ibobCompTypeChildGuardGuard } from '../guard/ibob-comp-type-child-guard.guard';
 import { ibobAuthGuard } from '../guard/ibob-auth.guard';
-import { handleLazyLoadError } from '../utils/lazy-load-error-handler';
+import { handleLazyLoadError, lazyLoadWithRetry } from '../utils/lazy-load-error-handler';
 
 export const SUPPLIER_ROUTES: Route[] = [
     {
@@ -29,12 +29,12 @@ export const SUPPLIER_ROUTES: Route[] = [
             {
                 path: "add/:warehouse",
                 resolve: [getByWarehouseResolver],
-                loadComponent: () => import('../pages/supplier-project/supplier-reserve-add/supplier-reserve-add.component')
+                loadComponent: () => lazyLoadWithRetry(() => import('../pages/supplier-project/supplier-reserve-add/supplier-reserve-add.component'))
                     .then(r => r.SupplierReserveAddComponent)
             },
             {
                 path: 'login',
-                loadComponent: () => import('../pages/supplier-project/supplier-login/supplier-login.component')
+                loadComponent: () => lazyLoadWithRetry(() => import('../pages/supplier-project/supplier-login/supplier-login.component'))
                     .then(r => r.SupplierLoginComponent)
             }
         ]
@@ -81,13 +81,13 @@ export const SUPPLIER_ROUTES: Route[] = [
                     },
                     {
                         path: 'add',
-                        loadComponent: () => import("../pages/supplier-project/ibob-admin-add/ibob-admin-add.component")
+                        loadComponent: () => lazyLoadWithRetry(() => import("../pages/supplier-project/ibob-admin-add/ibob-admin-add.component"))
                             .then(r => r.IbobAdminAddComponent)
                             .catch(handleLazyLoadError('supplier/in-out/add')),
                     },
                     {
                         path: ':reserveId',
-                        loadComponent: () => import("../pages/supplier-project/ibob-admin-edit/ibob-admin-edit.component")
+                        loadComponent: () => lazyLoadWithRetry(() => import("../pages/supplier-project/ibob-admin-edit/ibob-admin-edit.component"))
                             .then(r => r.IbobAdminEditComponent)
                             .catch(handleLazyLoadError('supplier/in-out/:reserveId')),
                     }

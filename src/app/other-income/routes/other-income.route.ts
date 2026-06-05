@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { handleLazyLoadError } from '../../utils/lazy-load-error-handler';
+import { handleLazyLoadError, lazyLoadWithRetry } from '../../utils/lazy-load-error-handler';
 import { InjectionToken } from '@angular/core';
 import { OtherIncomeHomeLayoutComponent } from '../shared/components/layout/other-income-home-layout/other-income-home-layout.component';
 
@@ -192,7 +192,7 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                 children: [
                     {
                         path: 'dc-rebate',
-                        loadComponent: () => import('../purchase/components/pages/dc-rebate-home-page/dc-rebate-home-page.component')
+                        loadComponent: () => lazyLoadWithRetry(() => import('../purchase/components/pages/dc-rebate-home-page/dc-rebate-home-page.component'))
                             .then(c => c.DcRebateHomePageComponent)
                             .catch(handleLazyLoadError('purchase dc rebate home'))
                     },

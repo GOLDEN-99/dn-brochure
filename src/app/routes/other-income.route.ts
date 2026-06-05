@@ -17,7 +17,7 @@ import { NotLightSingleDualComponent } from '../pages/other-income/purchase/not-
 import { LightSingleComponent } from '../pages/other-income/purchase/light-single/light-single.component';
 import { AccountNotLightInvoiceComponent } from '../pages/other-income/account/account-not-light-invoice.component';
 import { AccountLightBoxComponent } from '../pages/other-income/account/account-light-box.component';
-import { handleLazyLoadError } from '../utils/lazy-load-error-handler';
+import { handleLazyLoadError, lazyLoadWithRetry } from '../utils/lazy-load-error-handler';
 import { NotLightDualDetailComponent } from '../pages/other-income/purchase/not-light-dual-detail/not-light-dual-detail.component';
 import { getOtherIncomeNotLightDualIdResolver } from '../resolvers/other-income/get-other-income-not-light-dual-id.resolver';
 import { AccountMonthlyReportComponent } from '../pages/other-income/account/account-monthly-report/account-monthly-report.component';
@@ -119,7 +119,7 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                 children: [
                     {
                         path: "",
-                        loadComponent: () => import('../other-income/purchase/components/features/other-income-create-pair/other-income-create-pair.component').then(r => r.OtherIncomeCreatePairComponent).catch(handleLazyLoadError('other-income/not-light/create-pair'))
+                        loadComponent: () => lazyLoadWithRetry(() => import('../other-income/purchase/components/features/other-income-create-pair/other-income-create-pair.component')).then(r => r.OtherIncomeCreatePairComponent).catch(handleLazyLoadError('other-income/not-light/create-pair'))
                     },
                 ]
             },
@@ -188,13 +188,13 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                     },
                     {
                         path: 'batch',
-                        loadComponent: () => import("../pages/other-income/account/other-income-account-batch/other-income-account-batch.component")
+                        loadComponent: () => lazyLoadWithRetry(() => import("../pages/other-income/account/other-income-account-batch/other-income-account-batch.component"))
                             .then(r => r.OtherIncomeAccountBatchComponent)
                             .catch(handleLazyLoadError('other-income/account/batch'))
                     },
                     {
                         path: 'invoices',
-                        loadComponent: () => import("../other-income/account/pages/account-invoice-page/account-invoice-page.component")
+                        loadComponent: () => lazyLoadWithRetry(() => import("../other-income/account/pages/account-invoice-page/account-invoice-page.component"))
                             .then(r => r.AccountInvoicePageComponent)
                             .catch(handleLazyLoadError('other-income/account/invoices'))
                     }

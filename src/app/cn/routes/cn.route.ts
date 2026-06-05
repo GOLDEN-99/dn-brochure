@@ -2,7 +2,7 @@ import { CanActivateFn, Route, Router } from '@angular/router';
 import { CnLayoutComponent } from '../shared/components/cn-layout/cn-layout.component';
 import { CnStateService } from '../shared/services/cn-state.service';
 import { CreateCancelRequestComponent } from '../features/create-cancel-request/create-cancel-request.component';
-import { handleLazyLoadError } from '../../utils/lazy-load-error-handler';
+import { handleLazyLoadError, lazyLoadWithRetry } from '../../utils/lazy-load-error-handler';
 import { inject } from '@angular/core';
 import { TCnType } from '../shared/types/cn.type';
 
@@ -27,43 +27,38 @@ export const CN_ROUTES: Route[] = [
             },
             {
                 path: "whole",
-                loadComponent: () =>
-                    import('../features/whole-cancel-order/whole-cancel-order.component')
+                loadComponent: () => lazyLoadWithRetry(() => import('../features/whole-cancel-order/whole-cancel-order.component'))
                         .then(r => r.WholeCancelOrderComponent),
                 canActivate: [cnGuard('whole')]
             },
             {
                 path: "some",
-                loadComponent: () =>
-                    import('../features/partial-cancel-product-picker/partial-cancel-product-picker.component')
+                loadComponent: () => lazyLoadWithRetry(() => import('../features/partial-cancel-product-picker/partial-cancel-product-picker.component'))
                         .then(r => r.PartialCancelProductPickerComponent)
                         .catch(handleLazyLoadError('cn/partial-request-picker')),
                 canActivate: [cnGuard('some')]
             },
             {
                 path: "some/detail",
-                loadComponent: () =>
-                    import('../features/partial-cancel-order/partial-cancel-order.component')
+                loadComponent: () => lazyLoadWithRetry(() => import('../features/partial-cancel-order/partial-cancel-order.component'))
                         .then(r => r.PartialCancelOrderComponent)
                         .catch(handleLazyLoadError('cn/partial-request')),
                 canActivate: [cnGuard('some')]
             },
             {
                 path: "upload",
-                loadComponent: () =>
-                    import('../features/cn-upload/cn-upload.component')
+                loadComponent: () => lazyLoadWithRetry(() => import('../features/cn-upload/cn-upload.component'))
                         .then(r => r.CnUploadComponent).catch(handleLazyLoadError('cn/uplaod')),
                 canActivate: [cnGuard('upload')]
             },
             {
                 path: "complete",
-                loadComponent: () =>
-                    import('../features/cn-complete/cn-complete.component')
+                loadComponent: () => lazyLoadWithRetry(() => import('../features/cn-complete/cn-complete.component'))
                         .then(r => r.CnCompleteComponent).catch(handleLazyLoadError('cn/complete'))
             },
             {
                 path: 'fail',
-                loadComponent: () => import('../features/cn-fail/cn-fail.component')
+                loadComponent: () => lazyLoadWithRetry(() => import('../features/cn-fail/cn-fail.component'))
                     .then(c => c.CnFailComponent)
                     .catch(handleLazyLoadError('cn/complete'))
             }
