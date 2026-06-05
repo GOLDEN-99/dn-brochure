@@ -1,10 +1,7 @@
-@if (successMessage) {
-  <div style="position: fixed; z-index: 10000; right: 0" class="p-4">
-    <ngb-alert
-      #selfClosingAlert
-      [type]="severity"
-      (closed)="successMessage = ''"
-      >{{ successMessage }}</ngb-alert
-    >
+@if (toasts.length) {
+  <div style="position: fixed; z-index: 10000; right: 0; top: 0" class="p-4 d-flex flex-column gap-2">
+    @for (toast of toasts; track toast.id) {
+      <ngb-alert [type]="toast.severity" (closed)="remove(toast.id)">{{ toast.message }}</ngb-alert>
+    }
   </div>
 }

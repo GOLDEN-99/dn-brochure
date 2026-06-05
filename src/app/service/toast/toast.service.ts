@@ -17,9 +17,9 @@ export class ToastService {
   }
 }
 
-type TToastServerity = 'success' | 'danger'
+export type TToastSeverity = 'success' | 'danger'
 
-type TToastProps = {
+export type TToastProps = {
   message: string
-  severity: TToastServerity
+  severity: TToastSeverity
 }
