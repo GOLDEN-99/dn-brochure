@@ -16,7 +16,7 @@ export class CnApiService {
   private readonly url = environment.cnPath
   getOrder = (req: TCNRouteParam) =>
     this.api
-      .get<TOrderRes>(`${this.url}/GetOrder`, { params: { WholeNumb: req.wholeNumb + '1' } })
+      .get<TOrderRes>(`${this.url}/GetOrder`, { params: { WholeNumb: req.wholeNumb } })
       .pipe(
         catchError(err => throwError(() => {
           if (err instanceof HttpErrorResponse) {
