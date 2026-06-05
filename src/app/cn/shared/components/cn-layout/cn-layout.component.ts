@@ -66,10 +66,14 @@ export class CnLayoutComponent implements OnInit, OnDestroy {
           returnList: result.goodList.map(good => ({ good, amount: 0, check: false })),
         }))
       },
-      error: (err: Error) => {
+      error: (err: unknown) => {
         this.loading.set(false)
         this.toast.danger('ไม่สามารถโหลดข้อมูลได้')
-        this.toast.danger(err.message)
+        if (err instanceof Error) {
+          this.toast.danger(`[${err.name}] : ${err.message}`)
+          return
+        }
+        this.toast.danger(`[unknown error] : ${JSON.stringify(err)}`)
       }
     })
   }
