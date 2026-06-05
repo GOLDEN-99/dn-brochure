@@ -73,27 +73,3 @@ type TSearchResult = {
   check: boolean
   lot: Array<Omit<TLotItem, 'goodAmou'> & { check: boolean }>
 } & Omit<TGoodItemBase, 'lot'>
-
-
-
-type SuccessApiResponse<Request, Response> = {
-  status: 'success'
-  request: Request
-  response: Response
-  error: never
-}
-
-type FailApiResponse<Request, E extends Error> = {
-  stauts: 'fail'
-  request: Request
-  response: never
-  error: E
-}
-
-type ApiResponse<Request, Response, E extends Error> = SuccessApiResponse<Request, Response> | FailApiResponse<Request, E>
-
-class CustomError extends Error {
-  constructor(message: string) {
-    super(message)
-  }
-}
