@@ -1,11 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../../shared/services/api.service';
 import { environment } from '../../../../environments/environment';
-import { TCreateReq, TGoodItem, TGoodItemState, TLotItem, TOrderRes, TRemark, TWholeItem } from '../types/cn.type';
+import { TCreateReq, TGoodItemBase, TGoodItemState, TLotItem, TOrderRes, TRemark, TWholeItem } from '../types/cn.type';
 import { catchError, combineLatest, map, of, throwError } from 'rxjs';
 import { TCNRouteParam } from '../libs/parse-cn-param';
-import { mapGoodItemToState } from '../libs/good-item.lib';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -15,7 +13,6 @@ export class CnApiService {
   private readonly url = environment.cnPath
   getOrder = ({ wholeNumb }: Pick<TCNRouteParam, 'wholeNumb'>) =>
     this.api.get<TOrderRes>(`${this.url}/GetOrder`, { params: { WholeNumb: wholeNumb } })
-      .pipe(map(({ goodList, ...res }) => ({ ...res, goodList: goodList.map(good => mapGoodItemToState(good)) })))
 
 
 
@@ -38,8 +35,8 @@ export class CnApiService {
 
   searchProductByBarcode = (term: string) => this.api.get<TSearchResult>(`${this.url}/GetBarCode/${term}`)
     .pipe(
-      map<TSearchResult, Array<TGoodItemState>>(({ goodCode, goodName, barCode, unitCode, unitDesc, unitPrice, useItem }) => [{
-        goodCode, goodName, barCode, unitCode, unitDesc, unitPrice, useItem,
+      map<TSearchResult, Array<TGoodItemState>>(({ goodCode, goodAmou, goodName, barCode, unitCode, unitDesc, unitPrice, useItem }) => [{
+        goodCode, goodName, barCode, unitCode, unitDesc, unitPrice, goodAmou, useItem,
         orderAmount: 0, subTotal: 0
       }]),
       catchError(
@@ -55,4 +52,4 @@ export class CnApiService {
 type TSearchResult = {
   check: boolean
   lot: Array<Omit<TLotItem, 'goodAmou'> & { check: boolean }>
-} & Omit<TGoodItem, 'lot'>
+} & Omit<TGoodItemBase, 'lot'>

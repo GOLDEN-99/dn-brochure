@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { apply, applyEach, disabled, form, minLength, readonly, required, schema, validate } from '@angular/forms/signals';
+import { apply, applyEach, applyWhen, disabled, form, min, minLength, readonly, required, schema, validate } from '@angular/forms/signals';
 import { TReadonlyForm, TStepOne, TGoodFormItem, TCreateCancelForm } from '../types/cn.type';
 import { mapRemarkToResult } from '../libs/remark-result';
 import { mapRemarkToShowCN } from '../libs/remark-cn';
@@ -29,7 +29,7 @@ export class CnStateService {
       resultNotAccept: null,
       cnType: null,
       remark: '',
-      cnCount: 10,
+      cnCount: 0,
       cusStat: ''
     },
     returnList: [],
@@ -72,18 +72,29 @@ export class CnStateService {
   })
 
   goodItemSchema = schema<TGoodFormItem>((schema) => {
+    applyWhen(schema.amount, ({ valueOf }) => valueOf(schema.check), (s) => {
+      min(s, 1, { message: 'ระบุจำนวนขั้นต่ำ 1 ชิ้น' })
+    })
+    // min(schema.amount, 1, { message: 'ต้องระบุจำนวนสินค้าอย่างน้อย 1 ชิ้น' })
     validate(schema.amount, ({ value, valueOf }) => {
       if (!valueOf(schema.check)) return null
       const amount = value()
-      const orderAmount = valueOf(schema.good).orderAmount
-      if (orderAmount !== 0) {
-        if (amount > orderAmount) return { kind: 'invalid amount', message: `จำนวนสูงสุดที่คืนได้คือ ${orderAmount}` }
+      const { goodAmou, useItem } = valueOf(schema.good)
+      const remaining = goodAmou - useItem
+      if (goodAmou !== 0) {
+        const message = useItem > 0
+          ? `สั่งสินค้า ${goodAmou} ชิ้น cn ไปแล้ว ${useItem} จำนวนสูงสุดที่คืนได้คือ ${remaining}`
+          : `cn ได้ไม่เกินจำนวนที่สั่ง ${goodAmou} ชิ้น`
+        if (amount > remaining) return {
+          kind: 'invalid amount',
+          message
+        }
       }
       return null
     })
     disabled(schema.check, ({ valueOf }) => {
-      const { useItem, orderAmount } = valueOf(schema.good)
-      return orderAmount === 0 && useItem !== 0
+      const { useItem, goodAmou: orderAmount } = valueOf(schema.good)
+      return orderAmount - useItem <= 0 && (orderAmount !== 0 && useItem !== 0)
     })
   })
 

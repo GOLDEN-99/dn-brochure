@@ -16,7 +16,7 @@ export class PartialCancelProductPickerComponent {
   private readonly cnState = inject(CnStateService)
   requestForm = this.cnState.requestCNForm
   checkCount = this.cnState.checkCount
-  disable = computed(() => this.requestForm.stepOne().invalid() || this.requestForm.returnList().invalid())
+  disable = computed(() => this.requestForm.stepOne().invalid() || this.requestForm.returnList().value().every(({ check }) => !check))
   nextBtnClassName = computed(() => this.disable() ? 'btn btn-primary disabled' : 'btn btn-primary')
 
 }

@@ -44,7 +44,7 @@ export type TLotItem = {
     goodAmou: number //
 }
 
-type TGoodItemBase = {
+export type TGoodItemBase = {
     goodCode: string // "9060",
     goodName: string // "GPO Sidegra 50mg 1x4tab (ควบคุม)",
     barCode: string // "111235",
@@ -53,9 +53,10 @@ type TGoodItemBase = {
     unitDesc: string // "กล่อง",
     subTotal: number // 192,
     useItem: number
+    goodAmou: number // as order amount
 }
 
-export type TGoodItem = TGoodItemBase & {
+export type TGoodWithLot = Omit<TGoodItemBase, 'goodAmou'> & {
     lot: TLotItem[]
 }
 
@@ -69,7 +70,7 @@ export type TOrderRes = {
     wholeNumb: string // "25035799",
     orderNumb: string // "WO1825516",
     wholeCode: string // "2981",
-    goodList: TGoodItem[]
+    goodList: TGoodItemBase[]
 }
 
 export type TGoodItemReq = {
@@ -136,7 +137,7 @@ export type TStepOne = {
 }
 
 export type TGoodFormItem = {
-    good: TGoodItemState
+    good: TGoodItemBase
     amount: number
     check: boolean
 }
