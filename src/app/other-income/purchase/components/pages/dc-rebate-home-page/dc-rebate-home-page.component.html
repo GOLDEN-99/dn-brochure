@@ -1,0 +1,66 @@
+<h1 class="text-center">รายการรายได้อื่น DC-Rebate</h1>
+<div class="d-flex justify-content-end mb-3" style="gap: 16px">
+  <a
+    routerLink="./create"
+    class="btn btn-success btn-lg"
+    style="
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      align-items: center;
+    "
+  >
+    <i class="bi bi-plus"></i>
+    <span> เพิ่มกิจกรรม </span>
+  </a>
+  <a
+    routerLink="./create"
+    class="btn btn-outline-success btn-lg"
+    style="
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      align-items: center;
+    "
+  >
+    <i class="bi bi-plus"></i>
+    <span> เพิ่มกิจกรรม 2 หัว </span>
+  </a>
+</div>
+<!-- <app-other-income-purchasing-query-tab
+    [(term)]="term"
+    [(compType)]="compType"
+    [(field)]="mode"
+    [(eventFilter)]="eventFilter"
+  /> -->
+<table class="table table-striped table-bordered">
+  <thead style="font-size: 12px">
+    <tr>
+      <th>กิจกรรม</th>
+      <th>เริ่ม</th>
+      <th>จบ</th>
+      <th>ชื่อซัพพลายเออร์</th>
+      <th>เพิ่มรายเดือนเมื่อ</th>
+      <th>
+        <!-- <label style="display: flex; align-items: center; gap: 4px">
+            <input type="checkbox" [(ngModel)]="filterStatus" />
+            <span>รอเพิ่มรายเดือน</span>
+          </label> -->
+      </th>
+    </tr>
+  </thead>
+  <tbody style="font-size: 12px">
+    <!-- @for (item of rederList(); track item.id) {
+        <tr>
+          <td>{{ item.eventName }}</td>
+          <td>{{ item.startDate | date }}</td>
+          <td>{{ item.endDate | date }}</td>
+          <td>{{ item.compName }}</td>
+          <td>{{ (item.lastAdded | date) ?? "ยังไม่เพิ่ม" }}</td>
+          <td>
+            <a [routerLink]="genUrl(item.id, item.compType)">รายละเอียด</a>
+          </td>
+        </tr>
+      } -->
+  </tbody>
+</table>

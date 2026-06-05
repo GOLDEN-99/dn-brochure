@@ -8,6 +8,7 @@ import { CN_ROUTES } from './cn/routes/cn.route';
 import { SUPPLIER_ROUTES } from './routes/supplier.route';
 import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
 import { OTHER_INCOME_ROUTES } from './routes/other-income.route';
+import { OTHER_INCOME_ROUTES as v2 } from './other-income/routes/other-income.route'
 import { STOCK_ITEM_ROUTES } from './routes/stock-item.route';
 import { QUOTA_ITEM_ROUTES } from './routes/quota-item.route';
 import { CRM_PROMOTION_ROUTE } from './routes/crm-promotion.route';
@@ -26,6 +27,8 @@ export const routes: Routes = [
 
     // Other Income
     ...OTHER_INCOME_ROUTES,
+    // other income v2
+    ...v2,
 
     // Stock Item
     ...STOCK_ITEM_ROUTES,

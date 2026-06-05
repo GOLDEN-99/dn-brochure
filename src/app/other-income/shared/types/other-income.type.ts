@@ -1,8 +1,16 @@
+import { NgbDateStruct } from "@ng-bootstrap/ng-bootstrap"
+
 export type TOtherIncomeEvent = {
   id: number
   eventName: string
   eventType: number
 }
+
+export type TDateRangeFormState = {
+  startDate: NgbDateStruct,
+  endDate: NgbDateStruct
+}
+
 
 export type TOtherIncomeIncome = {
   id: number
