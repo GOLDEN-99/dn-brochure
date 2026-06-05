@@ -1,6 +1,6 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { apply, applyEach, applyWhen, disabled, form, min, minLength, readonly, required, schema, validate } from '@angular/forms/signals';
-import { TReadonlyForm, TStepOne, TGoodFormItem, TCreateCancelForm } from '../types/cn.type';
+import { CnLoadError, TReadonlyForm, TStepOne, TGoodFormItem, TCreateCancelForm } from '../types/cn.type';
 import { mapRemarkToResult } from '../libs/remark-result';
 import { mapRemarkToShowCN } from '../libs/remark-cn';
 
@@ -8,6 +8,8 @@ import { mapRemarkToShowCN } from '../libs/remark-cn';
   providedIn: null,
 })
 export class CnStateService {
+  loadError = signal<CnLoadError | null>(null)
+
   formState = signal<TCreateCancelForm>({
     metadata: {
       isWRR: '0',

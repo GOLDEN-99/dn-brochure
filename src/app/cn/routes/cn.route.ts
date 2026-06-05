@@ -60,6 +60,12 @@ export const CN_ROUTES: Route[] = [
                 loadComponent: () =>
                     import('../features/cn-complete/cn-complete.component')
                         .then(r => r.CnCompleteComponent).catch(handleLazyLoadError('cn/complete'))
+            },
+            {
+                path: 'fail',
+                loadComponent: () => import('../features/cn-fail/cn-fail.component')
+                    .then(c => c.CnFailComponent)
+                    .catch(handleLazyLoadError('cn/complete'))
             }
         ]
     },

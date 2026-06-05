@@ -1,10 +1,10 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { CnStateService } from '../../services/cn-state.service';
 import { distinctUntilChanged, map, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { CNRouteParamSchema } from '../../libs/parse-cn-param';
 import { CnApiService } from '../../services/cn-api.service';
-import { ToastService } from '../../../../service/toast/toast.service';
+import { CnLoadError } from '../../types/cn.type';
 
 @Component({
   selector: 'app-cn-layout',
@@ -24,9 +24,10 @@ import { ToastService } from '../../../../service/toast/toast.service';
 export class CnLayoutComponent implements OnInit, OnDestroy {
   private readonly cnClient = inject(CnApiService)
   private readonly state = inject(CnStateService)
-  private readonly toast = inject(ToastService)
   private readonly route = inject(ActivatedRoute)
+  private readonly router = inject(Router)
   private readonly sub$ = new Subject<void>()
+
 
   loading = signal(true)
 
@@ -68,12 +69,13 @@ export class CnLayoutComponent implements OnInit, OnDestroy {
       },
       error: (err: unknown) => {
         this.loading.set(false)
-        this.toast.danger('ไม่สามารถโหลดข้อมูลได้')
-        if (err instanceof Error) {
-          this.toast.danger(`[${err.name}] : ${err.message}`)
-          return
+        if (err instanceof CnLoadError) {
+          this.state.loadError.set(err)
+        } else {
+          const message = err instanceof Error ? err.message : JSON.stringify(err)
+          this.state.loadError.set(new CnLoadError('unknown', message, { saleCode: '', wholeCode: '', wholeNumb: '', isWRR: '' }))
         }
-        this.toast.danger(`[unknown error] : ${JSON.stringify(err)}`)
+        this.router.navigate(['fail'], { relativeTo: this.route })
       }
     })
   }

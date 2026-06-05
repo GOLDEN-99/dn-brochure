@@ -1,9 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../../shared/services/api.service';
 import { environment } from '../../../../environments/environment';
-import { TCreateReq, TGoodItemBase, TGoodItemState, TLotItem, TOrderRes, TRemark, TWholeItem } from '../types/cn.type';
+import { CnLoadError, TCreateReq, TGoodItemBase, TGoodItemState, TLotItem, TOrderRes, TRemark, TWholeItem } from '../types/cn.type';
 import { catchError, combineLatest, map, of, throwError } from 'rxjs';
 import { TCNRouteParam } from '../libs/parse-cn-param';
+import { HttpErrorResponse } from '@angular/common/http';
+import { wholeItemResponseSchema } from '../libs/cn-response-schema';
+import { ZodError } from 'zod';
 @Injectable({
   providedIn: 'root',
 })
@@ -11,23 +14,40 @@ export class CnApiService {
   private readonly api = inject(ApiService)
 
   private readonly url = environment.cnPath
-  getOrder = ({ wholeNumb }: Pick<TCNRouteParam, 'wholeNumb'>) =>
-    this.api.get<TOrderRes>(`${this.url}/GetOrder`, { params: { WholeNumb: wholeNumb } })
+  getOrder = (req: TCNRouteParam) =>
+    this.api
+      .get<TOrderRes>(`${this.url}/GetOrder`, { params: { WholeNumb: req.wholeNumb + '1' } })
+      .pipe(
+        catchError(err => throwError(() => {
+          if (err instanceof HttpErrorResponse) {
+            if (err.status === 418) return new CnLoadError('order-not-found', 'ไม่พบใบสั่งซื้อ หรือถูก CN ไปแล้ว', req)
+            return new CnLoadError('api-error', `[${err.status}] ${err.message}`, req)
+          }
+          return err
+        }))
+      )
 
-
-
-  getWholeItem = ({ wholeCode, saleCode, wholeNumb }: Omit<TCNRouteParam, 'isWRR'>) =>
+  getWholeItem = (req: TCNRouteParam) =>
     this.api.get<TWholeItem>(`${this.url}/GetWhole`, {
       params: {
-        SaleCode: saleCode, WholeCode: wholeCode, WholeNumb: wholeNumb
+        SaleCode: req.saleCode, WholeCode: req.wholeCode, WholeNumb: req.wholeNumb
       }
-    })
-
-  getData = ({ isWRR, ...res }: TCNRouteParam) => combineLatest([this.getWholeItem(res), this.getOrder(res)])
-    .pipe(
-      map(([wholeItem, order]) => ({ ...wholeItem, ...order, isWRR, saleCode: res.saleCode, returnAmount: order.goodList.reduce((acc, cur) => acc + cur.useItem, 0) })),
-      catchError((err) => throwError(() => err))
+    }).pipe(
+      map(res => wholeItemResponseSchema.parse(res)),
+      catchError(err => throwError(() => {
+        if (err instanceof ZodError) {
+          return new CnLoadError('whole-item-not-found', 'ไม่พบข้อมูลร้านค้า/ใบขาย/sale', req)
+        }
+        return err
+      }))
     )
+
+  getData = (req: TCNRouteParam) =>
+    combineLatest([this.getWholeItem(req), this.getOrder(req)])
+      .pipe(
+        map(([wholeItem, order]) => ({ ...wholeItem, ...order, isWRR: req.isWRR, saleCode: req.saleCode, returnAmount: order.goodList.reduce((acc, cur) => acc + cur.useItem, 0) })),
+        catchError((err) => throwError(() => err))
+      )
 
   getRemark = () => this.api.get<TRemark[]>(`${this.url}/GetCNRemark`)
 
@@ -53,3 +73,27 @@ type TSearchResult = {
   check: boolean
   lot: Array<Omit<TLotItem, 'goodAmou'> & { check: boolean }>
 } & Omit<TGoodItemBase, 'lot'>
+
+
+
+type SuccessApiResponse<Request, Response> = {
+  status: 'success'
+  request: Request
+  response: Response
+  error: never
+}
+
+type FailApiResponse<Request, E extends Error> = {
+  stauts: 'fail'
+  request: Request
+  response: never
+  error: E
+}
+
+type ApiResponse<Request, Response, E extends Error> = SuccessApiResponse<Request, Response> | FailApiResponse<Request, E>
+
+class CustomError extends Error {
+  constructor(message: string) {
+    super(message)
+  }
+}
