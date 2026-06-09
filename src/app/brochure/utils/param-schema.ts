@@ -1,13 +1,19 @@
 import { z } from 'zod'
 import { customeBooleanSchema } from '../../shared/utils/custome-schema'
 
-const brochureZoneSchema = z.enum(['UPC', 'BKK'])
+export const brochureZoneSchema = z.string().transform((value, ctx) => {
+  const normalized = value.toUpperCase()
+  if (normalized === 'UPC' || normalized === 'BKK') return normalized
+  ctx.addIssue({ code: 'custom', message: `Invalid brochureType: ${value}` })
+  return z.NEVER
+
+})
 
 export type TZone = z.infer<typeof brochureZoneSchema>
 
 export const flashSaleParamsSchema = z.object({
-    idPromotion: z.string().min(1).regex(/^\d+$/),
-    zone: brochureZoneSchema
+  idPromotion: z.string().min(1).regex(/^\d+$/),
+  zone: brochureZoneSchema
 })
 
 export type TFlashParams = z.infer<typeof flashSaleParamsSchema>
@@ -28,24 +34,33 @@ export const promotionTypeSchema = z.string()
 
 export type TPromotionType = z.infer<typeof promotionTypeSchema>
 
-export const wholeTypeSchema = z.enum(['Normal', 'Dental', 'Clinic'])
+export const wholeTypeSchema = z.string()
+  .transform((value, ctx) => {
+    const normalized = value.toLowerCase()
+    if (normalized === 'Normal') return normalized
+    if (normalized === 'Dental') return normalized
+    if (normalized === 'Clinic') return normalized
+    ctx.addIssue({ code: 'custom', message: `Invalid wholeType: ${value}` })
+    return z.NEVER
+  })
+
 
 export type TWhole = z.infer<typeof wholeTypeSchema>
 
 export const normalParamsSchea = z.object({
-    wholeCode: z.string().nonempty(),
-    promoType: promotionTypeSchema
+  wholeCode: z.string().nonempty(),
+  promoType: promotionTypeSchema
 })
 
 export type TNormalParams = z.infer<typeof normalParamsSchea>
 
 export const marketingParamsSchema = z.object({
-    wholeType: wholeTypeSchema,
-    token: z.string(), // an empty string is acceptable
-    idPromotion: z.string().min(1).regex(/^\d+$/),
-    promoType: promotionTypeSchema,
-    isNewCustomer: customeBooleanSchema,
-    isBkk: customeBooleanSchema
+  wholeType: wholeTypeSchema,
+  token: z.string(), // an empty string is acceptable
+  idPromotion: z.string().min(1).regex(/^\d+$/),
+  promoType: promotionTypeSchema,
+  isNewCustomer: customeBooleanSchema,
+  isBkk: customeBooleanSchema
 })
 
 export type TMarketingParams = z.infer<typeof marketingParamsSchema>

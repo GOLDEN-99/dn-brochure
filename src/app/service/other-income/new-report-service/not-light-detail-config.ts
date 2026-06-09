@@ -18,6 +18,7 @@ export type TNotLightDetailResponse = {
     incVat: boolean;
     stepList: { min: number; max: number | null; rate: number }[];
     orderHistory: TNotLightOrderHistory[];
+    incomeList: Array<{ incomeName: string }>
 }
 
 export type TNotLightOrderHistory = {
@@ -63,6 +64,7 @@ export const NotLightContractCols: TContractCol[] = [
     { header: 'id', valueMapper: v => v.id },
     { header: 'ชื่อซัพ', valueMapper: v => v.compName },
     { header: 'บริษัท', valueMapper: v => v.compType },
+    { header: 'รับรู้เป็น', valueMapper: v => v.incomeList.map(({ incomeName }) => incomeName).join(' ,') },
     { header: 'ชื่อรายรับภายใน', valueMapper: v => v.displayName ?? 'ไม่ระบุ' },
     { header: 'กิจกรรม', valueMapper: v => v.eventName },
     { header: 'เริ่ม', valueMapper: v => customFormatDate(v.startDate) },

@@ -26,7 +26,9 @@ export const AllContractConfig: TAoaConfig<TGetAllReportResponse> = {
     sheetName: "รายได้อื่นๆ",
     config: [
         { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
-        { header: 'บริษัท', valueMapper: (v) => v.compType },
+        {
+            header: 'บริษัท', valueMapper: (v) => String(v.compType) === '1' ? 'DN' : 'HU'
+        },
         { header: 'ชื่อรายรับภายใน', valueMapper: (v) => v.displayName ?? 'ไม่ระบุ' },
         { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
         { header: 'เริ่ม', valueMapper: (v) => customFormatDate(v.startDate) },

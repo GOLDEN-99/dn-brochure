@@ -3,7 +3,7 @@ import { BROCHURE_PAGE_TOKEN } from '../../token/brochure-token';
 import { BrochureApiService } from '../../services/brochure-api.service';
 import { ExportPdfService } from '../../../shared/services/export-pdf.service';
 import { ToastService } from '../../../service/toast/toast.service';
-import { map, retry, Subject, switchMap, tap, throwError } from 'rxjs';
+import { map, retry, Subject, switchMap, tap, } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { normalParamsSchea } from '../../utils/param-schema';
 import { TBorchureHead, TItem } from '../../types/brochure.type';
@@ -29,7 +29,6 @@ export class BrochureNormalPageComponent implements OnInit, OnDestroy {
   private readonly sub$ = new Subject<void>()
   private readonly route = inject(ActivatedRoute)
   private readonly result$ = this.route.params.pipe(
-    tap(console.log),
     map((params) => normalParamsSchea.parse(params)),
     switchMap((params) => this.flashSaleClient.getBrochureList(params)),
     map(({ wholeName, wholeType, zone, isNewCustomer, promotionType, fromDate, toDate, promotion }) => {
@@ -43,9 +42,8 @@ export class BrochureNormalPageComponent implements OnInit, OnDestroy {
         list,
         maxPage: list.length,
         pageSize: this.pageSize
-      }
-    }
-    ),
+      } satisfies TBrochureSpecialState
+    }),
     retry(2),
   )
 
@@ -80,6 +78,7 @@ export class BrochureNormalPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.result$.subscribe({
       next: (res) => {
+        console.log('next')
         this.result.set(res)
         this.loading.set(false)
       },

@@ -24,7 +24,14 @@
       <div
         class="d-flex align-items-center my-3 justify-content-between action"
       >
-        <button class="btn btn-primary" style="flex: 1 1 auto">export</button>
+        <button
+          class="btn btn-primary"
+          style="flex: 1 1 auto"
+          [disabled]="exporting()"
+          (click)="onExport()"
+        >
+          export
+        </button>
       </div>
     </section>
     <brochure-flash-sale

@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { filter, map, retry, Subject, switchMap } from 'rxjs';
+import { filter, map, retry, Subject, switchMap, tap } from 'rxjs';
 import { flashSaleParamsSchema, TFlashParams } from '../../utils/param-schema';
 import { BrochureApiService } from '../../services/brochure-api.service';
 import { TFlashSaleResponse } from '../../types/brochure.type';
@@ -24,28 +24,23 @@ export class BrochureFlashSalePageComponent implements OnInit, OnDestroy {
   private readonly sub$ = new Subject<void>()
   private readonly route = inject(ActivatedRoute)
   private readonly result$ = this.route.params.pipe(
-    map((params) => {
-      const result = flashSaleParamsSchema.safeParse(params)
-      if (!result.success) return null
-      return result.data
-    }),
+    map((params) => flashSaleParamsSchema.parse(params)),
     filter((data): data is TFlashParams => data !== null),
     switchMap((params) => this.flashSaleClient.getFlashSale(params)),
-    retry(2),
   )
 
   result = signal<TMaybe<TFlashSaleResponse>>(null)
 
   loading = signal(true)
 
+  exporting = signal(false)
+
   ngOnInit(): void {
     this.result$.subscribe({
       next: (res) => {
         this.result.set(res)
-      },
-      complete: () => {
         this.loading.set(false)
-      }
+      },
     })
   }
 
@@ -57,21 +52,23 @@ export class BrochureFlashSalePageComponent implements OnInit, OnDestroy {
   onExport() {
     const b = document.querySelector('.flash-sale-bg.flash-sale-page.main-gap.static')
     if (!b) return
-    this.loading.set(true)
+    this.exporting.set(true)
     this.exportService
       .exportImg(b as HTMLElement, `${this.result()?.head.name ?? 'flash-sale'}.jpg`)
       .subscribe({
         next: () => {
           this.toastService.success("export สำเร็จ")
+          this.exporting.set(false)
         },
-        error: (_) => {
+        error: (error) => {
+          console.error(error)
           this.toastService.danger("ไม่สามารถ export ได้")
+          this.toastService.danger(error.message)
+          this.exporting.set(false)
         },
-        complete: () => {
-          this.loading.set(false)
-        }
       })
   }
+
 
 }
 

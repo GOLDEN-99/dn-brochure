@@ -1,7 +1,7 @@
 import { Route } from "@angular/router";
 import { VERSION_TOKEN } from "../shared/tokens/injection-token";
 import { SearchBrochureComponent } from "./pages/search-brochure/search-brochure.component";
-import { handleLazyLoadError, lazyLoadWithRetry } from "../utils/lazy-load-error-handler";
+import { handleLazyLoadError } from "../utils/lazy-load-error-handler";
 import { BROCHURE_PAGE_TOKEN } from "./token/brochure-token";
 
 export const BROCHURE_ROUTES: Route[] = [
@@ -15,7 +15,7 @@ export const BROCHURE_ROUTES: Route[] = [
     },
     {
         path: 'flash-sale/:zone/:idPromotion',
-        loadComponent: () => lazyLoadWithRetry(() => import('./pages/brochure-flash-sale-page/brochure-flash-sale-page.component'))
+        loadComponent: () => import('./pages/brochure-flash-sale-page/brochure-flash-sale-page.component')
             .then(m => m.BrochureFlashSalePageComponent)
             .catch(handleLazyLoadError('Flash Sale Page'))
     },
@@ -27,7 +27,7 @@ export const BROCHURE_ROUTES: Route[] = [
                 useValue: { priceType: 'price', pageSize: 12 }
             },
         ],
-        loadComponent: () => lazyLoadWithRetry(() => import('./pages/brochure-normal-page/brochure-normal-page.component'))
+        loadComponent: () => import('./pages/brochure-normal-page/brochure-normal-page.component')
             .then(p => p.BrochureNormalPageComponent)
             .catch(handleLazyLoadError('Normal Brochure Page'))
     },
@@ -39,7 +39,7 @@ export const BROCHURE_ROUTES: Route[] = [
                 useValue: { priceType: 'priceGold', pageSize: 12 }
             },
         ],
-        loadComponent: () => lazyLoadWithRetry(() => import('./pages/brochure-special-page/brochure-special-page.component'))
+        loadComponent: () => import('./pages/brochure-special-page/brochure-special-page.component')
             .then(m => m.BrochureSpecialPageComponent)
             .catch(handleLazyLoadError('Marketing Brochure Page'))
     },

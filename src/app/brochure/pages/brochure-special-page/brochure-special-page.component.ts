@@ -4,7 +4,7 @@ import { ExportPdfService } from '../../../shared/services/export-pdf.service';
 import { ToastService } from '../../../service/toast/toast.service';
 import { Subject, map, switchMap, retry, throwError, tap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { marketingParamsSchema } from '../../utils/param-schema';
+import { brochureZoneSchema, marketingParamsSchema } from '../../utils/param-schema';
 import { TMaybe } from '../../../shared/types/index.type';
 import { TBorchureHead, TItem } from '../../types/brochure.type';
 import { BrochurePromotionPipe } from '../../pipe/brochure-promotion.pipe';
@@ -29,24 +29,23 @@ export class BrochureSpecialPageComponent implements OnInit, OnDestroy {
   private readonly sub$ = new Subject<void>()
   private readonly route = inject(ActivatedRoute)
   private readonly result$ = this.route.params.pipe(
-    tap(console.log),
     map((params) => marketingParamsSchema.parse(params)),
     switchMap((params) => this.flashSaleClient.getSpecialBrochureList(params)),
     map(({ wholeName, wholeType, zone, isNewCustomer, promotionType, fromDate, toDate, promotion }) => {
       const list = promotion.reduce<TItem[][]>(transformItemList(this.pageSize), [[]])
       return {
         head: {
-          wholeName, wholeType, zone,
+          wholeName,
+          wholeType,
+          zone,
           isNewCustomer, promotionType,
           fromDate, toDate
-        },
+        } satisfies TBorchureHead,
         list,
         maxPage: list.length,
         pageSize: this.pageSize
       }
-    }
-    ),
-    retry(2),
+    }),
   )
 
   result = signal<TMaybe<TBrochureSpecialState>>(null)
