@@ -68,7 +68,7 @@ export const promotionMasterSchema = schema<TPromotionMaster>((_path) => {
       ? null
       : {
         kind: 'invalid date range',
-        message: 'วันที่เริ่มต้องไม่มากว่าวันสิ้นสุด',
+        message: 'วันที่เริ่มต้องไม่มากกว่าวันสิ้นสุด',
       };
   });
 
