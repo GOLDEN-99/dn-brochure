@@ -1,3 +1,13 @@
+@if (exporting()) {
+  <div class="loading">
+    <output
+      class="spinner-border text-success"
+      style="width: 10rem; height: 10rem"
+    >
+      <span class="sr-only"></span>
+    </output>
+  </div>
+}
 @if (loading()) {
   <div class="loading">
     <output

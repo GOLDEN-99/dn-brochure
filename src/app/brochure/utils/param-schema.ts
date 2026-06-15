@@ -37,9 +37,9 @@ export type TPromotionType = z.infer<typeof promotionTypeSchema>
 export const wholeTypeSchema = z.string()
   .transform((value, ctx) => {
     const normalized = value.toLowerCase()
-    if (normalized === 'Normal') return normalized
-    if (normalized === 'Dental') return normalized
-    if (normalized === 'Clinic') return normalized
+    if (normalized === 'normal') return 'Normal'
+    if (normalized === 'dental') return 'Dental'
+    if (normalized === 'clinic') return 'Clinic'
     ctx.addIssue({ code: 'custom', message: `Invalid wholeType: ${value}` })
     return z.NEVER
   })

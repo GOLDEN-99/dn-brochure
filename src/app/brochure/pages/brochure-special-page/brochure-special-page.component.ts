@@ -51,6 +51,7 @@ export class BrochureSpecialPageComponent implements OnInit, OnDestroy {
   result = signal<TMaybe<TBrochureSpecialState>>(null)
 
   loading = signal(true)
+  exporting = signal(false)
 
   color = computed(() => {
     const zone = this.result()?.head.zone
@@ -96,16 +97,17 @@ export class BrochureSpecialPageComponent implements OnInit, OnDestroy {
 
   onExport() {
     const b = document.querySelectorAll('.static.prochure')
-    if (!b) return
-    this.loading.set(true)
+    if (!b.length) return
+    this.exporting.set(true)
     this.exportService.exportPdf(Array.from(b) as HTMLElement[],
       `${this.result()?.head.wholeName}-${this.result()?.head.promotionType}`).subscribe({
         next: () => {
-          this.loading.set(false)
+          this.exporting.set(false)
         },
-        error: (_) => {
+        error: (e) => {
+          console.log(e)
           this.toastService.danger("ไม่สามารถ export ได้")
-          this.loading.update(() => false)
+          this.exporting.set(false)
         }
       })
   }
