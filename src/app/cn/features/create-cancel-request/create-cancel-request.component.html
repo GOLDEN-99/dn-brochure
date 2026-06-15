@@ -36,7 +36,7 @@
   >
     <option value="" disabled>กรุณาเลือก</option>
     <option value="0">ไม่โอนคืน</option>
-    <option value="1">โอนคืน</option>
+    <option value="1" [disabled]="!createForm.metadata.bankNumb().value()">โอนคืน</option>
   </select>
 </div>
 @if (showBankAccountDetail()) {

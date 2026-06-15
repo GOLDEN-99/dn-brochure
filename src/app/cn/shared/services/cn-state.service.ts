@@ -103,6 +103,16 @@ export class CnStateService {
   requestCNForm = form<TCreateCancelForm>(this.formState, (schema) => {
     apply(schema.metadata, this.metaDataSchema)
     apply(schema.stepOne, this.stepOneSchema)
+    validate(schema.stepOne.cusStat, ({value, valueOf}) => {
+      const stat = value()
+      const bankAccount = valueOf(schema.metadata.bankNumb)
+      if(bankAccount !== '') return null
+      if(stat === '0') return null
+      return {
+        kind: 'invalid stat',
+        message: 'ไม่สามารถโอนเงินได้เพราะไม่พบบัญชีโอนคืน'
+      } 
+    })
     applyEach(schema.returnList, this.goodItemSchema)
     validate(schema.returnList, ({ value, valueOf }) => {
       const { cnType, remarkOpt } = valueOf(schema.stepOne);
