@@ -14,7 +14,7 @@ export class BrochureApiService {
   getFlashSale = (req: TFlashParams) =>
     this.api.post<TFlashSaleResponse>(`${this.url}/PaperProFlash`, req)
 
-  getSpecialBrochureList({ promoType, wholeType, isNewCustomer, isBkk, token, idPromotion }: TMarketingParams) {
+  getSpecialBrochureList({ promoType, wholeType, isNew, isBkk, token, idPromotion }: TMarketingParams) {
     return this.api.get<TItemList>(`${this.url}/PaperPro/V2`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -22,7 +22,7 @@ export class BrochureApiService {
       params: {
         ProType: promoType,
         IsBkk: isBkk,
-        IsNewCustomer: isNewCustomer,
+        IsNewCustomer: isNew,
         WholeTypeGroup: wholeType,
         IdPromotion: idPromotion
       }

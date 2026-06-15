@@ -55,12 +55,12 @@ export const normalParamsSchea = z.object({
 export type TNormalParams = z.infer<typeof normalParamsSchea>
 
 export const marketingParamsSchema = z.object({
-  wholeType: wholeTypeSchema,
-  token: z.string(), // an empty string is acceptable
-  idPromotion: z.string().min(1).regex(/^\d+$/),
-  promoType: promotionTypeSchema,
-  isNewCustomer: customeBooleanSchema,
-  isBkk: customeBooleanSchema
+    wholeType: wholeTypeSchema,
+    token: z.string(), // an empty string is acceptable
+    idPromotion: z.string().min(1).regex(/^\d+$/),
+    promoType: promotionTypeSchema,
+    isNew: customeBooleanSchema,
+    isBkk: customeBooleanSchema
 })
 
 export type TMarketingParams = z.infer<typeof marketingParamsSchema>
