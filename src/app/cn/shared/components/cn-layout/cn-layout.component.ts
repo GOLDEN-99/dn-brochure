@@ -61,7 +61,9 @@ export class CnLayoutComponent implements OnInit, OnDestroy {
             wholeNumb: result.wholeNumb,
           },
           stepOne: {
-            ...stepOne, cnCount: result.goodList.reduce((acc, cur) => acc + cur.useItem, 0)
+            ...stepOne,
+            cusStat: result.bankNumb === '' ? '0' : '',
+            cnCount: result.goodList.reduce((acc, cur) => acc + cur.useItem, 0),
           },
           image: [],
           returnList: result.goodList.map(good => ({ good, amount: 0, check: false })),

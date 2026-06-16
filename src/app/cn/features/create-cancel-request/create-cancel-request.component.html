@@ -36,8 +36,15 @@
   >
     <option value="" disabled>กรุณาเลือก</option>
     <option value="0">ไม่โอนคืน</option>
-    <option value="1" [disabled]="!createForm.metadata.bankNumb().value()">โอนคืน</option>
+    <option value="1" [disabled]="!createForm.metadata.bankNumb().value()">
+      โอนคืน
+    </option>
   </select>
+  @if (!createForm.metadata.bankNumb().value()) {
+    <small id="showBankHelper" class="form-text text-muted"
+      >ไม่สามารถโอนคืนได้เพราะไม่พบข้อมูลบัญชี</small
+    >
+  }
 </div>
 @if (showBankAccountDetail()) {
   <div class="card mb-3">
