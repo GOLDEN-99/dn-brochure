@@ -32,6 +32,35 @@ export const DCMonthConfig: TAoaConfig<TMonthlyReportResponse> = {
         { header: 'ยอด คำนวน', valueMapper: (v) => formatLocalNumber(v.calAmount) },
         { header: 'รายได้', valueMapper: (v) => formatLocalNumber(v.incomeAmount) },
         { header: 'หมายเหตุ', valueMapper: (v) => v.incomeRemark },
+        {
+            header : '%รายได้', 
+            valueMapper: v => v.calAmount ? Math.round(100_00 * v.incomeAmount/v.calAmount)/100 : 0
+        },
+        {
+            header: '%ขั้นต่ำ',
+            valueMapper: v => {
+                const stepList = v.steps?.steps
+                if(!stepList || stepList.length === 0) return '';
+                const percentage = v.calAmount ? Math.round(100_00 * v.incomeAmount/v.calAmount)/100 : 0
+                for(let i = stepList.length-1; i >0;i--){
+                    const cur = stepList[i]
+                    if(percentage >= cur.rate ) return `ขั้น ${cur.min} บาท คิด ${cur.rate} %`
+                }
+                return ''
+            }
+        },
+        {
+            header: '%ขั้นสูง',
+            valueMapper: v => {
+                const stepList = v.steps?.steps
+                if(!stepList || stepList.length === 0) return '';
+                const percentage = v.calAmount ? Math.round(100_00 * v.incomeAmount/v.calAmount)/100 : 0
+                for(const step of stepList){
+                    if(percentage <= step.rate ) return `ขั้น ${step.min} บาท คิด ${step.rate} %`
+                }
+                return ''
+            }
+        },
     ]
 }
 

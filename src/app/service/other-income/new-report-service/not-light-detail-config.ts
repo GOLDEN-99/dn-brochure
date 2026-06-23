@@ -1,84 +1,170 @@
-import { customFormatDate, formatLocalNumber } from "../../../lib/formatter";
+import { customFormatDate, formatLocalNumber } from '../../../lib/formatter';
 
 export type TNotLightDetailResponse = {
-    id: number;
-    displayName: string;
-    eventName: string;
-    compCode: string;
-    compType: string;
-    compName: string;
-    startDate: string;
-    endDate: string;
-    stepType: number;
-    capAmount: number;
-    isDc: boolean;
-    isRebate: boolean;
-    isInce: boolean;
-    isComp: boolean;
-    incVat: boolean;
-    stepList: { min: number; max: number | null; rate: number }[];
-    orderHistory: TNotLightOrderHistory[];
-    incomeList: Array<{ incomeName: string }>
-}
+  id: number;
+  displayName: string;
+  eventName: string;
+  compCode: string;
+  compType: string;
+  compName: string;
+  startDate: string;
+  endDate: string;
+  stepType: number;
+  capAmount: number;
+  isDc: boolean;
+  isRebate: boolean;
+  isInce: boolean;
+  isComp: boolean;
+  incVat: boolean;
+  stepList: { min: number; max: number | null; rate: number }[];
+  orderHistory: TNotLightOrderHistory[];
+  incomeList: Array<{ incomeName: string }>;
+};
 
 export type TNotLightOrderHistory = {
-    headId: number;
-    monthIndex: string;
-    ourAmount: number;
-    supplierAmount: number;
-    ourIncome: number;
-    supplierIncome: number;
-}
+  headId: number;
+  monthIndex: string;
+  ourAmount: number;
+  supplierAmount: number;
+  ourIncome: number;
+  supplierIncome: number;
+};
 
-export const NOT_LIGHT_SHEET_NAME = "ประมาณการเปรียบเทียบ"
+export type TNotLightOrderHistoryWithComputedField = {
+  ourPercent : number;
+  ourStep : string;
+  supplierPercent: number;
+  supplierStep: string
+} & TNotLightOrderHistory
 
-type TContractCol = { header: string; valueMapper: (v: TNotLightDetailResponse) => unknown }
-type TOrderCol = { header: string; valueMapper: (v: TNotLightOrderHistory) => unknown }
+const safeCalculateIncomePercent = (income: number) => (amount: number) => amount ? Math.round(100_00*income/amount)/100 : 0
+
+const parseMaybeStepToText = (step:{ min: number; max: number | null; rate: number } | undefined) => step ? `ยอด ${step.min} บาท คิด ${step.rate} %` : ''
+
+export const computedOrderHistroy = (steps: { min: number; max: number | null; rate: number }[]) => (order: TNotLightOrderHistory): TNotLightOrderHistoryWithComputedField => {
+  const ourPercent = safeCalculateIncomePercent(order.ourIncome)(order.ourAmount);
+  const supplierPercent = safeCalculateIncomePercent(order.supplierIncome)(order.supplierAmount);
+  let ourStepRef: { min: number; max: number | null; rate: number } | undefined
+  let supplierStepRef: { min: number; max: number | null; rate: number } | undefined
+  for(const step of steps){
+    if(ourStepRef && supplierStepRef) break;
+    if(step.rate >= ourPercent){
+      ourStepRef = step;
+    }
+    if(step.rate >= supplierPercent){
+      supplierStepRef = step
+    }
+  }
+  const ourStep = parseMaybeStepToText(ourStepRef)
+  const supplierStep = parseMaybeStepToText(supplierStepRef)
+  return {
+    ...order, 
+    ourPercent, supplierPercent,
+    ourStep, supplierStep
+    
+  }
+} 
+
+export const NOT_LIGHT_SHEET_NAME = 'ประมาณการเปรียบเทียบ';
+
+type TContractCol = {
+  header: string;
+  valueMapper: (v: TNotLightDetailResponse) => unknown;
+};
+type TOrderCol = {
+  header: string;
+  valueMapper: (v: TNotLightOrderHistoryWithComputedField) => unknown;
+};
 
 const mapStepType = (stepType: number): string => {
-    switch (stepType) {
-        case 1: return 'บาทแรก'
-        case 2: return 'step บาทแรก'
-        case 3: return 'ขั้นบันได'
-        default: return 'มีข้อผิดพลาด'
-    }
-}
+  switch (stepType) {
+    case 1:
+      return 'บาทแรก';
+    case 2:
+      return 'step บาทแรก';
+    case 3:
+      return 'ขั้นบันได';
+    default:
+      return 'มีข้อผิดพลาด';
+  }
+};
 
-const mapStepList = (stepList: { min: number; max: number | null; rate: number }[]): string =>
-    stepList.map(s => `ตั้งแต่ ${formatLocalNumber(s.min)} คิดรายได้ ${s.rate}%`).join('\n')
+const mapStepList = (
+  stepList: { min: number; max: number | null; rate: number }[],
+): string =>
+  stepList
+    .map((s) => `ตั้งแต่ ${formatLocalNumber(s.min)} คิดรายได้ ${s.rate}%`)
+    .join('\n');
 
-const mapNotLightDiscountCriteria = (v: TNotLightDetailResponse): string => [
+const mapNotLightDiscountCriteria = (v: TNotLightDetailResponse): string =>
+  [
     `${v.isDc ? 'หัก' : 'ไม่หัก'} ส่วนลด dc`,
     `${v.isRebate ? 'หัก' : 'ไม่หัก'} ส่วนลด rebate`,
     `${v.isInce ? 'หัก' : 'ไม่หัก'} ส่วนลด incentive`,
     `${v.isComp ? 'หัก' : 'ไม่หัก'} ส่วนลด compensate`,
-    `${v.incVat ? 'ไม่หัก' : 'หัก'} vat`
-].join('\n')
+    `${v.incVat ? 'ไม่หัก' : 'หัก'} vat`,
+  ].join('\n');
 
 const mapMonthIndex = (monthIndex: string): string => {
-    const [yy, mm] = monthIndex.split('T')[0].split('-')
-    return `${yy}/${mm}`
-}
+  const [yy, mm] = monthIndex.split('T')[0].split('-');
+  return `${yy}/${mm}`;
+};
 
 export const NotLightContractCols: TContractCol[] = [
-    { header: 'id', valueMapper: v => v.id },
-    { header: 'ชื่อซัพ', valueMapper: v => v.compName },
-    { header: 'บริษัท', valueMapper: v => v.compType },
-    { header: 'รับรู้เป็น', valueMapper: v => v.incomeList.map(({ incomeName }) => incomeName).join(' ,') },
-    { header: 'ชื่อรายรับภายใน', valueMapper: v => v.displayName ?? 'ไม่ระบุ' },
-    { header: 'กิจกรรม', valueMapper: v => v.eventName },
-    { header: 'เริ่ม', valueMapper: v => customFormatDate(v.startDate) },
-    { header: 'จบ', valueMapper: v => customFormatDate(v.endDate) },
-    { header: 'ประเภท Step', valueMapper: v => mapStepType(v.stepType) },
-    { header: 'เพดานยอดซื้อ', valueMapper: v => v.capAmount === 0 ? 'ไม่กำหนด' : formatLocalNumber(v.capAmount) },
-    { header: 'หักส่วนลด', valueMapper: v => mapNotLightDiscountCriteria(v) },
-    { header: 'เงื่อนไข', valueMapper: v => mapStepList(v.stepList) },
-]
+  { header: 'id', valueMapper: (v) => v.id },
+  { header: 'ชื่อซัพ', valueMapper: (v) => v.compName },
+  { header: 'บริษัท', valueMapper: (v) => v.compType },
+  {
+    header: 'รับรู้เป็น',
+    valueMapper: (v) =>
+      v.incomeList.map(({ incomeName }) => incomeName).join(' ,'),
+  },
+  { header: 'ชื่อรายรับภายใน', valueMapper: (v) => v.displayName ?? 'ไม่ระบุ' },
+  { header: 'กิจกรรม', valueMapper: (v) => v.eventName },
+  { header: 'เริ่ม', valueMapper: (v) => customFormatDate(v.startDate) },
+  { header: 'จบ', valueMapper: (v) => customFormatDate(v.endDate) },
+  { header: 'ประเภท Step', valueMapper: (v) => mapStepType(v.stepType) },
+  {
+    header: 'เพดานยอดซื้อ',
+    valueMapper: (v) =>
+      v.capAmount === 0 ? 'ไม่กำหนด' : formatLocalNumber(v.capAmount),
+  },
+  { header: 'หักส่วนลด', valueMapper: (v) => mapNotLightDiscountCriteria(v) },
+  { header: 'เงื่อนไข', valueMapper: (v) => mapStepList(v.stepList) },
+];
 
 export const NotLightOrderCols: TOrderCol[] = [
-    { header: 'เดือน', valueMapper: v => mapMonthIndex(v.monthIndex) },
-    { header: 'ยอดซื้อตามวันรับเข้า', valueMapper: v => formatLocalNumber(v.ourAmount) },
-    { header: 'รายได้ตามวันรับเข้า', valueMapper: v => formatLocalNumber(v.ourIncome) },
-    { header: 'ยอดซื้อตามบิลซัพ', valueMapper: v => formatLocalNumber(v.supplierAmount) },
-    { header: 'รายได้ตามบิลซัพ', valueMapper: v => formatLocalNumber(v.supplierIncome) },
-]
+  { header: 'เดือน', valueMapper: (v) => mapMonthIndex(v.monthIndex) },
+  {
+    header: 'ยอดซื้อตามวันรับเข้า',
+    valueMapper: (v) => formatLocalNumber(v.ourAmount),
+  },
+  {
+    header: 'รายได้ตามวันรับเข้า',
+    valueMapper: (v) => formatLocalNumber(v.ourIncome),
+  },
+  {
+    header: 'ยอดซื้อตามบิลซัพ',
+    valueMapper: (v) => formatLocalNumber(v.supplierAmount),
+  },
+  {
+    header: 'รายได้ตามบิลซัพ',
+    valueMapper: (v) => formatLocalNumber(v.supplierIncome),
+  },
+  {
+    header: '%รายได้ตามวันรับเข้า',
+    valueMapper: (v) => v.ourPercent
+  },
+  {
+    header: '%รายได้ขั้นสูงตามวันที่รับเข้า',
+    valueMapper: v => v.ourStep
+  }, 
+  {
+    header: '%รายได้ตามซัพ',
+    valueMapper: (v) => v.supplierPercent
+  },
+  {
+    header: '%รายได้ขั้นสูงตามซัพ',
+    valueMapper: v => v.supplierStep
+  }
+];

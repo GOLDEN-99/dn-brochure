@@ -3,12 +3,12 @@ import { TCompType } from '../../../types';
 import { ApiService } from '../../api/api.service';
 import { environment } from '../../../../environments/environment';
 import { XLSXReportService } from '../../xlsx-report/xlsx-report.service';
-import { catchError, from, switchMap, throwError } from 'rxjs';
+import { catchError, from, map, switchMap, throwError } from 'rxjs';
 import { DCMonthConfig, IncentiveMonthConfig, LightBoxMonthConfig, TMonthlyReportResponse } from './monthly-report-config';
 import { AllContractConfig, TGetAllReportResponse } from './all-contract-report-config';
 import { AppendBillDiscountConfig, AppendFreeProductConfig, IssueCreditReportConfig, IssueInvoiceReportConfig, IssueReceiptReportConfig, TIssueDocumentReportResponse, TIssueReceiptReportResponse } from './issuing-document-config';
 import { PeriodDualDateConfig, PeriodDualDateDetailConfig, TPeriodDualDateDetailRow, TPeriodDualDateResponse } from './period-dual-date-config';
-import { NOT_LIGHT_SHEET_NAME, NotLightContractCols, NotLightOrderCols, TNotLightDetailResponse } from './not-light-detail-config';
+import { computedOrderHistroy, NOT_LIGHT_SHEET_NAME, NotLightContractCols, NotLightOrderCols, TNotLightDetailResponse } from './not-light-detail-config';
 
 
 @Injectable({
@@ -171,6 +171,7 @@ export class NewReportService {
     const blank = NotLightContractCols.map(() => '')
     return this.api.get<TNotLightDetailResponse[]>(`${this.baseUrl}/not-light-detail`, { params: { CompType: compType } })
       .pipe(
+        map(res => res.map(({orderHistory, stepList, ...r}) => ({...r, stepList, orderHistory: orderHistory.map(o => computedOrderHistroy(stepList)(o))}))),
         switchMap(res => from(import('xlsx') as Promise<typeof import('xlsx')>).pipe(
           switchMap(XLSX => {
             const headers = [...contractHeaders, ...orderHeaders]
