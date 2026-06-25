@@ -1,7 +1,7 @@
 @if (toasts.length) {
-  <div style="position: fixed; z-index: 10000; right: 0; top: 0" class="p-4 d-flex flex-column gap-2">
+  <div style="position: fixed; z-index: 10000; right: 0; top: 0; left: 0; max-width: 400px; margin-left: auto; box-sizing: border-box" class="p-4 d-flex flex-column gap-2">
     @for (toast of toasts; track toast.id) {
-      <ngb-alert [type]="toast.severity" (closed)="remove(toast.id)">{{ toast.message }}</ngb-alert>
+      <ngb-alert [type]="toast.severity" (closed)="remove(toast.id)" style="word-break: break-word">{{ toast.message }}</ngb-alert>
     }
   </div>
 }
