@@ -35,14 +35,15 @@
     class="form-select"
   >
     <option value="" disabled>กรุณาเลือก</option>
-    <option value="0">ไม่โอนคืน</option>
+    <option value="0">ไม่โอนเงินคืน</option>
     <option value="1" [disabled]="!createForm.metadata.bankNumb().value()">
-      โอนคืน
+      โอนเงินคืน
     </option>
   </select>
   @if (!createForm.metadata.bankNumb().value()) {
     <small id="showBankHelper" class="form-text text-muted"
-      >ไม่สามารถโอนคืนได้เพราะไม่พบข้อมูลบัญชี</small
+      >หมายเหตุ: ไม่สามารถเลือก "โอนเงินคืน" ได้
+      เนื่องจากไม่พบข้อมูลบัญชี</small
     >
   }
 </div>
