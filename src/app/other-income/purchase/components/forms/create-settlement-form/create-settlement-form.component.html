@@ -1,0 +1,121 @@
+<div class="row row-cols-1 row-cols-md-4 g-2 align-items-end mb-2">
+  <div class="col">
+    <label
+      [htmlFor]="createSettlementForm.periodName().name()"
+      class="form-label small text-muted mb-1"
+      >ชื่องวด
+      @if (createSettlementForm.periodName().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <input
+      [id]="createSettlementForm.periodName().name()"
+      type="text"
+      class="form-control form-control-sm"
+      [formField]="createSettlementForm.periodName"
+    />
+  </div>
+
+  <div class="col">
+    <label [htmlFor]="createSettlementForm.dateRange.startDate().name()" class="form-label small text-muted mb-1"
+      >เริ่ม</label
+    >
+    <app-signal-datepicker
+      [id]="createSettlementForm.dateRange.startDate().name()"
+      [formField]="createSettlementForm.dateRange.startDate"
+    />
+  </div>
+
+  <div class="col">
+    <label [htmlFor]="createSettlementForm.dateRange.endDate().name()" class="form-label small text-muted mb-1"
+      >จบ</label
+    >
+    <app-signal-datepicker
+      [id]="createSettlementForm.dateRange.endDate().name()"
+      [formField]="createSettlementForm.dateRange.endDate"
+    />
+  </div>
+
+  @if (showSupplierOrderAmount()) {
+    <div class="col">
+      <label
+        for="settlementSupplierOrderAmount"
+        class="form-label small text-muted mb-1"
+        >ยอดสั่งซื้อ (ซัพพลายเออร์)</label
+      >
+      <input
+        id="settlementSupplierOrderAmount"
+        type="text"
+        class="form-control form-control-sm"
+        [value]="supplierOrderAmount()"
+        readonly
+        disabled
+      />
+    </div>
+  }
+</div>
+
+<app-form-alert-text [formState]="createSettlementForm()" />
+
+<div class="mb-2">
+  <label
+    [htmlFor]="createSettlementForm.remark().name()"
+    class="form-label small text-muted mb-1"
+    >หมายเหตุ</label
+  >
+  <input
+    [id]="createSettlementForm.remark().name()"
+    type="text"
+    class="form-control form-control-sm"
+    [formField]="createSettlementForm.remark"
+  />
+</div>
+
+<div class="mb-2">
+  <span class="form-label small text-muted">เลือกรายการรายได้ที่จะเคลียร์ยอด</span>
+  @if (openEntries().length === 0) {
+    <div class="text-muted small">ไม่มีรายการที่เปิดอยู่</div>
+  } @else {
+    <table class="table table-sm table-bordered mb-0" style="font-size: 12px">
+      <thead>
+        <tr>
+          <th></th>
+          <th>เดือน</th>
+          @if (showSupplierOrderAmount()) {
+            <th>ประเภท</th>
+            <th>ยอดสั่งซื้อ</th>
+          }
+          <th>จำนวนรายได้</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (entry of openEntries(); track entry.id) {
+          <tr>
+            <td>
+              <input
+                type="checkbox"
+                [checked]="selectedEntryIds().has(entry.id)"
+                (change)="toggleEntry(entry.id)"
+              />
+            </td>
+            <td>{{ entry.month | date: "MM/yyyy" }}</td>
+            @if (showSupplierOrderAmount()) {
+              <td>{{ entry.entryType }}</td>
+              <td>{{ entry.orderAmount ?? "-" }}</td>
+            }
+            <td>{{ entry.amount }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+<button
+  type="button"
+  class="btn btn-sm btn-primary"
+  [disabled]="!canSubmit()"
+  (click)="onSubmit()"
+>
+  สร้าง Settlement
+</button>

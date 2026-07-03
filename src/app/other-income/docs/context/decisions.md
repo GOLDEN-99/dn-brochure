@@ -1,3 +1,10 @@
+> **Note:** the CN/settlement-specific passages in this file (the
+> `other_income_cn_orders` table, OQ-1's CN-related rows, T0-3's "Entry row
+> state" section, and TA-3's "Stamp CN rows" workflow/SQL) describe a
+> pre-redesign architecture and are superseded by
+> [`settlement-reference.md`](./settlement-reference.md). Everything else in
+> this file is still accurate.
+
 ## Track D — Schema & Migration
 
 ### TD-1: Final v2 schema migration script
@@ -21,7 +28,6 @@
 | `other_income_promo_contracts`            | `other_income_heads` (event_type=3)                                     | Track C |
 | `other_income_contract_income_types`      | `income_type` field on head + `other_income_head_incomes` junction      | Shared  |
 | `other_income_income_entries`             | `other_income_lists`                                                    | Shared  |
-| `other_income_cn_orders`                  | _(new)_ cancelled order correction log                                  | Track A |
 | `other_income_settlements`                | `other_income_periods`                                                  | Shared  |
 | `other_income_settlement_supplier_orders` | _(new)_ optional supplier order line detail per settlement              | Track A |
 | `other_income_v2_bill_discounts`          | `other_income_bill_discounts`                                           | Shared  |
@@ -42,9 +48,9 @@
 #### Key constraints
 
 - `other_income_income_entries`: unique index on `(contract_id, contract_type, month)` — one entry per contract per month, idempotency guard (TA-2).
-- `other_income_income_entries` and `other_income_cn_orders`: `settlement_id` FK to `other_income_settlements` — NULL = open, NOT NULL = picked (OQ-1).
+- `other_income_income_entries`: `settlement_id` FK to `other_income_settlements` — NULL = open, NOT NULL = picked (OQ-1).
 - All settlement detail tables carry FK to `other_income_settlements` (not periods).
-- `contract_type` VARCHAR discriminator on `other_income_income_entries`, `other_income_cn_orders`, and `other_income_settlements` avoids a single monolithic contracts table while keeping a unified ledger.
+- `contract_type` VARCHAR discriminator on `other_income_income_entries` and `other_income_settlements` avoids a single monolithic contracts table while keeping a unified ledger.
 
 ---
 
@@ -56,8 +62,8 @@
 
 - Standard (non-materialised) view. Query volume is low enough at this stage; revisit if reporting becomes slow.
 - Single view covering all three contract types — `contract_type` column lets callers filter by track.
-- Groups by `(contract_id, contract_type, month)`. Joins `other_income_cn_orders` to aggregate CN corrections.
-- Columns: `estimate_order_amount`, `estimate_income` (both immutable from entry row), `cn_order_amount` (SUM of CN slices for that month), `net_order_amount` (estimate − cn; input to Step() for system number), `settlement_id`, `state` (open/picked derived from settlement_id).
+- Groups by `(contract_id, contract_type, month)`.
+- Columns: `estimate_order_amount`, `estimate_income` (both immutable from entry row), `settlement_id`, `state` (open/picked derived from settlement_id).
 - System income and supplier income are on the settlement row, not the view — report joins settlement to get those.
 - No separate accounting-only view at this stage; one operational view is sufficient.
 
@@ -149,12 +155,12 @@ Confirmed. Never mutate prior rows. All changes are new rows. Accounting accepts
 
 Dropped entry types (OQ-1):
 
-| entry_type          | Why dropped |
-| ------------------- | ----------- |
+| entry_type          | Why dropped                                                                                                                                                       |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `cn_adjustment`     | CN is an order base modifier, not an income modifier. Moved to `other_income_cn_orders`. Income recalculated from corrected order base at report/settlement time. |
-| `settlement_trueup` | Gap between system and supplier income is fully explained by running both sides through `Step()`. No forward-carry needed. |
-| `data_refresh`      | Not needed; accounting accepts estimate as-is. |
-| `correction`        | Dropped; add back only when a concrete use case forces it. |
+| `settlement_trueup` | Gap between system and supplier income is fully explained by running both sides through `Step()`. No forward-carry needed.                                        |
+| `data_refresh`      | Not needed; accounting accepts estimate as-is.                                                                                                                    |
+| `correction`        | Dropped; add back only when a concrete use case forces it.                                                                                                        |
 
 ---
 
@@ -170,24 +176,28 @@ Three key clarifications drove the resolution:
 
 **Decisions:**
 
-| Question | Decision |
-| -------- | -------- |
-| Table name | Rename `other_income_accruals` → `other_income_income_entries` |
-| `entry_type` | Only `monthly_accrual` remains. `cn_adjustment` and `settlement_trueup` entry types dropped. |
-| `cn_adjustment` ledger rows | Dropped. CN is a separate table `other_income_cn_orders` storing cancelled order base per month slice. |
-| `settlement_trueup` ledger rows | Dropped. Gap between system and supplier income is fully explained by running both sides through `Step()`. No forward-carry needed. |
-| State encoding | `settlement_id` stamp replaces explicit `state` column (v1 pattern). `NULL` = open, `NOT NULL` = picked. Reversal: `UPDATE SET settlement_id = NULL WHERE settlement_id = @id`. Applies to both `other_income_income_entries` and `other_income_cn_orders`. |
-| `system_total` replacement | Settlement stores five amounts: `system_order_amount`, `cn_order_amount`, `system_income` = `Step(system − cn)`, `supplier_order_amount`, `supplier_income` = `Step(supplier)`. All computed and stamped at post time. |
-| Unearned revenue | `supplier_income − system_income` — derived by accounting report, not stored. |
-| Cumulative order base | Settlement stores `cumulative_order_at_close` — running total of `(system_order_amount − cn_order_amount)` across all settlements for the contract. Seeds next settlement's bracket calculation without re-summing history. |
-| CN granularity | One cancellation event can span multiple months. One `other_income_cn_orders` row per affected month. |
-| Accounting report columns | `estimate_income` (raw, immutable) · `cn_order_amount` (correction input) · `net_order_amount` (corrected base). System income and supplier income come from the settlement row. Surfaced via `vw_other_income_accrual_state`. |
+| Question                        | Decision                                                                                                                             |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------|
+| Table name                      | Rename `other_income_accruals` → `other_income_income_entries`                                                                       |
+| `entry_type`                    | Only `monthly_accrual` remains. `cn_adjustment` and `settlement_trueup` entry types dropped.                                         |
+| `settlement_trueup` ledger rows | Dropped. Gap between system and supplier income is fully explained by running both sides through `Step()`. No forward-carry needed.  |
+| Unearned revenue                | `supplier_income − system_income` — derived by accounting report, not stored.                                                        |
+
+> CN handling (`cn_adjustment`/CN ledger design, state encoding, cumulative
+> order base, and accounting report columns) was reworked after this
+> decision — see [`settlement-reference.md`](./settlement-reference.md) §1–2
+> for the current model (`entry_type` including `CN_CORRECTION`, single
+> `other_income_income_entries` ledger, no separate CN table).
 
 ### T0-3: Define the (contract, month) state machine
 
 **Status: DONE**
 
-#### Entry row state (`other_income_income_entries` and `other_income_cn_orders`)
+> Entry row state below is current for `other_income_income_entries`, but
+> there is no separate CN table to apply it to — see
+> [`settlement-reference.md`](./settlement-reference.md) §1 and §4.
+
+#### Entry row state (`other_income_income_entries`)
 
 State is encoded as `settlement_id` (v1 stamping pattern — OQ-1):
 
@@ -204,13 +214,13 @@ Single state: **`posted`**. Settlement is created and posted atomically in one t
 
 On post, the system:
 
-1. Stamps `settlement_id` on all selected income entry rows and CN rows
-2. Computes and stores `system_order_amount`, `cn_order_amount`, `system_income`, `supplier_order_amount`, `supplier_income`, `cumulative_order_at_close` on the settlement row
+1. Stamps `settlement_id` on all selected income entry rows
+2. Computes and stores `system_order_amount`, `system_income`, `supplier_order_amount`, `supplier_income`, `cumulative_order_at_close` on the settlement row (current formulas: [`settlement-reference.md`](./settlement-reference.md) §2)
 3. Records bill-discount/free-item/invoice/receipt/credit-note detail rows if applicable
 
 #### Correction path
 
-Accounting deletes the settlement → system reverses in one transaction: `UPDATE SET settlement_id = NULL WHERE settlement_id = @id` on both `other_income_income_entries` and `other_income_cn_orders`, then deletes the settlement row → purchasing reposts.
+Accounting deletes the settlement → system reverses in one transaction: `UPDATE SET settlement_id = NULL WHERE settlement_id = @id` on `other_income_income_entries`, then deletes the settlement row → purchasing reposts.
 
 #### Dropped states from v1
 
@@ -353,12 +363,12 @@ The workflow is identical — purchasing selects open accrual months, inputs `su
 
 #### Contract lifecycle (purchasing)
 
-| Method | Path                     | Action                                                   | Request                                                                                                                               | Response                                                                                                                                                 |
-| ------ | ------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/branch-contracts`      | List contracts                                           | `?comp_type, comp_code, comp_name`                                                                                                    | `[{ id, comp_code, comp_type, comp_name, contract_label, income_label, start_date, end_date, settlement_period, rate_per_branch, active_branch_count }]` |
+| Method | Path                     | Action                                                   | Request                                                                                                                                                  | Response                                                                                                                                                 |
+| ------ | ------------------------ | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/branch-contracts`      | List contracts                                           | `?comp_type, comp_code, comp_name`                                                                                                                       | `[{ id, comp_code, comp_type, comp_name, contract_label, income_label, start_date, end_date, settlement_period, rate_per_branch, active_branch_count }]` |
 | POST   | `/branch-contracts`      | Create contract + spec                                   | `{ comp_code, comp_type, contract_label_id, income_types[{ income_type, income_label_id? }], settlement_period, start_date, end_date, rate_per_branch }` | `{ id }`                                                                                                                                                 |
-| GET    | `/branch-contracts/{id}` | Get contract detail with branches, accruals, settlements | —                                                                                                                                     | `{ contract, spec, branches[], accruals[], settlements[] }`                                                                                              |
-| DELETE | `/branch-contracts/{id}` | Delete contract (only if no accruals posted)             | —                                                                                                                                     | 204                                                                                                                                                      |
+| GET    | `/branch-contracts/{id}` | Get contract detail with branches, accruals, settlements | —                                                                                                                                                        | `{ contract, spec, branches[], accruals[], settlements[] }`                                                                                              |
+| DELETE | `/branch-contracts/{id}` | Delete contract (only if no accruals posted)             | —                                                                                                                                                        | 204                                                                                                                                                      |
 
 #### Branch management
 
@@ -420,17 +430,17 @@ There is no system calculation of any kind — purchasing enters the full income
 
 The v2 contract table for PromotionIncome uses the same base fields as DC/Rebate and Display Fee. No extra spec table needed.
 
-| Field               | Type        | Notes                                                             |
-| ------------------- | ----------- | ----------------------------------------------------------------- |
-| `id`                | INT PK      | —                                                                 |
-| `comp_code`         | NVARCHAR    | FK to CompInfo / DNCompInfo                                       |
-| `comp_type`         | NVARCHAR    | `DN` / `HU`                                                       |
-| `contract_label_id` | INT FK      | FK to `other_income_contract_labels`                              |
-| `income_types`      | junction    | One or more allowed payment methods via `other_income_contract_income_types`. Each row carries `income_type` (`Bill`/`FreeItem`/`Invoice`/`CreditNote`) + optional `income_label_id`. |
-| `settlement_period` | INT         | Number of months. No DB constraint — allowed values not yet confirmed. |
-| `start_date`        | DATE        | —                                                                 |
-| `end_date`          | DATE        | —                                                                 |
-| `created_at`        | DATETIME2   | —                                                                 |
+| Field               | Type      | Notes                                                                                                                                                                                 |
+| ------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                | INT PK    | —                                                                                                                                                                                     |
+| `comp_code`         | NVARCHAR  | FK to CompInfo / DNCompInfo                                                                                                                                                           |
+| `comp_type`         | NVARCHAR  | `DN` / `HU`                                                                                                                                                                           |
+| `contract_label_id` | INT FK    | FK to `other_income_contract_labels`                                                                                                                                                  |
+| `income_types`      | junction  | One or more allowed payment methods via `other_income_contract_income_types`. Each row carries `income_type` (`Bill`/`FreeItem`/`Invoice`/`CreditNote`) + optional `income_label_id`. |
+| `settlement_period` | INT       | Number of months. No DB constraint — allowed values not yet confirmed.                                                                                                                |
+| `start_date`        | DATE      | —                                                                                                                                                                                     |
+| `end_date`          | DATE      | —                                                                                                                                                                                     |
+| `created_at`        | DATETIME2 | —                                                                                                                                                                                     |
 
 No spec sub-table. No `supplier_pair_id` (promotion contracts are always single-supplier). No `calc_type` / bracket rows.
 
@@ -458,12 +468,12 @@ Identical to DC/Rebate (T0-3 / TA-3). Purchasing selects open accrual months, in
 
 #### Contract lifecycle (purchasing)
 
-| Method | Path                    | Action                                            | Request                                                                                                              | Response                                                                                                           |
-| ------ | ----------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| GET    | `/promo-contracts`      | List contracts                                    | `?comp_type, comp_code, comp_name`                                                                                   | `[{ id, comp_code, comp_type, comp_name, contract_label, income_label, start_date, end_date, settlement_period }]` |
+| Method | Path                    | Action                                            | Request                                                                                                                                 | Response                                                                                                           |
+| ------ | ----------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/promo-contracts`      | List contracts                                    | `?comp_type, comp_code, comp_name`                                                                                                      | `[{ id, comp_code, comp_type, comp_name, contract_label, income_label, start_date, end_date, settlement_period }]` |
 | POST   | `/promo-contracts`      | Create contract                                   | `{ comp_code, comp_type, contract_label_id, income_types[{ income_type, income_label_id? }], settlement_period, start_date, end_date }` | `{ id }`                                                                                                           |
-| GET    | `/promo-contracts/{id}` | Get contract detail with accruals and settlements | —                                                                                                                    | `{ contract, accruals[], settlements[] }`                                                                          |
-| DELETE | `/promo-contracts/{id}` | Delete contract (only if no accruals posted)      | —                                                                                                                    | 204                                                                                                                |
+| GET    | `/promo-contracts/{id}` | Get contract detail with accruals and settlements | —                                                                                                                                       | `{ contract, accruals[], settlements[] }`                                                                          |
+| DELETE | `/promo-contracts/{id}` | Delete contract (only if no accruals posted)      | —                                                                                                                                       | 204                                                                                                                |
 
 #### Accrual (manual, purchasing)
 
@@ -515,13 +525,13 @@ Settlement detail child row endpoints (`/settlements/{id}/bill-discounts`, `/inv
 
 #### Contract lifecycle (purchasing)
 
-| Method | Path                      | Action                                                                                   | Request                                                                                                                                                                                                                               | Response                                                                                                           |
-| ------ | ------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| GET    | `/order-contracts`        | List contracts                                                                           | `?comp_type, comp_code, comp_name, good_code`                                                                                                                                                                                         | `[{ id, comp_code, comp_type, comp_name, contract_label, income_label, start_date, end_date, settlement_period }]` |
+| Method | Path                      | Action                                                                                   | Request                                                                                                                                                                                                                                                  | Response                                                                                                           |
+| ------ | ------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/order-contracts`        | List contracts                                                                           | `?comp_type, comp_code, comp_name, good_code`                                                                                                                                                                                                            | `[{ id, comp_code, comp_type, comp_name, contract_label, income_label, start_date, end_date, settlement_period }]` |
 | POST   | `/order-contracts`        | Create single contract + trigger backward accrual                                        | `{ comp_code, comp_type, contract_label_id, income_types[{ income_type, income_label_id? }], settlement_period, start_date, end_date, calc_type, cap_amount, exclude_vat, exclude_dc, exclude_rebate, exclude_ince, exclude_comp, steps[], products[] }` | `{ id, accruals_posted: n }`                                                                                       |
 | POST   | `/order-contracts/paired` | Create DN+HU pair atomically, copy spec to both sides + trigger backward accrual on both | `{ supplier_pair_id, contract_label_id, income_types[{ income_type, income_label_id? }], settlement_period, start_date, end_date, calc_type, cap_amount, exclude_*, steps[], products[] }`                                                               | `{ dn_id, hu_id, accruals_posted: n }`                                                                             |
-| GET    | `/order-contracts/{id}`   | Get contract detail with accruals and settlements                                        | —                                                                                                                                                                                                                                     | `{ contract, spec, steps[], products[], accruals[], settlements[] }`                                               |
-| DELETE | `/order-contracts/{id}`   | Delete contract (only if no accruals posted)                                             | —                                                                                                                                                                                                                                     | 204                                                                                                                |
+| GET    | `/order-contracts/{id}`   | Get contract detail with accruals and settlements                                        | —                                                                                                                                                                                                                                                        | `{ contract, spec, steps[], products[], accruals[], settlements[] }`                                               |
+| DELETE | `/order-contracts/{id}`   | Delete contract (only if no accruals posted)                                             | —                                                                                                                                                                                                                                                        | 204                                                                                                                |
 
 #### Accrual (background job + manual)
 
@@ -734,22 +744,26 @@ CN events currently have no single touchpoint — cancellations reach purchasing
 
 #### Settlement row schema (`other_income_periods` replacement) — updated per OQ-1
 
-| Field                      | Type          | Notes                                                                                      |
-| -------------------------- | ------------- | ------------------------------------------------------------------------------------------ |
-| `id`                       | INT PK        | —                                                                                          |
-| `contract_id`              | INT           | One settlement per contract per period                                                     |
-| `contract_type`            | NVARCHAR(10)  | `'ORDER'` \| `'BRANCH'` \| `'PROMO'`                                                      |
-| `period_name`              | NVARCHAR(50)  | Human label e.g. "Q1 2026"                                                                 |
-| `start_date`               | DATE          | First month included                                                                       |
-| `end_date`                 | DATE          | Last month included                                                                        |
-| `system_order_amount`      | DECIMAL(18,4) | SUM of `entry.order_amount` for picked entries. NULL for BRANCH/PROMO.                     |
-| `cn_order_amount`          | DECIMAL(18,4) | SUM of `cn.order_amount` for picked CN rows. NULL for BRANCH/PROMO.                       |
-| `system_income`            | DECIMAL(18,4) | `Step(system_order_amount − cn_order_amount)`. Computed and stamped at post time.          |
-| `supplier_order_amount`    | DECIMAL(18,4) | Purchasing input from supplier statement. NULL for BRANCH/PROMO.                          |
-| `supplier_income`          | DECIMAL(18,4) | `Step(supplier_order_amount)`. Computed and stamped at post time.                          |
-| `cumulative_order_at_close`| DECIMAL(18,4) | Running total of corrected order base across all settlements 1..N for this contract. Seeds next settlement's bracket calculation. NULL for BRANCH/PROMO. |
-| `remark`                   | NVARCHAR(MAX) | Free text for adhoc notes                                                                  |
-| `created_at`               | DATETIME2     | —                                                                                          |
+> `cn_order_amount` and the `Step(system_order_amount − cn_order_amount)`
+> formula below are superseded — CN corrections are now picked income
+> entries summed directly into `system_order_amount`, with no separate CN
+> column. See [`settlement-reference.md`](./settlement-reference.md) §2.
+
+| Field                       | Type          | Notes                                                                                                                                                    |
+| --------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                        | INT PK        | —                                                                                                                                                        |
+| `contract_id`               | INT           | One settlement per contract per period                                                                                                                   |
+| `contract_type`             | NVARCHAR(10)  | `'ORDER'` \| `'BRANCH'` \| `'PROMO'`                                                                                                                     |
+| `period_name`               | NVARCHAR(50)  | Human label e.g. "Q1 2026"                                                                                                                               |
+| `start_date`                | DATE          | First month included                                                                                                                                     |
+| `end_date`                  | DATE          | Last month included                                                                                                                                      |
+| `system_order_amount`       | DECIMAL(18,4) | SUM of `entry.order_amount` for picked entries. NULL for BRANCH/PROMO.                                                                                   |
+| `system_income`             | DECIMAL(18,4) | `Step(system_order_amount)`. Computed and stamped at post time.                                                                                          |
+| `supplier_order_amount`     | DECIMAL(18,4) | Purchasing input from supplier statement. NULL for BRANCH/PROMO.                                                                                         |
+| `supplier_income`           | DECIMAL(18,4) | `Step(supplier_order_amount)`. Computed and stamped at post time.                                                                                        |
+| `cumulative_order_at_close` | DECIMAL(18,4) | Running total of corrected order base across all settlements 1..N for this contract. Seeds next settlement's bracket calculation. NULL for BRANCH/PROMO. |
+| `remark`                    | NVARCHAR(MAX) | Free text for adhoc notes                                                                                                                                |
+| `created_at`                | DATETIME2     | —                                                                                                                                                        |
 
 Unearned revenue = `supplier_income − system_income`. Derived by accounting report; not stored.
 
@@ -767,23 +781,20 @@ Bill-discount and free-item rows are optional. Only `supplier_order_amount` (ORD
 
 All steps execute in a single transaction. No draft state.
 
-| Step | Actor      | Action                                                        | System writes                                                                                                           |
-| ---- | ---------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| 1    | Purchasing | Select income entry months to include                         | —                                                                                                                       |
-| 2    | Purchasing | Review open CN rows for those months; confirm which to include| —                                                                                                                       |
-| 3    | Purchasing | Enter `supplier_order_amount`                                 | —                                                                                                                       |
-| 4    | Purchasing | Optionally append bill-discount / free-item / invoice detail  | —                                                                                                                       |
-| 5    | Purchasing | Confirm post                                                  | Settlement row inserted with all computed amounts stamped                                                               |
-| 6    | System     | Stamp income entry rows                                       | `settlement_id` set on all selected `other_income_income_entries` rows                                                  |
-| 7    | System     | Stamp CN rows                                                 | `settlement_id` set on all selected `other_income_cn_orders` rows                                                       |
+| Step | Actor      | Action                                                         | System writes                                                          |
+| ---- | ---------- | -------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| 1    | Purchasing | Select income entry months to include (including any open CN correction entries) | —                                                             |
+| 2    | Purchasing | Enter `supplier_order_amount`                                  | —                                                                      |
+| 3    | Purchasing | Optionally append bill-discount / free-item / invoice detail   | —                                                                      |
+| 4    | Purchasing | Confirm post                                                   | Settlement row inserted with all computed amounts stamped              |
+| 5    | System     | Stamp income entry rows                                        | `settlement_id` set on all selected `other_income_income_entries` rows |
 
 #### Correction path
 
 Accounting deletes the settlement → system (in one transaction):
 
 1. `UPDATE other_income_income_entries SET settlement_id = NULL WHERE settlement_id = @id`
-2. `UPDATE other_income_cn_orders SET settlement_id = NULL WHERE settlement_id = @id`
-3. Delete all child detail rows, then delete the settlement row
+2. Delete all child detail rows, then delete the settlement row
 
 Purchasing then reposts from step 1.
 
@@ -795,19 +806,19 @@ Purchasing then reposts from step 1.
 
 #### Contract table (`other_income_heads` replacement)
 
-| v1 Field                                                                                                                                                    | v2 Field                          | Status      | Notes                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------- |
-| `event_id`                                                                                                                                                  | `contract_label_id`               | Changed     | FK to `other_income_contract_labels`                                                                     |
+| v1 Field                                                                                                                                                    | v2 Field                                      | Status      | Notes                                                                                                    |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------- |
+| `event_id`                                                                                                                                                  | `contract_label_id`                           | Changed     | FK to `other_income_contract_labels`                                                                     |
 | `income_id`                                                                                                                                                 | `other_income_contract_income_types` junction | Changed     | One or more `(income_type, income_label_id)` rows per contract. Replaces single `income_id` FK.          |
-| `comp_code`                                                                                                                                                 | `comp_code`                       | Keep        | —                                                                                                        |
-| `comp_type`                                                                                                                                                 | `comp_type`                       | Keep        | DN/HU distinction is structural                                                                          |
-| `period`                                                                                                                                                    | `settlement_period`               | Renamed     | 1/3/6/12 months                                                                                          |
-| `start_date`                                                                                                                                                | `start_date`                      | Keep        | —                                                                                                        |
-| `end_date`                                                                                                                                                  | `end_date`                        | Keep        | —                                                                                                        |
-| `dual_pair_id`                                                                                                                                              | `supplier_pair_id`                | Changed     | FK to new `supplier_pairs` master-data table                                                             |
-| `display_name`                                                                                                                                              | —                                 | **Dropped** | Unused in practice (700+ empty rows)                                                                     |
-| `timestamp`                                                                                                                                                 | `created_at`                      | Renamed     | —                                                                                                        |
-| `acc_amount`, `acc_income`, `rece_amount`, `inv_amount`, `order_amount`, `credit_amount`, `free_item_amount`, `bill_discount_amount` + all `_date` variants | —                                 | **Dropped** | Derivable running totals — replaced by "current state" view (TD-2) aggregating accrual + settlement rows |
+| `comp_code`                                                                                                                                                 | `comp_code`                                   | Keep        | —                                                                                                        |
+| `comp_type`                                                                                                                                                 | `comp_type`                                   | Keep        | DN/HU distinction is structural                                                                          |
+| `period`                                                                                                                                                    | `settlement_period`                           | Renamed     | 1/3/6/12 months                                                                                          |
+| `start_date`                                                                                                                                                | `start_date`                                  | Keep        | —                                                                                                        |
+| `end_date`                                                                                                                                                  | `end_date`                                    | Keep        | —                                                                                                        |
+| `dual_pair_id`                                                                                                                                              | `supplier_pair_id`                            | Changed     | FK to new `supplier_pairs` master-data table                                                             |
+| `display_name`                                                                                                                                              | —                                             | **Dropped** | Unused in practice (700+ empty rows)                                                                     |
+| `timestamp`                                                                                                                                                 | `created_at`                                  | Renamed     | —                                                                                                        |
+| `acc_amount`, `acc_income`, `rece_amount`, `inv_amount`, `order_amount`, `credit_amount`, `free_item_amount`, `bill_discount_amount` + all `_date` variants | —                                             | **Dropped** | Derivable running totals — replaced by "current state" view (TD-2) aggregating accrual + settlement rows |
 
 #### DC/Rebate spec table (`other_income_not_light` replacement)
 

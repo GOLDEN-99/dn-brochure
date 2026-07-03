@@ -1,8 +1,8 @@
 import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
-import { TCreateReceiptForm } from './createReceiptForm.type';
+import { TCreateReceiptForm, TInvoiceWithRemaining, TPartialMatchInvoice } from './createReceiptForm.type';
 import { SignalDatepickerComponent } from "../../../../../components/crm-promotion/signal-datepicker.component";
-import { TOtherIncomeInvoice } from '../../../../shared/types/other-income.type';
+import { TOtherIncomeInvoice, TOtherIncomeMatching } from '../../../../shared/types/other-income.type';
 import { distinctUntilChanged, map, Observable } from 'rxjs';
 import { NgbCalendar, NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
@@ -22,12 +22,22 @@ export class CreateReceiptComponent {
   success = output<any>()
   fail = output<any>()
   submitting = signal(false)
+  matched = input.required<TOtherIncomeMatching[]>()
+  invoiceRef = computed(() => {
+    let ref = new Map<number, number>();
+    for (const record of this.matched()) {
+      const saved = ref.get(record.invoiceId) ?? 0;
+      ref.set(record.id, saved + record.matchedAmount);
+    }
+    return ref;
+  })
   private readonly calendar = inject(NgbCalendar)
   private readonly accountPeriodService = inject(OtherIncomeAccountPeriodService)
   invoiceList = input.required<TOtherIncomeInvoice[]>();
   periodId = input.required<number>()
   totalInvoice = input(0)
   remainingInvoice = input(0)
+
 
 
   private readonly formData = linkedSignal<TCreateReceiptForm>(() => {
@@ -38,18 +48,21 @@ export class CreateReceiptComponent {
 
   createForm = form(this.formData, createReceiptSchema)
 
-  formatInvoice = ({ invNumb }: TOtherIncomeInvoice) => invNumb
-  searchInvoice = (term$: Observable<string>) => {
+  formatInvoice = ({ invoiceNumb }: TOtherIncomeInvoice) => invoiceNumb
+  searchInvoice = (term$: Observable<string>): Observable<Array<TInvoiceWithRemaining>> => {
+    const ref = this.invoiceRef();
     return term$.pipe(
       distinctUntilChanged(),
       map(t => {
         const normalize = t.toLocaleLowerCase().trim()
-        return this.invoiceList().filter(({ invNumb, remainingAmount }) => remainingAmount > 0 && invNumb.toLocaleLowerCase().includes(normalize))
+        return this.invoiceList()
+          .map(res => ({ ...res, remainingAmount: res.invoiceAmount - (ref.get(res.id) ?? 0) }))
+          .filter(({ invoiceNumb }) => invoiceNumb.toLocaleLowerCase().includes(normalize))
       })
     )
   }
-  onSelectInvoice({ item }: NgbTypeaheadSelectItemEvent<TOtherIncomeInvoice>) {
-    this.createForm.matches().controlValue.update(prev => [...prev, { invoice: item, matchAmount: String(item.remainingAmount) }])
+  onSelectInvoice({ item }: NgbTypeaheadSelectItemEvent<TInvoiceWithRemaining>) {
+    this.createForm.matches().controlValue.update(prev => [...prev, { invoice: item, matchAmount: '0' }])
   }
 
   onSubmit() {

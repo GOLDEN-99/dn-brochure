@@ -1,0 +1,130 @@
+<div class="row row-cols-1 row-cols-md-4 g-3 mb-3">
+  <div class="col">
+    <label
+      [htmlFor]="appendReceiptForm.receNumb().name()"
+      class="form-label small text-muted mb-1"
+      >เลขที่ใบเสร็จ
+      @if (appendReceiptForm.receNumb().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <input
+      [id]="appendReceiptForm.receNumb().name()"
+      type="text"
+      class="form-control form-control-sm"
+      [formField]="appendReceiptForm.receNumb"
+    />
+    <div style="min-height: 1.25rem" class="mt-1">
+      <app-form-alert-text [formState]="appendReceiptForm.receNumb()" />
+    </div>
+  </div>
+
+  <div class="col">
+    <label [htmlFor]="appendReceiptForm.receDate().name()" class="form-label small text-muted mb-1"
+      >วันที่ใบเสร็จ</label
+    >
+    <app-signal-datepicker
+      [id]="appendReceiptForm.receDate().name()"
+      [formField]="appendReceiptForm.receDate"
+    />
+    <div style="min-height: 1.25rem" class="mt-1"></div>
+  </div>
+
+  <div class="col">
+    <label
+      [htmlFor]="appendReceiptForm.receAmount().name()"
+      class="form-label small text-muted mb-1"
+      >ยอด
+      @if (appendReceiptForm.receAmount().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <input
+      [id]="appendReceiptForm.receAmount().name()"
+      type="number"
+      class="form-control form-control-sm"
+      [formField]="appendReceiptForm.receAmount"
+    />
+    <div style="min-height: 1.25rem" class="mt-1">
+      <app-form-alert-text [formState]="appendReceiptForm.receAmount()" />
+    </div>
+  </div>
+
+  <div class="col">
+    <label
+      [htmlFor]="appendReceiptForm.receRemark().name()"
+      class="form-label small text-muted mb-1"
+      >หมายเหตุ</label
+    >
+    <input
+      [id]="appendReceiptForm.receRemark().name()"
+      type="text"
+      class="form-control form-control-sm"
+      [formField]="appendReceiptForm.receRemark"
+    />
+    <div style="min-height: 1.25rem" class="mt-1"></div>
+  </div>
+</div>
+
+<hr class="my-2" />
+
+<div class="row row-cols-1 row-cols-md-4 g-3 mb-3">
+  <div class="col">
+    <label class="form-label small text-muted mb-1"
+      >ใบแจ้งหนี้ที่จะจับคู่
+      <span class="text-danger">*</span>
+    </label>
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      placeholder="ค้นหาเลขที่ใบแจ้งหนี้"
+      [ngbTypeahead]="searchInvoice"
+      [resultFormatter]="formatInvoice"
+      [inputFormatter]="formatInvoice"
+      (selectItem)="onSelectInvoice($event)"
+    />
+    <div style="min-height: 1.25rem" class="mt-1">
+      <app-form-alert-text [formState]="appendReceiptForm.matchInvoice()" />
+    </div>
+  </div>
+
+  <div class="col">
+    <label class="form-label small text-muted mb-1">ยอดคงเหลือของใบแจ้งหนี้</label>
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      readonly
+      [ngModel]="appendReceiptForm.matchInvoice().value()?.remainingAmount ?? '-'"
+    />
+    <div style="min-height: 1.25rem" class="mt-1"></div>
+  </div>
+
+  <div class="col">
+    <label
+      [htmlFor]="appendReceiptForm.matchAmount().name()"
+      class="form-label small text-muted mb-1"
+      >ยอดที่จับคู่
+      @if (appendReceiptForm.matchAmount().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <input
+      [id]="appendReceiptForm.matchAmount().name()"
+      type="number"
+      class="form-control form-control-sm"
+      [formField]="appendReceiptForm.matchAmount"
+    />
+    <div style="min-height: 1.25rem" class="mt-1">
+      <app-form-alert-text [formState]="appendReceiptForm.matchAmount()" />
+    </div>
+  </div>
+</div>
+
+<button
+  type="button"
+  class="btn btn-sm btn-primary"
+  [disabled]="!canSubmit()"
+  (click)="onSubmit()"
+>
+  เพิ่มใบเสร็จและจับคู่
+</button>

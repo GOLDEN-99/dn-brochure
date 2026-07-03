@@ -1,5 +1,11 @@
 # Other Income API Reference
 
+> **STALE:** This describes the pre-rewrite module at
+> `src/app/pages/other-income/` (`oi-light`/`oi-not-light` services, v1
+> endpoints). The module was rewritten at `src/app/other-income/` — see
+> `src/app/other-income/docs/api/*.md` for current API reference and
+> `src/app/other-income/docs/context/decisions.md` for what changed and why.
+
 **Base URL:** `https://api.otherincome.healthupgroup.com`
 **Environment Variable:** `environment.oi`
 **Last Updated:** 2026-01-08

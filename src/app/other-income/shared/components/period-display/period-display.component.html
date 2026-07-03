@@ -91,10 +91,10 @@
       }
     </div>
 
-    @if (currentPeriod.periodRemark) {
+    @if (currentPeriod.remark) {
       <div class="mt-3 pt-2 border-top">
         <div class="small text-muted">หมายเหตุ:</div>
-        <div>{{ period().periodRemark }}</div>
+        <div>{{ currentPeriod.remark }}</div>
       </div>
     }
   </div>
@@ -112,57 +112,61 @@
   >
     <!-- ท้ายบิล (Order) -->
     @if (types.hasType1) {
-      <div style="min-width: 100%">
+      <div>discount wait for implement</div>
+      <!-- <div style="min-width: 100%">
         <app-other-income-order-period
           [canEdit]="isPurchase()"
-          [actualAmount]="period().totalIncome"
-          [orderList]="period().billDiscountList"
-          [periodId]="period().id"
+          [actualAmount]="currentPeriod.supplierIncome"
+          [orderList]="currentPeriod.billDiscounts"
+          [periodId]="currentPeriod.id"
           [compCode]="compCode()"
           [compType]="compType()"
           (success)="onSuccess($event)"
           (fail)="onFail($event)"
         />
-      </div>
+      </div> -->
     }
 
     <!-- สินค้า (Good Order) -->
     @if (types.hasType2) {
-      <div style="min-width: 100%">
+      <div>free item wait for implement</div>
+      <!-- <div style="min-width: 100%">
         <app-other-income-good-order-period
           [canEdit]="isPurchase()"
-          [actualAmount]="currentPeriod.totalIncome"
-          [orderList]="currentPeriod.freeItemList"
+          [actualAmount]="currentPeriod.supplierIncome"
+          [orderList]="currentPeriod.freeItems"
           [periodId]="currentPeriod.id"
           [compCode]="compCode()"
           [compType]="compType()"
           (success)="onSuccess($event)"
           (fail)="onFail($event)"
         />
-      </div>
+      </div> -->
     }
 
     <!-- Credit Note -->
     @if (types.hasType4) {
-      <div style="min-width: 100%">
+      <div>credit note wait for implement</div>
+      <!-- <div style="min-width: 100%">
         <app-other-income-credit-period
           [canEdit]="!isPurchase()"
           [periodId]="currentPeriod.id"
-          [incomeAmount]="currentPeriod.totalIncome"
-          [addedAmount]="currentPeriod.creditAmount"
-          [creditList]="currentPeriod.creditList"
+          [incomeAmount]="currentPeriod.supplierIncome"
+          [addedAmount]="creditNoteAmount()"
+          [creditList]="currentPeriod.creditNotes"
           (success)="onSuccess($event)"
           (fail)="onFail($event)"
         />
-      </div>
+      </div> -->
     }
 
     <!-- end period here -->
     @if (types.hasType3) {
       <other-income-invoice-receipt
         [canDelete]="!isPurchase()"
-        [receiptList]="currentPeriod.receiptList"
-        [invoiceList]="currentPeriod.invoiceList"
+        [matches]="currentPeriod.matches"
+        [receiptList]="currentPeriod.receipts"
+        [invoiceList]="currentPeriod.invoices"
         [periodId]="currentPeriod.id"
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
@@ -237,7 +241,7 @@
 <!-- Order Po Modal -->
 <ng-template #orderPoModal let-modal>
   <app-other-income-order-modal
-    [periodAmount]="period().totalIncome"
+    [periodAmount]="currentPeriod.supplierIncome"
     [compCode]="compCode()"
     [compType]="compType()"
     [periodId]="period().id"
@@ -250,7 +254,7 @@
 <!-- Good Order Po Modal -->
 <ng-template #goodOrderPoModal let-modal>
   <app-other-income-good-order-modal
-    [periodAmount]="period().totalIncome"
+    [periodAmount]="currentPeriod.supplierIncome"
     [compCode]="compCode()"
     [compType]="compType()"
     [periodId]="period().id"
@@ -264,14 +268,8 @@
 <ng-template #invoiceModal let-modal>
   <other-income-create-invoice
     [periodId]="currentPeriod.id"
-    [totalIncome]="currentPeriod.totalIncome"
-    [remainingIncome]="
-      currentPeriod.totalIncome -
-      currentPeriod.billDiscountAmount -
-      currentPeriod.freeItemAmount -
-      currentPeriod.creditAmount -
-      currentPeriod.invAmount
-    "
+    [totalIncome]="currentPeriod.supplierIncome"
+    [remainingIncome]="remainingIncome()"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
     (closeModal)="modal.dismiss()"
@@ -282,14 +280,8 @@
 <ng-template #creditModal let-modal>
   <other-income-create-credit-note
     [periodId]="period().id"
-    [totalIncome]="currentPeriod.totalIncome"
-    [remainingIncome]="
-      currentPeriod.totalIncome -
-      currentPeriod.billDiscountAmount -
-      currentPeriod.freeItemAmount -
-      currentPeriod.creditAmount -
-      currentPeriod.invAmount
-    "
+    [totalIncome]="currentPeriod.supplierIncome"
+    [remainingIncome]="remainingIncome()"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
     (close)="modal.dismiss()"
@@ -299,10 +291,11 @@
 <!-- Receipt Modal -->
 <ng-template #receiptModal let-modal>
   <other-income-create-receipt
+    [matched]="currentPeriod.matches"
     [periodId]="currentPeriod.id"
-    [totalInvoice]="currentPeriod.invAmount"
-    [remainingInvoice]="currentPeriod.invAmount - currentPeriod.receAmount"
-    [invoiceList]="currentPeriod.invoiceList"
+    [totalInvoice]="invoiceAmount()"
+    [remainingInvoice]="receiptAmount()"
+    [invoiceList]="currentPeriod.invoices"
     (closeModal)="modal.dismiss()"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"

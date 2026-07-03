@@ -1,0 +1,113 @@
+<div class="row row-cols-1 row-cols-md-4 g-2 align-items-end mb-2">
+  <div class="col">
+    <label
+      [htmlFor]="cnCorrectionForm.month().name()"
+      class="form-label small text-muted mb-1"
+      >เดือน
+      @if (cnCorrectionForm.month().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <app-signal-month-picker
+      [id]="cnCorrectionForm.month().name()"
+      [formField]="cnCorrectionForm.month"
+    />
+  </div>
+
+  <div class="col">
+    <label for="cnBarCode" class="form-label small text-muted mb-1"
+      >บาร์โค้ด</label
+    >
+    <input
+      id="cnBarCode"
+      type="text"
+      class="form-control form-control-sm"
+      [ngbTypeahead]="search"
+      (selectItem)="onAddLine($event)"
+      [resultFormatter]="formatProduct"
+      [inputFormatter]="formatProduct"
+    />
+  </div>
+  <div class="col">
+    <label for="cnGoodName" class="form-label small text-muted mb-1"
+      >ชื่อสินค้า</label
+    >
+    <input
+      id="cnGoodName"
+      type="text"
+      class="form-control form-control-sm"
+      [ngbTypeahead]="searchProdcutName"
+      (selectItem)="onAddLine($event)"
+      [resultFormatter]="formatProduct"
+      [inputFormatter]="formatProduct"
+    />
+  </div>
+</div>
+
+<app-form-alert-text [formState]="cnCorrectionForm.cnItems()" />
+
+@if (cnCorrectionForm.cnItems().controlValue().length > 0) {
+  <table class="table table-sm table-bordered mb-2" style="font-size: 12px">
+    <thead>
+      <tr>
+        <th>รหัสสินค้า</th>
+        <th>ชื่อสินค้า</th>
+        <th>ยอดCN (บาท)</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of cnCorrectionForm.cnItems; track $index) {
+        @let lineItem = item().value().product;
+        <tr>
+          <td>{{ lineItem?.barCode }}</td>
+          <td>{{ lineItem?.goodName ?? "-" }}</td>
+          <td>
+            <label [htmlFor]="item.amount().name()" class="visually-hidden"
+              >ยอดCN (บาท)</label
+            >
+            <input
+              [id]="item.amount().name()"
+              type="number"
+              class="form-control form-control-sm"
+              [formField]="item.amount"
+            />
+            <app-form-alert-text [formState]="item.amount()" />
+          </td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-squre btn-danger btn-sm"
+              (click)="onRemoveLine(lineItem?.goodCode)"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
+<div class="mb-3">
+  <label
+    [htmlFor]="cnCorrectionForm.note().name()"
+    class="form-label small text-muted mb-1"
+    >หมายเหตุ</label
+  >
+  <textarea
+    [id]="cnCorrectionForm.note().name()"
+    type="text"
+    class="form-control form-control-sm"
+    [formField]="cnCorrectionForm.note"
+  ></textarea>
+</div>
+
+<button
+  type="button"
+  class="btn btn-sm btn-primary"
+  [disabled]="!canSubmit()"
+  (click)="onSubmit()"
+>
+  บันทึก CN
+</button>

@@ -18,7 +18,6 @@ import { OtherIncomeDualMonthlyListComponent } from '../../../../components/othe
 import { MonthSelectComponent } from '../../../../components/date-input/month-select.component';
 import { YearSelectComponent } from '../../../../components/date-input/year-select.component';
 import { RouterLink } from "@angular/router";
-import { PeriodDisplayComponent } from "../../../../other-income/shared/components/period-display/period-display.component";
 
 @Component({
   selector: 'app-not-light-dual-detail',
@@ -30,7 +29,6 @@ import { PeriodDisplayComponent } from "../../../../other-income/shared/componen
     MonthSelectComponent, YearSelectComponent,
     NgTemplateOutlet,
     RouterLink,
-    PeriodDisplayComponent
   ],
   templateUrl: './not-light-dual-detail.component.html',
   styleUrl: './not-light-dual-detail.component.scss'

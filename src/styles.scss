@@ -128,22 +128,42 @@ $dn: #680dc0;
 $hu: #f36e21;
 
 .btn-dn {
-  background-color: $dn;
-  color: white;
+  background-color: $dn !important;
+  color: white !important;
+  border: 1px solid $dn !important;
 
   &:hover {
-    background-color: darken($dn, 8%);
-    color: white;
+    background-color: darken($dn, 8%) !important;
+  }
+}
+
+.btn-dn-outline {
+  background-color: transparent !important;
+  color: $dn !important;
+  border: 1px solid $dn !important;
+
+  &:hover {
+    background-color: rgba($dn, 0.1) !important;
   }
 }
 
 .btn-hu {
-  background-color: $hu;
-  color: white;
+  background-color: $hu !important;
+  color: white !important;
+  border: 1px solid $hu !important;
 
   &:hover {
-    background-color: darken($hu, 8%);
-    color: white;
+    background-color: darken($hu, 8%) !important;
+  }
+}
+
+.btn-hu-outline {
+  background-color: transparent !important;
+  color: $hu !important;
+  border: 1px solid $hu !important;
+
+  &:hover {
+    background-color: rgba($hu, 0.1) !important;
   }
 }
 

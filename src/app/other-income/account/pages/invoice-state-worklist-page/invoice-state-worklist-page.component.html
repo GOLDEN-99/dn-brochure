@@ -1,0 +1,88 @@
+<h1 class="text-center">ใบแจ้งหนี้ค้างจับคู่ (Invoice States)</h1>
+
+<div class="d-flex gap-2 mb-3">
+  <select
+    class="form-select"
+    style="max-width: 200px"
+    [ngModel]="invoiceState() ?? 'all'"
+    (ngModelChange)="setInvoiceState($event)"
+  >
+    <option value="all">ทุกสถานะ</option>
+    <option value="UNMATCHED">UNMATCHED</option>
+    <option value="MATCHED">MATCHED</option>
+  </select>
+  <select
+    class="form-select"
+    style="max-width: 160px"
+    [ngModel]="contractType()"
+    (ngModelChange)="setContractType($event)"
+  >
+    <option [ngValue]="null">ทุกสัญญา</option>
+    <option value="ORDER">{{ contractTypeLabel.ORDER }}</option>
+    <option value="BRANCH">{{ contractTypeLabel.BRANCH }}</option>
+    <option value="PROMO">{{ contractTypeLabel.PROMO }}</option>
+  </select>
+  <button class="btn btn-outline-secondary" (click)="refresh()">
+    <i class="bi bi-arrow-clockwise"></i>
+  </button>
+</div>
+
+@if (loading()) {
+  <div class="text-center py-4">
+    <div
+      class="spinner-border spinner-border-sm text-secondary"
+      role="status"
+    ></div>
+    <span class="ms-2 text-muted">กำลังโหลด...</span>
+  </div>
+} @else if (error()) {
+  <div class="alert alert-danger d-flex align-items-center gap-2">
+    {{ error() }}
+    <button class="btn btn-sm btn-outline-danger ms-auto" (click)="refresh()">
+      ลองใหม่
+    </button>
+  </div>
+} @else {
+  <table class="table table-striped table-bordered" style="font-size: 12px">
+    <thead>
+      <tr>
+        <th>รหัสซัพ</th>
+        <th>ชื่อซัพ</th>
+        <th>ประเภทกิจกรรม</th>
+        <th>เลขที่ใบแจ้งหนี้</th>
+        <th class="text-end">ยอดใบแจ้งหนี้</th>
+        <th class="text-end">ยอดจับคู่แล้ว</th>
+        <th>สถานะ</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of items(); track row.invoiceId) {
+        <tr>
+          <td>{{ row.compCode }}</td>
+          <td>{{ row.compName }}</td>
+          <td>{{ row.contractLabelName }}</td>
+          <td>{{ row.invoiceNumb }}</td>
+          <td class="text-end">{{ row.invoiceAmount | number: "1.2-2" }}</td>
+          <td class="text-end">{{ row.matchedAmount | number: "1.2-2" }}</td>
+          <td>
+            <span
+              class="badge"
+              [class.text-bg-warning]="row.invoiceState === 'UNMATCHED'"
+              [class.text-bg-success]="row.invoiceState === 'MATCHED'"
+            >{{ row.invoiceState }}</span>
+          </td>
+          <td>
+            <a [routerLink]="['../', contractTypePath[row.contractType], row.contractId, 'settlements', row.settlementId]" class="btn btn-sm btn-outline-primary">
+              รายละเอียด
+            </a>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="8" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

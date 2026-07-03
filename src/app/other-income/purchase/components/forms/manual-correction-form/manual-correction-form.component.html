@@ -1,0 +1,85 @@
+<div class="row row-cols-1 row-cols-md-4 g-2 align-items-end mb-2">
+  <div class="col">
+    <label
+      [htmlFor]="manualCorrectionForm.month().name()"
+      class="form-label small text-muted mb-1"
+      >เดือน
+      @if (manualCorrectionForm.month().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <app-signal-month-picker
+      [id]="manualCorrectionForm.month().name()"
+      [formField]="manualCorrectionForm.month"
+    />
+  </div>
+
+  <div class="col">
+    @if (contractType() === 'ORDER') {
+      <label
+        [htmlFor]="manualCorrectionForm.orderAmount().name()"
+        class="form-label small text-muted mb-1"
+        >ยอดเงิน (บาท)
+        @if (manualCorrectionForm.orderAmount().required()) {
+          <span class="text-danger">*</span>
+        }
+      </label>
+      <input
+        [id]="manualCorrectionForm.orderAmount().name()"
+        type="number"
+        class="form-control form-control-sm"
+        [class.is-invalid]="manualCorrectionForm.orderAmount().invalid()"
+        [formField]="manualCorrectionForm.orderAmount"
+      />
+      <div class="invalid-feedback">
+        @for (e of manualCorrectionForm.orderAmount().errors(); track $index) {
+          <div>{{ e.message }}</div>
+        }
+      </div>
+    } @else {
+      <label
+        [htmlFor]="manualCorrectionForm.amount().name()"
+        class="form-label small text-muted mb-1"
+        >ยอดเงิน (บาท)
+        @if (manualCorrectionForm.amount().required()) {
+          <span class="text-danger">*</span>
+        }
+      </label>
+      <input
+        [id]="manualCorrectionForm.amount().name()"
+        type="number"
+        class="form-control form-control-sm"
+        [class.is-invalid]="manualCorrectionForm.amount().invalid()"
+        [formField]="manualCorrectionForm.amount"
+      />
+      <div class="invalid-feedback">
+        @for (e of manualCorrectionForm.amount().errors(); track $index) {
+          <div>{{ e.message }}</div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="col">
+    <label
+      [htmlFor]="manualCorrectionForm.note().name()"
+      class="form-label small text-muted mb-1"
+      >หมายเหตุ</label
+    >
+    <input
+      [id]="manualCorrectionForm.note().name()"
+      type="text"
+      class="form-control form-control-sm"
+      [formField]="manualCorrectionForm.note"
+    />
+  </div>
+</div>
+
+<button
+  type="button"
+  class="btn btn-sm btn-primary"
+  [disabled]="!canSubmit()"
+  (click)="onSubmit()"
+>
+  บันทึก Manual Correction
+</button>

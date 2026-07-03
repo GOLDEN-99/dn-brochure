@@ -1,0 +1,335 @@
+@if (ctx.loading()) {
+  <div class="text-center py-4">
+    <output class="spinner-border spinner-border-sm text-secondary"></output>
+    <span class="ms-2 text-muted">กำลังโหลด...</span>
+  </div>
+} @else if (ctx.error()) {
+  <div class="alert alert-danger d-flex align-items-center gap-2">
+    {{ ctx.error() }}
+    <button
+      class="btn btn-sm btn-outline-danger ms-auto"
+      (click)="ctx.refresh()"
+    >
+      ลองใหม่
+    </button>
+  </div>
+} @else if (ctx.settlement(); as settlement) {
+  <!-- Header card -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">ข้อมูลทั่วไป</div>
+    <div class="card-body">
+      <div class="row row-cols-2 row-cols-md-4 g-2 mb-3">
+        <div>
+          <small class="text-muted d-block">งวด</small
+          >{{ settlement.periodName }}
+        </div>
+
+        <div>
+          <small class="text-muted d-block">เริ่ม</small
+          >{{ settlement.startDate | date: "dd/MM/yyyy" }}
+        </div>
+        <div>
+          <small class="text-muted d-block">จบ</small
+          >{{ settlement.endDate | date: "dd/MM/yyyy" }}
+        </div>
+        <div>
+          <small class="text-muted d-block">สร้างเมื่อ</small
+          >{{ settlement.createdAt | date: "dd/MM/yyyy HH:mm" }}
+        </div>
+        <div>
+          <small class="text-muted d-block">หมายเหตุ</small
+          >{{ settlement.remark ?? "-" }}
+        </div>
+      </div>
+      <div class="row row-cols-2 row-cols-md-4 g-2">
+        <div>
+          <small class="text-muted d-block">ยอดสั่งซื้อ (ระบบ)</small
+          >{{ settlement.systemOrderAmount ?? "-" }}
+        </div>
+        <div>
+          <small class="text-muted d-block">ยอด CN</small
+          >{{ settlement.cnOrderAmount ?? "-" }}
+        </div>
+        <div>
+          <small class="text-muted d-block">รายได้ (ระบบ)</small
+          >{{ settlement.systemIncome }}
+        </div>
+        <div>
+          <small class="text-muted d-block">ยอดสั่งซื้อ (ซัพพลายเออร์)</small
+          >{{ settlement.supplierOrderAmount ?? "-" }}
+        </div>
+        <div>
+          <small class="text-muted d-block">รายได้ (ซัพพลายเออร์)</small
+          >{{ settlement.supplierIncome }}
+        </div>
+        <div>
+          <small class="text-muted d-block">ส่วนต่างรายได้</small>
+          <span
+            class="fw-bold"
+            [class.text-danger]="
+              settlement.supplierIncome - settlement.systemIncome < 0
+            "
+            [class.text-success]="
+              settlement.supplierIncome - settlement.systemIncome > 0
+            "
+          >
+            {{ settlement.supplierIncome - settlement.systemIncome }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bill discounts -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">ส่วนลดบิล</div>
+    <div class="card-body">
+      <table
+        class="table table-sm table-striped table-bordered mb-3"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>เลขที่คำสั่งซื้อ</th>
+            <th>เลขที่ใบเสร็จ</th>
+            <th>ยอด</th>
+            <th>หมายเหตุ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of settlement.billDiscounts; track row.id) {
+            <tr>
+              <td>{{ row.orderNumb }}</td>
+              <td>{{ row.receNumb }}</td>
+              <td>{{ row.subtotalAmount }}</td>
+              <td>{{ row.remark }}</td>
+              <td>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="onDeleteBillDiscount(row.id)"
+                >
+                  ลบ
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center text-muted py-2">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <other-income-append-bill-discount
+        [submitting]="submittingBillDiscount()"
+        [search]="searchBillDiscounts"
+        (submitBillDiscounts)="onSubmitBillDiscounts($event)"
+      ></other-income-append-bill-discount>
+    </div>
+  </div>
+
+  <!-- Free items -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">ของแถม</div>
+    <div class="card-body">
+      <table
+        class="table table-sm table-striped table-bordered mb-3"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>เลขที่คำสั่งซื้อ</th>
+            <th>เลขที่ใบเสร็จ</th>
+            <th>รหัสสินค้า</th>
+            <th>มูลค่า</th>
+            <th>หมายเหตุ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of settlement.freeItems; track row.id) {
+            <tr>
+              <td>{{ row.orderNumb }}</td>
+              <td>{{ row.receNumb }}</td>
+              <td>{{ row.goodCode }}</td>
+              <td>{{ row.subtotalAmount }}</td>
+              <td>{{ row.remark }}</td>
+              <td>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="onDeleteFreeItem(row.id)"
+                >
+                  ลบ
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center text-muted py-2">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <other-income-append-free-item
+        [submitting]="submittingFreeItem()"
+        [search]="searchFreeProducts"
+        (submitFreeItems)="onSubmitFreeItems($event)"
+      ></other-income-append-free-item>
+    </div>
+  </div>
+
+  <!-- Invoices (accounting) -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">ใบแจ้งหนี้ (ฝ่ายบัญชี)</div>
+    <div class="card-body">
+      <table
+        class="table table-sm table-striped table-bordered mb-3"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>เลขที่</th>
+            <th>วันที่</th>
+            <th>ยอด</th>
+            <th>จับคู่แล้ว</th>
+            <th>คงเหลือ</th>
+            <th>หมายเหตุ</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of settlement.invoices; track row.id) {
+            <tr>
+              <td>{{ row.invoiceNumb }}</td>
+              <td>{{ row.invoiceDate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ row.invoiceAmount }}</td>
+              <td>{{ matchedByInvoiceId().get(row.id) ?? 0 }}</td>
+              <td
+                [class.text-danger]="
+                  row.invoiceAmount - (matchedByInvoiceId().get(row.id) ?? 0) !== 0
+                "
+              >
+                {{ row.invoiceAmount - (matchedByInvoiceId().get(row.id) ?? 0) }}
+              </td>
+              <td>{{ row.invoiceRemark }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center text-muted py-2">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <other-income-append-invoice
+        [submitting]="submittingInvoice()"
+        (submitInvoice)="onSubmitInvoice($event)"
+      ></other-income-append-invoice>
+    </div>
+  </div>
+
+  <!-- Receipts (accounting) -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">ใบเสร็จ (ฝ่ายบัญชี)</div>
+    <div class="card-body">
+      <table
+        class="table table-sm table-striped table-bordered mb-3"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>เลขที่</th>
+            <th>วันที่</th>
+            <th>ยอด</th>
+            <th>จับคู่แล้ว</th>
+            <th>คงเหลือ</th>
+            <th>หมายเหตุ</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of settlement.receipts; track row.id) {
+            <tr>
+              <td>{{ row.receNumb }}</td>
+              <td>{{ row.receDate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ row.receAmount }}</td>
+              <td>{{ matchedByReceiptId().get(row.id) ?? 0 }}</td>
+              <td
+                [class.text-danger]="
+                  row.receAmount - (matchedByReceiptId().get(row.id) ?? 0) !== 0
+                "
+              >
+                {{ row.receAmount - (matchedByReceiptId().get(row.id) ?? 0) }}
+              </td>
+              <td>{{ row.receRemark }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center text-muted py-2">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <other-income-append-receipt
+        [submitting]="submittingReceipt()"
+        [invoices]="settlement.invoices"
+        [matches]="settlement.matches"
+        (submitReceipt)="onSubmitReceipt($event)"
+      ></other-income-append-receipt>
+    </div>
+  </div>
+
+  <!-- Credit notes -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">ใบลดหนี้ (ฝ่ายบัญชี)</div>
+    <div class="card-body">
+      <table
+        class="table table-sm table-striped table-bordered mb-3"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>เลขที่</th>
+            <th>วันที่</th>
+            <th>ยอด</th>
+            <th>หมายเหตุ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of settlement.creditNotes; track row.id) {
+            <tr>
+              <td>{{ row.creditNumb }}</td>
+              <td>{{ row.creditDate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ row.creditAmount }}</td>
+              <td>{{ row.creditRemark }}</td>
+              <td>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="onDeleteCreditNote(row.id)"
+                >
+                  ลบ
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center text-muted py-2">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <other-income-append-credit-note
+        [submitting]="submittingCreditNote()"
+        (submitCreditNote)="onSubmitCreditNote($event)"
+      ></other-income-append-credit-note>
+    </div>
+  </div>
+}

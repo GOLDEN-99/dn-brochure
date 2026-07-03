@@ -57,7 +57,7 @@
         <input
           type="text"
           class="form-control"
-          [ngModel]="matchForm.invoice().value().invNumb"
+          [ngModel]="matchForm.invoice().value().invoiceNumb"
           [readOnly]="true"
         />
         @if (matchForm.invoice().touched() || matchForm.invoice().dirty()) {

@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
+import { TExcludeFlagsForm } from '../../forms/create-schema';
 
 @Component({
   selector: 'other-income-product-condition-form',
@@ -8,12 +9,5 @@ import { FieldTree, FormField } from '@angular/forms/signals';
   styles: '',
 })
 export class ProductConditionFormComponent {
-  productConditionForm = input.required<FieldTree<TOtherIncomeProductConditionFormState>>()
-}
-type TOtherIncomeProductConditionFormState = {
-  isDc: boolean
-  isRebate: boolean
-  isComp: boolean
-  isInce: boolean
-  exVat: boolean // ! vincVat
+  excludeFlagsForm = input.required<FieldTree<TExcludeFlagsForm>>()
 }

@@ -3,8 +3,10 @@ import { TOtherIncomeInvoice } from "../../../../shared/types/other-income.type"
 
 export type TMaybeString = TOtherIncomeInvoice | string
 
+export type TInvoiceWithRemaining = TOtherIncomeInvoice & { remainingAmount: number }
+
 export type TPartialMatchInvoice = {
-    invoice: TOtherIncomeInvoice,
+    invoice: TInvoiceWithRemaining,
     matchAmount: string
 }
 

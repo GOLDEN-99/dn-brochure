@@ -5,7 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { of, switchMap } from 'rxjs';
 import { OtherIncomeSearchProductService } from '../../../services/other-income-search-product.service';
-import { TOtherIncomeCompType } from '../../../../shared/types/other-income.type';
+import { CompType } from '../../../../shared/libs/other-income-schema';
 
 @Component({
   selector: 'other-income-create-product-picker',
@@ -19,7 +19,7 @@ export class CreateProductPickerComponent implements FormValueControl<TOtherInco
   private readonly modalService = inject(NgbModal)
 
   compCode = input.required<string>()
-  compType = input.required<TOtherIncomeCompType>()
+  compType = input.required<CompType>()
 
   value: ModelSignal<TOtherIncomeProduct[]> = model<TOtherIncomeProduct[]>([])
   errors = input<readonly ValidationError.WithOptionalFieldTree[]>([])
@@ -34,7 +34,7 @@ export class CreateProductPickerComponent implements FormValueControl<TOtherInco
   private readonly product$ = this.compCode$.pipe(
     switchMap(compCode => {
       if (compCode === '') return of([])
-      return this.compType() === 'dn'
+      return this.compType() === 'DN'
         ? this.productService.searchDNProduct(compCode)
         : this.productService.searchHUProduct(compCode)
     })

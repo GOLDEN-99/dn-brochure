@@ -29,26 +29,26 @@ export const defaultCreateReceipt: Omit<TCreateReceiptForm, 'receDate' | 'remain
 export const createReceiptSchema = schema<TCreateReceiptForm>((schema) => {
     required(schema.receNumb, { message: 'กรุณาใส่เลขที่ใบเสร็จ' })
     required(schema.receAmount, { message: 'กรุณากรอกตัวเลข' })
-    readonly(schema.remainingInvoice)
-    validateAmountField(schema.receAmount, schema.remainingInvoice, 'ยอดใบเสร็จมากกว่ายอดใบแจ้งหนี้คงเหลือ')
+    // readonly(schema.remainingInvoice)
+    // validateAmountField(schema.receAmount, schema.remainingInvoice, 'ยอดใบเสร็จมากกว่ายอดใบแจ้งหนี้คงเหลือ')
     applyEach(schema.matches, partialMatchSchema)
     validate(schema.matches, ({ value, valueOf }) => {
         const ref = new Map<string, number>()
         let acc = 0;
         const maximum = Number.parseFloat(valueOf(schema.receAmount))
         const current = value();
-        for (const { invoice: { invNumb, remainingAmount }, matchAmount } of current) {
+        for (const { invoice: { invoiceNumb, remainingAmount }, matchAmount } of current) {
             const matchNumber = Number.parseFloat(matchAmount)
             if (Number.isNaN(matchNumber)) continue
             acc += matchNumber
             if (acc > maximum) return { kind: 'invalid-acc-match', message: 'ยอดจับคู่มากกว่ายอดใบเสร็จ' }
-            const amount = ref.get(invNumb)
+            const amount = ref.get(invoiceNumb)
             if (typeof amount === 'number') {
                 const newAmount = amount - matchNumber;
                 if (newAmount < 0) return { kind: 'invalid-match', message: 'ยอดจับคู่มากกว่ายอดที่เหลืออยู่' }
-                ref.set(invNumb, newAmount);
+                ref.set(invoiceNumb, newAmount);
             } else {
-                ref.set(invNumb, remainingAmount - matchNumber)
+                ref.set(invoiceNumb, remainingAmount - matchNumber)
             }
         }
         return null
@@ -70,18 +70,18 @@ export const createReceiptSchemaWithMaximum = (maximum: number) => schema<TCreat
         let acc = 0;
         const maximum = Number.parseFloat(valueOf(schema.receAmount))
         const current = value();
-        for (const { invoice: { invNumb, remainingAmount }, matchAmount } of current) {
+        for (const { invoice: { invoiceNumb, remainingAmount }, matchAmount } of current) {
             const matchNumber = Number.parseFloat(matchAmount)
             if (Number.isNaN(matchNumber)) continue
             acc += matchNumber
             if (acc > maximum) return { kind: 'invalid-acc-match', message: 'ยอดจับคู่มากกว่ายอดใบเสร็จ' }
-            const amount = ref.get(invNumb)
+            const amount = ref.get(invoiceNumb)
             if (typeof amount === 'number') {
                 const newAmount = amount - matchNumber;
                 if (newAmount < 0) return { kind: 'invalid-match', message: 'ยอดจับคู่มากกว่ายอดที่เหลืออยู่' }
-                ref.set(invNumb, newAmount);
+                ref.set(invoiceNumb, newAmount);
             } else {
-                ref.set(invNumb, remainingAmount - matchNumber)
+                ref.set(invoiceNumb, remainingAmount - matchNumber)
             }
         }
         return null

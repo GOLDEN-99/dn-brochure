@@ -1,0 +1,67 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <p class="fw-semibold mb-2 text-muted small">รายละเอียดกิจกรรม</p>
+    <!-- <other-income-create-pair-head [headForm]="createForm.head" /> -->
+  </div>
+</div>
+<div class="border rounded p-3 mb-3">
+  <p class="fw-semibold mb-2 text-muted small">รับรู้รายได้เป็น</p>
+  <div class="row row-cols-2 g-2">
+    <div class="col">
+      <other-income-income-select
+        [form]="createForm.head.bill"
+        [incomeType]="'Bill'"
+      />
+    </div>
+    <div class="col">
+      <other-income-income-select
+        [form]="createForm.head.freeItem"
+        [incomeType]="'FreeItem'"
+      />
+    </div>
+    <div class="col">
+      <other-income-income-select
+        [form]="createForm.head.invoice"
+        [incomeType]="'Invoice'"
+      />
+    </div>
+    <div class="col">
+      <other-income-income-select
+        [form]="createForm.head.creditNote"
+        [incomeType]="'CreditNote'"
+      />
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <p class="fw-semibold mb-3 text-muted small">เลือกบริษัท DN / HU</p>
+    <!-- <other-income-create-pair-company-picker [formField]="createForm.comps" /> -->
+  </div>
+</div>
+<div class="card mb-3">
+  <div class="card-body">
+    <p class="fw-semibold mb-3 text-muted small">เลือกสินค้า</p>
+    <!-- <other-income-create-pair-product-picker
+      [dnCompCode]="formData().comps.dnComp.compCode"
+      [huCompCode]="formData().comps.huComp.compCode"
+      [(value)]="createForm.products().controlValue"
+    /> -->
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <p class="fw-semibold mb-2 text-muted small">เงื่อนไขส่วนลด และ VAT</p>
+    <!-- <other-income-product-condition-form
+      [productConditionForm]="createForm.productCondition"
+    /> -->
+  </div>
+</div>
+<div class="card mb-3">
+  <div class="card-body">
+    <p class="fw-semibold mb-2 text-muted small">เงื่อนไขการคำนวณรายได้</p>
+    <!-- <other-income-step-form [stepForm]="createForm.stepCondition" /> -->
+  </div>
+</div>

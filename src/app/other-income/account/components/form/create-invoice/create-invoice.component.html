@@ -9,14 +9,19 @@
 </div>
 <div class="modal-body">
   <div class="mb-3">
-    <label [htmlFor]="createForm.invDate().name()" class="form-label"
-      >วันที่ใบแจ้งหนี้</label
-    >
-    <app-signal-datepicker [formField]="createForm.invDate" />
+    <label for="invoice-date-input" class="form-label">วันที่ใบแจ้งหนี้</label>
+    <app-signal-datepicker
+      [formField]="createForm.invoiceDate"
+      id="invoice-date-input"
+    />
   </div>
   <div class="app-form-field">
-    <label [htmlFor]="createForm.invNumb()">เลขที่ใบแจ้งหนี้</label>
-    <input type="text" [formField]="createForm.invNumb" />
+    <label for="invoice-numb-input">เลขที่ใบแจ้งหนี้</label>
+    <input
+      type="text"
+      [formField]="createForm.invoiceNumb"
+      id="invoice-numb-input"
+    />
   </div>
   <div class="app-form-field">
     <label for="total-income">รายได้ตามรอบบัญชี</label>
@@ -27,12 +32,21 @@
     <input type="number" [formField]="createForm.remainingIncome" />
   </div>
   <div class="app-form-field">
-    <label [htmlFor]="createForm.invAmount()">ยอดใบแจ้งหนี้</label>
-    <input type="text" [formField]="createForm.invAmount" />
+    <label for="invoice-amount-input">ยอดใบแจ้งหนี้</label>
+    <input
+      type="text"
+      [formField]="createForm.invoiceAmount"
+      id="invoice-amount-input"
+      inputmode="numeric"
+    />
   </div>
   <div class="app-form-field">
-    <label [htmlFor]="createForm.invRemark()">หมายเหตุ</label>
-    <textarea type="text" [formField]="createForm.invRemark"></textarea>
+    <label for="invoice-remark-text">หมายเหตุ</label>
+    <textarea
+      type="text"
+      [formField]="createForm.invoiceRemark"
+      id="invoice-remark-text"
+    ></textarea>
   </div>
 </div>
 <div class="modal-footer">

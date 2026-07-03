@@ -1,5 +1,11 @@
 # API Usage Examples
 
+> **STALE:** This describes the pre-rewrite module at
+> `src/app/pages/other-income/` (`oi-baseform`/`monthly`/`period` services,
+> v1 endpoints/concepts like "Light"/"Not-Light" contacts). The module was
+> rewritten at `src/app/other-income/` — see `src/app/other-income/docs/`
+> for current API and design context.
+
 Common patterns and workflows for using the Other Income API.
 
 ---

@@ -7,10 +7,11 @@ import { OtherIncomeAccountPeriodService } from '../../../services/other-income-
 import { createInvoiceSchema, defaultInvoice } from './createInvoice';
 import { ngbDateToIso } from '../../../../shared/libs/date-time';
 import { FormsModule } from '@angular/forms';
+import { NumericInputDirective } from "../../../../../shared/directives/numeric-input.directive";
 
 @Component({
   selector: 'other-income-create-invoice',
-  imports: [SignalDatepickerComponent, FormField, FormsModule],
+  imports: [SignalDatepickerComponent, FormField, FormsModule, NumericInputDirective],
   templateUrl: './create-invoice.component.html',
   styles: '',
 })
@@ -27,8 +28,8 @@ export class CreateInvoiceComponent {
 
   private readonly formData = linkedSignal<TCreateInvoiceForm>(() => {
     const remaining = this.remainingIncome()
-    const invDate = this.calendar.getToday()
-    return { ...defaultInvoice, invDate, remainingIncome: remaining, invAmount: String(remaining) }
+    const invoiceDate = this.calendar.getToday()
+    return { ...defaultInvoice, invoiceDate, remainingIncome: remaining, invoiceAmount: String(remaining) }
   })
 
   createForm = form(this.formData, createInvoiceSchema)
@@ -41,12 +42,12 @@ export class CreateInvoiceComponent {
       this.fail.emit(formState.errorSummary());
       return
     }
-    const { invNumb, invAmount, invRemark, invDate } = formState.value();
+    const { invoiceNumb, invoiceAmount, invoiceRemark, invoiceDate } = formState.value();
     this.accountPeriodService.insertInv(this.periodId(), {
-      invNumb,
-      invDate: ngbDateToIso(invDate),
-      invRemark,
-      invAmount: Number.parseFloat(invAmount),
+      invoiceNumb,
+      invoiceDate: ngbDateToIso(invoiceDate),
+      invoiceRemark,
+      invoiceAmount: Number.parseFloat(invoiceAmount),
     }).subscribe({
       next: () => {
         this.submitting.set(false)

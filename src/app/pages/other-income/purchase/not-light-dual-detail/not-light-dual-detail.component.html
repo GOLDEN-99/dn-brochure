@@ -63,7 +63,7 @@
           (fail)="onFail($event)"
         />
       }
-      @for (period of s.periodList; track period.id) {
+      <!-- @for (period of s.periodList; track period.id) {
         <other-income-period-display
           [period]="period"
           [possibleIncome]="s.headIncomeList"
@@ -74,7 +74,7 @@
           (success)="onSuccess($event)"
           (fail)="onFail($event)"
         />
-      }
+      } -->
     </div>
 
     <ng-template #incomeTemplate>

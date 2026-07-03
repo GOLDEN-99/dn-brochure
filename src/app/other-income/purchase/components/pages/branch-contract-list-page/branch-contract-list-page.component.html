@@ -1,0 +1,131 @@
+<h1 class="text-center">Branch Contracts (Display Fee)</h1>
+
+<div class="d-flex gap-2 mb-3">
+  <input
+    type="text"
+    class="form-control"
+    style="max-width: 240px"
+    placeholder="ค้นหา รหัสซัพ"
+    [ngModel]="list.searchCompCode()"
+    (ngModelChange)="list.setSearchCompCode($event)"
+  />
+  <input
+    type="text"
+    class="form-control"
+    style="max-width: 240px"
+    placeholder="ค้นหา ชื่อซัพ"
+    [ngModel]="list.searchCompName()"
+    (ngModelChange)="list.setSearchCompName($event)"
+  />
+  <select
+    class="form-select"
+    style="max-width: 160px"
+    [ngModel]="list.compTypeFilter()"
+    (ngModelChange)="list.setCompTypeFilter($event)"
+  >
+    <option value="DN">DN</option>
+    <option value="HU">HU</option>
+  </select>
+  <select
+    class="form-select"
+    style="max-width: 200px"
+    [ngModel]="list.contractLabelFilter()"
+    (ngModelChange)="list.setContractLabelFilter($event)"
+  >
+    <option [ngValue]="null">ทุกประเภทกิจกรรม</option>
+    @for (label of contractLabelOptions(); track label.id) {
+      <option [ngValue]="label.id">{{ label.eventName }}</option>
+    }
+  </select>
+  <button class="btn btn-outline-secondary" (click)="list.load()">
+    <i class="bi bi-arrow-clockwise"></i>
+  </button>
+  <a [routerLink]="['create']" class="btn btn-primary ms-auto">สร้างสัญญาใหม่</a>
+</div>
+
+@if (list.loading()) {
+  <div class="text-center py-4">
+    <div
+      class="spinner-border spinner-border-sm text-secondary"
+      role="status"
+    ></div>
+    <span class="ms-2 text-muted">กำลังโหลด...</span>
+  </div>
+} @else if (list.error()) {
+  <div class="alert alert-danger d-flex align-items-center gap-2">
+    {{ list.error() }}
+    <button class="btn btn-sm btn-outline-danger ms-auto" (click)="list.load()">
+      ลองใหม่
+    </button>
+  </div>
+} @else {
+  <table class="table table-striped table-bordered" style="font-size: 12px">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>รหัสซัพ</th>
+        <th>ชื่อซัพ</th>
+        <th>บริษัท</th>
+        <th>ประเภทกิจกรรม</th>
+        <th>เริ่ม</th>
+        <th>จบ</th>
+        <th>รอบชำระ (เดือน)</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of list.pagedItems(); track item.id) {
+        <tr>
+          <td>{{ item.id }}</td>
+          <td>{{ item.compCode }}</td>
+          <td>{{ item.compName ?? "-" }}</td>
+          <td>{{ item.compType }}</td>
+          <td>{{ item.contractLabelName }}</td>
+          <td>{{ item.startDate | date: "dd/MM/yyyy" }}</td>
+          <td>{{ item.endDate | date: "dd/MM/yyyy" }}</td>
+          <td class="text-center">{{ item.settlementPeriod }}</td>
+          <td>
+            <a [routerLink]="[item.id]" class="btn btn-sm btn-outline-primary"
+              >รายละเอียด</a
+            >
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="9" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-between align-items-center">
+    <small class="text-muted"
+      >ทั้งหมด {{ list.filteredItems().length }} รายการ</small
+    >
+    @if (list.totalPages() > 1) {
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="list.currentPage() === 1">
+            <button class="page-link" (click)="list.goToPage(list.currentPage() - 1)">
+              &laquo;
+            </button>
+          </li>
+          @for (page of list.pageNumbers(); track page) {
+            <li class="page-item" [class.active]="list.currentPage() === page">
+              <button class="page-link" (click)="list.goToPage(page)">
+                {{ page }}
+              </button>
+            </li>
+          }
+          <li
+            class="page-item"
+            [class.disabled]="list.currentPage() === list.totalPages()"
+          >
+            <button class="page-link" (click)="list.goToPage(list.currentPage() + 1)">
+              &raquo;
+            </button>
+          </li>
+        </ul>
+      </nav>
+    }
+  </div>
+}

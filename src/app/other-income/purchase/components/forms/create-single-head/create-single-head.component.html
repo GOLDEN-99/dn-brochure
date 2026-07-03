@@ -1,0 +1,44 @@
+<other-income-event-select
+  [form]="headForm().contractLabel"
+  [eventType]="eventType()"
+/>
+<div class="form-field mb-3">
+  <label [htmlFor]="headForm().settlementPeriod().name()" class="form-label"
+    >ระยะเวลาเก็บเงิน
+    @if (headForm().settlementPeriod().required()) {
+      <span class="text-danger">*</span>
+    }
+  </label>
+  <app-select [formField]="headForm().settlementPeriod">
+    <app-option [value]="null">กรุณาเลือก</app-option>
+    @for (period of periodList; track period.value) {
+      <app-option [value]="period.value">{{ period.label }}</app-option>
+    }
+  </app-select>
+</div>
+<div class="row">
+  <div class="col form-contro mb-3">
+    <label [htmlFor]="headForm().dateRange.startDate().name()"
+      >วันที่เริ่มกิจกรรม
+      @if (headForm().dateRange.startDate().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <app-signal-datepicker
+      [id]="headForm().dateRange.startDate().name()"
+      [formField]="headForm().dateRange.startDate"
+    />
+  </div>
+  <div class="col form-contro mb-3">
+    <label [htmlFor]="headForm().dateRange.endDate().name()"
+      >วันที่สิ้นสุดกิจกรรม
+      @if (headForm().dateRange.endDate().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <app-signal-datepicker
+      [id]="headForm().dateRange.endDate().name()"
+      [formField]="headForm().dateRange.endDate"
+    />
+  </div>
+</div>

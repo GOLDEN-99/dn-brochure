@@ -1,0 +1,76 @@
+<div class="row row-cols-1 row-cols-md-4 g-3 mb-3">
+  <div class="col">
+    <label
+      [htmlFor]="appendInvoiceForm.invoiceNumb().name()"
+      class="form-label small text-muted mb-1"
+      >เลขที่ใบแจ้งหนี้
+      @if (appendInvoiceForm.invoiceNumb().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <input
+      [id]="appendInvoiceForm.invoiceNumb().name()"
+      type="text"
+      class="form-control form-control-sm"
+      [formField]="appendInvoiceForm.invoiceNumb"
+    />
+    <div style="min-height: 1.25rem" class="mt-1">
+      <app-form-alert-text [formState]="appendInvoiceForm.invoiceNumb()" />
+    </div>
+  </div>
+
+  <div class="col">
+    <label [htmlFor]="appendInvoiceForm.invoiceDate().name()" class="form-label small text-muted mb-1"
+      >วันที่ใบแจ้งหนี้</label
+    >
+    <app-signal-datepicker
+      [id]="appendInvoiceForm.invoiceDate().name()"
+      [formField]="appendInvoiceForm.invoiceDate"
+    />
+    <div style="min-height: 1.25rem" class="mt-1"></div>
+  </div>
+
+  <div class="col">
+    <label
+      [htmlFor]="appendInvoiceForm.invoiceAmount().name()"
+      class="form-label small text-muted mb-1"
+      >ยอด
+      @if (appendInvoiceForm.invoiceAmount().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <input
+      [id]="appendInvoiceForm.invoiceAmount().name()"
+      type="number"
+      class="form-control form-control-sm"
+      [formField]="appendInvoiceForm.invoiceAmount"
+    />
+    <div style="min-height: 1.25rem" class="mt-1">
+      <app-form-alert-text [formState]="appendInvoiceForm.invoiceAmount()" />
+    </div>
+  </div>
+
+  <div class="col">
+    <label
+      [htmlFor]="appendInvoiceForm.invoiceRemark().name()"
+      class="form-label small text-muted mb-1"
+      >หมายเหตุ</label
+    >
+    <input
+      [id]="appendInvoiceForm.invoiceRemark().name()"
+      type="text"
+      class="form-control form-control-sm"
+      [formField]="appendInvoiceForm.invoiceRemark"
+    />
+    <div style="min-height: 1.25rem" class="mt-1"></div>
+  </div>
+</div>
+
+<button
+  type="button"
+  class="btn btn-sm btn-primary"
+  [disabled]="!canSubmit()"
+  (click)="onSubmit()"
+>
+  เพิ่มใบแจ้งหนี้
+</button>

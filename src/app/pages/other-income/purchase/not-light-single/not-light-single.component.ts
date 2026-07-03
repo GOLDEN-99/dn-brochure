@@ -14,7 +14,6 @@ import { OTHER_INCOME_PAGE_TOKEN } from '../../../../lib';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PeriodNotLightService } from '../../../../service/other-income/period-not-light.service';
 import { OiNotLightListService } from '../../../../service/other-income/oi-not-light-list.service';
-import { PeriodDisplayComponent } from "../../../../other-income/shared/components/period-display/period-display.component";
 
 @Component({
   selector: 'app-not-light-single',
@@ -26,7 +25,6 @@ import { PeriodDisplayComponent } from "../../../../other-income/shared/componen
     OtherIncomeMonthlyIncentiveEditComponent,
     OtherIncomeMonthlyListComponent,
     RouterLink,
-    PeriodDisplayComponent
   ],
   templateUrl: './not-light-single.component.html',
   styleUrl: './not-light-single.component.scss'
