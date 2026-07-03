@@ -3,6 +3,7 @@
     <div>ไม่พบเอกสาร</div>
   } @else {
     @let e = currentResult();@let branches = e.branchList;
+    @let periods = e.periodList;
 
     <app-other-income-head-edit
       [headIncomeList]="e.headIncomeList"
@@ -22,8 +23,8 @@
       [branchList]="branches"
       (refetch)="onRefetch()"
     />
-    <!-- @for (period of periods; track period.id) {
-      <other-income-period-display
+    @for (period of periods; track period.id) {
+      <app-other-income-period-display
         [possibleIncome]="e.headIncomeList"
         [period]="period"
         [canEdit]="isPurchase"
@@ -33,7 +34,7 @@
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
       />
-    } -->
+    }
   }
 
   <button (click)="onDelete()" class="btn btn-danger w-100">ลบ</button>

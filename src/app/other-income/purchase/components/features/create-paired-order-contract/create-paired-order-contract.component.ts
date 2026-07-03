@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { OiNotLightPairService } from '../../../../../service/other-income/oi-not-light-pair.service';
+import { OtherIncomeNotLightPairService } from '../../../services/other-income-not-light-pair.service';
 import { form, FormField } from '@angular/forms/signals';
 import { StepFormComponent } from "../../forms/step-form/step-form.component";
 import { OtherIncomeIncomeSelectComponent } from "../../../../shared/components/other-income-income-select/other-income-income-select.component";
@@ -55,7 +55,7 @@ export class CreatePairedOrderContractComponent {
       singleStep: { min: 0, rate: 0 }
     }
   })
-  private readonly otherIncomeDual = inject(OiNotLightPairService)
+  private readonly otherIncomeDual = inject(OtherIncomeNotLightPairService)
   private readonly pairList = this.otherIncomeDual.pairList
   private readonly schema = computed(() => {
     const pair = this.pairList()

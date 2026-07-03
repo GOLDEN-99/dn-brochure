@@ -4,7 +4,7 @@
   } @else {
     <!---->
     @let e = currentResult(); @let comp = e.company;@let incomes = e.incomeList;
-    @let h = e.head;
+    @let periods = e.periodList;@let h = e.head;
     <app-other-income-head-edit
       [headIncomeList]="e.headIncomeList"
       [head]="e.head"
@@ -68,8 +68,8 @@
       />
     }
     <!---->
-    <!-- @for (period of periods; track period.id) {
-      <other-income-period-display
+    @for (period of periods; track period.id) {
+      <app-other-income-period-display
         [possibleIncome]="e.headIncomeList"
         [period]="period"
         [canEdit]="isPurchase"
@@ -79,7 +79,7 @@
         (success)="onSuccess($event)"
         (fail)="onFail($event)"
       />
-    } -->
+    }
   }
 
   <button (click)="onDelete()" class="btn btn-danger w-100">ลบ</button>

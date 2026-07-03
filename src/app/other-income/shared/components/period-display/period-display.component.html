@@ -8,25 +8,6 @@
     <h5 class="mb-0">{{ currentPeriod.periodName }}</h5>
     <div class="d-flex gap-2">
       @if (isPurchase() && canEdit()) {
-        @if (types.hasType1) {
-          <button
-            class="btn btn-sm btn-outline-primary"
-            type="button"
-            (click)="openOrderPo()"
-          >
-            เพิ่มส่วนลดท้ายบิล
-          </button>
-        }
-        @if (types.hasType2) {
-          <button
-            class="btn btn-sm btn-outline-primary"
-            type="button"
-            (click)="openGoodOrderPo()"
-          >
-            เพิ่มสินค้าแถม
-          </button>
-        }
-
         <button
           class="btn btn-sm btn-primary"
           (click)="openEditModal()"
@@ -232,32 +213,6 @@
     [periodId]="period().id"
     [(initialPeriodName)]="editPeriodName"
     [(initialPeriodRemark)]="editPeriodRemark"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-    (close)="modal.dismiss()"
-  />
-</ng-template>
-
-<!-- Order Po Modal -->
-<ng-template #orderPoModal let-modal>
-  <app-other-income-order-modal
-    [periodAmount]="currentPeriod.supplierIncome"
-    [compCode]="compCode()"
-    [compType]="compType()"
-    [periodId]="period().id"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-    (close)="modal.dismiss()"
-  />
-</ng-template>
-
-<!-- Good Order Po Modal -->
-<ng-template #goodOrderPoModal let-modal>
-  <app-other-income-good-order-modal
-    [periodAmount]="currentPeriod.supplierIncome"
-    [compCode]="compCode()"
-    [compType]="compType()"
-    [periodId]="period().id"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"
     (close)="modal.dismiss()"

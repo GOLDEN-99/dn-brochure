@@ -159,7 +159,7 @@
 
     <!-- end period here -->
     @if (types.hasType3) {
-      <other-income-invoice-receipt
+      <app-other-income-invoice-receipt
         [canDelete]="!isPurchase()"
         [receiptList]="currentPeriod.receiptList"
         [invoiceList]="currentPeriod.invoiceList"
@@ -262,7 +262,7 @@
 
 <!-- Invoice Modal -->
 <ng-template #invoiceModal let-modal>
-  <other-income-create-invoice
+  <app-other-income-create-invoice
     [periodId]="currentPeriod.id"
     [totalIncome]="currentPeriod.totalIncome"
     [remainingIncome]="
@@ -280,7 +280,7 @@
 
 <!-- Credit Modal -->
 <ng-template #creditModal let-modal>
-  <other-income-create-credit-note
+  <app-other-income-create-credit-note
     [periodId]="period().id"
     [totalIncome]="currentPeriod.totalIncome"
     [remainingIncome]="
@@ -298,11 +298,10 @@
 
 <!-- Receipt Modal -->
 <ng-template #receiptModal let-modal>
-  <other-income-create-receipt
+  <app-other-income-create-receipt
     [periodId]="currentPeriod.id"
     [totalInvoice]="currentPeriod.invAmount"
     [remainingInvoice]="currentPeriod.invAmount - currentPeriod.receAmount"
-    [invoiceList]="currentPeriod.invoiceList"
     (closeModal)="modal.dismiss()"
     (success)="onSuccess($event)"
     (fail)="onFail($event)"

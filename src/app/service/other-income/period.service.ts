@@ -85,6 +85,10 @@ export class PeriodService {
   deletePeriod(periodId: number) {
     return this.api.delete(`${this.url}/period/${periodId}`)
   }
+
+  matchInvoiceToReceipt(periodId: number, req: TPeriodMatchReq) {
+    return this.api.post<unknown>(`${this.url}/period/${periodId}/match`, req)
+  }
 }
 
 type TMonth = Pick<TIncomeItem, 'startDate' | 'endDate' | 'id'>
@@ -131,6 +135,12 @@ type TPeriodCreditReq = {
   creditDate: string
   creditAmount: number
   creditRemark: string
+}
+
+type TPeriodMatchReq = {
+  invoiceId: number
+  receiptId: number
+  matchedAmount: number
 }
 
 export type TPeriodInvBatch = { periodId: number } & TPeriodInvReq

@@ -1,0 +1,103 @@
+import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { PeriodService } from '../../../../service/other-income/period.service';
+import { TInviceItemDto, TReceiptItemDto } from '../../../../service/other-income/base-oi';
+import { DatePipe, DecimalPipe } from '@angular/common';
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
+import { distinctUntilChanged, map, Observable } from 'rxjs';
+import { form, FormField } from "@angular/forms/signals";
+import { FormsModule } from '@angular/forms';
+import { defaultMatching, matchingSchema } from './matchingForm/matching';
+
+
+@Component({
+  selector: 'app-other-income-invoice-receipt',
+  imports: [DecimalPipe, DatePipe, NgbTypeahead, FormField, FormsModule],
+  templateUrl: './other-income-invoice-receipt.component.html',
+  styleUrl: './other-income-invoice-receipt.component.scss',
+})
+export class OtherIncomeInvoiceReceiptComponent {
+  success = output<string>()
+  fail = output<string>()
+  canDelete = input(false)
+  private readonly periodService = inject(PeriodService);
+
+  receiptList = input.required<TReceiptItemDto[]>();
+  formatReceipt = ({ receNumb }: TReceiptItemDto) => receNumb
+  searchReceipt = (term$: Observable<string>) => {
+    return term$.pipe(
+      distinctUntilChanged(),
+      map(t => {
+        const normalize = t.toLocaleLowerCase().trim()
+        return this.receiptList()
+          .filter(({ receNumb, remainingAmount }) => remainingAmount > 0 && receNumb.toLocaleLowerCase().includes(normalize))
+      })
+    )
+  }
+
+  periodId = input.required<number>();
+
+  invoiceList = input.required<TInviceItemDto[]>();
+  formatInvoice = ({ invNumb }: TInviceItemDto) => invNumb
+  selectedInvoice = signal<TInviceItemDto | null>(null)
+  searchInvoice = (term$: Observable<string>) => {
+    return term$.pipe(
+      distinctUntilChanged(),
+      map(t => {
+        const normalize = t.toLocaleLowerCase().trim()
+        return this.invoiceList()
+          .filter(({ invNumb, remainingAmount }) => remainingAmount > 0 && invNumb.toLocaleLowerCase().includes(normalize))
+      })
+    )
+  }
+  matchingState = signal(defaultMatching)
+  matchForm = form(this.matchingState, matchingSchema)
+
+  onMatch() {
+    const form = this.matchForm();
+    if (form.invalid()) {
+      return
+    }
+    const { invoice, receipt, matchAmount } = form.value();
+    if (typeof invoice === 'string' || typeof receipt === 'string') {
+      return
+    }
+    this.periodService.matchInvoiceToReceipt(this.periodId(), {
+      invoiceId: invoice.id,
+      receiptId: receipt.id,
+      matchedAmount: Number.parseFloat(matchAmount)
+    }).subscribe({
+      next: () => {
+        form.reset(defaultMatching);
+        this.onRefetch();
+      },
+      error: () => { }
+    })
+  }
+
+  onRefetch() { }
+
+  deleting = signal(false)
+  cannotDeleteInvoice = computed(() => this.deleting() || !this.canDelete())
+  cannotDeleteReceipt = computed(() => this.deleting() || !this.canDelete())
+
+  onDeleteInvoice(invId: number) {
+    this.deleting.set(true)
+    this.periodService.deleteInvoice(this.periodId(), invId).subscribe({
+      next: () => {
+        this.success.emit('ลบสำเร็จ');
+        this.deleting.set(false);
+      },
+      error: (err) => { this.fail.emit(err.message) }
+    })
+  }
+  onDeleteReceipt(receId: number) {
+    this.deleting.set(true)
+    this.periodService.deleteReceipt(this.periodId(), receId).subscribe({
+      next: () => {
+        this.success.emit('ลบสำเร็จ');
+        this.deleting.set(false);
+      },
+      error: (err) => { this.fail.emit(err.message) }
+    })
+  }
+}

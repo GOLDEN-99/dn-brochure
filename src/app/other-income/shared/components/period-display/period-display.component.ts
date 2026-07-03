@@ -1,18 +1,14 @@
-import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, output, signal, viewChild } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OtherIncomeAccountPeriodService } from '../../../account/services/other-income-account-period.service';
 import { OtherIncomePurchasePeriodService } from '../../../purchase/services/other-income-purchase-period.service';
-import { BasePeriodComponent } from '../../../../components/other-income/period/base-period.component';
-import { TIncome } from '../../../../service/other-income/income.service';
-import { TPopulatedPeriodResult } from '../../../../service/other-income/base-oi';
-import { PeriodStatus, TFieldSelector } from '../../../../types';
+import { TIncome } from './period-display.type';
 import { formatLocalNumber } from '../../../../lib/formatter';
 import { CreateCreditNoteComponent } from "../../../account/components/form/create-credit-note/create-credit-note.component";
 import { CreateReceiptComponent } from "../../../account/components/form/create-receipt/create-receipt.component";
 import { CreateInvoiceComponent } from "../../../account/components/form/create-invoice/create-invoice.component";
 import { OtherIncomeInvoiceReceiptComponent } from "../../../account/components/other-income-invoice-receipt/other-income-invoice-receipt.component";
-import { OtherIncomeGoodOrderModalComponent } from "../../../../components/other-income/period/other-income-good-order-modal/other-income-good-order-modal.component";
-import { OtherIncomeOrderModalComponent } from "../../../../components/other-income/period/other-income-order-modal/other-income-order-modal.component";
-import { EditPeriodModalComponent } from "../../../../components/other-income/period/edit-period-modal/edit-period-modal.component";
+import { EditPeriodModalComponent } from "../edit-period-modal/edit-period-modal.component";
 import { TSettlementDetail } from '../../types/other-income.type';
 
 @Component({
@@ -20,13 +16,31 @@ import { TSettlementDetail } from '../../types/other-income.type';
   imports: [
     CreateCreditNoteComponent, CreateReceiptComponent, CreateInvoiceComponent,
     OtherIncomeInvoiceReceiptComponent,
-    OtherIncomeGoodOrderModalComponent, OtherIncomeOrderModalComponent,
     EditPeriodModalComponent
   ],
   templateUrl: './period-display.component.html',
   styleUrl: './period-display.component.scss',
 })
-export class PeriodDisplayComponent extends BasePeriodComponent {
+export class PeriodDisplayComponent {
+  // Outputs (previously provided by BasePeriodComponent)
+  success = output<string>()
+  fail = output<string>()
+  private readonly modalServ = inject(NgbModal)
+
+  protected openModal(modalRef: any, size: string = 'lg') {
+    return this.modalServ.open(modalRef, { size });
+  }
+
+  onSuccess(value: string): void {
+    this.modalServ.dismissAll();
+    this.success.emit(value);
+  }
+
+  onFail(value: string): void {
+    this.modalServ.dismissAll();
+    this.fail.emit(value);
+  }
+
   // Service injection
   private readonly accountPeriodService = inject(OtherIncomeAccountPeriodService);
   private readonly purchasePeriodService = inject(OtherIncomePurchasePeriodService)
@@ -81,8 +95,6 @@ export class PeriodDisplayComponent extends BasePeriodComponent {
   // ViewChild for modals
   private readonly editModal = viewChild('editPeriodModal');
   private readonly confirmDeleteModal = viewChild('confirmDeleteModal');
-  private readonly orderPoModal = viewChild('orderPoModal');
-  private readonly goodOrderPoModal = viewChild('goodOrderPoModal');
   private readonly invoiceModal = viewChild('invoiceModal');
   private readonly creditModal = viewChild('creditModal');
   private readonly receiptModal = viewChild('receiptModal');
@@ -90,36 +102,6 @@ export class PeriodDisplayComponent extends BasePeriodComponent {
   // Signals for edit modal two-way binding
   editPeriodName = signal('');
   editPeriodRemark = signal('');
-
-  // Selector arrays
-  private readonly periodOrderSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
-    { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
-    { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
-    { label: 'ส่วนลดบิล', fn: v => formatLocalNumber(v.billDiscountAmount) },
-    { label: 'ของแถม', fn: v => formatLocalNumber(v.freeItemAmount) },
-  ];
-
-  private readonly periodReceSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
-    { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
-    { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
-    { label: 'ยอดใบแจ้งหนี้', fn: v => formatLocalNumber(v.invAmount) },
-    { label: 'ยอดใบเสร็จ', fn: v => formatLocalNumber(v.receAmount) },
-  ];
-
-  private readonly periodCreditSelector: TFieldSelector<TPopulatedPeriodResult>[] = [
-    { label: 'ยอดซื้อ', fn: v => formatLocalNumber(v.totalAmount) },
-    { label: 'รายได้', fn: v => formatLocalNumber(v.totalIncome) },
-    { label: 'ยอดใบลดหนี้', fn: v => formatLocalNumber(v.creditAmount) },
-  ];
-
-  // Computed selector based on possible income types
-  headerSelector = computed(() => {
-    const { hasType1, hasType2, hasType3, hasType4 } = this.incomeTypes()
-    if (hasType3) return this.periodReceSelector;
-    if (hasType4) return this.periodCreditSelector;
-    if (hasType1 || hasType2) return this.periodOrderSelector;
-    return [];
-  });
 
   sectionHeader = computed(() => {
     const { supplierIncome, supplierOrderAmount } = this.period();
@@ -166,8 +148,6 @@ export class PeriodDisplayComponent extends BasePeriodComponent {
     });
   }
 
-  openOrderPo() { this.openModal(this.orderPoModal(), 'xl'); }
-  openGoodOrderPo() { this.openModal(this.goodOrderPoModal(), 'xl'); }
   openInvoice() { this.openModal(this.invoiceModal()); }
   openCredit() { this.openModal(this.creditModal()); }
   openReceipt() { this.openModal(this.receiptModal()); }
