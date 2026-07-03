@@ -12,6 +12,9 @@ import { AppendInvoiceComponent } from '../../forms/append-invoice/append-invoic
 import { AppendReceiptComponent, AppendReceiptSubmit } from '../../forms/append-receipt/append-receipt.component';
 import { TPostBillDiscountReq, TPostCreditNoteReq, TPostFreeItemReq, TPostInvoiceReq } from '../../../../shared/types/other-income.type';
 import { FOR_CONTRACT_DATA_TOKEN } from '../../../../tokens/service-token';
+import { BALANCE_STATE_LABEL } from '../../../../shared/libs/settlement-labels';
+
+type DocTab = 'bill' | 'freeItem' | 'invoice' | 'creditNote';
 
 @Component({
   selector: 'app-settlement-detail-page',
@@ -67,6 +70,45 @@ export class SettlementDetailPageComponent implements OnInit {
     for (const m of matches) map.set(m.receiptId, (map.get(m.receiptId) ?? 0) + m.matchedAmount)
     return map
   })
+
+  /**
+   * balanceState/remaining aren't returned by GET /v2/settlements/{id} (only by
+   * GET /v2/settlements/overview) — compute the same formula client-side from
+   * fields already on TSettlementDetail. Mirrors docs/api/settlement-api.md's
+   * `remaining = supplierIncome - appendedTotal` / `OUTSTANDING if remaining > 1`.
+   */
+  balance = computed(() => {
+    const settlement = this.ctx.settlement()
+    if (!settlement) return null
+    const appendedTotal =
+      settlement.invoices.reduce((sum, row) => sum + row.invoiceAmount, 0) +
+      settlement.creditNotes.reduce((sum, row) => sum + row.creditAmount, 0) +
+      settlement.billDiscounts.reduce((sum, row) => sum + row.subtotalAmount, 0) +
+      settlement.freeItems.reduce((sum, row) => sum + row.subtotalAmount, 0)
+    const remaining = settlement.supplierIncome - appendedTotal
+    const state: 'OUTSTANDING' | 'SETTLED' = remaining > 1 ? 'OUTSTANDING' : 'SETTLED'
+    return { remaining, state, label: BALANCE_STATE_LABEL[state] }
+  })
+
+  /** Which document-type tabs apply to this contract, per its agreed income types. */
+  availableTabs = computed(() => {
+    const incomeTypes = new Set(this.headService.contract()?.incomeTypes.map(t => t.incomeType) ?? [])
+    const tabs: DocTab[] = []
+    if (incomeTypes.has('Bill')) tabs.push('bill')
+    if (incomeTypes.has('FreeItem')) tabs.push('freeItem')
+    if (incomeTypes.has('Invoice')) tabs.push('invoice')
+    if (incomeTypes.has('CreditNote')) tabs.push('creditNote')
+    return tabs
+  })
+
+  activeTab = signal<DocTab | null>(null)
+
+  /** Defaults to the first available tab once the contract (and thus availableTabs) loads. */
+  currentTab = computed(() => this.activeTab() ?? this.availableTabs()[0] ?? null)
+
+  setTab(tab: DocTab): void {
+    this.activeTab.set(tab)
+  }
 
   searchBillDiscounts = (filters: Omit<Parameters<typeof this.api.searchBillDiscounts>[0], 'compType' | 'compCode'>) => {
     const comp = this.contractComp()
