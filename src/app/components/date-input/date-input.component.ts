@@ -53,12 +53,7 @@ let id = 0;
   `,
   styles: `
     .dp-hidden {
-      width: 0;
-      height: 0;
-      margin: 0;
-      border: none;
-      padding: 0;
-      overflow: hidden;
+
     }
   `
 })
