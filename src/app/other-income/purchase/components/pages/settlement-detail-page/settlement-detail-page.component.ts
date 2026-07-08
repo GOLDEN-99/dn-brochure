@@ -1,49 +1,47 @@
-import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { DatePipe, Location } from '@angular/common';
-import { forkJoin } from 'rxjs';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Location } from '@angular/common';
 import { SettlementContextService } from '../../../services/settlement-context.service';
 import { OtherIncomePurchaseApiService } from '../../../services/other-income-purchase-api.service';
 import { ToastService } from '../../../../../service/toast/toast.service';
-import { AppendBillDiscountComponent } from '../../forms/append-bill-discount/append-bill-discount.component';
-import { AppendFreeItemComponent } from '../../forms/append-free-item/append-free-item.component';
-import { AppendCreditNoteComponent } from '../../forms/append-credit-note/append-credit-note.component';
-import { AppendInvoiceComponent } from '../../forms/append-invoice/append-invoice.component';
-import { AppendReceiptComponent, AppendReceiptSubmit } from '../../forms/append-receipt/append-receipt.component';
-import { TPostBillDiscountReq, TPostCreditNoteReq, TPostFreeItemReq, TPostInvoiceReq } from '../../../../shared/types/other-income.type';
 import { FOR_CONTRACT_DATA_TOKEN } from '../../../../tokens/service-token';
 import { BALANCE_STATE_LABEL } from '../../../../shared/libs/settlement-labels';
+import { SettlementSummaryCardComponent } from './components/settlement-summary-card/settlement-summary-card.component';
+import { SettlementBillTabComponent } from './components/settlement-bill-tab/settlement-bill-tab.component';
+import { SettlementFreeItemTabComponent } from './components/settlement-free-item-tab/settlement-free-item-tab.component';
+import { SettlementInvoiceReceiptTabComponent } from './components/settlement-invoice-receipt-tab/settlement-invoice-receipt-tab.component';
+import { SettlementCreditNoteTabComponent } from './components/settlement-credit-note-tab/settlement-credit-note-tab.component';
 
 type DocTab = 'bill' | 'freeItem' | 'invoice' | 'creditNote';
 
+const INCOME_TYPE_TO_TAB: Partial<Record<string, DocTab>> = {
+  Bill: 'bill',
+  FreeItem: 'freeItem',
+  Invoice: 'invoice',
+  CreditNote: 'creditNote',
+}
+
 @Component({
   selector: 'app-settlement-detail-page',
-  imports: [DatePipe, AppendBillDiscountComponent, AppendFreeItemComponent, AppendCreditNoteComponent, AppendInvoiceComponent, AppendReceiptComponent],
+  imports: [
+    SettlementSummaryCardComponent,
+    SettlementBillTabComponent,
+    SettlementFreeItemTabComponent,
+    SettlementInvoiceReceiptTabComponent,
+    SettlementCreditNoteTabComponent,
+  ],
   templateUrl: './settlement-detail-page.component.html',
   styleUrl: './settlement-detail-page.component.scss',
 })
 export class SettlementDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute)
+  private readonly router = inject(Router)
   private readonly location = inject(Location)
   private readonly toast = inject(ToastService)
   private readonly api = inject(OtherIncomePurchaseApiService)
   readonly ctx = inject(SettlementContextService)
   private readonly headService = inject(FOR_CONTRACT_DATA_TOKEN)
-
-  appendBillDiscountForm = viewChild(AppendBillDiscountComponent)
-  submittingBillDiscount = signal(false)
-
-  appendFreeItemForm = viewChild(AppendFreeItemComponent)
-  submittingFreeItem = signal(false)
-
-  appendCreditNoteForm = viewChild(AppendCreditNoteComponent)
-  submittingCreditNote = signal(false)
-
-  appendInvoiceForm = viewChild(AppendInvoiceComponent)
-  submittingInvoice = signal(false)
-
-  appendReceiptForm = viewChild(AppendReceiptComponent)
-  submittingReceipt = signal(false)
 
   /**
    * GET /v2/settlements/{id} doesn't carry compCode/compType, so once the settlement loads
@@ -54,21 +52,6 @@ export class SettlementDetailPageComponent implements OnInit {
     if (!head) return null
     const { compCode, compType } = head
     return { compCode, compType }
-  })
-
-  /** Sum of matched amounts per invoiceId/receiptId, derived from settlement.matches (many-to-many join). */
-  matchedByInvoiceId = computed(() => {
-    const matches = this.ctx.settlement()?.matches ?? []
-    const map = new Map<number, number>()
-    for (const m of matches) map.set(m.invoiceId, (map.get(m.invoiceId) ?? 0) + m.matchedAmount)
-    return map
-  })
-
-  matchedByReceiptId = computed(() => {
-    const matches = this.ctx.settlement()?.matches ?? []
-    const map = new Map<number, number>()
-    for (const m of matches) map.set(m.receiptId, (map.get(m.receiptId) ?? 0) + m.matchedAmount)
-    return map
   })
 
   /**
@@ -90,6 +73,8 @@ export class SettlementDetailPageComponent implements OnInit {
     return { remaining, state, label: BALANCE_STATE_LABEL[state] }
   })
 
+  openSettlementAmount = computed(() => this.balance()?.remaining ?? 0)
+
   /** Which document-type tabs apply to this contract, per its agreed income types. */
   availableTabs = computed(() => {
     const incomeTypes = new Set(this.headService.contract()?.incomeTypes.map(t => t.incomeType) ?? [])
@@ -101,10 +86,28 @@ export class SettlementDetailPageComponent implements OnInit {
     return tabs
   })
 
+  private readonly queryParamMap = toSignal(this.route.queryParamMap, {
+    initialValue: this.route.snapshot.queryParamMap,
+  })
+
+  /** Tab hinted by the `?incomeType=` param passed in from the worklist. */
+  private readonly requestedTab = computed<DocTab | null>(() =>
+    INCOME_TYPE_TO_TAB[this.queryParamMap().get('incomeType') ?? ''] ?? null
+  )
+
   activeTab = signal<DocTab | null>(null)
 
-  /** Defaults to the first available tab once the contract (and thus availableTabs) loads. */
-  currentTab = computed(() => this.activeTab() ?? this.availableTabs()[0] ?? null)
+  /**
+   * Priority: explicit user click (activeTab) → worklist hint (requestedTab, if available) → first tab.
+   * requestedTab is guarded against incomeTypes not on the contract.
+   */
+  currentTab = computed(() => {
+    const active = this.activeTab()
+    if (active) return active
+    const requested = this.requestedTab()
+    if (requested && this.availableTabs().includes(requested)) return requested
+    return this.availableTabs()[0] ?? null
+  })
 
   setTab(tab: DocTab): void {
     this.activeTab.set(tab)
@@ -126,97 +129,13 @@ export class SettlementDetailPageComponent implements OnInit {
     this.ctx.load(+this.route.snapshot.params['settlementId']);
   }
 
-
-
-  onSubmitBillDiscounts(reqs: TPostBillDiscountReq[]): void {
-    if (reqs.length === 0) return
-    this.submittingBillDiscount.set(true)
-    forkJoin(reqs.map(req => this.ctx.addBillDiscount(req))).subscribe({
+  onDeleteSettlement(): void {
+    this.ctx.deleteSettlement().subscribe({
       next: () => {
-        this.toast.success('เพิ่มส่วนลดบิลเรียบร้อย')
-        this.appendBillDiscountForm()?.reset()
-        this.submittingBillDiscount.set(false)
+        this.toast.success('ลบงวดชำระเรียบร้อย')
+        this.router.navigate(['../'], { relativeTo: this.route })
       },
-      error: (err) => {
-        this.toast.danger(err?.error?.error ?? 'เกิดข้อผิดพลาด')
-        this.submittingBillDiscount.set(false)
-      },
-    })
-  }
-
-  onDeleteBillDiscount(itemId: number): void {
-    this.ctx.removeBillDiscount(itemId).subscribe({
-      next: () => this.toast.success('ลบรายการเรียบร้อย'),
       error: (err) => this.toast.danger(err?.error?.error ?? 'เกิดข้อผิดพลาด'),
     })
-  }
-
-  onSubmitFreeItems(reqs: TPostFreeItemReq[]): void {
-    if (reqs.length === 0) return
-    this.submittingFreeItem.set(true)
-    forkJoin(reqs.map(req => this.ctx.addFreeItem(req))).subscribe({
-      next: () => {
-        this.toast.success('เพิ่มของแถมเรียบร้อย')
-        this.appendFreeItemForm()?.reset()
-        this.submittingFreeItem.set(false)
-      },
-      error: (err) => {
-        this.toast.danger(err?.error?.error ?? 'เกิดข้อผิดพลาด')
-        this.submittingFreeItem.set(false)
-      },
-    })
-  }
-
-  onDeleteFreeItem(itemId: number): void {
-    this.ctx.removeFreeItem(itemId).subscribe({
-      next: () => this.toast.success('ลบรายการเรียบร้อย'),
-      error: (err) => this.toast.danger(err?.error?.error ?? 'เกิดข้อผิดพลาด'),
-    })
-  }
-
-  onSubmitCreditNote(req: TPostCreditNoteReq): void {
-    this.submittingCreditNote.set(true)
-    this.ctx.addCreditNote(req).subscribe({
-      next: () => {
-        this.toast.success('เพิ่มใบลดหนี้เรียบร้อย')
-        this.appendCreditNoteForm()?.reset()
-        this.submittingCreditNote.set(false)
-      },
-      error: (err) => {
-        this.toast.danger(err?.error?.error ?? 'เกิดข้อผิดพลาด')
-        this.submittingCreditNote.set(false)
-      },
-    })
-  }
-
-  onDeleteCreditNote(itemId: number): void {
-    this.ctx.removeCreditNote(itemId).subscribe({
-      next: () => this.toast.success('ลบรายการเรียบร้อย'),
-      error: (err) => this.toast.danger(err?.error?.error ?? 'เกิดข้อผิดพลาด'),
-    })
-  }
-
-  onSubmitInvoice(req: TPostInvoiceReq): void {
-    this.submittingInvoice.set(true)
-    this.ctx.addInvoice(req).subscribe({
-      next: () => {
-        this.toast.success('เพิ่มใบแจ้งหนี้เรียบร้อย')
-        this.appendInvoiceForm()?.reset()
-        this.submittingInvoice.set(false)
-      },
-      error: (err) => {
-        this.toast.danger(err?.error?.error ?? 'เกิดข้อผิดพลาด')
-        this.submittingInvoice.set(false)
-      },
-    })
-  }
-
-  /**
-   * TODO: v2 has no combined receipt+match endpoint — needs postReceipt then postMatch
-   * chained with the new receipt id (and rollback/toast handling if the second call fails)
-   * before this can actually submit. Blocked pending that API-call design.
-   */
-  onSubmitReceipt(_submission: AppendReceiptSubmit): void {
-    this.toast.danger('ยังไม่รองรับการเพิ่มใบเสร็จพร้อมจับคู่ในขณะนี้')
   }
 }

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { TPostInvoiceReq } from '../../../../shared/types/other-income.type';
 import { AppendInvoiceForm, appendInvoiceSchema } from './append-invoice';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
@@ -15,17 +15,26 @@ import { ngbDateToIso } from '../../../../shared/libs/date-time';
 })
 export class AppendInvoiceComponent {
   submitting = input(false)
+  openSettlement = input.required<number>()
 
   private readonly calendar = inject(NgbCalendar)
   private readonly today = this.calendar.getToday()
 
-  private readonly appendInvoiceState = signal<AppendInvoiceForm>({
+  private readonly defaultInvoiceState: AppendInvoiceForm = {
+    openSettleAmount: 0,
     invoiceNumb: '',
     invoiceDate: this.today,
-    invoiceAmount: 0,
+    invoiceAmount: 1,
     invoiceRemark: '',
-  })
+  }
 
+  private readonly appendInvoiceState = linkedSignal<number, AppendInvoiceForm>({
+    source: this.openSettlement,
+    computation: (openSettleAmount, previous) => ({
+      ...(previous?.value ?? this.defaultInvoiceState),
+      openSettleAmount, invoiceAmount: Math.round(openSettleAmount)
+    }),
+  })
   appendInvoiceForm = form(this.appendInvoiceState, appendInvoiceSchema)
 
   submitInvoice = output<TPostInvoiceReq>()
@@ -44,11 +53,6 @@ export class AppendInvoiceComponent {
   }
 
   reset(): void {
-    this.appendInvoiceState.set({
-      invoiceNumb: '',
-      invoiceDate: this.today,
-      invoiceAmount: 0,
-      invoiceRemark: '',
-    })
+    this.appendInvoiceState.set(this.defaultInvoiceState)
   }
 }

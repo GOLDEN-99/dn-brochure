@@ -5,7 +5,7 @@ import { of, throwError } from 'rxjs';
 import { BranchContractSpecsPageComponent } from './branch-contract-specs-page.component';
 import { BranchContractContextService } from '../../../../purchase/services/branch-contract-context.service';
 import { ToastService } from '../../../../../service/toast/toast.service';
-import { AddBranchFormComponent } from '../../../../purchase/components/forms/add-branch-form/add-branch-form.component';
+import { AddBranchFormComponent } from '../../add-branch-form/add-branch-form.component';
 import { TAddBranchReq, TBranchContractDetail } from '../../../types/other-income.type';
 
 @Component({

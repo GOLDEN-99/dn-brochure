@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { PromoContractContextService } from '../../../services/promo-contract-context.service';
 import { ToastService } from '../../../../../service/toast/toast.service';
 import { AddPromoAccrualFormComponent } from '../../forms/add-promo-accrual-form/add-promo-accrual-form.component';
@@ -16,6 +16,7 @@ import { TPostPromoAccrualReq, TPostSettlementReq } from '../../../../shared/typ
 export class PromoContractDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute)
   private readonly toast = inject(ToastService)
+  private readonly location = inject(Location)
   readonly ctx = inject(PromoContractContextService)
 
   addPromoAccrualForm = viewChild(AddPromoAccrualFormComponent)
@@ -27,6 +28,10 @@ export class PromoContractDetailPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.ctx.load(+this.route.snapshot.params['id']);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   onSubmitAddPromoAccrual(req: TPostPromoAccrualReq): void {

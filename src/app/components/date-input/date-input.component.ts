@@ -51,7 +51,16 @@ let id = 0;
   </div>
 </div>
   `,
-  styles: ''
+  styles: `
+    .dp-hidden {
+      width: 0;
+      height: 0;
+      margin: 0;
+      border: none;
+      padding: 0;
+      overflow: hidden;
+    }
+  `
 })
 export class DateInputComponent {
   private readonly calendar = inject(NgbCalendar)

@@ -1,46 +1,104 @@
 <h1 class="text-center">Promo Contracts</h1>
 
-<div class="d-flex gap-2 mb-3">
-  <input
-    type="text"
-    class="form-control"
-    style="max-width: 240px"
-    placeholder="ค้นหา รหัสซัพ"
-    [ngModel]="list.searchCompCode()"
-    (ngModelChange)="list.setSearchCompCode($event)"
-  />
-  <input
-    type="text"
-    class="form-control"
-    style="max-width: 240px"
-    placeholder="ค้นหา ชื่อซัพ"
-    [ngModel]="list.searchCompName()"
-    (ngModelChange)="list.setSearchCompName($event)"
-  />
-  <select
-    class="form-select"
-    style="max-width: 160px"
-    [ngModel]="list.compTypeFilter()"
-    (ngModelChange)="list.setCompTypeFilter($event)"
-  >
-    <option value="DN">DN</option>
-    <option value="HU">HU</option>
-  </select>
-  <select
-    class="form-select"
-    style="max-width: 200px"
-    [ngModel]="list.contractLabelFilter()"
-    (ngModelChange)="list.setContractLabelFilter($event)"
-  >
-    <option [ngValue]="null">ทุกประเภทกิจกรรม</option>
-    @for (label of contractLabelOptions(); track label.id) {
-      <option [ngValue]="label.id">{{ label.eventName }}</option>
-    }
-  </select>
-  <button class="btn btn-outline-secondary" (click)="list.load()">
-    <i class="bi bi-arrow-clockwise"></i>
-  </button>
-  <a [routerLink]="['create']" class="btn btn-primary ms-auto">สร้างสัญญาใหม่</a>
+<div class="card mb-3">
+  <div class="card-body">
+    <h2 class="card-title h6 text-muted text-uppercase mb-3">
+      <i class="bi bi-funnel"></i> ตัวกรอง
+    </h2>
+    <div class="d-flex flex-wrap align-items-end gap-3">
+      <div style="max-width: 220px">
+        <label
+          for="promo-filter-comp-code"
+          class="form-label small text-muted mb-1"
+          >รหัสซัพ</label
+        >
+        <input
+          id="promo-filter-comp-code"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="ค้นหา รหัสซัพ"
+          [ngModel]="list.searchCompCode()"
+          (ngModelChange)="list.setSearchCompCode($event)"
+        />
+      </div>
+      <div style="max-width: 220px">
+        <label
+          for="promo-filter-comp-name"
+          class="form-label small text-muted mb-1"
+          >ชื่อซัพ</label
+        >
+        <input
+          id="promo-filter-comp-name"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="ค้นหา ชื่อซัพ"
+          [ngModel]="list.searchCompName()"
+          (ngModelChange)="list.setSearchCompName($event)"
+        />
+      </div>
+      <div style="max-width: 140px">
+        <label
+          for="promo-filter-comp-type"
+          class="form-label small text-muted mb-1"
+          >บริษัท</label
+        >
+        <select
+          id="promo-filter-comp-type"
+          class="form-select form-select-sm"
+          [ngModel]="list.compTypeFilter()"
+          (ngModelChange)="list.setCompTypeFilter($event)"
+        >
+          <option value="DN">DN</option>
+          <option value="HU">HU</option>
+        </select>
+      </div>
+      <div style="max-width: 200px">
+        <label
+          for="promo-filter-contract-label"
+          class="form-label small text-muted mb-1"
+          >ประเภทกิจกรรม</label
+        >
+        <select
+          id="promo-filter-contract-label"
+          class="form-select form-select-sm"
+          [ngModel]="list.contractLabelFilter()"
+          (ngModelChange)="list.setContractLabelFilter($event)"
+        >
+          <option [ngValue]="null">ทุกประเภทกิจกรรม</option>
+          @for (label of contractLabelOptions(); track label.id) {
+            <option [ngValue]="label.id">{{ label.eventName }}</option>
+          }
+        </select>
+      </div>
+      <div style="max-width: 170px">
+        <label
+          for="promo-filter-start-date"
+          class="form-label small text-muted mb-1"
+          >เริ่มสัญญา (ตั้งแต่)</label
+        >
+        <app-date-picker
+          id="promo-filter-start-date"
+          [value]="startDate()"
+          (valueChange)="onStartDateChange($event)"
+        />
+      </div>
+      <div style="max-width: 170px">
+        <label
+          for="promo-filter-end-date"
+          class="form-label small text-muted mb-1"
+          >ถึงวันที่</label
+        >
+        <app-date-picker
+          id="promo-filter-end-date"
+          [value]="endDate()"
+          (valueChange)="onEndDateChange($event)"
+        />
+      </div>
+      <button class="btn btn-outline-secondary btn-sm" (click)="list.load()">
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
+    </div>
+  </div>
 </div>
 
 @if (list.loading()) {
@@ -70,6 +128,9 @@
         <th>เริ่ม</th>
         <th>จบ</th>
         <th>รอบชำระ (เดือน)</th>
+        <th>ยอดคงค้าง (Accrual)</th>
+        <th>ยอดตกลงจ่าย (Settlement)</th>
+        <th>สถานะเอกสาร</th>
         <th></th>
       </tr>
     </thead>
@@ -84,6 +145,33 @@
           <td>{{ item.startDate | date: "dd/MM/yyyy" }}</td>
           <td>{{ item.endDate | date: "dd/MM/yyyy" }}</td>
           <td class="text-center">{{ item.settlementPeriod }}</td>
+          <td class="text-end">
+            {{ item.entriesAmountTotal | number: "1.2-2" }}
+          </td>
+          <td class="text-end">
+            {{ item.settlementsSupplierIncomeTotal | number: "1.2-2" }}
+          </td>
+          <td class="text-center">
+            @if (item.entriesAmountTotal <= 0) {
+              <span
+                class="badge text-bg-secondary"
+                style="font-size: 1em; font-weight: 400"
+                >รอเพิ่มยอดรายเดือน</span
+              >
+            } @else if (item.settlementsSupplierIncomeTotal <= 0) {
+              <span
+                class="badge text-bg-warning"
+                style="font-size: 1em; font-weight: 400"
+                >รอสรุปยอดเรียกเก็บ</span
+              >
+            } @else {
+              <span
+                class="badge text-bg-success"
+                style="font-size: 1em; font-weight: 400"
+                >สรุปยอดเรียกเก็บแล้ว</span
+              >
+            }
+          </td>
           <td>
             <a [routerLink]="[item.id]" class="btn btn-sm btn-outline-primary"
               >รายละเอียด</a
@@ -92,7 +180,7 @@
         </tr>
       } @empty {
         <tr>
-          <td colspan="9" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
+          <td colspan="12" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
         </tr>
       }
     </tbody>
@@ -105,7 +193,10 @@
       <nav>
         <ul class="pagination pagination-sm mb-0">
           <li class="page-item" [class.disabled]="list.currentPage() === 1">
-            <button class="page-link" (click)="list.goToPage(list.currentPage() - 1)">
+            <button
+              class="page-link"
+              (click)="list.goToPage(list.currentPage() - 1)"
+            >
               &laquo;
             </button>
           </li>
@@ -120,7 +211,10 @@
             class="page-item"
             [class.disabled]="list.currentPage() === list.totalPages()"
           >
-            <button class="page-link" (click)="list.goToPage(list.currentPage() + 1)">
+            <button
+              class="page-link"
+              (click)="list.goToPage(list.currentPage() + 1)"
+            >
               &raquo;
             </button>
           </li>

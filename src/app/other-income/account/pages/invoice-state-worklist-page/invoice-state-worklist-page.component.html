@@ -4,17 +4,17 @@
   <select
     class="form-select"
     style="max-width: 200px"
-    [ngModel]="invoiceState() ?? 'all'"
+    [ngModel]="filters().invoiceState"
     (ngModelChange)="setInvoiceState($event)"
   >
-    <option value="all">ทุกสถานะ</option>
+    <option [ngValue]="null">ทุกสถานะ</option>
     <option value="UNMATCHED">UNMATCHED</option>
     <option value="MATCHED">MATCHED</option>
   </select>
   <select
     class="form-select"
     style="max-width: 160px"
-    [ngModel]="contractType()"
+    [ngModel]="filters().contractType"
     (ngModelChange)="setContractType($event)"
   >
     <option [ngValue]="null">ทุกสัญญา</option>
@@ -70,10 +70,21 @@
               class="badge"
               [class.text-bg-warning]="row.invoiceState === 'UNMATCHED'"
               [class.text-bg-success]="row.invoiceState === 'MATCHED'"
-            >{{ row.invoiceState }}</span>
+              >{{ row.invoiceState }}</span
+            >
           </td>
           <td>
-            <a [routerLink]="['../', contractTypePath[row.contractType], row.contractId, 'settlements', row.settlementId]" class="btn btn-sm btn-outline-primary">
+            <a
+              [routerLink]="[
+                '../',
+                contractTypePath[row.contractType],
+                row.contractId,
+                'settlements',
+                row.settlementId,
+              ]"
+              [queryParams]="{ incomeType: 'Invoice' }"
+              class="btn btn-sm btn-outline-primary"
+            >
               รายละเอียด
             </a>
           </td>

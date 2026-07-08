@@ -1,7 +1,11 @@
 <div class="d-flex align-items-center gap-2 mb-3">
-  <a [routerLink]="['../../']" class="btn btn-sm btn-outline-secondary"
-    >&laquo; ย้อนกลับ</a
+  <button
+    type="button"
+    (click)="goBack()"
+    class="btn btn-sm btn-outline-secondary"
   >
+    &laquo; ย้อนกลับ
+  </button>
   <h1 class="mb-0">รายละเอียดสัญญา DC-Rebate</h1>
 </div>
 

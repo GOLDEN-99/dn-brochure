@@ -1,16 +1,23 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { EMPTY, merge, Subject, switchMap } from 'rxjs';
+import { catchError, finalize, map } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { z } from 'zod';
 import { OtherIncomeAccountApiService } from '../../services/other-income-account-api.service';
 import { TSettlementOverviewItem } from '../../../shared/types/other-income.type';
-import { BALANCE_STATE_LABEL, CONTRACT_TYPE_PATH, CONTRACT_TYPE_LABEL, INCOME_TYPE_LABEL, REVIEW_STATE_LABEL } from '../../../shared/libs/settlement-labels';
+import { BALANCE_STATE_LABEL, COMP_TYPE_LABEL, CONTRACT_TYPE_PATH, CONTRACT_TYPE_LABEL, INCOME_TYPE_LABEL, REVIEW_STATE_LABEL } from '../../../shared/libs/settlement-labels';
 
-type TContractType = 'ORDER' | 'BRANCH' | 'PROMO';
-type TBalanceState = 'OUTSTANDING' | 'SETTLED';
-type TReviewState = 'UNREVIEWED' | 'REVIEWED';
-type TIncomeType = 'Bill' | 'FreeItem' | 'Invoice' | 'CreditNote';
+const settlementFilterSchema = z.object({
+  contractType: z.enum(['ORDER', 'BRANCH', 'PROMO']).nullable().default(null).catch(null),
+  balanceState: z.enum(['OUTSTANDING', 'SETTLED']).nullable().default(null).catch(null),
+  reviewState: z.enum(['UNREVIEWED', 'REVIEWED']).nullable().default(null).catch(null),
+  incomeType: z.enum(['Bill', 'FreeItem', 'Invoice', 'CreditNote']).nullable().default(null).catch(null),
+  compType: z.enum(['DN', 'HU']).nullable().default(null).catch(null),
+})
 
 /**
  * Filters are URL-driven (query params), not local signals — same pattern as
@@ -35,54 +42,65 @@ export class SettlementWorklistPageComponent {
   readonly contractTypeLabel = CONTRACT_TYPE_LABEL
   readonly balanceStateLabel = BALANCE_STATE_LABEL
   readonly reviewStateLabel = REVIEW_STATE_LABEL
+  readonly compTypeLabel = COMP_TYPE_LABEL
   readonly contractTypePath = CONTRACT_TYPE_PATH
 
   items = signal<TSettlementOverviewItem[]>([])
   loading = signal(false)
   error = signal<string | null>(null)
+  searchText = signal('')
 
-  private readonly queryParamMap = toSignal(this.route.queryParamMap, {
-    initialValue: this.route.snapshot.queryParamMap,
+  filteredItems = computed(() => {
+    const q = this.searchText().trim().toLowerCase()
+    if (!q) return this.items()
+    return this.items().filter(item =>
+      item.compCode.toLowerCase().includes(q) ||
+      item.compName.toLowerCase().includes(q)
+    )
   })
 
-  contractType = computed<TContractType | null>(() => this.queryParamMap().get('contractType') as TContractType | null)
-  balanceState = computed<TBalanceState | null>(() => this.queryParamMap().get('balanceState') as TBalanceState | null)
-  reviewState = computed<TReviewState | null>(() => this.queryParamMap().get('reviewState') as TReviewState | null)
-  /** Absent param → default to 'Invoice' (the common case); `incomeType=all` → explicit "all types". */
-  incomeType = computed<TIncomeType | null>(() => {
-    const raw = this.queryParamMap().get('incomeType')
-    if (raw === 'all') return null
-    return (raw as TIncomeType | null) ?? 'Invoice'
-  })
+  private readonly refreshTrigger$ = new Subject<void>()
 
-  private readonly filters = computed(() => ({
-    contractType: this.contractType() ?? undefined,
-    balanceState: this.balanceState() ?? undefined,
-    reviewState: this.reviewState() ?? undefined,
-    incomeType: this.incomeType() ?? undefined,
-  }))
+  private readonly filter$ = merge(
+    this.route.queryParamMap,
+    this.refreshTrigger$.pipe(map(() => this.route.snapshot.queryParamMap))
+  ).pipe(
+    map(params => settlementFilterSchema.parse({
+      contractType: params.get('contractType'),
+      balanceState: params.get('balanceState'),
+      reviewState: params.get('reviewState'),
+      incomeType: params.get('incomeType'),
+      compType: params.get('compType'),
+    }))
+  )
+
+  readonly filters = toSignal(this.filter$, { initialValue: settlementFilterSchema.parse({}) })
 
   constructor() {
-    effect(() => this.load(this.filters()))
-  }
-
-  load(filters: ReturnType<typeof this.filters>): void {
-    this.loading.set(true)
-    this.error.set(null)
-    this.api.getSettlementsOverview(filters).subscribe({
-      next: (items) => {
-        this.items.set(items)
-        this.loading.set(false)
-      },
-      error: () => {
-        this.error.set('โหลดข้อมูลไม่สำเร็จ')
-        this.loading.set(false)
-      },
-    })
+    this.filter$.pipe(
+      switchMap(filters => {
+        this.loading.set(true)
+        this.error.set(null)
+        return this.api.getSettlementsOverview({
+          contractType: filters.contractType ?? undefined,
+          balanceState: filters.balanceState ?? undefined,
+          reviewState: filters.reviewState ?? undefined,
+          incomeType: filters.incomeType ?? undefined,
+          compType: filters.compType ?? undefined,
+        }).pipe(
+          catchError(() => {
+            this.error.set('โหลดข้อมูลไม่สำเร็จ')
+            return EMPTY
+          }),
+          finalize(() => this.loading.set(false))
+        )
+      }),
+      takeUntilDestroyed()
+    ).subscribe(items => this.items.set(items))
   }
 
   refresh(): void {
-    this.load(this.filters())
+    this.refreshTrigger$.next()
   }
 
   setContractType(value: string): void {
@@ -101,8 +119,8 @@ export class SettlementWorklistPageComponent {
     this.setQueryParams({ incomeType: value })
   }
 
-  formatIncomeTypes(incomeTypes: TSettlementOverviewItem['incomeTypes']): string {
-    return incomeTypes?.map(type => this.incomeTypeLabel[type]).join(', ') ?? '-'
+  setCompType(value: string): void {
+    this.setQueryParams({ compType: value || null })
   }
 
   private setQueryParams(params: Record<string, string | null>): void {

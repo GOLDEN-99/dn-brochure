@@ -12,6 +12,11 @@ import { STOCK_ITEM_ROUTES } from './routes/stock-item.route';
 import { QUOTA_ITEM_ROUTES } from './routes/quota-item.route';
 import { CRM_PROMOTION_ROUTE } from './routes/crm-promotion.route';
 
+// Single toggle for which Other Income implementation is mounted — both
+// versions register routes under the same 'other-income' path, so exactly
+// one must be active at a time.
+// const OTHER_INCOME_ROUTES = OTHER_INCOME_ROUTES_V2;
+
 export const routes: Routes = [
     // Brochure & Marketing
     ...BROCHURE_ROUTES,

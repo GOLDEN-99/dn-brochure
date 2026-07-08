@@ -17,7 +17,7 @@ export class BranchContractListPageComponent {
   private readonly eventService = inject(OtherIncomeEventService);
 
   readonly list = new ContractListController({
-    fetch: () => this.api.getBranchContracts(),
+    fetch: params => this.api.getBranchContracts(params),
   });
 
   contractLabelOptions = computed(() =>

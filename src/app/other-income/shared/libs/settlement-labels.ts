@@ -26,3 +26,8 @@ export const REVIEW_STATE_LABEL: Record<'UNREVIEWED' | 'REVIEWED', string> = {
   UNREVIEWED: 'รอ audit',
   REVIEWED: 'audit แล้ว',
 }
+
+export const COMP_TYPE_LABEL: Record<'DN' | 'HU', string> = {
+  DN: 'DN',
+  HU: 'HU',
+}

@@ -1,9 +1,9 @@
 import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { BranchContractContextService } from '../../../services/branch-contract-context.service';
 import { ToastService } from '../../../../../service/toast/toast.service';
-import { AddBranchFormComponent } from '../../forms/add-branch-form/add-branch-form.component';
+import { AddBranchFormComponent } from '../../../../shared/components/add-branch-form/add-branch-form.component';
 import { CreateSettlementFormComponent } from '../../forms/create-settlement-form/create-settlement-form.component';
 import { TAddBranchReq, TPostSettlementReq } from '../../../../shared/types/other-income.type';
 
@@ -16,6 +16,7 @@ import { TAddBranchReq, TPostSettlementReq } from '../../../../shared/types/othe
 export class BranchContractDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute)
   private readonly toast = inject(ToastService)
+  private readonly location = inject(Location)
   readonly ctx = inject(BranchContractContextService)
 
   addBranchForm = viewChild(AddBranchFormComponent)
@@ -27,6 +28,10 @@ export class BranchContractDetailPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.ctx.load(+this.route.snapshot.params['id']);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   onSubmitAddBranch(req: TAddBranchReq): void {

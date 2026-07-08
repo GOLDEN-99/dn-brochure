@@ -34,7 +34,8 @@ export class OtherIncomeAccountApiService {
     contractId?: number
     balanceState?: 'OUTSTANDING' | 'SETTLED'
     reviewState?: 'UNREVIEWED' | 'REVIEWED'
-    incomeType?: 'Bill' | 'FreeItem' | 'Invoice' | 'CreditNote'
+    incomeType?: 'Bill' | 'FreeItem' | 'Invoice' | 'CreditNote' | 'all'
+    compType?: 'DN' | 'HU'
   }): Observable<TSettlementOverviewItem[]> {
     return this.api.get(`${this.url}/v2/settlements/overview`, { params: compact(params ?? {}) })
   }

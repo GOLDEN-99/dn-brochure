@@ -1,0 +1,51 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table
+        class="table table-sm table-striped table-bordered mb-3"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>เลขที่คำสั่งซื้อ</th>
+            <th>เลขที่ใบเสร็จ</th>
+            <th>รหัสสินค้า</th>
+            <th>มูลค่า</th>
+            <th>หมายเหตุ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of ctx.settlement()?.freeItems ?? []; track row.id) {
+            <tr>
+              <td>{{ row.orderNumb }}</td>
+              <td>{{ row.receNumb }}</td>
+              <td>{{ row.goodCode }}</td>
+              <td>{{ row.subtotalAmount }}</td>
+              <td>{{ row.remark }}</td>
+              <td>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="onDeleteFreeItem(row.id)"
+                >
+                  ลบ
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center text-muted py-2">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <other-income-append-free-item
+      [submitting]="submittingFreeItem()"
+      [search]="search()"
+      (submitFreeItems)="onSubmitFreeItems($event)"
+    ></other-income-append-free-item>
+  </div>
+</div>

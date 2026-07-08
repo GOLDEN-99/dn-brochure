@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { OrderContractContextService } from '../../../../purchase/services/order-contract-context.service';
 
 @Component({
@@ -11,9 +11,14 @@ import { OrderContractContextService } from '../../../../purchase/services/order
 })
 export class AccountOrderContractLayoutComponent implements OnInit {
   private readonly route = inject(ActivatedRoute)
+  private readonly location = inject(Location)
   readonly ctx = inject(OrderContractContextService)
 
   ngOnInit(): void {
     this.ctx.load(+this.route.snapshot.params['id']);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }

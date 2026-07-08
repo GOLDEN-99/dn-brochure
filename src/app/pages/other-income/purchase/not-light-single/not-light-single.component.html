@@ -4,7 +4,7 @@
   } @else {
     <!---->
     @let e = currentResult(); @let comp = e.company;@let incomes = e.incomeList;
-    @let periods = e.periodList;@let h = e.head;
+    @let h = e.head;@let periods = e.periodList;
     <app-other-income-head-edit
       [headIncomeList]="e.headIncomeList"
       [head]="e.head"
@@ -80,6 +80,7 @@
         (fail)="onFail($event)"
       />
     }
+    -->
   }
 
   <button (click)="onDelete()" class="btn btn-danger w-100">ลบ</button>

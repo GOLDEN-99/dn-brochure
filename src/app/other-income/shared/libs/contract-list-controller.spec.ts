@@ -29,8 +29,11 @@ describe('ContractListController', () => {
     (TestBed.inject(ActivatedRoute) as unknown as { snapshot: { queryParamMap: typeof map } }).snapshot.queryParamMap = map;
   }
 
-  function create(fetch: () => Observable<TItem[]> = () => of(items)) {
-    return TestBed.runInInjectionContext(() => new ContractListController<TItem>({ fetch }));
+  function create(
+    fetch: (params: { compType?: string; startDate?: string; endDate?: string }) => Observable<TItem[]> = () => of(items),
+    defaultDateRange?: () => { startDate: string; endDate: string }
+  ) {
+    return TestBed.runInInjectionContext(() => new ContractListController<TItem>({ fetch, defaultDateRange }));
   }
 
   beforeEach(() => {
@@ -64,24 +67,37 @@ describe('ContractListController', () => {
     expect(controller.loading()).toBe(false);
   });
 
-  it('defaults compType filter to DN and filters items by it', () => {
-    const controller = create();
+  it('defaults compType filter to DN and passes it to fetch', () => {
+    const fetch = jasmine.createSpy('fetch').and.returnValue(of(items));
+    const controller = create(fetch);
     expect(controller.compTypeFilter()).toBe('DN');
-    expect(controller.filteredItems().every(i => i.compType === 'DN')).toBe(true);
+    expect(fetch).toHaveBeenCalledWith(jasmine.objectContaining({ compType: 'DN' }));
   });
 
   it('filters by compCode, compName, and contractLabelId together', () => {
-    setQuery({ compType: 'HU', compCode: 'C3', compName: 'Supplier 3', contractLabelId: '3' });
+    setQuery({ compCode: 'C3', compName: 'Supplier 3', contractLabelId: '3' });
     const controller = create();
     expect(controller.filteredItems()).toEqual([items[2]]);
   });
 
   it('paginates the filtered result set', () => {
-    setQuery({ compType: 'HU' });
     const controller = create();
-    expect(controller.filteredItems().length).toBe(12);
-    expect(controller.totalPages()).toBe(1);
-    expect(controller.pagedItems().length).toBe(12);
+    expect(controller.filteredItems().length).toBe(25);
+    expect(controller.totalPages()).toBe(2);
+    expect(controller.pagedItems().length).toBe(20);
+  });
+
+  it('setCompTypeFilter merges compType into the URL, resets to page 1, and reloads', () => {
+    const fetch = jasmine.createSpy('fetch').and.returnValue(of(items));
+    const controller = create(fetch);
+    fetch.calls.reset();
+
+    controller.setCompTypeFilter('HU');
+
+    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({
+      queryParams: { compType: 'HU', page: 1 },
+    }));
+    expect(fetch).toHaveBeenCalledWith(jasmine.objectContaining({ compType: 'HU' }));
   });
 
   it('setSearchCompCode merges compCode into the URL and resets to page 1', () => {
@@ -99,6 +115,55 @@ describe('ContractListController', () => {
     controller.setSearchCompCode('   ');
     expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({
       queryParams: { compCode: null, page: 1 },
+    }));
+  });
+
+  it('passes startDate/endDate from the URL into the fetch call', () => {
+    setQuery({ startDate: '2026-01-01', endDate: '2026-06-30' });
+    const fetch = jasmine.createSpy('fetch').and.returnValue(of(items));
+    create(fetch);
+    expect(fetch).toHaveBeenCalledWith({ compType: 'DN', startDate: '2026-01-01', endDate: '2026-06-30' });
+  });
+
+  it('falls back to defaultDateRange when no startDate/endDate is in the URL', () => {
+    const fetch = jasmine.createSpy('fetch').and.returnValue(of(items));
+    const defaultDateRange = () => ({ startDate: '2026-01-01', endDate: '2026-12-31' });
+
+    const controller = create(fetch, defaultDateRange);
+
+    expect(controller.startDateFilter()).toBe('2026-01-01');
+    expect(controller.endDateFilter()).toBe('2026-12-31');
+    expect(fetch).toHaveBeenCalledWith({ compType: 'DN', startDate: '2026-01-01', endDate: '2026-12-31' });
+  });
+
+  it('URL startDate/endDate override defaultDateRange', () => {
+    setQuery({ startDate: '2026-03-01' });
+    const defaultDateRange = () => ({ startDate: '2026-01-01', endDate: '2026-12-31' });
+
+    const controller = create(() => of(items), defaultDateRange);
+
+    expect(controller.startDateFilter()).toBe('2026-03-01');
+    expect(controller.endDateFilter()).toBe('2026-12-31');
+  });
+
+  it('setStartDateFilter merges startDate into the URL, resets to page 1, and reloads', () => {
+    const fetch = jasmine.createSpy('fetch').and.returnValue(of(items));
+    const controller = create(fetch);
+    fetch.calls.reset();
+
+    controller.setStartDateFilter('2026-02-01');
+
+    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({
+      queryParams: { startDate: '2026-02-01', page: 1 },
+    }));
+    expect(fetch).toHaveBeenCalled();
+  });
+
+  it('setEndDateFilter clears the param when given blank input', () => {
+    const controller = create();
+    controller.setEndDateFilter('');
+    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({
+      queryParams: { endDate: null, page: 1 },
     }));
   });
 

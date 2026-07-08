@@ -1,7 +1,7 @@
 import { Component, inject, signal, viewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { BranchContractContextService } from '../../../../purchase/services/branch-contract-context.service';
-import { AddBranchFormComponent } from '../../../../purchase/components/forms/add-branch-form/add-branch-form.component';
+import { AddBranchFormComponent } from '../../add-branch-form/add-branch-form.component';
 import { ToastService } from '../../../../../service/toast/toast.service';
 import { TAddBranchReq } from '../../../types/other-income.type';
 

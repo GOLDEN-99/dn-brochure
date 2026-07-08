@@ -43,6 +43,12 @@ export class PromoContractContextService implements ForContractData {
     if (this.lastId !== null) this.load(this.lastId)
   }
 
+  deleteContract(): Observable<void> {
+    const id = this.contract()?.id
+    if (id == null) throw new Error('Contract not loaded')
+    return this.api.deletePromoContract(id)
+  }
+
   addPromoAccrual(id: number, req: TPostPromoAccrualReq): Observable<TIncomeEntry> {
     return this.api.postPromoAccrual(id, req).pipe(tap(() => this.refresh()))
   }

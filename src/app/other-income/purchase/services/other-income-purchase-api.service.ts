@@ -45,7 +45,22 @@ import {
   TBillDiscountSearchParams,
   TFreeItemSearchParams,
   TDateRange,
+  TPostReceiptWithMatchesReq,
 } from '../../shared/types/other-income.type';
+
+/**
+ * HttpParams.fromObject stringifies every key present, including `undefined`
+ * (→ literal `"undefined"` in the query string) — it does not drop them. Omit
+ * undefined entries here so optional filters are absent from the request
+ * instead of sent as the string "undefined".
+ */
+function compact<T extends Record<string, unknown>>(params: T): Partial<T> {
+  const result: Partial<T> = {}
+  for (const key in params) {
+    if (params[key] !== undefined) result[key] = params[key]
+  }
+  return result
+}
 
 @Injectable({
   providedIn: 'root',
@@ -56,8 +71,8 @@ export class OtherIncomePurchaseApiService {
 
   // ─────────────── Group A — Order contracts ───────────────
 
-  getOrderContracts(params?: { compCode?: string; compType?: string }): Observable<TOrderContractListItem[]> {
-    return this.api.get(`${this.url}/v2/order-contracts`, { params })
+  getOrderContracts(params?: { compCode?: string; compType?: string; startDate?: string; endDate?: string }): Observable<TOrderContractListItem[]> {
+    return this.api.get(`${this.url}/v2/order-contracts`, { params: compact(params ?? {}) })
   }
 
   getOrderContract(id: number): Observable<TOrderContractDetail> {
@@ -130,8 +145,8 @@ export class OtherIncomePurchaseApiService {
 
   // ─────────────── Group B — Branch contracts ───────────────
 
-  getBranchContracts(params?: { compCode?: string; compType?: string }): Observable<TBranchContractListItem[]> {
-    return this.api.get(`${this.url}/v2/branch-contracts`, { params })
+  getBranchContracts(params?: { compCode?: string; compType?: string; startDate?: string; endDate?: string }): Observable<TBranchContractListItem[]> {
+    return this.api.get(`${this.url}/v2/branch-contracts`, { params: compact(params ?? {}) })
   }
 
   getBranchContract(id: number): Observable<TBranchContractDetail> {
@@ -172,8 +187,8 @@ export class OtherIncomePurchaseApiService {
 
   // ─────────────── Group C — Promo contracts ───────────────
 
-  getPromoContracts(params?: { compCode?: string; compType?: string }): Observable<TPromoContractListItem[]> {
-    return this.api.get(`${this.url}/v2/promo-contracts`, { params })
+  getPromoContracts(params?: { compCode?: string; compType?: string; startDate?: string; endDate?: string }): Observable<TPromoContractListItem[]> {
+    return this.api.get(`${this.url}/v2/promo-contracts`, { params: compact(params ?? {}) })
   }
 
   getPromoContract(id: number): Observable<TPromoContractDetail> {
@@ -246,7 +261,7 @@ export class OtherIncomePurchaseApiService {
     return this.api.delete(`${this.url}/v2/settlements/${settlementId}/invoices/${itemId}`)
   }
 
-  postReceipt(settlementId: number, req: TPostReceiptReq): Observable<{ id: number }> {
+  postReceipt(settlementId: number, req: TPostReceiptWithMatchesReq): Observable<{ id: number }> {
     return this.api.post(`${this.url}/v2/settlements/${settlementId}/receipts`, req)
   }
 

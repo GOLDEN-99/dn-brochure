@@ -1,0 +1,81 @@
+<div class="card mb-3">
+  <div
+    class="card-header fw-bold d-flex justify-content-between align-items-center"
+  >
+    <span>{{ settlement().periodName }}</span>
+    <div class="d-flex align-items-center gap-2">
+      @if (balance(); as bal) {
+        <span
+          class="badge"
+          [class.text-bg-success]="bal.state === 'SETTLED'"
+          [class.text-bg-warning]="bal.state === 'OUTSTANDING'"
+        >
+          {{ bal.label }}
+        </span>
+      }
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-danger"
+        (click)="deleteSettlement.emit()"
+      >
+        ลบงวดชำระ
+      </button>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row row-cols-2 row-cols-md-4 g-2 mb-3">
+      <div>
+        <small class="text-muted d-block">เริ่ม</small
+        >{{ settlement().startDate | date: "dd/MM/yyyy" }}
+      </div>
+      <div>
+        <small class="text-muted d-block">จบ</small
+        >{{ settlement().endDate | date: "dd/MM/yyyy" }}
+      </div>
+      <div>
+        <small class="text-muted d-block">สร้างเมื่อ</small
+        >{{ settlement().createdAt | date: "dd/MM/yyyy HH:mm" }}
+      </div>
+      <div>
+        <small class="text-muted d-block">หมายเหตุ</small
+        >{{ settlement().remark ?? "-" }}
+      </div>
+    </div>
+    <div class="row row-cols-2 row-cols-md-3 g-2">
+      <div>
+        <small class="text-muted d-block">ยอดสั่งซื้อ (ระบบ)</small
+        >{{ settlement().systemOrderAmount ?? "-" }}
+      </div>
+      <div>
+        <small class="text-muted d-block">ยอด CN</small
+        >{{ settlement().cnOrderAmount ?? "-" }}
+      </div>
+      <div>
+        <small class="text-muted d-block">รายได้ (ระบบ)</small
+        >{{ settlement().systemIncome }}
+      </div>
+      <div>
+        <small class="text-muted d-block">ยอดสั่งซื้อ (ซัพพลายเออร์)</small
+        >{{ settlement().supplierOrderAmount ?? "-" }}
+      </div>
+      <div>
+        <small class="text-muted d-block">รายได้ (ซัพพลายเออร์)</small
+        >{{ settlement().supplierIncome }}
+      </div>
+      @if (balance(); as bal) {
+        <div>
+          <small class="text-muted d-block"
+            >คงเหลือ (ยังไม่บันทึกเอกสาร)</small
+          >
+          <span
+            class="fw-bold"
+            [class.text-danger]="bal.remaining > 1"
+            [class.text-success]="bal.remaining <= 1"
+          >
+            {{ bal.remaining }}
+          </span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,14 +1,20 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { EMPTY, merge, Subject, switchMap } from 'rxjs';
+import { catchError, finalize, map } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { z } from 'zod';
 import { OtherIncomeAccountApiService } from '../../services/other-income-account-api.service';
 import { TInvoiceStateRow } from '../../../shared/types/other-income.type';
 import { CONTRACT_TYPE_PATH, CONTRACT_TYPE_LABEL } from '../../../shared/libs/settlement-labels';
 
-type TContractType = 'ORDER' | 'BRANCH' | 'PROMO';
-type TInvoiceState = 'UNMATCHED' | 'MATCHED';
+const invoiceFilterSchema = z.object({
+  contractType: z.enum(['ORDER', 'BRANCH', 'PROMO']).nullable().default(null).catch(null),
+  invoiceState: z.enum(['UNMATCHED', 'MATCHED']).nullable().default(null).catch(null),
+})
 
 /**
  * Filters are URL-driven (query params), not local signals — same pattern as
@@ -35,45 +41,42 @@ export class InvoiceStateWorklistPageComponent {
   loading = signal(false)
   error = signal<string | null>(null)
 
-  private readonly queryParamMap = toSignal(this.route.queryParamMap, {
-    initialValue: this.route.snapshot.queryParamMap,
-  })
+  private readonly refreshTrigger$ = new Subject<void>()
 
-  contractType = computed<TContractType | null>(() => this.queryParamMap().get('contractType') as TContractType | null)
+  private readonly filter$ = merge(
+    this.route.queryParamMap,
+    this.refreshTrigger$.pipe(map(() => this.route.snapshot.queryParamMap))
+  ).pipe(
+    map(params => invoiceFilterSchema.parse({
+      contractType: params.get('contractType'),
+      invoiceState: params.get('invoiceState'),
+    }))
+  )
 
-  /** Absent param → default to 'UNMATCHED' (the common case); `invoiceState=all` → explicit "all". */
-  invoiceState = computed<TInvoiceState | null>(() => {
-    const raw = this.queryParamMap().get('invoiceState')
-    if (raw === 'all') return null
-    return (raw as TInvoiceState | null) ?? 'UNMATCHED'
-  })
-
-  private readonly filters = computed(() => ({
-    contractType: this.contractType() ?? undefined,
-    invoiceState: this.invoiceState() ?? undefined,
-  }))
+  readonly filters = toSignal(this.filter$, { initialValue: invoiceFilterSchema.parse({}) })
 
   constructor() {
-    effect(() => this.load(this.filters()))
-  }
-
-  load(filters: ReturnType<typeof this.filters>): void {
-    this.loading.set(true)
-    this.error.set(null)
-    this.api.getInvoiceStates(filters).subscribe({
-      next: (items) => {
-        this.items.set(items)
-        this.loading.set(false)
-      },
-      error: () => {
-        this.error.set('โหลดข้อมูลไม่สำเร็จ')
-        this.loading.set(false)
-      },
-    })
+    this.filter$.pipe(
+      switchMap(filters => {
+        this.loading.set(true)
+        this.error.set(null)
+        return this.api.getInvoiceStates({
+          contractType: filters.contractType ?? undefined,
+          invoiceState: filters.invoiceState ?? undefined,
+        }).pipe(
+          catchError(() => {
+            this.error.set('โหลดข้อมูลไม่สำเร็จ')
+            return EMPTY
+          }),
+          finalize(() => this.loading.set(false))
+        )
+      }),
+      takeUntilDestroyed()
+    ).subscribe(items => this.items.set(items))
   }
 
   refresh(): void {
-    this.load(this.filters())
+    this.refreshTrigger$.next()
   }
 
   setContractType(value: string): void {

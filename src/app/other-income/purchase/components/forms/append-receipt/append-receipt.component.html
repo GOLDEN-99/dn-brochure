@@ -20,7 +20,9 @@
   </div>
 
   <div class="col">
-    <label [htmlFor]="appendReceiptForm.receDate().name()" class="form-label small text-muted mb-1"
+    <label
+      [htmlFor]="appendReceiptForm.receDate().name()"
+      class="form-label small text-muted mb-1"
       >วันที่ใบเสร็จ</label
     >
     <app-signal-datepicker
@@ -71,9 +73,8 @@
 <div class="row row-cols-1 row-cols-md-4 g-3 mb-3">
   <div class="col">
     <label class="form-label small text-muted mb-1"
-      >ใบแจ้งหนี้ที่จะจับคู่
-      <span class="text-danger">*</span>
-    </label>
+      >ใบแจ้งหนี้ที่จะจับคู่</label
+    >
     <input
       type="text"
       class="form-control form-control-sm"
@@ -83,12 +84,12 @@
       [inputFormatter]="formatInvoice"
       (selectItem)="onSelectInvoice($event)"
     />
-    <div style="min-height: 1.25rem" class="mt-1">
+    <!-- <div style="min-height: 1.25rem" class="mt-1">
       <app-form-alert-text [formState]="appendReceiptForm.matchInvoice()" />
-    </div>
+    </div> -->
   </div>
 
-  <div class="col">
+  <!-- <div class="col">
     <label class="form-label small text-muted mb-1">ยอดคงเหลือของใบแจ้งหนี้</label>
     <input
       type="text"
@@ -103,21 +104,71 @@
     <label
       [htmlFor]="appendReceiptForm.matchAmount().name()"
       class="form-label small text-muted mb-1"
-      >ยอดที่จับคู่
-      @if (appendReceiptForm.matchAmount().required()) {
-        <span class="text-danger">*</span>
-      }
-    </label>
-    <input
-      [id]="appendReceiptForm.matchAmount().name()"
-      type="number"
-      class="form-control form-control-sm"
-      [formField]="appendReceiptForm.matchAmount"
-    />
+      >ยอดที่จับคู่</label
+    >
+    <div class="d-flex gap-2">
+      <input
+        [id]="appendReceiptForm.matchAmount().name()"
+        type="number"
+        class="form-control form-control-sm"
+        [formField]="appendReceiptForm.matchAmount"
+      />
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-primary text-nowrap"
+        [disabled]="!canAddMatch()"
+        (click)="addMatch()"
+      >
+        เพิ่มรายการ
+      </button>
+    </div>
     <div style="min-height: 1.25rem" class="mt-1">
       <app-form-alert-text [formState]="appendReceiptForm.matchAmount()" />
     </div>
-  </div>
+  </div> -->
+</div>
+
+<div class="table-responsive mb-2">
+  <table class="table table-sm table-bordered mb-1" style="font-size: 12px">
+    <thead>
+      <tr>
+        <th>เลขที่ใบแจ้งหนี้</th>
+        <th>ยอดที่จับคู่</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (m of appendReceiptForm.matches().value(); track m.invoice.id) {
+        <tr>
+          <td>{{ m.invoice.invoiceNumb }}</td>
+          <td>{{ m.matchAmount }}</td>
+          <td class="text-end">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              (click)="removeMatch($index)"
+            >
+              ลบ
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="3" class="text-center text-muted py-2">
+            ยังไม่มีรายการจับคู่
+          </td>
+        </tr>
+      }
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>รวม</th>
+        <th>{{ matchedTotal() }}</th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+  <app-form-alert-text [formState]="appendReceiptForm.matches()" />
 </div>
 
 <button

@@ -43,6 +43,12 @@ export class OrderContractContextService implements ForContractData {
     if (this.lastId !== null) this.load(this.lastId)
   }
 
+  deleteContract(): Observable<void> {
+    const id = this.contract()?.id
+    if (id == null) throw new Error('Contract not loaded')
+    return this.api.deleteOrderContract(id)
+  }
+
   addCnCorrection(contractId: number, req: TPostCnCorrectionReq): Observable<TIncomeEntry> {
     return this.api.postCnCorrection(contractId, req).pipe(tap(entry => this.incomeEntries.update(list => [...list, entry])))
   }

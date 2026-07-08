@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { OrderContractContextService } from '../../../services/order-contract-context.service';
 import { PaginatedListComponent } from '../../../../../shared/components/paginated-list/paginated-list.component';
 import { ToastService } from '../../../../../service/toast/toast.service';
@@ -19,6 +19,7 @@ import { TPostCnCorrectionReq, TPostLagCorrectionReq, TPostManualCorrectionReq, 
 export class OrderContractDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute)
   private readonly toast = inject(ToastService)
+  private readonly location = inject(Location)
   readonly ctx = inject(OrderContractContextService)
 
   cnCorrectionForm = viewChild(CnCorrectionFormComponent)
@@ -36,6 +37,10 @@ export class OrderContractDetailPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.ctx.load(+this.route.snapshot.params['id']);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   onSubmitCnCorrection(req: TPostCnCorrectionReq): void {

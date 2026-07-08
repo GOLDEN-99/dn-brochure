@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { OtherIncomePurchaseApiService } from './other-income-purchase-api.service';
-import { TPostBillDiscountReq, TPostCreditNoteReq, TPostFreeItemReq, TPostInvoiceReq, TSettlementDetail } from '../../shared/types/other-income.type';
+import { TPostBillDiscountReq, TPostCreditNoteReq, TPostFreeItemReq, TPostInvoiceReq, TPostReceiptWithMatchesReq, TSettlementDetail } from '../../shared/types/other-income.type';
 
 @Injectable({
   providedIn: null,
@@ -32,6 +32,12 @@ export class SettlementContextService {
 
   refresh(): void {
     if (this.lastId !== null) this.load(this.lastId)
+  }
+
+  deleteSettlement(): Observable<void> {
+    const settlementId = this.settlement()?.id
+    if (settlementId == null) throw new Error('Settlement not loaded')
+    return this.api.deleteSettlement(settlementId)
   }
 
   addBillDiscount(req: TPostBillDiscountReq): Observable<{ id: number }> {
@@ -71,6 +77,38 @@ export class SettlementContextService {
     if (settlementId == null) throw new Error('Settlement not loaded')
     return this.api.postInvoice(settlementId, req).pipe(
       tap(({ id }) => this.settlement.update(s => s && { ...s, invoices: [...s.invoices, { id, ...req }] }))
+    )
+  }
+
+  addReceipt(req: TPostReceiptWithMatchesReq): Observable<{ id: number }> {
+    const settlementId = this.settlement()?.id
+    if (settlementId == null) throw new Error('Settlement not loaded')
+    return this.api.postReceipt(settlementId, req).pipe(
+      tap(() => this.refresh())
+    )
+  }
+
+  removeInvoice(itemId: number): Observable<void> {
+    const settlementId = this.settlement()?.id
+    if (settlementId == null) throw new Error('Settlement not loaded')
+    return this.api.deleteInvoice(settlementId, itemId).pipe(
+      tap(() => this.settlement.update(s => s && {
+        ...s,
+        invoices: s.invoices.filter(row => row.id !== itemId),
+        matches: s.matches.filter(m => m.invoiceId !== itemId),
+      }))
+    )
+  }
+
+  removeReceipt(itemId: number): Observable<void> {
+    const settlementId = this.settlement()?.id
+    if (settlementId == null) throw new Error('Settlement not loaded')
+    return this.api.deleteReceipt(settlementId, itemId).pipe(
+      tap(() => this.settlement.update(s => s && {
+        ...s,
+        receipts: s.receipts.filter(row => row.id !== itemId),
+        matches: s.matches.filter(m => m.receiptId !== itemId),
+      }))
     )
   }
 

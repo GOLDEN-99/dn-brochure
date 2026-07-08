@@ -43,6 +43,12 @@ export class BranchContractContextService implements ForContractData {
     if (this.lastId !== null) this.load(this.lastId)
   }
 
+  deleteContract(): Observable<void> {
+    const id = this.contract()?.id
+    if (id == null) throw new Error('Contract not loaded')
+    return this.api.deleteBranchContract(id)
+  }
+
   addBranch(id: number, req: TAddBranchReq): Observable<{ entryId: number; accruals_posted: number }> {
     return this.api.addBranch(id, req).pipe(tap(() => this.refresh()))
   }

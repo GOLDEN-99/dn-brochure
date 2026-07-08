@@ -1,0 +1,48 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table
+        class="table table-sm table-striped table-bordered mb-3"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>เลขที่</th>
+            <th>วันที่</th>
+            <th>ยอด</th>
+            <th>หมายเหตุ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of ctx.settlement()?.creditNotes ?? []; track row.id) {
+            <tr>
+              <td>{{ row.creditNumb }}</td>
+              <td>{{ row.creditDate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ row.creditAmount }}</td>
+              <td>{{ row.creditRemark }}</td>
+              <td>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="onDeleteCreditNote(row.id)"
+                >
+                  ลบ
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center text-muted py-2">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <other-income-append-credit-note
+      [submitting]="submittingCreditNote()"
+      (submitCreditNote)="onSubmitCreditNote($event)"
+    ></other-income-append-credit-note>
+  </div>
+</div>

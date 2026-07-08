@@ -17,7 +17,9 @@
   </div>
 
   <div class="col">
-    <label [htmlFor]="createSettlementForm.dateRange.startDate().name()" class="form-label small text-muted mb-1"
+    <label
+      [htmlFor]="createSettlementForm.dateRange.startDate().name()"
+      class="form-label small text-muted mb-1"
       >เริ่ม</label
     >
     <app-signal-datepicker
@@ -27,7 +29,9 @@
   </div>
 
   <div class="col">
-    <label [htmlFor]="createSettlementForm.dateRange.endDate().name()" class="form-label small text-muted mb-1"
+    <label
+      [htmlFor]="createSettlementForm.dateRange.endDate().name()"
+      class="form-label small text-muted mb-1"
       >จบ</label
     >
     <app-signal-datepicker
@@ -72,7 +76,9 @@
 </div>
 
 <div class="mb-2">
-  <span class="form-label small text-muted">เลือกรายการรายได้ที่จะเคลียร์ยอด</span>
+  <span class="form-label small text-muted"
+    >เลือกรายการรายได้ที่จะเคลียร์ยอด</span
+  >
   @if (openEntries().length === 0) {
     <div class="text-muted small">ไม่มีรายการที่เปิดอยู่</div>
   } @else {
@@ -110,7 +116,6 @@
     </table>
   }
 </div>
-
 <button
   type="button"
   class="btn btn-sm btn-primary"

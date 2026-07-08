@@ -11,8 +11,9 @@ type TContractListItem = {
 };
 
 export type TContractListControllerOptions<T extends TContractListItem> = {
-  fetch: () => Observable<T[]>;
+  fetch: (params: { compType?: string; startDate?: string; endDate?: string }) => Observable<T[]>;
   pageSize?: number;
+  defaultDateRange?: () => { startDate: string; endDate: string };
 };
 
 /**
@@ -24,8 +25,9 @@ export class ContractListController<T extends TContractListItem> {
   private readonly router = inject(Router);
   private readonly sub$ = new Subject<void>();
 
-  private readonly fetch: () => Observable<T[]>;
+  private readonly fetch: (params: { compType?: string; startDate?: string; endDate?: string }) => Observable<T[]>;
   private readonly pageSize;
+  private readonly defaultDateRange?: () => { startDate: string; endDate: string };
 
   items = signal<T[]>([]);
   loading = signal(false);
@@ -45,18 +47,22 @@ export class ContractListController<T extends TContractListItem> {
     return raw ? Number(raw) : null;
   });
   currentPage = computed(() => Math.max(1, Number(this.queryParamMap().get('page')) || 1));
+  startDateFilter = computed(() =>
+    this.queryParamMap().get('startDate') ?? this.defaultDateRange?.().startDate ?? ''
+  );
+  endDateFilter = computed(() =>
+    this.queryParamMap().get('endDate') ?? this.defaultDateRange?.().endDate ?? ''
+  );
 
   filteredItems = computed(() => {
     const compCode = this.searchCompCode().trim();
     const compName = this.searchCompName().trim().toLowerCase();
-    const type = this.compTypeFilter();
     const labelId = this.contractLabelFilter();
     return this.items().filter(item => {
-      const matchType = !type || item.compType === type;
       const matchCode = !compCode || item.compCode.includes(compCode);
       const matchName = !compName || (item.compName?.toLowerCase().includes(compName) ?? false);
       const matchLabel = !labelId || item.contractLabelId === labelId;
-      return matchType && matchCode && matchName && matchLabel;
+      return matchCode && matchName && matchLabel;
     });
   });
 
@@ -74,6 +80,7 @@ export class ContractListController<T extends TContractListItem> {
   constructor(options: TContractListControllerOptions<T>) {
     this.fetch = options.fetch;
     this.pageSize = signal(options.pageSize ?? 20);
+    this.defaultDateRange = options.defaultDateRange;
 
     inject(DestroyRef).onDestroy(() => {
       this.sub$.next();
@@ -83,10 +90,17 @@ export class ContractListController<T extends TContractListItem> {
     this.load();
   }
 
-  load(): void {
+  load(params?: { compType?: string; startDate?: string; endDate?: string }): void {
+    const compType = params?.compType ?? this.compTypeFilter();
+    const startDate = params?.startDate ?? this.startDateFilter();
+    const endDate = params?.endDate ?? this.endDateFilter();
     this.loading.set(true);
     this.error.set(null);
-    this.fetch()
+    this.fetch({
+      compType: compType || undefined,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
+    })
       .pipe(takeUntil(this.sub$))
       .subscribe({
         next: data => {
@@ -110,10 +124,21 @@ export class ContractListController<T extends TContractListItem> {
 
   setCompTypeFilter(value: 'DN' | 'HU'): void {
     this.setQueryParams({ compType: value }, { resetPage: true });
+    this.load({ compType: value });
   }
 
   setContractLabelFilter(value: number | null): void {
     this.setQueryParams({ contractLabelId: value }, { resetPage: true });
+  }
+
+  setStartDateFilter(value: string): void {
+    this.setQueryParams({ startDate: value || null }, { resetPage: true });
+    this.load({ startDate: value });
+  }
+
+  setEndDateFilter(value: string): void {
+    this.setQueryParams({ endDate: value || null }, { resetPage: true });
+    this.load({ endDate: value });
   }
 
   goToPage(page: number): void {

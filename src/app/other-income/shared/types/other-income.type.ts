@@ -44,6 +44,12 @@ export const CALC_TYPE = {
 
 export type TCalcType = (typeof CALC_TYPE)[keyof typeof CALC_TYPE]
 
+export const CALC_TYPE_LABEL: Record<TCalcType, string> = {
+  Flat: 'บาทแรก',
+  Cumulative: 'step บาทแรก',
+  Step: 'ขั้นบันได',
+}
+
 // ---------- Shared contract base ----------
 
 export type TContractBase = {
@@ -61,7 +67,19 @@ export type TContractBase = {
 
 // ---------- Track A — Order contracts ----------
 
-export type TOrderContractListItem = TContractBase & { supplierPairId: TMaybe<number> }
+export type TOrderContractCurrentBracket = {
+  id: number
+  min: number
+  max: TMaybe<number>
+  rate: number
+}
+
+export type TOrderContractListItem = TContractBase & {
+  supplierPairId: TMaybe<number>
+  cumulativeOrderAmount: number
+  calcType: TCalcType
+  currentBracket: TMaybe<TOrderContractCurrentBracket>
+}
 
 export type TOrderContractSpec = {
   id: number
@@ -131,7 +149,10 @@ export type TBranchContractDetail = TContractBase & {
 
 // ---------- Track C — Promo contracts ----------
 
-export type TPromoContractListItem = TContractBase
+export type TPromoContractListItem = TContractBase & {
+  entriesAmountTotal: number
+  settlementsSupplierIncomeTotal: number
+}
 
 export type TPromoContractDetail = TContractBase & {
   incomeTypes: TContractIncomeType[]
@@ -293,8 +314,11 @@ export type TSettlementOverviewItem = {
   remaining: number
   balanceState: 'OUTSTANDING' | 'SETTLED'
   reviewState: 'UNREVIEWED' | 'REVIEWED'
-  /** Optional until the backend ships the incomeTypes/incomeType addition proposed in docs/api/settlement-api.md. */
-  incomeTypes?: ('Bill' | 'FreeItem' | 'Invoice' | 'CreditNote')[]
+  compType: 'DN' | 'HU'
+  compCode: string
+  compName: string
+  incomeType: 'Bill' | 'FreeItem' | 'Invoice' | 'CreditNote'
+  incomeLabelName: string | null
 }
 
 export type TInvoiceStateRow = {
@@ -467,6 +491,11 @@ export type TFreeItemOrderLine = {
 export type TPostInvoiceReq = { invoiceNumb: string; invoiceAmount: number; invoiceDate: string; invoiceRemark: string }
 export type TPostReceiptReq = { receNumb: string; receAmount: number; receDate: string; receRemark: string }
 export type TPostMatchReq = { invoiceId: number; receiptId: number; matchedAmount: number }
+export type TPostReceiptWithMatchesReq = {
+  receipt: TPostReceiptReq;
+  invoiceMatches: Array<Pick<TPostMatchReq, 'invoiceId' | 'matchedAmount'>>
+}
+
 export type TPostCreditNoteReq = { creditNumb: string; creditAmount: number; creditDate: string; creditRemark: string }
 
 export type TPostSettlementReq = {

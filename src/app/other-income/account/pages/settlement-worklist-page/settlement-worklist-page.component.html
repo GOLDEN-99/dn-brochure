@@ -4,10 +4,10 @@
   <select
     class="form-select"
     style="max-width: 200px"
-    [ngModel]="incomeType() ?? 'all'"
+    [ngModel]="filters().incomeType"
     (ngModelChange)="setIncomeType($event)"
   >
-    <option value="all">ทุกประเภทรายได้</option>
+    <option [ngValue]="null">ทุกประเภทรายได้</option>
     <option value="Invoice">{{ incomeTypeLabel.Invoice }}</option>
     <option value="CreditNote">{{ incomeTypeLabel.CreditNote }}</option>
     <option value="Bill">{{ incomeTypeLabel.Bill }}</option>
@@ -16,7 +16,7 @@
   <select
     class="form-select"
     style="max-width: 160px"
-    [ngModel]="contractType()"
+    [ngModel]="filters().contractType"
     (ngModelChange)="setContractType($event)"
   >
     <option [ngValue]="null">ทุกสัญญา</option>
@@ -26,8 +26,18 @@
   </select>
   <select
     class="form-select"
+    style="max-width: 120px"
+    [ngModel]="filters().compType"
+    (ngModelChange)="setCompType($event)"
+  >
+    <option [ngValue]="null">ทุก Comp</option>
+    <option value="DN">{{ compTypeLabel.DN }}</option>
+    <option value="HU">{{ compTypeLabel.HU }}</option>
+  </select>
+  <select
+    class="form-select"
     style="max-width: 180px"
-    [ngModel]="balanceState()"
+    [ngModel]="filters().balanceState"
     (ngModelChange)="setBalanceState($event)"
   >
     <option [ngValue]="null">ทุกสถานะยอด</option>
@@ -37,13 +47,21 @@
   <select
     class="form-select"
     style="max-width: 180px"
-    [ngModel]="reviewState()"
+    [ngModel]="filters().reviewState"
     (ngModelChange)="setReviewState($event)"
   >
     <option [ngValue]="null">ทุกสถานะตรวจสอบ</option>
     <option value="UNREVIEWED">{{ reviewStateLabel.UNREVIEWED }}</option>
     <option value="REVIEWED">{{ reviewStateLabel.REVIEWED }}</option>
   </select>
+  <input
+    type="search"
+    class="form-control"
+    style="max-width: 220px"
+    placeholder="ค้นหาชื่อ/รหัสซัพ"
+    [ngModel]="searchText()"
+    (ngModelChange)="searchText.set($event)"
+  />
   <button class="btn btn-outline-secondary" (click)="refresh()">
     <i class="bi bi-arrow-clockwise"></i>
   </button>
@@ -68,8 +86,8 @@
   <table class="table table-striped table-bordered" style="font-size: 12px">
     <thead>
       <tr>
-        <th>#</th>
         <th>ประเภทสัญญา</th>
+        <th>ซัพพลายเออร์</th>
         <th>รอบ</th>
         <th>เริ่ม</th>
         <th>จบ</th>
@@ -83,14 +101,19 @@
       </tr>
     </thead>
     <tbody>
-      @for (item of items(); track $index) {
+      @for (item of filteredItems(); track $index) {
         <tr>
-          <td>{{ item.id }}</td>
           <td>{{ contractTypeLabel[item.contractType] }}</td>
+          <td>
+            <span class="badge text-bg-light me-1">{{ item.compType }}</span>
+            {{ item.compCode }} {{ item.compName }}
+          </td>
           <td>{{ item.periodName }}</td>
           <td>{{ item.startDate | date: "dd/MM/yyyy" }}</td>
           <td>{{ item.endDate | date: "dd/MM/yyyy" }}</td>
-          <td>{{ formatIncomeTypes(item.incomeTypes) }}</td>
+          <td>
+            {{ item.incomeLabelName ?? incomeTypeLabel[item.incomeType] }}
+          </td>
           <td class="text-end">{{ item.supplierIncome | number: "1.2-2" }}</td>
           <td class="text-end">{{ item.appendedTotal | number: "1.2-2" }}</td>
           <td class="text-end">{{ item.remaining | number: "1.2-2" }}</td>
@@ -118,6 +141,7 @@
                 'settlements',
                 item.id,
               ]"
+              [queryParams]="{ incomeType: item.incomeType }"
               class="btn btn-sm btn-outline-primary"
             >
               รายละเอียด
@@ -126,7 +150,7 @@
         </tr>
       } @empty {
         <tr>
-          <td colspan="12" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
+          <td colspan="13" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
         </tr>
       }
     </tbody>

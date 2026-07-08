@@ -25,7 +25,12 @@
         <a
           class="nav-link"
           routerLink="./"
-          [routerLinkActiveOptions]="{ exact: true }"
+          [routerLinkActiveOptions]="{
+            paths: 'exact',
+            queryParams: 'ignored',
+            fragment: 'ignored',
+            matrixParams: 'ignored',
+          }"
           [routerLinkActive]="'active'"
           (click)="closeSidebarOnMobile()"
         >
