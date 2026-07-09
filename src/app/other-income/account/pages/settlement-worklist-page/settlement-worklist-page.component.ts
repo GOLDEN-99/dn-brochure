@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { OtherIncomeAccountApiService } from '../../services/other-income-account-api.service';
 import { TSettlementOverviewItem } from '../../../shared/types/other-income.type';
 import { BALANCE_STATE_LABEL, COMP_TYPE_LABEL, CONTRACT_TYPE_PATH, CONTRACT_TYPE_LABEL, INCOME_TYPE_LABEL, REVIEW_STATE_LABEL } from '../../../shared/libs/settlement-labels';
+import { XLSXReportService, TAoaConfig } from '../../../../service/xlsx-report/xlsx-report.service';
 
 const settlementFilterSchema = z.object({
   contractType: z.enum(['ORDER', 'BRANCH', 'PROMO']).nullable().default(null).catch(null),
@@ -27,6 +28,25 @@ const settlementFilterSchema = z.object({
  * accept the filters as query params), so a filter change re-fetches rather
  * than re-slicing a client-held array.
  */
+const settlementExportConfig: TAoaConfig<TSettlementOverviewItem> = {
+  sheetName: 'Settlements',
+  config: [
+    { header: 'ประเภทสัญญา', valueMapper: row => CONTRACT_TYPE_LABEL[row.contractType] },
+    { header: 'Comp', valueMapper: row => row.compType },
+    { header: 'รหัสซัพพลายเออร์', valueMapper: row => row.compCode },
+    { header: 'ชื่อซัพพลายเออร์', valueMapper: row => row.compName },
+    { header: 'รอบ', valueMapper: row => row.periodName },
+    { header: 'เริ่ม', valueMapper: row => row.startDate?.slice(0, 10) ?? '' },
+    { header: 'จบ', valueMapper: row => row.endDate?.slice(0, 10) ?? '' },
+    { header: 'ประเภทรายได้', valueMapper: row => row.incomeLabelName ?? INCOME_TYPE_LABEL[row.incomeType] },
+    { header: 'ยอดซัพพลายเออร์', valueMapper: row => row.supplierIncome },
+    { header: 'ยอดแนบเอกสาร', valueMapper: row => row.appendedTotal },
+    { header: 'คงเหลือ', valueMapper: row => row.remaining },
+    { header: 'สถานะยอด', valueMapper: row => BALANCE_STATE_LABEL[row.balanceState] },
+    { header: 'สถานะตรวจสอบ', valueMapper: row => REVIEW_STATE_LABEL[row.reviewState] },
+  ],
+}
+
 @Component({
   selector: 'app-settlement-worklist-page',
   imports: [RouterLink, DatePipe, DecimalPipe, FormsModule],
@@ -37,6 +57,7 @@ export class SettlementWorklistPageComponent {
   private readonly api = inject(OtherIncomeAccountApiService)
   private readonly route = inject(ActivatedRoute)
   private readonly router = inject(Router)
+  private readonly xlsx = inject(XLSXReportService)
 
   readonly incomeTypeLabel = INCOME_TYPE_LABEL
   readonly contractTypeLabel = CONTRACT_TYPE_LABEL
@@ -101,6 +122,14 @@ export class SettlementWorklistPageComponent {
 
   refresh(): void {
     this.refreshTrigger$.next()
+  }
+
+  exportExcel(): void {
+    const mapper = this.xlsx.convertJsonToWorkbook<TSettlementOverviewItem>(settlementExportConfig)
+    const exporter = this.xlsx.exportWorkbook(`รายการชำระ ${new Date().toISOString().split('T')[0]}`)
+    mapper(this.filteredItems()).pipe(
+      switchMap(wb => exporter(wb))
+    ).subscribe()
   }
 
   setContractType(value: string): void {

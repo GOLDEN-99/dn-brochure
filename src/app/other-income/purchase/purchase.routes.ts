@@ -30,6 +30,12 @@ export const PURCHASE_ROUTES: Route = {
                 .catch(handleLazyLoadError('purchase order-contracts-create'))
         },
         {
+            path: 'order/create-cross',
+            loadComponent: () => import('../purchase/components/pages/order-contract-create-cross-page/order-contract-create-cross-page.component')
+                .then(c => c.OrderContractCreateCrossPageComponent)
+                .catch(handleLazyLoadError('purchase order-contracts-create-cross'))
+        },
+        {
             path: 'order/:id',
             component: OrderContractLayoutComponent,
             providers: [OrderContractContextService],
@@ -73,12 +79,7 @@ export const PURCHASE_ROUTES: Route = {
                 },
             ]
         },
-        {
-            path: 'order/create-cross',
-            loadComponent: () => import('../purchase/components/pages/order-contract-create-cross-page/order-contract-create-cross-page.component')
-                .then(c => c.OrderContractCreateCrossPageComponent)
-                .catch(handleLazyLoadError('purchase order-contracts-create-cross'))
-        },
+
         {
             path: 'branch',
             loadComponent: () => import('../purchase/components/pages/branch-contract-list-page/branch-contract-list-page.component')

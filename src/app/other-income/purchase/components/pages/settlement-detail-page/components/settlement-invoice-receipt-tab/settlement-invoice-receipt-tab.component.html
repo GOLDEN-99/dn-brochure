@@ -1,6 +1,13 @@
 <div class="card mb-3">
   <div class="card-header fw-bold">ใบแจ้งหนี้</div>
   <div class="card-body">
+    @if (canAppend()) {
+      <other-income-append-invoice
+        [openSettlement]="openSettlementAmount()"
+        [submitting]="submittingInvoice()"
+        (submitInvoice)="onSubmitInvoice($event)"
+      ></other-income-append-invoice>
+    }
     <div class="table-responsive">
       <table
         class="table table-sm table-striped table-bordered mb-3"
@@ -38,12 +45,14 @@
               </td>
               <td>{{ row.invoiceRemark }}</td>
               <td>
-                <button
-                  class="btn btn-sm btn-outline-danger"
-                  (click)="onDeleteInvoice(row.id)"
-                >
-                  ลบ
-                </button>
+                @if (canAppend()) {
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="onDeleteInvoice(row.id)"
+                  >
+                    ลบ
+                  </button>
+                }
               </td>
             </tr>
           } @empty {
@@ -56,17 +65,20 @@
         </tbody>
       </table>
     </div>
-    <other-income-append-invoice
-      [openSettlement]="openSettlementAmount()"
-      [submitting]="submittingInvoice()"
-      (submitInvoice)="onSubmitInvoice($event)"
-    ></other-income-append-invoice>
   </div>
 </div>
 
 <div class="card mb-3">
   <div class="card-header fw-bold">ใบเสร็จ</div>
   <div class="card-body">
+    @if (canAppend()) {
+      <other-income-append-receipt
+        [submitting]="submittingReceipt()"
+        [invoices]="ctx.settlement()?.invoices ?? []"
+        [matches]="ctx.settlement()?.matches ?? []"
+        (submitReceipt)="onSubmitReceipt($event)"
+      ></other-income-append-receipt>
+    }
     <div class="table-responsive">
       <table
         class="table table-sm table-striped table-bordered mb-3"
@@ -104,12 +116,14 @@
               </td>
               <td>{{ row.receRemark }}</td>
               <td>
-                <button
-                  class="btn btn-sm btn-outline-danger"
-                  (click)="onDeleteReceipt(row.id)"
-                >
-                  ลบ
-                </button>
+                @if (canAppend()) {
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="onDeleteReceipt(row.id)"
+                  >
+                    ลบ
+                  </button>
+                }
               </td>
             </tr>
           } @empty {
@@ -122,11 +136,5 @@
         </tbody>
       </table>
     </div>
-    <other-income-append-receipt
-      [submitting]="submittingReceipt()"
-      [invoices]="ctx.settlement()?.invoices ?? []"
-      [matches]="ctx.settlement()?.matches ?? []"
-      (submitReceipt)="onSubmitReceipt($event)"
-    ></other-income-append-receipt>
   </div>
 </div>

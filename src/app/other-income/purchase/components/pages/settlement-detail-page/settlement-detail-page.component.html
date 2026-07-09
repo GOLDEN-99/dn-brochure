@@ -17,6 +17,7 @@
   <app-settlement-summary-card
     [settlement]="settlement"
     [balance]="balance()"
+    [isAccount]="isAccount()"
     (deleteSettlement)="onDeleteSettlement()"
   ></app-settlement-summary-card>
 
@@ -89,20 +90,25 @@
       @case ("bill") {
         <app-settlement-bill-tab
           [search]="searchBillDiscounts"
+          [canAppend]="!isAccount()"
         ></app-settlement-bill-tab>
       }
       @case ("freeItem") {
         <app-settlement-free-item-tab
           [search]="searchFreeProducts"
+          [canAppend]="!isAccount()"
         ></app-settlement-free-item-tab>
       }
       @case ("invoice") {
         <app-settlement-invoice-receipt-tab
           [openSettlementAmount]="openSettlementAmount()"
+          [canAppend]="isAccount()"
         ></app-settlement-invoice-receipt-tab>
       }
       @case ("creditNote") {
-        <app-settlement-credit-note-tab></app-settlement-credit-note-tab>
+        <app-settlement-credit-note-tab
+          [canAppend]="isAccount()"
+        ></app-settlement-credit-note-tab>
       }
     }
   } @else {

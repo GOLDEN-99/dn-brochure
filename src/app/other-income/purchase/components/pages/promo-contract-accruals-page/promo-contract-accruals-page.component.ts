@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, inject, input, signal, viewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { PromoContractContextService } from '../../../services/promo-contract-context.service';
 import { ToastService } from '../../../../../service/toast/toast.service';
@@ -14,6 +14,8 @@ import { TPostPromoAccrualReq } from '../../../../shared/types/other-income.type
 export class PromoContractAccrualsPageComponent {
   private readonly toast = inject(ToastService)
   readonly ctx = inject(PromoContractContextService)
+
+  isAccount = input(false)
 
   addPromoAccrualForm = viewChild(AddPromoAccrualFormComponent)
   submittingAddPromoAccrual = signal(false)

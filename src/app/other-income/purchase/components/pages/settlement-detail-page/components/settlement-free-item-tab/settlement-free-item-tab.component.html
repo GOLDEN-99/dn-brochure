@@ -1,5 +1,12 @@
 <div class="card mb-3">
   <div class="card-body">
+    @if (canAppend()) {
+      <other-income-append-free-item
+        [submitting]="submittingFreeItem()"
+        [search]="search()"
+        (submitFreeItems)="onSubmitFreeItems($event)"
+      ></other-income-append-free-item>
+    }
     <div class="table-responsive">
       <table
         class="table table-sm table-striped table-bordered mb-3"
@@ -24,12 +31,14 @@
               <td>{{ row.subtotalAmount }}</td>
               <td>{{ row.remark }}</td>
               <td>
-                <button
-                  class="btn btn-sm btn-outline-danger"
-                  (click)="onDeleteFreeItem(row.id)"
-                >
-                  ลบ
-                </button>
+                @if (canAppend()) {
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="onDeleteFreeItem(row.id)"
+                  >
+                    ลบ
+                  </button>
+                }
               </td>
             </tr>
           } @empty {
@@ -42,10 +51,5 @@
         </tbody>
       </table>
     </div>
-    <other-income-append-free-item
-      [submitting]="submittingFreeItem()"
-      [search]="search()"
-      (submitFreeItems)="onSubmitFreeItems($event)"
-    ></other-income-append-free-item>
   </div>
 </div>

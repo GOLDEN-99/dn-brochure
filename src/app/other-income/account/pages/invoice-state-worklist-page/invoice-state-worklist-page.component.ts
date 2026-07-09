@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EMPTY, merge, Subject, switchMap } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
@@ -10,11 +10,28 @@ import { z } from 'zod';
 import { OtherIncomeAccountApiService } from '../../services/other-income-account-api.service';
 import { TInvoiceStateRow } from '../../../shared/types/other-income.type';
 import { CONTRACT_TYPE_PATH, CONTRACT_TYPE_LABEL } from '../../../shared/libs/settlement-labels';
+import { XLSXReportService, TAoaConfig } from '../../../../service/xlsx-report/xlsx-report.service';
 
 const invoiceFilterSchema = z.object({
   contractType: z.enum(['ORDER', 'BRANCH', 'PROMO']).nullable().default(null).catch(null),
   invoiceState: z.enum(['UNMATCHED', 'MATCHED']).nullable().default(null).catch(null),
 })
+
+const invoiceStateExportConfig: TAoaConfig<TInvoiceStateRow> = {
+  sheetName: 'Invoice States',
+  config: [
+    { header: 'รหัสซัพ', valueMapper: row => row.compCode },
+    { header: 'ชื่อซัพ', valueMapper: row => row.compName },
+    { header: 'ประเภทสัญญา', valueMapper: row => CONTRACT_TYPE_LABEL[row.contractType] },
+    { header: 'ประเภทกิจกรรม', valueMapper: row => row.contractLabelName },
+    { header: 'เลขที่ใบแจ้งหนี้', valueMapper: row => row.invoiceNumb },
+    { header: 'ยอดใบแจ้งหนี้', valueMapper: row => row.invoiceAmount },
+    { header: 'ยอดจับคู่แล้ว', valueMapper: row => row.matchedAmount },
+    { header: 'สถานะ', valueMapper: row => row.invoiceState },
+    { header: 'เลขที่ใบเสร็จ', valueMapper: row => row.receiptNumbs ?? '' },
+    { header: 'รับล่าสุด', valueMapper: row => row.lastReceiptDate ?? '' },
+  ],
+}
 
 /**
  * Filters are URL-driven (query params), not local signals — same pattern as
@@ -25,7 +42,7 @@ const invoiceFilterSchema = z.object({
  */
 @Component({
   selector: 'app-invoice-state-worklist-page',
-  imports: [RouterLink, DecimalPipe, FormsModule],
+  imports: [RouterLink, DatePipe, DecimalPipe, FormsModule],
   templateUrl: './invoice-state-worklist-page.component.html',
   styleUrl: './invoice-state-worklist-page.component.scss',
 })
@@ -33,6 +50,7 @@ export class InvoiceStateWorklistPageComponent {
   private readonly api = inject(OtherIncomeAccountApiService)
   private readonly route = inject(ActivatedRoute)
   private readonly router = inject(Router)
+  private readonly xlsx = inject(XLSXReportService)
 
   readonly contractTypeLabel = CONTRACT_TYPE_LABEL
   readonly contractTypePath = CONTRACT_TYPE_PATH
@@ -79,12 +97,24 @@ export class InvoiceStateWorklistPageComponent {
     this.refreshTrigger$.next()
   }
 
+  exportExcel(): void {
+    const mapper = this.xlsx.convertJsonToWorkbook<TInvoiceStateRow>(invoiceStateExportConfig)
+    const exporter = this.xlsx.exportWorkbook(`ใบแจ้งหนี้ค้างจับคู่ ${new Date().toISOString().split('T')[0]}`)
+    mapper(this.items()).pipe(
+      switchMap(wb => exporter(wb))
+    ).subscribe()
+  }
+
   setContractType(value: string): void {
     this.setQueryParams({ contractType: value || null })
   }
 
   setInvoiceState(value: string): void {
     this.setQueryParams({ invoiceState: value })
+  }
+
+  isPartiallyReceived(row: TInvoiceStateRow): boolean {
+    return row.invoiceState === 'UNMATCHED' && row.matchedAmount > 0
   }
 
   private setQueryParams(params: Record<string, string | null>): void {

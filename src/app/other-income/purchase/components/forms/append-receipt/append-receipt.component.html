@@ -84,48 +84,58 @@
       [inputFormatter]="formatInvoice"
       (selectItem)="onSelectInvoice($event)"
     />
-    <!-- <div style="min-height: 1.25rem" class="mt-1">
-      <app-form-alert-text [formState]="appendReceiptForm.matchInvoice()" />
-    </div> -->
-  </div>
-
-  <!-- <div class="col">
-    <label class="form-label small text-muted mb-1">ยอดคงเหลือของใบแจ้งหนี้</label>
-    <input
-      type="text"
-      class="form-control form-control-sm"
-      readonly
-      [ngModel]="appendReceiptForm.matchInvoice().value()?.remainingAmount ?? '-'"
-    />
     <div style="min-height: 1.25rem" class="mt-1"></div>
   </div>
 
-  <div class="col">
-    <label
-      [htmlFor]="appendReceiptForm.matchAmount().name()"
-      class="form-label small text-muted mb-1"
-      >ยอดที่จับคู่</label
-    >
-    <div class="d-flex gap-2">
-      <input
-        [id]="appendReceiptForm.matchAmount().name()"
-        type="number"
-        class="form-control form-control-sm"
-        [formField]="appendReceiptForm.matchAmount"
-      />
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-primary text-nowrap"
-        [disabled]="!canAddMatch()"
-        (click)="addMatch()"
+  @if (pendingMatchForm.invoice().value(); as pendingInvoice) {
+    <div class="col">
+      <label for="pending-match-remaining" class="form-label small text-muted mb-1"
+        >ยอดคงเหลือของใบแจ้งหนี้</label
       >
-        เพิ่มรายการ
-      </button>
+      <input
+        id="pending-match-remaining"
+        type="text"
+        class="form-control form-control-sm"
+        readonly
+        [ngModel]="pendingInvoice.remainingAmount"
+      />
+      <div style="min-height: 1.25rem" class="mt-1"></div>
     </div>
-    <div style="min-height: 1.25rem" class="mt-1">
-      <app-form-alert-text [formState]="appendReceiptForm.matchAmount()" />
+
+    <div class="col">
+      <label
+        [htmlFor]="pendingMatchForm.matchAmount().name()"
+        class="form-label small text-muted mb-1"
+        >ยอดที่จับคู่</label
+      >
+      <div class="d-flex gap-2">
+        <input
+          [id]="pendingMatchForm.matchAmount().name()"
+          type="number"
+          class="form-control form-control-sm"
+          [formField]="pendingMatchForm.matchAmount"
+        />
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary text-nowrap"
+          [disabled]="!canConfirmMatch()"
+          (click)="addMatch()"
+        >
+          เพิ่มรายการ
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary text-nowrap"
+          (click)="cancelPendingMatch()"
+        >
+          ยกเลิก
+        </button>
+      </div>
+      <div style="min-height: 1.25rem" class="mt-1">
+        <app-form-alert-text [formState]="pendingMatchForm.matchAmount()" />
+      </div>
     </div>
-  </div> -->
+  }
 </div>
 
 <div class="table-responsive mb-2">

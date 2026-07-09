@@ -49,6 +49,7 @@ export const calcSpecSchema: SchemaFn<TCalcSpecForm> = (schema) => {
 }
 
 export const pairCompSchema: SchemaFn<TPairComp> = (schema) => {
+    required(schema.supplierPairId, { message: 'กรุณาเลือกคู่ซัพพลายเออร์' })
     apply(schema.dnComp, compSchema)
     readonly(schema.dnComp)
     apply(schema.huComp, compSchema)
@@ -243,6 +244,7 @@ export type TBranchSpecForm = {
 }
 
 export type TPairComp = {
+    supplierPairId: number | null;
     dnComp: TOtherIncomeComp & { compType: 'DN' };
     huComp: TOtherIncomeComp & { compType: 'HU' };
 }
@@ -350,9 +352,11 @@ export function mapOrderContractFormToSpecReq(state: TCreateOrderContractForm): 
 }
 
 export function mapPairedOrderContractFormToCreateReq(state: TCreatePairedOrderContractForm): TCreatePairedOrderContractReq {
-    const { excludeFlags: f, calcSpec: c, head: h, products } = state
+    const { excludeFlags: f, calcSpec: c, head: h, products, comps } = state
     return {
-        supplierPairId: 0, // caller must supply supplierPairId before submitting
+        supplierPairId: comps.supplierPairId!,
+        dnCompCode: comps.dnComp.compCode,
+        huCompCode: comps.huComp.compCode,
         contractLabelId: h.contractLabel!.id,
         settlementPeriod: h.settlementPeriod!,
         startDate: formatDate(h.dateRange.startDate),

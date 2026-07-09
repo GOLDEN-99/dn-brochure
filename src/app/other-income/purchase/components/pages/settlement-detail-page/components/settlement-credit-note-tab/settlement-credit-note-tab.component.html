@@ -1,5 +1,11 @@
 <div class="card mb-3">
   <div class="card-body">
+    @if (canAppend()) {
+      <other-income-append-credit-note
+        [submitting]="submittingCreditNote()"
+        (submitCreditNote)="onSubmitCreditNote($event)"
+      ></other-income-append-credit-note>
+    }
     <div class="table-responsive">
       <table
         class="table table-sm table-striped table-bordered mb-3"
@@ -22,12 +28,14 @@
               <td>{{ row.creditAmount }}</td>
               <td>{{ row.creditRemark }}</td>
               <td>
-                <button
-                  class="btn btn-sm btn-outline-danger"
-                  (click)="onDeleteCreditNote(row.id)"
-                >
-                  ลบ
-                </button>
+                @if (canAppend()) {
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="onDeleteCreditNote(row.id)"
+                  >
+                    ลบ
+                  </button>
+                }
               </td>
             </tr>
           } @empty {
@@ -40,9 +48,5 @@
         </tbody>
       </table>
     </div>
-    <other-income-append-credit-note
-      [submitting]="submittingCreditNote()"
-      (submitCreditNote)="onSubmitCreditNote($event)"
-    ></other-income-append-credit-note>
   </div>
 </div>

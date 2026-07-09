@@ -13,13 +13,15 @@
           {{ bal.label }}
         </span>
       }
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-danger"
-        (click)="deleteSettlement.emit()"
-      >
-        ลบงวดชำระ
-      </button>
+      @if (!isAccount()) {
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-danger"
+          (click)="deleteSettlement.emit()"
+        >
+          ลบงวดชำระ
+        </button>
+      }
     </div>
   </div>
   <div class="card-body">

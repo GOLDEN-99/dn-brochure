@@ -57,41 +57,43 @@
     </div>
   </div>
 
-  <!-- CN correction -->
-  <div class="card mb-3">
-    <div class="card-header fw-bold">บันทึก CN (ยกเลิกคำสั่งซื้อ)</div>
-    <div class="card-body">
-      <other-income-cn-correction-form
-        [contractId]="contract.id"
-        [products]="contract.products"
-        [submitting]="submittingCnCorrection()"
-        (submitCorrection)="onSubmitCnCorrection($event)"
-      ></other-income-cn-correction-form>
+  @if (!isAccount()) {
+    <!-- CN correction -->
+    <div class="card mb-3">
+      <div class="card-header fw-bold">บันทึก CN (ยกเลิกคำสั่งซื้อ)</div>
+      <div class="card-body">
+        <other-income-cn-correction-form
+          [contractId]="contract.id"
+          [products]="contract.products"
+          [submitting]="submittingCnCorrection()"
+          (submitCorrection)="onSubmitCnCorrection($event)"
+        ></other-income-cn-correction-form>
+      </div>
     </div>
-  </div>
 
-  <!-- Lag correction -->
-  <div class="card mb-3">
-    <div class="card-header fw-bold">บันทึก Lag Correction (ข้อมูลมาช้า)</div>
-    <div class="card-body">
-      <other-income-lag-correction-form
-        [contractId]="contract.id"
-        [submitting]="submittingLagCorrection()"
-        (submitCorrection)="onSubmitLagCorrection($event)"
-      ></other-income-lag-correction-form>
+    <!-- Lag correction -->
+    <div class="card mb-3">
+      <div class="card-header fw-bold">บันทึก Lag Correction (ข้อมูลมาช้า)</div>
+      <div class="card-body">
+        <other-income-lag-correction-form
+          [contractId]="contract.id"
+          [submitting]="submittingLagCorrection()"
+          (submitCorrection)="onSubmitLagCorrection($event)"
+        ></other-income-lag-correction-form>
+      </div>
     </div>
-  </div>
 
-  <!-- Manual correction -->
-  <div class="card mb-3">
-    <div class="card-header fw-bold">บันทึก Manual Correction (กรณีอื่นๆ)</div>
-    <div class="card-body">
-      <other-income-manual-correction-form
-        [contractId]="contract.id"
-        [contractType]="'ORDER'"
-        [submitting]="submittingManualCorrection()"
-        (submitCorrection)="onSubmitManualCorrection($event)"
-      ></other-income-manual-correction-form>
+    <!-- Manual correction -->
+    <div class="card mb-3">
+      <div class="card-header fw-bold">บันทึก Manual Correction (กรณีอื่นๆ)</div>
+      <div class="card-body">
+        <other-income-manual-correction-form
+          [contractId]="contract.id"
+          [contractType]="'ORDER'"
+          [submitting]="submittingManualCorrection()"
+          (submitCorrection)="onSubmitManualCorrection($event)"
+        ></other-income-manual-correction-form>
+      </div>
     </div>
-  </div>
+  }
 }

@@ -17,6 +17,7 @@ export class SettlementInvoiceReceiptTabComponent {
 
   /** Remaining open balance for the settlement, used as the invoice-append form's default amount. */
   openSettlementAmount = input.required<number>()
+  canAppend = input(false)
 
   appendInvoiceForm = viewChild(AppendInvoiceComponent)
   submittingInvoice = signal(false)

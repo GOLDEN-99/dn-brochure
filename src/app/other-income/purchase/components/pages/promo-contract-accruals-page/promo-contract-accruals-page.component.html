@@ -1,15 +1,17 @@
 @if (ctx.contract(); as contract) {
-  <!-- Add promo accrual -->
-  <div class="card mb-3">
-    <div class="card-header fw-bold">บันทึกรายได้ Promo รายเดือน</div>
-    <div class="card-body">
-      <other-income-add-promo-accrual-form
-        [contractId]="contract.id"
-        [submitting]="submittingAddPromoAccrual()"
-        (submitAddPromoAccrual)="onSubmitAddPromoAccrual($event)"
-      ></other-income-add-promo-accrual-form>
+  @if (!isAccount()) {
+    <!-- Add promo accrual -->
+    <div class="card mb-3">
+      <div class="card-header fw-bold">บันทึกรายได้ Promo รายเดือน</div>
+      <div class="card-body">
+        <other-income-add-promo-accrual-form
+          [contractId]="contract.id"
+          [submitting]="submittingAddPromoAccrual()"
+          (submitAddPromoAccrual)="onSubmitAddPromoAccrual($event)"
+        ></other-income-add-promo-accrual-form>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Income entries -->
   <div class="card mb-3">
@@ -42,7 +44,7 @@
                 </span>
               </td>
               <td>
-                @if (!entry.settlementId) {
+                @if (!isAccount() && !entry.settlementId) {
                   <button
                     class="btn btn-sm btn-outline-danger"
                     (click)="onDeletePromoAccrual(entry.id)"

@@ -10,6 +10,11 @@ export type TPartialMatchInvoice = {
     matchAmount: string
 }
 
+export type TPendingMatch = {
+    invoice: TInvoiceWithRemaining | null
+    matchAmount: number
+}
+
 export type TCreateReceiptForm = {
     receNumb: string
     receAmount: string

@@ -4,8 +4,7 @@ import { OtherIncomeNotLightPairService } from '../../../services/other-income-n
 import { form, FormField } from '@angular/forms/signals';
 import { StepFormComponent } from "../../forms/step-form/step-form.component";
 import { OtherIncomeIncomeSelectComponent } from "../../../../shared/components/other-income-income-select/other-income-income-select.component";
-import { JsonPipe } from '@angular/common';
-import { CreatePairCompanyPickerComponent } from "../../forms/create-pair-company-picker/create-pair-company-picker.component";
+import { CreatePairSupplierPickerComponent } from "../../forms/create-pair-supplier-picker/create-pair-supplier-picker.component";
 import { CreatePairHeadComponent } from "../../forms/create-pair-head/create-pair-head.component";
 import { CreatePairProductPickerComponent } from "../../forms/create-pair-product-picker/create-pair-product-picker.component";
 import { ProductConditionFormComponent } from "../../forms/product-condition-form/product-condition-form.component";
@@ -13,7 +12,7 @@ import { createPairedOrderContractSchema, TCreatePairedOrderContractForm } from 
 
 @Component({
   selector: 'app-create-paired-order-contract',
-  imports: [FormField, JsonPipe, StepFormComponent, OtherIncomeIncomeSelectComponent, CreatePairCompanyPickerComponent, CreatePairHeadComponent, CreatePairProductPickerComponent, ProductConditionFormComponent],
+  imports: [FormField, StepFormComponent, OtherIncomeIncomeSelectComponent, CreatePairSupplierPickerComponent, CreatePairHeadComponent, CreatePairProductPickerComponent, ProductConditionFormComponent],
   templateUrl: './create-paired-order-contract.component.html',
   styles: '',
 })
@@ -37,8 +36,9 @@ export class CreatePairedOrderContractComponent {
     },
     products: [],
     comps: {
-      dnComp: { compCode: '', compName: '', compName2: '' },
-      huComp: { compCode: '', compName: '', compName2: '' }
+      supplierPairId: null,
+      dnComp: { compCode: '', compName: '', compName2: '', compType: 'DN' },
+      huComp: { compCode: '', compName: '', compName2: '', compType: 'HU' }
     },
     excludeFlags: {
       excludeDc: false, excludeRebate: false, excludeComp: false, excludeInce: false, excludeVat: false

@@ -1,5 +1,12 @@
 <div class="card mb-3">
   <div class="card-body">
+    @if (canAppend()) {
+      <other-income-append-bill-discount
+        [submitting]="submittingBillDiscount()"
+        [search]="search()"
+        (submitBillDiscounts)="onSubmitBillDiscounts($event)"
+      ></other-income-append-bill-discount>
+    }
     <div class="table-responsive">
       <table
         class="table table-sm table-striped table-bordered mb-3"
@@ -22,12 +29,14 @@
               <td>{{ row.subtotalAmount }}</td>
               <td>{{ row.remark }}</td>
               <td>
-                <button
-                  class="btn btn-sm btn-outline-danger"
-                  (click)="onDeleteBillDiscount(row.id)"
-                >
-                  ลบ
-                </button>
+                @if (canAppend()) {
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="onDeleteBillDiscount(row.id)"
+                  >
+                    ลบ
+                  </button>
+                }
               </td>
             </tr>
           } @empty {
@@ -40,10 +49,5 @@
         </tbody>
       </table>
     </div>
-    <other-income-append-bill-discount
-      [submitting]="submittingBillDiscount()"
-      [search]="search()"
-      (submitBillDiscounts)="onSubmitBillDiscounts($event)"
-    ></other-income-append-bill-discount>
   </div>
 </div>

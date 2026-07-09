@@ -65,6 +65,14 @@
   <button class="btn btn-outline-secondary" (click)="refresh()">
     <i class="bi bi-arrow-clockwise"></i>
   </button>
+  <button
+    class="btn btn-outline-success ms-auto"
+    [disabled]="loading() || filteredItems().length === 0"
+    (click)="exportExcel()"
+  >
+    <i class="bi bi-file-earmark-excel"></i>
+    Export Excel
+  </button>
 </div>
 
 @if (loading()) {

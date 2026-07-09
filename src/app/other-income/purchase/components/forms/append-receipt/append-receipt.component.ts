@@ -7,8 +7,8 @@ import { SignalDatepickerComponent } from '../../../../../components/crm-promoti
 import { FormAlertTextComponent } from '../../../../../components/crm-promotion/form-alert-text.component';
 import { ngbDateToIso } from '../../../../shared/libs/date-time';
 import { TOtherIncomeInvoice, TOtherIncomeMatching, TPostMatchReq, TPostReceiptReq } from '../../../../shared/types/other-income.type';
-import { TInvoiceWithRemaining } from './createReceiptForm.type';
-import { AppendReceiptForm, appendReceiptSchema } from './append-receipt';
+import { TInvoiceWithRemaining, TPendingMatch } from './createReceiptForm.type';
+import { AppendReceiptForm, appendReceiptSchema, pendingMatchSchema } from './append-receipt';
 
 /**
  * Emits receipt + matches as separate payloads (v2 has no combined receipt+match endpoint —
@@ -54,7 +54,7 @@ export class AppendReceiptComponent {
     return this.invoicesWithRemaining().filter(inv => !addedIds.has(inv.id))
   })
 
-  private readonly appendReceiptState = linkedSignal<number, AppendReceiptForm>({
+  appendReceiptState = linkedSignal<number, AppendReceiptForm>({
     source: this.openInvoiceAmount,
     computation: (openInvoiceAmount, previous) => ({
       ...(previous?.value ?? this.defaultFormValue),
@@ -79,11 +79,7 @@ export class AppendReceiptComponent {
 
   matchedTotal = computed(() => this.appendReceiptState().matches.reduce((sum, m) => sum + m.matchAmount, 0))
 
-  canAddMatch = computed(() => {
-    const { receAmount, matches } = this.appendReceiptState()
-    const matchAmount = matches.reduce((a, b) => a + b.matchAmount, 0)
-    return matchAmount > 0 && matchAmount <= receAmount
-  })
+  remainingRceipt = computed(() => this.appendReceiptState().receAmount - this.matchedTotal())
 
   formatInvoice = ({ invoiceNumb }: TInvoiceWithRemaining) => invoiceNumb
   searchInvoice = (term$: Observable<string>): Observable<TInvoiceWithRemaining[]> => {
@@ -96,26 +92,29 @@ export class AppendReceiptComponent {
     )
   }
 
+  /** Staged separately from `matches` so the user can edit the amount before committing the row. */
+  private readonly defaultPendingMatch: TPendingMatch = { invoice: null, matchAmount: 0 }
+  pendingMatchState = signal<TPendingMatch>(this.defaultPendingMatch)
+  pendingMatchForm = form(this.pendingMatchState, pendingMatchSchema)
+
+  canConfirmMatch = computed(() => this.pendingMatchForm().valid() && this.pendingMatchState().matchAmount <= this.remainingRceipt())
+
   onSelectInvoice({ item }: NgbTypeaheadSelectItemEvent<TInvoiceWithRemaining>): void {
-    this.appendReceiptForm().controlValue.update(({ matches, receAmount, ...res }) => ({ ...res, receAmount, matches: [...matches, { invoice: item, matchAmount: Math.min(item.remainingAmount, receAmount) }] }))
+    this.pendingMatchState.set({ invoice: item, matchAmount: Math.min(item.remainingAmount, this.remainingRceipt()) })
   }
 
-  private readonly remainingReceiptToMatch = computed(() => {
-    const { receAmount, matches } = this.appendReceiptState();
-    return receAmount - matches.reduce((acc, cur) => acc + cur.matchAmount, 0)
-  })
-
   addMatch(): void {
-    // if (!this.canAddMatch()) return
-    // this.appendReceiptState.update(state => {
-    //   if (!state.matchInvoice) return state
-    //   return {
-    //     ...state,
-    //     matches: [...state.matches, { invoice: state.matchInvoice, matchAmount: state.matchAmount }],
-    //     matchInvoice: null,
-    //     matchAmount: 0,
-    //   }
-    // })
+    if (!this.canConfirmMatch()) return
+    const { invoice, matchAmount } = this.pendingMatchState()
+    if (!invoice) return
+    this.appendReceiptForm().controlValue.update(({ matches, receAmount, ...res }) => ({
+      ...res, receAmount, matches: [...matches, { invoice, matchAmount }],
+    }))
+    this.pendingMatchState.set(this.defaultPendingMatch)
+  }
+
+  cancelPendingMatch(): void {
+    this.pendingMatchState.set(this.defaultPendingMatch)
   }
 
   removeMatch(index: number): void {

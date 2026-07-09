@@ -1,0 +1,49 @@
+<div class="app-form-field mb-3">
+  <label>เลือกคู่ซัพพลายเออร์ (DN / HU)</label>
+  <app-select
+    [value]="value().supplierPairId"
+    (valueChange)="onSelectPair($event)"
+  >
+    @for (pair of supplierPairList(); track pair.id) {
+      <app-option [value]="pair.id">{{ pair.displayName }}</app-option>
+    }
+  </app-select>
+</div>
+
+<div class="row g-3 mt-1">
+  <div class="col-6">
+    <p class="fw-semibold small mb-2 text-muted">DN</p>
+    @if (selectedPair(); as pair) {
+      <div class="d-flex align-items-center gap-2 border rounded px-3 py-2">
+        <span class="badge badge-dn">{{ pair.dnCompCode }}</span>
+        <div class="flex-grow-1 lh-sm">
+          <div class="fw-medium">{{ pair.displayName }}</div>
+        </div>
+      </div>
+    } @else {
+      <div class="border rounded px-3 py-2 text-muted small fst-italic">
+        ยังไม่ได้เลือก
+      </div>
+    }
+  </div>
+  <div class="col-6">
+    <p class="fw-semibold small mb-2 text-muted">HU</p>
+    @if (selectedPair(); as pair) {
+      <div class="d-flex align-items-center gap-2 border rounded px-3 py-2">
+        <span class="badge badge-hu">{{ pair.huCompCode }}</span>
+        <div class="flex-grow-1 lh-sm">
+          <div class="fw-medium">{{ pair.displayName }}</div>
+        </div>
+      </div>
+    } @else {
+      <div class="border rounded px-3 py-2 text-muted small fst-italic">
+        ยังไม่ได้เลือก
+      </div>
+    }
+  </div>
+  <div class="d-flex flex-column">
+    @for (error of errors(); track $index) {
+      <span class="text-danger">{{ error.message }}</span>
+    }
+  </div>
+</div>

@@ -17,6 +17,7 @@ export class SettlementBillTabComponent {
   readonly ctx = inject(SettlementContextService)
 
   search = input.required<SearchBillDiscounts>()
+  canAppend = input(false)
 
   appendBillDiscountForm = viewChild(AppendBillDiscountComponent)
   submittingBillDiscount = signal(false)

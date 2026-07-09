@@ -16,6 +16,13 @@ export type TOtherIncomeCompanyRes = {
   compType: 'DN' | 'HU'
 }
 
+export type TSupplierPair = {
+  id: number
+  displayName: string
+  dnCompCode: string
+  huCompCode: string
+}
+
 // ---------- Lookup labels ----------
 
 export type TContractLabelType = 'ORDER' | 'BRANCH' | 'PROMO'
@@ -330,10 +337,13 @@ export type TInvoiceStateRow = {
   compType: string
   compName: string
   contractLabelName: string
+  incomeLabelName: string | null
   invoiceNumb: string
   invoiceAmount: number
   matchedAmount: number
   invoiceState: 'UNMATCHED' | 'MATCHED'
+  receiptNumbs: string | null
+  lastReceiptDate: string | null
 }
 
 // ---------- Report ----------
@@ -381,6 +391,8 @@ export type TCreateOrderContractReq = {
 
 export type TCreatePairedOrderContractReq = Omit<TCreateOrderContractReq, 'compCode' | 'compType'> & {
   supplierPairId: number
+  dnCompCode: string
+  huCompCode: string
 }
 
 export type TUpdateOrderContractHeaderReq = {

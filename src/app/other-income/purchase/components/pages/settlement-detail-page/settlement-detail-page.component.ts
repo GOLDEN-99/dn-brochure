@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Location } from '@angular/common';
@@ -42,6 +42,8 @@ export class SettlementDetailPageComponent implements OnInit {
   private readonly api = inject(OtherIncomePurchaseApiService)
   readonly ctx = inject(SettlementContextService)
   private readonly headService = inject(FOR_CONTRACT_DATA_TOKEN)
+
+  isAccount = input(false)
 
   /**
    * GET /v2/settlements/{id} doesn't carry compCode/compType, so once the settlement loads

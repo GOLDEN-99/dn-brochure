@@ -1,1 +1,12 @@
-<p>order-contract-create-cross-page works!</p>
+<app-create-paired-order-contract />
+
+<div class="d-flex justify-content-center mb-4">
+  <button
+    class="btn btn-success"
+    [disabled]="cannotSubmit()"
+    (click)="onSubmit()"
+  >
+    <i class="bi bi-floppy"></i>
+    <span> บันทึก </span>
+  </button>
+</div>

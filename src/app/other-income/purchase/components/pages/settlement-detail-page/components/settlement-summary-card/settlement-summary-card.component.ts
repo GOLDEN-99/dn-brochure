@@ -16,6 +16,7 @@ export type SettlementBalance = {
 export class SettlementSummaryCardComponent {
   settlement = input.required<TSettlementDetail>()
   balance = input<SettlementBalance | null>(null)
+  isAccount = input(false)
 
   deleteSettlement = output<void>()
 }

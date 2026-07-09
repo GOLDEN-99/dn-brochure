@@ -1,12 +1,26 @@
 import { apply, applyEach, max, min, readonly, required, schema, validate } from '@angular/forms/signals';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { TInvoiceWithRemaining } from './createReceiptForm.type';
+import { TInvoiceWithRemaining, TPendingMatch } from './createReceiptForm.type';
 
 
 export const matchesSchema = schema<TStagedMatch>((schema) => {
   readonly(schema.invoice.remainingAmount)
   max(schema.matchAmount, ({ valueOf }) => valueOf(schema.invoice.remainingAmount), { message: 'ยอดจับคู่ต้องไม่เกินยอดใบแจ้งหนี้' })
   min(schema.matchAmount, 1, { message: "ยอดจับคู่ขั้นต่ำ 1 บาท" })
+})
+
+/** Sub-form for editing the match amount for a just-selected invoice before it's staged into `matches`. */
+export const pendingMatchSchema = schema<TPendingMatch>((schema) => {
+  required(schema.invoice, { message: 'เลือกใบแจ้งหนี้' })
+  min(schema.matchAmount, 1, { message: 'ยอดจับคู่ขั้นต่ำ 1 บาท' })
+  validate(schema.matchAmount, ({ value, valueOf }) => {
+    const invoice = valueOf(schema.invoice)
+    if (!invoice) return null
+    if (value() > invoice.remainingAmount) {
+      return { kind: 'invalid-amount', message: `ยอดจับคู่ต้องไม่เกิน ${invoice.remainingAmount} บาท` }
+    }
+    return null
+  })
 })
 
 export const appendReceiptSchema = schema<AppendReceiptForm>((schema) => {

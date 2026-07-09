@@ -42,6 +42,13 @@ export const ACCOUNT_ROUTES: Route = {
                         .catch(handleLazyLoadError('account order-spec'))
                 },
                 {
+                    path: 'accruals',
+                    loadComponent: () => import('../purchase/components/pages/order-contract-accruals-page/order-contract-accruals-page.component')
+                        .then(c => c.OrderContractAccrualsPageComponent)
+                        .catch(handleLazyLoadError('account order-contracts-accruals')),
+                    data: { isAccount: true }
+                },
+                {
                     path: 'settlements',
                     loadComponent: () => import('../account/pages/order-settlements-page/order-settlements-page.component')
                         .then(c => c.OrderSettlementsPageComponent)
@@ -58,7 +65,8 @@ export const ACCOUNT_ROUTES: Route = {
                     ],
                     loadComponent: () => import('../purchase/components/pages/settlement-detail-page/settlement-detail-page.component')
                         .then(c => c.SettlementDetailPageComponent)
-                        .catch(handleLazyLoadError('settlement-detail'))
+                        .catch(handleLazyLoadError('settlement-detail')),
+                    data: { isAccount: true }
                 },
             ]
         },
@@ -79,6 +87,13 @@ export const ACCOUNT_ROUTES: Route = {
                         .catch(handleLazyLoadError('account branch-spec'))
                 },
                 {
+                    path: 'accruals',
+                    loadComponent: () => import('../purchase/components/pages/branch-contract-accruals-page/branch-contract-accruals-page.component')
+                        .then(c => c.BranchContractAccrualsPageComponent)
+                        .catch(handleLazyLoadError('account branch-contracts-accruals')),
+                    data: { isAccount: true }
+                },
+                {
                     path: 'settlements',
                     loadComponent: () => import('../account/pages/branch-settlements-page/branch-settlements-page.component')
                         .then(c => c.BranchSettlementsPageComponent)
@@ -95,7 +110,8 @@ export const ACCOUNT_ROUTES: Route = {
                     ],
                     loadComponent: () => import('../purchase/components/pages/settlement-detail-page/settlement-detail-page.component')
                         .then(c => c.SettlementDetailPageComponent)
-                        .catch(handleLazyLoadError('settlement-detail'))
+                        .catch(handleLazyLoadError('settlement-detail')),
+                    data: { isAccount: true }
                 },
             ]
         },
@@ -116,6 +132,13 @@ export const ACCOUNT_ROUTES: Route = {
                         .catch(handleLazyLoadError('account promo-spec'))
                 },
                 {
+                    path: 'accruals',
+                    loadComponent: () => import('../purchase/components/pages/promo-contract-accruals-page/promo-contract-accruals-page.component')
+                        .then(c => c.PromoContractAccrualsPageComponent)
+                        .catch(handleLazyLoadError('account promo-contracts-accruals')),
+                    data: { isAccount: true }
+                },
+                {
                     path: 'settlements',
                     loadComponent: () => import('../account/pages/promo-settlements-page/promo-settlements-page.component')
                         .then(c => c.PromoSettlementsPageComponent)
@@ -132,7 +155,8 @@ export const ACCOUNT_ROUTES: Route = {
                     ],
                     loadComponent: () => import('../purchase/components/pages/settlement-detail-page/settlement-detail-page.component')
                         .then(c => c.SettlementDetailPageComponent)
-                        .catch(handleLazyLoadError('settlement-detail'))
+                        .catch(handleLazyLoadError('settlement-detail')),
+                    data: { isAccount: true }
                 },
             ]
         },

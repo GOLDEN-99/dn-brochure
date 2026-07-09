@@ -46,6 +46,7 @@ import {
   TFreeItemSearchParams,
   TDateRange,
   TPostReceiptWithMatchesReq,
+  TSupplierPair,
 } from '../../shared/types/other-income.type';
 
 /**
@@ -83,8 +84,12 @@ export class OtherIncomePurchaseApiService {
     return this.api.post(`${this.url}/v2/order-contracts`, req)
   }
 
-  createPairedOrderContract(req: TCreatePairedOrderContractReq): Observable<{ dn_id: number; hu_id: number; accruals_posted: number }> {
+  createPairedOrderContract(req: TCreatePairedOrderContractReq): Observable<{ pairId: number; dnContractId: number; huContractId: number; supplierPairId: number }> {
     return this.api.post(`${this.url}/v2/order-contracts/paired`, req)
+  }
+
+  getSupplierPairs(): Observable<TSupplierPair[]> {
+    return this.api.get(`${this.url}/v2/master/supplier-pairs`)
   }
 
   updateOrderContractHeader(id: number, req: TUpdateOrderContractHeaderReq): Observable<void> {

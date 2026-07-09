@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, inject, input, signal, viewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { OrderContractContextService } from '../../../services/order-contract-context.service';
 import { ToastService } from '../../../../../service/toast/toast.service';
@@ -16,6 +16,8 @@ import { TPostCnCorrectionReq, TPostLagCorrectionReq, TPostManualCorrectionReq }
 export class OrderContractAccrualsPageComponent {
   private readonly toast = inject(ToastService)
   readonly ctx = inject(OrderContractContextService)
+
+  isAccount = input(false)
 
   cnCorrectionForm = viewChild(CnCorrectionFormComponent)
   submittingCnCorrection = signal(false)

@@ -17,6 +17,7 @@ export class SettlementFreeItemTabComponent {
   readonly ctx = inject(SettlementContextService)
 
   search = input.required<SearchFreeItems>()
+  canAppend = input(false)
 
   appendFreeItemForm = viewChild(AppendFreeItemComponent)
   submittingFreeItem = signal(false)
