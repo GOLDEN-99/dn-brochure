@@ -3,13 +3,17 @@
   <div class="card mb-3">
     <div class="card-header fw-bold">สร้าง Settlement</div>
     <div class="card-body">
-      <other-income-create-settlement-form
-        [contractId]="contract.id"
-        [contractType]="'ORDER'"
-        [openEntries]="openIncomeEntries()"
-        [submitting]="submittingSettlement()"
-        (submitSettlement)="onSubmitSettlement($event)"
-      ></other-income-create-settlement-form>
+      @if (contract.supplierPairId != null) {
+        <p class="text-muted mb-0">สัญญา 2 หัวกำลังพัฒนาอยู่</p>
+      } @else {
+        <other-income-create-settlement-form
+          [contractId]="contract.id"
+          [contractType]="'ORDER'"
+          [openEntries]="openIncomeEntries()"
+          [submitting]="submittingSettlement()"
+          (submitSettlement)="onSubmitSettlement($event)"
+        ></other-income-create-settlement-form>
+      }
     </div>
   </div>
 
