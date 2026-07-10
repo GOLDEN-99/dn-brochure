@@ -8,46 +8,42 @@ import { catchError, finalize, map } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { z } from 'zod';
 import { OtherIncomeAccountApiService } from '../../services/other-income-account-api.service';
-import { TInvoiceStateRow } from '../../../shared/types/other-income.type';
+import { TBillDiscountStateRow } from '../../../shared/types/other-income.type';
 import { CONTRACT_TYPE_PATH, CONTRACT_TYPE_LABEL, COMP_TYPE_LABEL } from '../../../shared/libs/settlement-labels';
 import { XLSXReportService, TAoaConfig } from '../../../../service/xlsx-report/xlsx-report.service';
 
-const invoiceFilterSchema = z.object({
+const CHECKED_BY = 'account_user'
+
+const billDiscountFilterSchema = z.object({
   contractType: z.enum(['ORDER', 'BRANCH', 'PROMO']).nullable().default(null).catch(null),
-  invoiceState: z.enum(['UNMATCHED', 'MATCHED']).nullable().default(null).catch(null),
+  checkState: z.enum(['CHECKED', 'UNCHECKED']).nullable().default(null).catch(null),
   compType: z.enum(['DN', 'HU']).default('DN').catch('DN'),
 })
 
-const invoiceStateExportConfig: TAoaConfig<TInvoiceStateRow> = {
-  sheetName: 'Invoice States',
+const billDiscountExportConfig: TAoaConfig<TBillDiscountStateRow> = {
+  sheetName: 'Bill Discount States',
   config: [
+    { header: 'Comp', valueMapper: row => row.compType },
     { header: 'รหัสซัพ', valueMapper: row => row.compCode },
     { header: 'ชื่อซัพ', valueMapper: row => row.compName },
     { header: 'ประเภทสัญญา', valueMapper: row => CONTRACT_TYPE_LABEL[row.contractType] },
     { header: 'ประเภทกิจกรรม', valueMapper: row => row.contractLabelName },
-    { header: 'เลขที่ใบแจ้งหนี้', valueMapper: row => row.invoiceNumb },
-    { header: 'ยอดใบแจ้งหนี้', valueMapper: row => row.invoiceAmount },
-    { header: 'ยอดจับคู่แล้ว', valueMapper: row => row.matchedAmount },
-    { header: 'สถานะ', valueMapper: row => row.invoiceState },
-    { header: 'เลขที่ใบเสร็จ', valueMapper: row => row.receiptNumbs ?? '' },
-    { header: 'รับล่าสุด', valueMapper: row => row.lastReceiptDate ?? '' },
+    { header: 'เลขที่ออเดอร์', valueMapper: row => row.orderNumb },
+    { header: 'เลขที่ใบเสร็จ', valueMapper: row => row.receNumb },
+    { header: 'ยอด', valueMapper: row => row.subtotalAmount },
+    { header: 'สถานะตรวจสอบ', valueMapper: row => row.checkState },
+    { header: 'ตรวจสอบเมื่อ', valueMapper: row => row.checkedAt ?? '' },
+    { header: 'ตรวจสอบโดย', valueMapper: row => row.checkedBy ?? '' },
   ],
 }
 
-/**
- * Filters are URL-driven (query params), not local signals — same pattern as
- * ContractListController (see purchase/components/pages/CLAUDE.md), so the
- * worklist view is bookmarkable/shareable and survives reload/back-button.
- * Filtering happens server-side (query params passed straight to the API),
- * so a filter change re-fetches rather than re-slicing a client-held array.
- */
 @Component({
-  selector: 'app-invoice-state-worklist-page',
+  selector: 'app-bill-discount-state-worklist-page',
   imports: [RouterLink, DatePipe, DecimalPipe, FormsModule],
-  templateUrl: './invoice-state-worklist-page.component.html',
-  styleUrl: './invoice-state-worklist-page.component.scss',
+  templateUrl: './bill-discount-state-worklist-page.component.html',
+  styleUrl: './bill-discount-state-worklist-page.component.scss',
 })
-export class InvoiceStateWorklistPageComponent {
+export class BillDiscountStateWorklistPageComponent {
   private readonly api = inject(OtherIncomeAccountApiService)
   private readonly route = inject(ActivatedRoute)
   private readonly router = inject(Router)
@@ -57,9 +53,10 @@ export class InvoiceStateWorklistPageComponent {
   readonly contractTypePath = CONTRACT_TYPE_PATH
   readonly compTypeLabel = COMP_TYPE_LABEL
 
-  items = signal<TInvoiceStateRow[]>([])
+  items = signal<TBillDiscountStateRow[]>([])
   loading = signal(false)
   error = signal<string | null>(null)
+  checkingId = signal<number | null>(null)
 
   private readonly refreshTrigger$ = new Subject<void>()
 
@@ -67,24 +64,24 @@ export class InvoiceStateWorklistPageComponent {
     this.route.queryParamMap,
     this.refreshTrigger$.pipe(map(() => this.route.snapshot.queryParamMap))
   ).pipe(
-    map(params => invoiceFilterSchema.parse({
+    map(params => billDiscountFilterSchema.parse({
       contractType: params.get('contractType'),
-      invoiceState: params.get('invoiceState'),
+      checkState: params.get('checkState'),
       compType: params.get('compType'),
     }))
   )
 
-  readonly filters = toSignal(this.filter$, { initialValue: invoiceFilterSchema.parse({}) })
+  readonly filters = toSignal(this.filter$, { initialValue: billDiscountFilterSchema.parse({}) })
 
   constructor() {
     this.filter$.pipe(
       switchMap(filters => {
         this.loading.set(true)
         this.error.set(null)
-        return this.api.getInvoiceStates({
+        return this.api.getBillDiscountStates({
           contractType: filters.contractType ?? undefined,
-          invoiceState: filters.invoiceState ?? undefined,
-          compType: filters.compType,
+          checkState: filters.checkState ?? undefined,
+          compType: filters.compType ?? undefined,
         }).pipe(
           catchError(() => {
             this.error.set('โหลดข้อมูลไม่สำเร็จ')
@@ -102,8 +99,8 @@ export class InvoiceStateWorklistPageComponent {
   }
 
   exportExcel(): void {
-    const mapper = this.xlsx.convertJsonToWorkbook<TInvoiceStateRow>(invoiceStateExportConfig)
-    const exporter = this.xlsx.exportWorkbook(`ใบแจ้งหนี้ค้างจับคู่ ${new Date().toISOString().split('T')[0]}`)
+    const mapper = this.xlsx.convertJsonToWorkbook<TBillDiscountStateRow>(billDiscountExportConfig)
+    const exporter = this.xlsx.exportWorkbook(`CN กับบิล ${new Date().toISOString().split('T')[0]}`)
     mapper(this.items()).pipe(
       switchMap(wb => exporter(wb))
     ).subscribe()
@@ -113,16 +110,32 @@ export class InvoiceStateWorklistPageComponent {
     this.setQueryParams({ contractType: value || null })
   }
 
-  setInvoiceState(value: string): void {
-    this.setQueryParams({ invoiceState: value })
+  setCheckState(value: string): void {
+    this.setQueryParams({ checkState: value || null })
   }
 
   setCompType(value: string): void {
     this.setQueryParams({ compType: value || null })
   }
 
-  isPartiallyReceived(row: TInvoiceStateRow): boolean {
-    return row.invoiceState === 'UNMATCHED' && row.matchedAmount > 0
+  check(row: TBillDiscountStateRow): void {
+    this.checkingId.set(row.billDiscountId)
+    this.api.checkBillDiscount(row.settlementId, row.billDiscountId, CHECKED_BY).pipe(
+      catchError(() => {
+        this.error.set('ตรวจสอบไม่สำเร็จ')
+        return EMPTY
+      }),
+      finalize(() => this.checkingId.set(null))
+    ).subscribe(() => this.refresh())
+  }
+
+  remove(row: TBillDiscountStateRow): void {
+    this.api.deleteBillDiscountState(row.settlementId, row.billDiscountId).pipe(
+      catchError(() => {
+        this.error.set('ลบไม่สำเร็จ')
+        return EMPTY
+      })
+    ).subscribe(() => this.refresh())
   }
 
   private setQueryParams(params: Record<string, string | null>): void {

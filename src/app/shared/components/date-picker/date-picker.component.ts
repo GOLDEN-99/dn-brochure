@@ -65,7 +65,10 @@ import { FormsModule } from '@angular/forms';
       margin: 0;
       border: none;
       padding: 0;
-      overflow: hidden;
+      > input{
+        width: 0;
+        height: 0;
+      }
     }
   `,
 })

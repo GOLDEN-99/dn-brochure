@@ -4,7 +4,18 @@
     <div class="card-header fw-bold">สร้าง Settlement</div>
     <div class="card-body">
       @if (contract.supplierPairId != null) {
-        <p class="text-muted mb-0">สัญญา 2 หัวกำลังพัฒนาอยู่</p>
+        @if (ctx.pairedEntries(); as pe) {
+          <other-income-create-paired-settlement-form
+            [dnContractId]="pe.dnContractId"
+            [huContractId]="pe.huContractId"
+            [dnEntries]="pe.dnEntries"
+            [huEntries]="pe.huEntries"
+            [submitting]="submittingPairedSettlement()"
+            (submitPairedSettlement)="onSubmitPairedSettlement($event)"
+          ></other-income-create-paired-settlement-form>
+        } @else {
+          <div class="text-center text-muted py-2">กำลังโหลดข้อมูลสัญญาคู่...</div>
+        }
       } @else {
         <other-income-create-settlement-form
           [contractId]="contract.id"

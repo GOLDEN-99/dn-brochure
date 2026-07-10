@@ -104,17 +104,17 @@
   <!-- Tabs -->
   <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
-      <a class="nav-link" routerLink="./specs" routerLinkActive="active">
+      <a class="nav-link" routerLink="./specs" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         เงื่อนไข
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" routerLink="./accruals" routerLinkActive="active">
+      <a class="nav-link" routerLink="./accruals" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         ประมาณการรายได้
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" routerLink="./settlements" routerLinkActive="active">
+      <a class="nav-link" routerLink="./settlements" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         Settlements
       </a>
     </li>

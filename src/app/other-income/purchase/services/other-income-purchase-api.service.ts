@@ -47,6 +47,11 @@ import {
   TDateRange,
   TPostReceiptWithMatchesReq,
   TSupplierPair,
+  TPairedIncomeEntries,
+  TPostPairedSettlementReq,
+  TPostPairedSettlementRes,
+  TOrderConfirmationReport,
+  TGetOrderConfirmationReportParams,
 } from '../../shared/types/other-income.type';
 
 /**
@@ -126,6 +131,14 @@ export class OtherIncomePurchaseApiService {
 
   postOrderSettlement(req: TPostSettlementReq): Observable<TSettlementListItem> {
     return this.api.post(`${this.url}/v2/settlements`, { ...req, invoices: [], billDiscounts: [], freeItems: [], creditNotes: [] })
+  }
+
+  getPairedIncomeEntries(params: { dnContractId?: number; huContractId?: number }): Observable<TPairedIncomeEntries> {
+    return this.api.get(`${this.url}/v2/income-entries/paired`, { params: compact(params) })
+  }
+
+  postPairedSettlement(req: TPostPairedSettlementReq): Observable<TPostPairedSettlementRes> {
+    return this.api.post(`${this.url}/v2/settlements/paired`, req)
   }
 
   postCnCorrection(contractId: number, req: TPostCnCorrectionReq): Observable<TIncomeEntry> {
@@ -296,6 +309,10 @@ export class OtherIncomePurchaseApiService {
 
   getAccrualState(params: TAccrualStateParams): Observable<TAccrualStateRow[]> {
     return this.api.get(`${this.url}/v2/report/accrual-state`, { params })
+  }
+
+  getOrderConfirmationReport(contractId: number, params?: TGetOrderConfirmationReportParams): Observable<TOrderConfirmationReport> {
+    return this.api.get(`${this.url}/v2/report/order-confirmation/${contractId}`, { params: compact(params ?? {}) })
   }
 
   searchBillDiscounts({ orderDateRange, order, ...params }: TBillDiscountSearchParams): Observable<TBillDiscountOrderLine[]> {

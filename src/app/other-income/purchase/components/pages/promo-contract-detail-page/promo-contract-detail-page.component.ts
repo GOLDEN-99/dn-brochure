@@ -27,7 +27,7 @@ export class PromoContractDetailPageComponent implements OnInit {
   openIncomeEntries = computed(() => this.ctx.incomeEntries().filter(e => !e.settlementId))
 
   ngOnInit(): void {
-    this.ctx.load(+this.route.snapshot.params['id']);
+    this.ctx.setId(+this.route.snapshot.params['id']);
   }
 
   goBack(): void {

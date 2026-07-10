@@ -26,6 +26,36 @@ export const ACCOUNT_ROUTES: Route = {
                 .catch(handleLazyLoadError('account invoice-states'))
         },
         {
+            path: 'bill-discount-states',
+            loadComponent: () => import('../account/pages/bill-discount-state-worklist-page/bill-discount-state-worklist-page.component')
+                .then(c => c.BillDiscountStateWorklistPageComponent)
+                .catch(handleLazyLoadError('account bill-discount-states'))
+        },
+        {
+            path: 'free-item-states',
+            loadComponent: () => import('../account/pages/free-item-state-worklist-page/free-item-state-worklist-page.component')
+                .then(c => c.FreeItemStateWorklistPageComponent)
+                .catch(handleLazyLoadError('account free-item-states'))
+        },
+        {
+            path: 'report/order',
+            loadComponent: () => import('../account/pages/accrual-order-report-page/accrual-order-report-page.component')
+                .then(c => c.AccrualOrderReportPageComponent)
+                .catch(handleLazyLoadError('account accrual-order-report'))
+        },
+        {
+            path: 'report/branch',
+            loadComponent: () => import('../account/pages/accrual-branch-report-page/accrual-branch-report-page.component')
+                .then(c => c.AccrualBranchReportPageComponent)
+                .catch(handleLazyLoadError('account accrual-branch-report'))
+        },
+        {
+            path: 'report/promo',
+            loadComponent: () => import('../account/pages/accrual-promo-report-page/accrual-promo-report-page.component')
+                .then(c => c.AccrualPromoReportPageComponent)
+                .catch(handleLazyLoadError('account accrual-promo-report'))
+        },
+        {
             path: 'order/:id',
             component: AccountOrderContractLayoutComponent,
             providers: [OrderContractContextService],

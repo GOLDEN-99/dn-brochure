@@ -17,7 +17,7 @@ const settlementFilterSchema = z.object({
   balanceState: z.enum(['OUTSTANDING', 'SETTLED']).nullable().default(null).catch(null),
   reviewState: z.enum(['UNREVIEWED', 'REVIEWED']).nullable().default(null).catch(null),
   incomeType: z.enum(['Bill', 'FreeItem', 'Invoice', 'CreditNote']).nullable().default(null).catch(null),
-  compType: z.enum(['DN', 'HU']).nullable().default(null).catch(null),
+  compType: z.enum(['DN', 'HU']).default('DN').catch('DN'),
 })
 
 /**

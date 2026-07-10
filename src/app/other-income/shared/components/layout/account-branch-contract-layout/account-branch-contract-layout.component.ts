@@ -1,6 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { DatePipe, Location } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { BranchContractContextService } from '../../../../purchase/services/branch-contract-context.service';
 
 @Component({
@@ -9,13 +10,18 @@ import { BranchContractContextService } from '../../../../purchase/services/bran
   templateUrl: './account-branch-contract-layout.component.html',
   styleUrl: './account-branch-contract-layout.component.scss',
 })
-export class AccountBranchContractLayoutComponent implements OnInit {
+export class AccountBranchContractLayoutComponent {
   private readonly route = inject(ActivatedRoute)
   private readonly location = inject(Location)
   readonly ctx = inject(BranchContractContextService)
 
-  ngOnInit(): void {
-    this.ctx.load(+this.route.snapshot.params['id']);
+  constructor() {
+    const routeParams = toSignal(this.route.params, { initialValue: this.route.snapshot.params })
+    effect(() => {
+      const raw = routeParams()['id']
+      if (raw === undefined) return
+      this.ctx.setId(+raw)
+    })
   }
 
   goBack(): void {

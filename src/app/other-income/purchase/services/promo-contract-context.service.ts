@@ -1,7 +1,8 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { forkJoin, Observable, tap } from 'rxjs';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { Observable, tap } from 'rxjs';
 import { OtherIncomePurchaseApiService } from './other-income-purchase-api.service';
-import { TIncomeEntry, TPostPromoAccrualReq, TPostSettlementReq, TPromoContractDetail, TSettlementListItem } from '../../shared/types/other-income.type';
+import { TIncomeEntry, TPostPromoAccrualReq, TPostSettlementReq, TSettlementListItem } from '../../shared/types/other-income.type';
 import { ForContractData } from '../../tokens/service-token';
 
 @Injectable({
@@ -9,38 +10,61 @@ import { ForContractData } from '../../tokens/service-token';
 })
 export class PromoContractContextService implements ForContractData {
   private readonly api = inject(OtherIncomePurchaseApiService)
-  private lastId: number | null = null
 
-  contract = signal<TPromoContractDetail | null>(null)
-  incomeEntries = signal<TIncomeEntry[]>([])
-  settlements = signal<TSettlementListItem[]>([])
-  loading = signal(false)
-  error = signal<string | null>(null)
+  private readonly id = signal<number | null>(null)
 
-  load(id: number): void {
-    this.lastId = id
-    this.loading.set(true)
-    this.error.set(null)
-    forkJoin({
-      contract: this.api.getPromoContract(id),
-      incomeEntries: this.api.getIncomeEntries({ contractType: 'PROMO', contractId: id }),
-      settlements: this.api.getSettlements({ contractType: 'PROMO', contractId: id }),
-    }).subscribe({
-      next: ({ contract, incomeEntries, settlements }) => {
-        this.contract.set(contract)
-        this.incomeEntries.set(incomeEntries)
-        this.settlements.set(settlements)
-        this.loading.set(false)
-      },
-      error: () => {
-        this.error.set('โหลดข้อมูลไม่สำเร็จ')
-        this.loading.set(false)
-      },
-    })
+  private readonly contractResource = rxResource({
+    params: () => this.id() ?? undefined,
+    stream: ({ params: id }) => this.api.getPromoContract(id),
+  })
+
+  private readonly incomeEntriesResource = rxResource({
+    params: () => this.id() ?? undefined,
+    stream: ({ params: id }) => this.api.getIncomeEntries({ contractType: 'PROMO', contractId: id }),
+    defaultValue: [] as TIncomeEntry[],
+  })
+
+  private readonly settlementsResource = rxResource({
+    params: () => this.id() ?? undefined,
+    stream: ({ params: id }) => this.api.getSettlements({ contractType: 'PROMO', contractId: id }),
+    defaultValue: [] as TSettlementListItem[],
+  })
+
+  contract = computed(() => this.contractResource.value() ?? null)
+  incomeEntries = computed(() => this.incomeEntriesResource.value() ?? [])
+  settlements = computed(() => this.settlementsResource.value() ?? [])
+
+  loading = computed(() =>
+    this.contractResource.isLoading() || this.incomeEntriesResource.isLoading() || this.settlementsResource.isLoading()
+  )
+
+  error = computed(() =>
+    (this.contractResource.error() || this.incomeEntriesResource.error() || this.settlementsResource.error())
+      ? 'โหลดข้อมูลไม่สำเร็จ'
+      : null
+  )
+
+  setId(id: number): void {
+    this.id.set(id)
   }
 
   refresh(): void {
-    if (this.lastId !== null) this.load(this.lastId)
+    this.contractResource.reload()
+    this.incomeEntriesResource.reload()
+    this.settlementsResource.reload()
+  }
+
+  incomeEntriesRefresh(): void {
+    this.incomeEntriesResource.reload()
+  }
+
+  settlementsRefresh(): void {
+    this.settlementsResource.reload()
+  }
+
+  refreshChildren(): void {
+    this.incomeEntriesResource.reload()
+    this.settlementsResource.reload()
   }
 
   deleteContract(): Observable<void> {
@@ -54,18 +78,15 @@ export class PromoContractContextService implements ForContractData {
   }
 
   deletePromoAccrual(accrualId: number): Observable<void> {
-    return this.api.deletePromoAccrual(accrualId).pipe(
-      tap(() => this.incomeEntries.update(list => list.filter(e => e.id !== accrualId)))
-    )
+    return this.api.deletePromoAccrual(accrualId).pipe(tap(() => this.incomeEntriesResource.reload()))
   }
 
   addSettlement(req: TPostSettlementReq): Observable<TSettlementListItem> {
     if (this.contract()?.id == null) throw new Error('Contract not loaded')
     return this.api.postPromoSettlement(req).pipe(
-      tap(settlement => {
-        this.settlements.update(list => [...list, settlement])
-        const pickedIds = new Set(req.incomeEntryIds)
-        this.incomeEntries.update(list => list.map(e => pickedIds.has(e.id) ? { ...e, settlementId: settlement.id } : e))
+      tap(() => {
+        this.settlementsResource.reload()
+        this.incomeEntriesResource.reload()
       })
     )
   }

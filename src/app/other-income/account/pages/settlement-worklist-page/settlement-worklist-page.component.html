@@ -30,7 +30,6 @@
     [ngModel]="filters().compType"
     (ngModelChange)="setCompType($event)"
   >
-    <option [ngValue]="null">ทุก Comp</option>
     <option value="DN">{{ compTypeLabel.DN }}</option>
     <option value="HU">{{ compTypeLabel.HU }}</option>
   </select>

@@ -6,6 +6,13 @@ import {
   TSettlementOverviewItem,
   TInvoiceStateRow,
   TSettlementDetail,
+  TAccrualOrderReportRow,
+  TAccrualBranchReportRow,
+  TAccrualPromoReportRow,
+  TAccrualReportParams,
+  TBillDiscountStateRow,
+  TFreeItemStateRow,
+  TCheckStateParams,
 } from '../../shared/types/other-income.type';
 
 /**
@@ -44,11 +51,48 @@ export class OtherIncomeAccountApiService {
     invoiceState?: 'UNMATCHED' | 'MATCHED'
     contractType?: 'ORDER' | 'BRANCH' | 'PROMO'
     contractId?: number
+    compType?: 'DN' | 'HU'
   }): Observable<TInvoiceStateRow[]> {
     return this.api.get(`${this.url}/v2/settlements/invoice-states`, { params: compact(params ?? {}) })
   }
 
   getSettlementDetail(id: number): Observable<TSettlementDetail> {
     return this.api.get(`${this.url}/v2/settlements/${id}`)
+  }
+
+  getAccrualOrderReport(params?: TAccrualReportParams): Observable<TAccrualOrderReportRow[]> {
+    return this.api.get(`${this.url}/v2/report/accrual/order`, { params: compact(params ?? {}) })
+  }
+
+  getAccrualBranchReport(params?: TAccrualReportParams): Observable<TAccrualBranchReportRow[]> {
+    return this.api.get(`${this.url}/v2/report/accrual/branch`, { params: compact(params ?? {}) })
+  }
+
+  getAccrualPromoReport(params?: TAccrualReportParams): Observable<TAccrualPromoReportRow[]> {
+    return this.api.get(`${this.url}/v2/report/accrual/promo`, { params: compact(params ?? {}) })
+  }
+
+  getBillDiscountStates(params?: TCheckStateParams): Observable<TBillDiscountStateRow[]> {
+    return this.api.get(`${this.url}/v2/settlements/bill-discount-states`, { params: compact(params ?? {}) })
+  }
+
+  checkBillDiscount(settlementId: number, itemId: number, checkedBy: string): Observable<void> {
+    return this.api.post(`${this.url}/v2/settlements/${settlementId}/bill-discounts/${itemId}/check`, { checkedBy })
+  }
+
+  deleteBillDiscountState(settlementId: number, itemId: number): Observable<void> {
+    return this.api.delete(`${this.url}/v2/settlements/${settlementId}/bill-discounts/${itemId}`)
+  }
+
+  getFreeItemStates(params?: TCheckStateParams): Observable<TFreeItemStateRow[]> {
+    return this.api.get(`${this.url}/v2/settlements/free-item-states`, { params: compact(params ?? {}) })
+  }
+
+  checkFreeItem(settlementId: number, itemId: number, checkedBy: string): Observable<void> {
+    return this.api.post(`${this.url}/v2/settlements/${settlementId}/free-items/${itemId}/check`, { checkedBy })
+  }
+
+  deleteFreeItemState(settlementId: number, itemId: number): Observable<void> {
+    return this.api.delete(`${this.url}/v2/settlements/${settlementId}/free-items/${itemId}`)
   }
 }

@@ -1,0 +1,143 @@
+<div class="row row-cols-1 row-cols-md-3 g-2 align-items-end mb-2">
+  <div class="col">
+    <label
+      [htmlFor]="createPairedSettlementForm.periodName().name()"
+      class="form-label small text-muted mb-1"
+      >ชื่องวด
+      @if (createPairedSettlementForm.periodName().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <input
+      [id]="createPairedSettlementForm.periodName().name()"
+      type="text"
+      class="form-control form-control-sm"
+      [formField]="createPairedSettlementForm.periodName"
+    />
+  </div>
+
+  <div class="col">
+    <label
+      [htmlFor]="createPairedSettlementForm.dateRange.startDate().name()"
+      class="form-label small text-muted mb-1"
+      >เริ่ม</label
+    >
+    <app-signal-datepicker
+      [id]="createPairedSettlementForm.dateRange.startDate().name()"
+      [formField]="createPairedSettlementForm.dateRange.startDate"
+    />
+  </div>
+
+  <div class="col">
+    <label
+      [htmlFor]="createPairedSettlementForm.dateRange.endDate().name()"
+      class="form-label small text-muted mb-1"
+      >จบ</label
+    >
+    <app-signal-datepicker
+      [id]="createPairedSettlementForm.dateRange.endDate().name()"
+      [formField]="createPairedSettlementForm.dateRange.endDate"
+    />
+  </div>
+</div>
+
+<app-form-alert-text [formState]="createPairedSettlementForm()" />
+
+<div class="mb-2">
+  <label
+    [htmlFor]="createPairedSettlementForm.remark().name()"
+    class="form-label small text-muted mb-1"
+    >หมายเหตุ</label
+  >
+  <input
+    [id]="createPairedSettlementForm.remark().name()"
+    type="text"
+    class="form-control form-control-sm"
+    [formField]="createPairedSettlementForm.remark"
+  />
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 g-3 mb-2">
+  <div class="col">
+    <span class="form-label small text-muted fw-bold">DN — เลือกรายการรายได้ที่จะเคลียร์ยอด</span>
+    @if (dnOpenEntries().length === 0) {
+      <div class="text-muted small">ไม่มีรายการที่เปิดอยู่</div>
+    } @else {
+      <table class="table table-sm table-bordered mb-0" style="font-size: 12px">
+        <thead>
+          <tr>
+            <th></th>
+            <th>เดือน</th>
+            <th>ประเภท</th>
+            <th>ยอดสั่งซื้อ</th>
+            <th>จำนวนรายได้</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (entry of dnOpenEntries(); track entry.id) {
+            <tr>
+              <td>
+                <input
+                  type="checkbox"
+                  [checked]="dnSelectedEntryIds().has(entry.id)"
+                  (change)="toggleDnEntry(entry.id)"
+                />
+              </td>
+              <td>{{ entry.month | date: "MM/yyyy" }}</td>
+              <td>{{ entry.entryType }}</td>
+              <td>{{ entry.orderAmount ?? "-" }}</td>
+              <td>{{ entry.amount }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <div class="small text-muted mt-1">ยอดสั่งซื้อรวม (DN): {{ dnSupplierOrderAmount() }}</div>
+    }
+  </div>
+
+  <div class="col">
+    <span class="form-label small text-muted fw-bold">HU — เลือกรายการรายได้ที่จะเคลียร์ยอด</span>
+    @if (huOpenEntries().length === 0) {
+      <div class="text-muted small">ไม่มีรายการที่เปิดอยู่</div>
+    } @else {
+      <table class="table table-sm table-bordered mb-0" style="font-size: 12px">
+        <thead>
+          <tr>
+            <th></th>
+            <th>เดือน</th>
+            <th>ประเภท</th>
+            <th>ยอดสั่งซื้อ</th>
+            <th>จำนวนรายได้</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (entry of huOpenEntries(); track entry.id) {
+            <tr>
+              <td>
+                <input
+                  type="checkbox"
+                  [checked]="huSelectedEntryIds().has(entry.id)"
+                  (change)="toggleHuEntry(entry.id)"
+                />
+              </td>
+              <td>{{ entry.month | date: "MM/yyyy" }}</td>
+              <td>{{ entry.entryType }}</td>
+              <td>{{ entry.orderAmount ?? "-" }}</td>
+              <td>{{ entry.amount }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <div class="small text-muted mt-1">ยอดสั่งซื้อรวม (HU): {{ huSupplierOrderAmount() }}</div>
+    }
+  </div>
+</div>
+
+<button
+  type="button"
+  class="btn btn-sm btn-primary"
+  [disabled]="!canSubmit()"
+  (click)="onSubmit()"
+>
+  สร้าง Settlement (คู่)
+</button>

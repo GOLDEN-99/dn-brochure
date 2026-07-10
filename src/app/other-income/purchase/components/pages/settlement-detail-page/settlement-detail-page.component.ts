@@ -135,6 +135,7 @@ export class SettlementDetailPageComponent implements OnInit {
     this.ctx.deleteSettlement().subscribe({
       next: () => {
         this.toast.success('ลบงวดชำระเรียบร้อย')
+        this.headService.refreshChildren?.()
         this.router.navigate(['../'], { relativeTo: this.route })
       },
       error: (err) => this.toast.danger(err?.error?.error ?? 'เกิดข้อผิดพลาด'),

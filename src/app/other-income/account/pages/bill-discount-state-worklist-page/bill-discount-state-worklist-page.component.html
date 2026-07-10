@@ -1,15 +1,15 @@
-<h1 class="text-center">ใบแจ้งหนี้ค้างจับคู่ (Invoice States)</h1>
+<h1 class="text-center">ตรวจสอบ CN กับบิล</h1>
 
 <div class="d-flex gap-2 mb-3">
   <select
     class="form-select"
-    style="max-width: 200px"
-    [ngModel]="filters().invoiceState"
-    (ngModelChange)="setInvoiceState($event)"
+    style="max-width: 160px"
+    [ngModel]="filters().checkState"
+    (ngModelChange)="setCheckState($event)"
   >
     <option [ngValue]="null">ทุกสถานะ</option>
-    <option value="UNMATCHED">UNMATCHED</option>
-    <option value="MATCHED">MATCHED</option>
+    <option value="UNCHECKED">UNCHECKED</option>
+    <option value="CHECKED">CHECKED</option>
   </select>
   <select
     class="form-select"
@@ -63,39 +63,44 @@
   <table class="table table-striped table-bordered" style="font-size: 12px">
     <thead>
       <tr>
-        <th>รหัสซัพ</th>
-        <th>ชื่อซัพ</th>
+        <th>บริษัท</th>
+        <th>รหัสซัพพลายเออร์</th>
+        <th>ชื่อซัพพลายเออร์</th>
         <th>ประเภทกิจกรรม</th>
-        <th>เลขที่ใบแจ้งหนี้</th>
-        <th class="text-end">ยอดใบแจ้งหนี้</th>
-        <th class="text-end">ยอดจับคู่แล้ว</th>
-        <th>สถานะ</th>
+        <th>เลขที่ออเดอร์</th>
         <th>เลขที่ใบเสร็จ</th>
-        <th>รับล่าสุด</th>
+        <th class="text-end">ยอด</th>
+        <th>สถานะตรวจสอบ</th>
+        <th>ตรวจสอบเมื่อ</th>
         <th></th>
       </tr>
     </thead>
     <tbody>
-      @for (row of items(); track row.invoiceId) {
+      @for (row of items(); track row.billDiscountId) {
         <tr>
+          <td>
+            <span class="badge text-bg-light">{{ row.compType }}</span>
+          </td>
           <td>{{ row.compCode }}</td>
           <td>{{ row.compName }}</td>
           <td>{{ row.contractLabelName }}</td>
-          <td>{{ row.invoiceNumb }}</td>
-          <td class="text-end">{{ row.invoiceAmount | number: "1.2-2" }}</td>
-          <td class="text-end">{{ row.matchedAmount | number: "1.2-2" }}</td>
+          <td>{{ row.orderNumb }}</td>
+          <td>{{ row.receNumb }}</td>
+          <td class="text-end">{{ row.subtotalAmount | number: "1.2-2" }}</td>
           <td>
             <span
               class="badge"
-              [class.text-bg-warning]="row.invoiceState === 'UNMATCHED'"
-              [class.text-bg-info]="isPartiallyReceived(row)"
-              [class.text-bg-success]="row.invoiceState === 'MATCHED'"
-              >{{ isPartiallyReceived(row) ? "PARTIAL" : row.invoiceState }}</span
+              [class.text-bg-warning]="row.checkState === 'UNCHECKED'"
+              [class.text-bg-success]="row.checkState === 'CHECKED'"
+              >{{ row.checkState }}</span
             >
           </td>
-          <td>{{ row.receiptNumbs ?? "-" }}</td>
-          <td>{{ row.lastReceiptDate ? (row.lastReceiptDate | date: "dd/MM/yyyy") : "-" }}</td>
           <td>
+            {{
+              row.checkedAt ? (row.checkedAt | date: "dd/MM/yyyy HH:mm") : "-"
+            }}
+          </td>
+          <td class="d-flex gap-1">
             <a
               [routerLink]="[
                 '../',
@@ -104,11 +109,22 @@
                 'settlements',
                 row.settlementId,
               ]"
-              [queryParams]="{ incomeType: 'Invoice' }"
               class="btn btn-sm btn-outline-primary"
             >
               รายละเอียด
             </a>
+            @if (row.checkState === "UNCHECKED") {
+              <button
+                class="btn btn-sm btn-outline-success"
+                [disabled]="checkingId() === row.billDiscountId"
+                (click)="check(row)"
+              >
+                ตรวจสอบแล้ว
+              </button>
+            }
+            <button class="btn btn-sm btn-outline-danger" (click)="remove(row)">
+              <i class="bi bi-trash"></i>
+            </button>
           </td>
         </tr>
       } @empty {
