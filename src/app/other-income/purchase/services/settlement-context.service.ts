@@ -40,11 +40,11 @@ export class SettlementContextService {
     return this.api.deleteSettlement(settlementId)
   }
 
-  addBillDiscount(req: TPostBillDiscountReq): Observable<{ id: number }> {
+  addBillDiscounts(reqs: TPostBillDiscountReq[]): Observable<{ ids: number[] }> {
     const settlementId = this.settlement()?.id
     if (settlementId == null) throw new Error('Settlement not loaded')
-    return this.api.postBillDiscount(settlementId, req).pipe(
-      tap(({ id }) => this.settlement.update(s => s && { ...s, billDiscounts: [...s.billDiscounts, { id, ...req }] }))
+    return this.api.postBillDiscounts(settlementId, reqs).pipe(
+      tap(() => this.refresh())
     )
   }
 
@@ -52,7 +52,7 @@ export class SettlementContextService {
     const settlementId = this.settlement()?.id
     if (settlementId == null) throw new Error('Settlement not loaded')
     return this.api.deleteBillDiscount(settlementId, itemId).pipe(
-      tap(() => this.settlement.update(s => s && { ...s, billDiscounts: s.billDiscounts.filter(row => row.id !== itemId) }))
+      tap(() => this.refresh())
     )
   }
 
@@ -60,10 +60,7 @@ export class SettlementContextService {
     const settlementId = this.settlement()?.id
     if (settlementId == null) throw new Error('Settlement not loaded')
     return this.api.postFreeItems(settlementId, reqs).pipe(
-      tap(({ ids }) => this.settlement.update(s => s && {
-        ...s,
-        freeItems: [...s.freeItems, ...reqs.map((req, i) => ({ id: ids[i], ...req }))],
-      }))
+      tap(() => this.refresh())
     )
   }
 
@@ -71,7 +68,7 @@ export class SettlementContextService {
     const settlementId = this.settlement()?.id
     if (settlementId == null) throw new Error('Settlement not loaded')
     return this.api.deleteFreeItem(settlementId, itemId).pipe(
-      tap(() => this.settlement.update(s => s && { ...s, freeItems: s.freeItems.filter(row => row.id !== itemId) }))
+      tap(() => this.refresh())
     )
   }
 
@@ -79,7 +76,7 @@ export class SettlementContextService {
     const settlementId = this.settlement()?.id
     if (settlementId == null) throw new Error('Settlement not loaded')
     return this.api.postInvoice(settlementId, req).pipe(
-      tap(({ id }) => this.settlement.update(s => s && { ...s, invoices: [...s.invoices, { id, ...req }] }))
+      tap(() => this.refresh())
     )
   }
 
@@ -95,11 +92,7 @@ export class SettlementContextService {
     const settlementId = this.settlement()?.id
     if (settlementId == null) throw new Error('Settlement not loaded')
     return this.api.deleteInvoice(settlementId, itemId).pipe(
-      tap(() => this.settlement.update(s => s && {
-        ...s,
-        invoices: s.invoices.filter(row => row.id !== itemId),
-        matches: s.matches.filter(m => m.invoiceId !== itemId),
-      }))
+      tap(() => this.refresh())
     )
   }
 
@@ -107,11 +100,7 @@ export class SettlementContextService {
     const settlementId = this.settlement()?.id
     if (settlementId == null) throw new Error('Settlement not loaded')
     return this.api.deleteReceipt(settlementId, itemId).pipe(
-      tap(() => this.settlement.update(s => s && {
-        ...s,
-        receipts: s.receipts.filter(row => row.id !== itemId),
-        matches: s.matches.filter(m => m.receiptId !== itemId),
-      }))
+      tap(() => this.refresh())
     )
   }
 
@@ -119,7 +108,7 @@ export class SettlementContextService {
     const settlementId = this.settlement()?.id
     if (settlementId == null) throw new Error('Settlement not loaded')
     return this.api.postCreditNote(settlementId, req).pipe(
-      tap(({ id }) => this.settlement.update(s => s && { ...s, creditNotes: [...s.creditNotes, { id, ...req }] }))
+      tap(() => this.refresh())
     )
   }
 
@@ -127,7 +116,7 @@ export class SettlementContextService {
     const settlementId = this.settlement()?.id
     if (settlementId == null) throw new Error('Settlement not loaded')
     return this.api.deleteCreditNote(settlementId, itemId).pipe(
-      tap(() => this.settlement.update(s => s && { ...s, creditNotes: s.creditNotes.filter(row => row.id !== itemId) }))
+      tap(() => this.refresh())
     )
   }
 }
