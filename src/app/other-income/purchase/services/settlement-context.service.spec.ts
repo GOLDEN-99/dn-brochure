@@ -33,7 +33,7 @@ describe('SettlementContextService', () => {
 
   beforeEach(() => {
     api = jasmine.createSpyObj('OtherIncomePurchaseApiService', [
-      'getSettlementDetail', 'postBillDiscount', 'deleteBillDiscount', 'postFreeItem', 'deleteFreeItem',
+      'getSettlementDetail', 'postBillDiscounts', 'deleteBillDiscount', 'postFreeItems', 'deleteFreeItem',
     ]);
     TestBed.configureTestingModule({
       providers: [SettlementContextService, { provide: OtherIncomePurchaseApiService, useValue: api }],
@@ -60,23 +60,27 @@ describe('SettlementContextService', () => {
     expect(service.loading()).toBe(false);
   });
 
-  it('appends the new row to billDiscounts after addBillDiscount resolves', () => {
+  it('refreshes the settlement after addBillDiscounts resolves', () => {
     api.getSettlementDetail.and.returnValue(of(settlement));
     service.load(900);
 
     const req = { orderNumb: 'PO-1', receNumb: 'REC-1', subtotalAmount: 500, remark: '' };
-    api.postBillDiscount.and.returnValue(of({ id: 10 }));
+    api.postBillDiscounts.and.returnValue(of({ ids: [10] }));
+    const refreshed = { ...settlement, billDiscounts: [{ id: 10, ...req }] };
+    api.getSettlementDetail.and.returnValue(of(refreshed));
 
-    service.addBillDiscount(req).subscribe();
+    service.addBillDiscounts([req]).subscribe();
 
-    expect(service.settlement()?.billDiscounts).toEqual([{ id: 10, ...req }]);
-    expect(api.postBillDiscount).toHaveBeenCalledWith(900, req);
+    expect(service.settlement()).toEqual(refreshed);
+    expect(api.postBillDiscounts).toHaveBeenCalledWith(900, [req]);
+    expect(api.getSettlementDetail).toHaveBeenCalledWith(900);
   });
 
-  it('removes the row from billDiscounts after removeBillDiscount resolves', () => {
+  it('refreshes the settlement after removeBillDiscount resolves', () => {
     api.getSettlementDetail.and.returnValue(of({ ...settlement, billDiscounts: [{ id: 10, orderNumb: 'PO-1', receNumb: 'REC-1', subtotalAmount: 500, remark: '' }] }));
     service.load(900);
     api.deleteBillDiscount.and.returnValue(of(undefined));
+    api.getSettlementDetail.and.returnValue(of(settlement));
 
     service.removeBillDiscount(10).subscribe();
 
@@ -84,23 +88,26 @@ describe('SettlementContextService', () => {
     expect(api.deleteBillDiscount).toHaveBeenCalledWith(900, 10);
   });
 
-  it('appends the new row to freeItems after addFreeItem resolves', () => {
+  it('refreshes the settlement after addFreeItems resolves', () => {
     api.getSettlementDetail.and.returnValue(of(settlement));
     service.load(900);
 
     const req = { orderNumb: 'PO-2', receNumb: 'REC-2', goodCode: 'G001', subtotalAmount: 200, remark: '' };
-    api.postFreeItem.and.returnValue(of({ id: 20 }));
+    api.postFreeItems.and.returnValue(of({ ids: [20] }));
+    const refreshed = { ...settlement, freeItems: [{ id: 20, ...req }] };
+    api.getSettlementDetail.and.returnValue(of(refreshed));
 
-    service.addFreeItem(req).subscribe();
+    service.addFreeItems([req]).subscribe();
 
-    expect(service.settlement()?.freeItems).toEqual([{ id: 20, ...req }]);
-    expect(api.postFreeItem).toHaveBeenCalledWith(900, req);
+    expect(service.settlement()).toEqual(refreshed);
+    expect(api.postFreeItems).toHaveBeenCalledWith(900, [req]);
   });
 
-  it('removes the row from freeItems after removeFreeItem resolves', () => {
+  it('refreshes the settlement after removeFreeItem resolves', () => {
     api.getSettlementDetail.and.returnValue(of({ ...settlement, freeItems: [{ id: 20, orderNumb: 'PO-2', receNumb: 'REC-2', goodCode: 'G001', subtotalAmount: 200, remark: '' }] }));
     service.load(900);
     api.deleteFreeItem.and.returnValue(of(undefined));
+    api.getSettlementDetail.and.returnValue(of(settlement));
 
     service.removeFreeItem(20).subscribe();
 
@@ -108,11 +115,11 @@ describe('SettlementContextService', () => {
     expect(api.deleteFreeItem).toHaveBeenCalledWith(900, 20);
   });
 
-  it('throws if addBillDiscount is called before a settlement is loaded', () => {
-    expect(() => service.addBillDiscount({ orderNumb: '', receNumb: '', subtotalAmount: 0, remark: '' })).toThrowError('Settlement not loaded');
+  it('throws if addBillDiscounts is called before a settlement is loaded', () => {
+    expect(() => service.addBillDiscounts([{ orderNumb: '', receNumb: '', subtotalAmount: 0, remark: '' }])).toThrowError('Settlement not loaded');
   });
 
-  it('throws if addFreeItem is called before a settlement is loaded', () => {
-    expect(() => service.addFreeItem({ orderNumb: '', receNumb: '', goodCode: '', subtotalAmount: 0, remark: '' })).toThrowError('Settlement not loaded');
+  it('throws if addFreeItems is called before a settlement is loaded', () => {
+    expect(() => service.addFreeItems([{ orderNumb: '', receNumb: '', goodCode: '', subtotalAmount: 0, remark: '' }])).toThrowError('Settlement not loaded');
   });
 });

@@ -17,6 +17,9 @@ function makeContract(overrides: Partial<TOrderContractDetail> = {}): TOrderCont
     endDate: '2026-12-31',
     createdAt: '2026-01-01',
     supplierPairId: null,
+    cumulativeOrderAmount: 0,
+    calcType: 'Flat',
+    currentBracket: null,
     spec: {
       id: 1,
       calcType: 'Flat',

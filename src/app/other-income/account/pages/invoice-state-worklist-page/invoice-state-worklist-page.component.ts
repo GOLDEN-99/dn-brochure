@@ -9,12 +9,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { z } from 'zod';
 import { OtherIncomeAccountApiService } from '../../services/other-income-account-api.service';
 import { TInvoiceStateRow } from '../../../shared/types/other-income.type';
-import { CONTRACT_TYPE_PATH, CONTRACT_TYPE_LABEL } from '../../../shared/libs/settlement-labels';
+import { CONTRACT_TYPE_PATH, CONTRACT_TYPE_LABEL, COMP_TYPE_LABEL } from '../../../shared/libs/settlement-labels';
 import { XLSXReportService, TAoaConfig } from '../../../../service/xlsx-report/xlsx-report.service';
 
 const invoiceFilterSchema = z.object({
   contractType: z.enum(['ORDER', 'BRANCH', 'PROMO']).nullable().default(null).catch(null),
   invoiceState: z.enum(['UNMATCHED', 'MATCHED']).nullable().default(null).catch(null),
+  compType: z.enum(['DN', 'HU']).default('DN').catch('DN'),
 })
 
 const invoiceStateExportConfig: TAoaConfig<TInvoiceStateRow> = {
@@ -54,6 +55,7 @@ export class InvoiceStateWorklistPageComponent {
 
   readonly contractTypeLabel = CONTRACT_TYPE_LABEL
   readonly contractTypePath = CONTRACT_TYPE_PATH
+  readonly compTypeLabel = COMP_TYPE_LABEL
 
   items = signal<TInvoiceStateRow[]>([])
   loading = signal(false)
@@ -68,6 +70,7 @@ export class InvoiceStateWorklistPageComponent {
     map(params => invoiceFilterSchema.parse({
       contractType: params.get('contractType'),
       invoiceState: params.get('invoiceState'),
+      compType: params.get('compType'),
     }))
   )
 
@@ -81,6 +84,7 @@ export class InvoiceStateWorklistPageComponent {
         return this.api.getInvoiceStates({
           contractType: filters.contractType ?? undefined,
           invoiceState: filters.invoiceState ?? undefined,
+          compType: filters.compType,
         }).pipe(
           catchError(() => {
             this.error.set('โหลดข้อมูลไม่สำเร็จ')
@@ -111,6 +115,10 @@ export class InvoiceStateWorklistPageComponent {
 
   setInvoiceState(value: string): void {
     this.setQueryParams({ invoiceState: value })
+  }
+
+  setCompType(value: string): void {
+    this.setQueryParams({ compType: value || null })
   }
 
   isPartiallyReceived(row: TInvoiceStateRow): boolean {

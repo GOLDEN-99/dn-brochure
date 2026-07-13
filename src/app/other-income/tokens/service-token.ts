@@ -19,6 +19,8 @@ interface ForContractDisplay {
 
 export interface ForContractData {
     contract: Signal<ForContractDisplay | null>
+    /** Re-fetch child collections (e.g. income entries, settlements) after a mutation elsewhere. Optional: only implementors with reloadable child collections need to provide it. */
+    refreshChildren?(): void
 }
 
 export const FOR_CONTRACT_DATA_TOKEN = new InjectionToken<ForContractData>('FOR_CONTRACT_DATA_TOKEN')

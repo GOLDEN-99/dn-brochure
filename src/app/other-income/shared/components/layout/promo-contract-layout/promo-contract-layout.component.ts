@@ -1,6 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { DatePipe, Location } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { PromoContractContextService } from '../../../../purchase/services/promo-contract-context.service';
 import { ToastService } from '../../../../../service/toast/toast.service';
 
@@ -10,15 +11,20 @@ import { ToastService } from '../../../../../service/toast/toast.service';
   templateUrl: './promo-contract-layout.component.html',
   styles: '',
 })
-export class PromoContractLayoutComponent implements OnInit {
+export class PromoContractLayoutComponent {
   private readonly route = inject(ActivatedRoute)
   private readonly router = inject(Router)
   private readonly location = inject(Location)
   private readonly toast = inject(ToastService)
   readonly ctx = inject(PromoContractContextService)
 
-  ngOnInit(): void {
-    this.ctx.load(+this.route.snapshot.params['id']);
+  constructor() {
+    const routeParams = toSignal(this.route.params, { initialValue: this.route.snapshot.params })
+    effect(() => {
+      const raw = routeParams()['id']
+      if (raw === undefined) return
+      this.ctx.setId(+raw)
+    })
   }
 
   goBack(): void {

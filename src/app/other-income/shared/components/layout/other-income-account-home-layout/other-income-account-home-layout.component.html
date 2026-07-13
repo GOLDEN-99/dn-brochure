@@ -47,19 +47,75 @@
           ใบแจ้งหนี้ค้างจับคู่ (Invoice States)
         </a>
       </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./bill-discount-states"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          ตรวจสอบ CN กับบิล
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./free-item-states"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          ตรวจสอบสินค้าแถม
+        </a>
+      </li>
+
+      <!--รายงาน-->
+      <li class="nav-item">
+        <span class="sidebar__section-label">รายงาน</span>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./report/settlement"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          รายงานปรับปรุงประมาณการ
+        </a>
+      </li>
 
       <!--ประมาณการ-->
       <li class="nav-item">
         <span class="sidebar__section-label">ประมาณการ</span>
       </li>
       <li class="nav-item">
-        <a class="nav-link" (click)="closeSidebarOnMobile()"> DC REBATE </a>
+        <a
+          class="nav-link"
+          routerLink="./report/order"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          DC REBATE
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" (click)="closeSidebarOnMobile()"> Light Box </a>
+        <a
+          class="nav-link"
+          routerLink="./report/branch"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          Light Box
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" (click)="closeSidebarOnMobile()"> อื่นๆ </a>
+        <a
+          class="nav-link"
+          routerLink="./report/promo"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          อื่นๆ
+        </a>
       </li>
     </ul>
   </nav>

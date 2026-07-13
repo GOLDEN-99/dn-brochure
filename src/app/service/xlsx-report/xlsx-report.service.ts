@@ -82,6 +82,21 @@ export class XLSXReportService {
     }
   }
 
+  convertMultiSheetWorkbook<T extends readonly TObject[]>(sheets: TSheetInputs<T>) {
+    return from(xlsxPromise).pipe(
+      switchMap(XLSX => {
+        const wb = XLSX.utils.book_new()
+        for (const { config, data } of sheets as readonly TSheetInput<TObject>[]) {
+          const headers = config.config.map(c => c.header)
+          const cols = config.config.map(c => c.valueMapper)
+          const ws = XLSX.utils.aoa_to_sheet([headers, ...data.map(d => cols.map(fn => fn(d)))])
+          XLSX.utils.book_append_sheet(wb, ws, config.sheetName)
+        }
+        return [wb]
+      })
+    )
+  }
+
 }
 
 
@@ -95,3 +110,7 @@ export type TAoaConfig<T extends TObject> = {
     valueMapper: (row: T) => unknown
   }>
 }
+
+type TSheetInput<T extends TObject> = { config: TAoaConfig<T>; data: T[] }
+
+type TSheetInputs<T extends readonly TObject[]> = { [K in keyof T]: TSheetInput<T[K]> }

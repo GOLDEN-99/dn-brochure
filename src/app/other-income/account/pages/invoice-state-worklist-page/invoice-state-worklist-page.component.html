@@ -22,6 +22,15 @@
     <option value="BRANCH">{{ contractTypeLabel.BRANCH }}</option>
     <option value="PROMO">{{ contractTypeLabel.PROMO }}</option>
   </select>
+  <select
+    class="form-select"
+    style="max-width: 120px"
+    [ngModel]="filters().compType"
+    (ngModelChange)="setCompType($event)"
+  >
+    <option value="DN">{{ compTypeLabel.DN }}</option>
+    <option value="HU">{{ compTypeLabel.HU }}</option>
+  </select>
   <button class="btn btn-outline-secondary" (click)="refresh()">
     <i class="bi bi-arrow-clockwise"></i>
   </button>

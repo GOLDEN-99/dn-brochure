@@ -46,23 +46,38 @@
     <div class="row row-cols-2 row-cols-md-3 g-2">
       <div>
         <small class="text-muted d-block">ยอดสั่งซื้อ (ระบบ)</small
-        >{{ settlement().systemOrderAmount ?? "-" }}
+        >{{
+          settlement().systemOrderAmount !== null &&
+          settlement().systemOrderAmount !== undefined
+            ? (settlement().systemOrderAmount | number: "1.2-2")
+            : "-"
+        }}
       </div>
       <div>
         <small class="text-muted d-block">ยอด CN</small
-        >{{ settlement().cnOrderAmount ?? "-" }}
+        >{{
+          settlement().cnOrderAmount !== null &&
+          settlement().cnOrderAmount !== undefined
+            ? (settlement().cnOrderAmount | number: "1.2-2")
+            : "-"
+        }}
       </div>
       <div>
         <small class="text-muted d-block">รายได้ (ระบบ)</small
-        >{{ settlement().systemIncome }}
+        >{{ settlement().systemIncome | number: "1.2-2" }}
       </div>
       <div>
         <small class="text-muted d-block">ยอดสั่งซื้อ (ซัพพลายเออร์)</small
-        >{{ settlement().supplierOrderAmount ?? "-" }}
+        >{{
+          settlement().supplierOrderAmount !== null &&
+          settlement().supplierOrderAmount !== undefined
+            ? (settlement().supplierOrderAmount | number: "1.2-2")
+            : "-"
+        }}
       </div>
       <div>
         <small class="text-muted d-block">รายได้ (ซัพพลายเออร์)</small
-        >{{ settlement().supplierIncome }}
+        >{{ settlement().supplierIncome | number: "1.2-2" }}
       </div>
       @if (balance(); as bal) {
         <div>
@@ -74,7 +89,7 @@
             [class.text-danger]="bal.remaining > 1"
             [class.text-success]="bal.remaining <= 1"
           >
-            {{ bal.remaining }}
+            {{ bal.remaining | number: "1.2-2" }}
           </span>
         </div>
       }

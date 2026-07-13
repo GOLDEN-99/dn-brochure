@@ -1,5 +1,5 @@
 import { Component, inject, input, signal, viewChild } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable } from 'rxjs';
 import { SettlementContextService } from '../../../../../services/settlement-context.service';
 import { ToastService } from '../../../../../../../service/toast/toast.service';
 import { AppendBillDiscountComponent, TBillDiscountSearchFilters } from '../../../../forms/append-bill-discount/append-bill-discount.component';
@@ -25,7 +25,7 @@ export class SettlementBillTabComponent {
   onSubmitBillDiscounts(reqs: TPostBillDiscountReq[]): void {
     if (reqs.length === 0) return
     this.submittingBillDiscount.set(true)
-    forkJoin(reqs.map(req => this.ctx.addBillDiscount(req))).subscribe({
+    this.ctx.addBillDiscounts(reqs).subscribe({
       next: () => {
         this.toast.success('เพิ่มส่วนลดบิลเรียบร้อย')
         this.appendBillDiscountForm()?.reset()

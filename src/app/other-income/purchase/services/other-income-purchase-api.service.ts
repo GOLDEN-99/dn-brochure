@@ -47,6 +47,11 @@ import {
   TDateRange,
   TPostReceiptWithMatchesReq,
   TSupplierPair,
+  TPairedIncomeEntries,
+  TPostPairedSettlementReq,
+  TPostPairedSettlementRes,
+  TOrderConfirmationReport,
+  TGetOrderConfirmationReportParams,
 } from '../../shared/types/other-income.type';
 
 /**
@@ -128,6 +133,14 @@ export class OtherIncomePurchaseApiService {
     return this.api.post(`${this.url}/v2/settlements`, { ...req, invoices: [], billDiscounts: [], freeItems: [], creditNotes: [] })
   }
 
+  getPairedIncomeEntries(params: { dnContractId?: number; huContractId?: number }): Observable<TPairedIncomeEntries> {
+    return this.api.get(`${this.url}/v2/income-entries/paired`, { params: compact(params) })
+  }
+
+  postPairedSettlement(req: TPostPairedSettlementReq): Observable<TPostPairedSettlementRes> {
+    return this.api.post(`${this.url}/v2/settlements/paired`, req)
+  }
+
   postCnCorrection(contractId: number, req: TPostCnCorrectionReq): Observable<TIncomeEntry> {
     return this.api.post(`${this.url}/v2/income-entries/order/${contractId}/cn-correction`, req)
   }
@@ -146,6 +159,10 @@ export class OtherIncomePurchaseApiService {
 
   postManualCorrection(req: TPostManualCorrectionReq): Observable<TIncomeEntry> {
     return this.api.post(`${this.url}/v2/income-entries/correction`, req)
+  }
+
+  deleteIncomeEntry(id: number): Observable<void> {
+    return this.api.delete(`${this.url}/v2/income-entries/${id}`)
   }
 
   // ─────────────── Group B — Branch contracts ───────────────
@@ -242,16 +259,16 @@ export class OtherIncomePurchaseApiService {
     return this.api.delete(`${this.url}/v2/settlements/${id}`)
   }
 
-  postBillDiscount(settlementId: number, req: TPostBillDiscountReq): Observable<{ id: number }> {
-    return this.api.post(`${this.url}/v2/settlements/${settlementId}/bill-discounts`, req)
+  postBillDiscounts(settlementId: number, billDiscounts: TPostBillDiscountReq[]): Observable<{ ids: number[] }> {
+    return this.api.post(`${this.url}/v2/settlements/${settlementId}/bill-discounts`, { billDiscounts })
   }
 
   deleteBillDiscount(settlementId: number, itemId: number): Observable<void> {
     return this.api.delete(`${this.url}/v2/settlements/${settlementId}/bill-discounts/${itemId}`)
   }
 
-  postFreeItem(settlementId: number, req: TPostFreeItemReq): Observable<{ id: number }> {
-    return this.api.post(`${this.url}/v2/settlements/${settlementId}/free-items`, req)
+  postFreeItems(settlementId: number, freeItems: TPostFreeItemReq[]): Observable<{ ids: number[] }> {
+    return this.api.post(`${this.url}/v2/settlements/${settlementId}/free-items`, { freeItems })
   }
 
   deleteFreeItem(settlementId: number, itemId: number): Observable<void> {
@@ -296,6 +313,10 @@ export class OtherIncomePurchaseApiService {
 
   getAccrualState(params: TAccrualStateParams): Observable<TAccrualStateRow[]> {
     return this.api.get(`${this.url}/v2/report/accrual-state`, { params })
+  }
+
+  getOrderConfirmationReport(contractId: number, params?: TGetOrderConfirmationReportParams): Observable<TOrderConfirmationReport> {
+    return this.api.get(`${this.url}/v2/report/order-confirmation/${contractId}`, { params: compact(params ?? {}) })
   }
 
   searchBillDiscounts({ orderDateRange, order, ...params }: TBillDiscountSearchParams): Observable<TBillDiscountOrderLine[]> {
