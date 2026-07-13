@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { TSettlementDetail } from '../../../../../../shared/types/other-income.type';
 
 export type SettlementBalance = {
@@ -10,7 +10,7 @@ export type SettlementBalance = {
 
 @Component({
   selector: 'app-settlement-summary-card',
-  imports: [DatePipe],
+  imports: [DatePipe, DecimalPipe],
   templateUrl: './settlement-summary-card.component.html',
 })
 export class SettlementSummaryCardComponent {
