@@ -83,6 +83,37 @@ describe('ManualCorrectionFormComponent', () => {
     });
   });
 
+  it('negates orderAmount when sign is set to deduct (-1)', () => {
+    let emitted: TPostManualCorrectionReq | undefined;
+    component.submitCorrection.subscribe((req) => (emitted = req));
+
+    component.manualCorrectionForm.orderAmount().value.set(10000);
+    component.manualCorrectionForm.sign().value.set(-1);
+    component.manualCorrectionForm.month().value.set({ year: 2026, month: 1, day: 1 });
+    component.onSubmit();
+
+    expect(emitted).toEqual(
+      jasmine.objectContaining({ orderAmount: -10000 })
+    );
+  });
+
+  it('negates amount when sign is set to deduct (-1) for BRANCH/PROMO', () => {
+    fixture.componentRef.setInput('contractType', 'PROMO');
+    fixture.detectChanges();
+
+    let emitted: TPostManualCorrectionReq | undefined;
+    component.submitCorrection.subscribe((req) => (emitted = req));
+
+    component.manualCorrectionForm.amount().value.set(500);
+    component.manualCorrectionForm.sign().value.set(-1);
+    component.manualCorrectionForm.month().value.set({ year: 2026, month: 2, day: 1 });
+    component.onSubmit();
+
+    expect(emitted).toEqual(
+      jasmine.objectContaining({ amount: -500 })
+    );
+  });
+
   it('includes note when provided', () => {
     let emitted: TPostManualCorrectionReq | undefined;
     component.submitCorrection.subscribe((req) => (emitted = req));
@@ -104,13 +135,15 @@ describe('ManualCorrectionFormComponent', () => {
     expect(emitted).toBeUndefined();
   });
 
-  it('reset() restores amount to 0, note to empty, and month to today at day 1', () => {
+  it('reset() restores amount to 0, note to empty, sign to add (1), and month to today at day 1', () => {
     component.manualCorrectionForm.orderAmount().value.set(999);
     component.manualCorrectionForm.note().value.set('temp');
+    component.manualCorrectionForm.sign().value.set(-1);
 
     component.reset();
 
     expect(component.manualCorrectionForm.orderAmount().value()).toBe(0);
     expect(component.manualCorrectionForm.note().value()).toBe('');
+    expect(component.manualCorrectionForm.sign().value()).toBe(1);
   });
 });

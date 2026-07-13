@@ -25,6 +25,7 @@ export class ManualCorrectionFormComponent {
       contractType: this.contractType(),
       amount: 0,
       orderAmount: 0,
+      sign: 1,
       note: '',
     }
   }
@@ -42,7 +43,7 @@ export class ManualCorrectionFormComponent {
 
   onSubmit(): void {
     if (!this.canSubmit()) return
-    const { month: { month, year }, amount, orderAmount, note } = this.manualCorrectionState()
+    const { month: { month, year }, amount, orderAmount, sign, note } = this.manualCorrectionState()
     const contractId = this.contractId()
     const contractType = this.contractType()
     const monthStr = `${year}-${month.toString().padStart(2, '0')}-01`
@@ -50,8 +51,8 @@ export class ManualCorrectionFormComponent {
 
     this.submitCorrection.emit(
       contractType === 'ORDER'
-        ? { contractId, contractType, month: monthStr, orderAmount, note: note_ }
-        : { contractId, contractType, month: monthStr, amount, note: note_ }
+        ? { contractId, contractType, month: monthStr, orderAmount: orderAmount * sign, note: note_ }
+        : { contractId, contractType, month: monthStr, amount: amount * sign, note: note_ }
     )
   }
 

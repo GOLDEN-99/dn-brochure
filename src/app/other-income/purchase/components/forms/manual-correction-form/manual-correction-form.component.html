@@ -15,6 +15,39 @@
   </div>
 
   <div class="col">
+    <fieldset class="d-block">
+      <legend class="form-label small text-muted mb-1 float-none">
+        {{ contractType() === 'ORDER' ? 'ปรับปรุงยอดซื้อ' : 'ปรับปรุงรายได้' }}
+      </legend>
+      <div class="btn-group w-100">
+        <input
+          type="radio"
+          class="btn-check"
+          name="manualCorrectionSign"
+          id="manualCorrectionSignAdd"
+          [checked]="manualCorrectionForm.sign().value() === 1"
+          (change)="manualCorrectionForm.sign().value.set(1)"
+        />
+        <label class="btn btn-outline-success btn-sm" for="manualCorrectionSignAdd"
+          >เพิ่ม</label
+        >
+
+        <input
+          type="radio"
+          class="btn-check"
+          name="manualCorrectionSign"
+          id="manualCorrectionSignSubtract"
+          [checked]="manualCorrectionForm.sign().value() === -1"
+          (change)="manualCorrectionForm.sign().value.set(-1)"
+        />
+        <label class="btn btn-outline-danger btn-sm" for="manualCorrectionSignSubtract"
+          >ลด</label
+        >
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="col">
     @if (contractType() === 'ORDER') {
       <label
         [htmlFor]="manualCorrectionForm.orderAmount().name()"
