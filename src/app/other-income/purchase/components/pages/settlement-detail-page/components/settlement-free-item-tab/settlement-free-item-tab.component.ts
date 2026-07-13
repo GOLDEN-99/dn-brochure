@@ -1,5 +1,5 @@
 import { Component, inject, input, signal, viewChild } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable } from 'rxjs';
 import { SettlementContextService } from '../../../../../services/settlement-context.service';
 import { ToastService } from '../../../../../../../service/toast/toast.service';
 import { AppendFreeItemComponent, TFreeItemSearchFilters } from '../../../../forms/append-free-item/append-free-item.component';
@@ -25,7 +25,7 @@ export class SettlementFreeItemTabComponent {
   onSubmitFreeItems(reqs: TPostFreeItemReq[]): void {
     if (reqs.length === 0) return
     this.submittingFreeItem.set(true)
-    forkJoin(reqs.map(req => this.ctx.addFreeItem(req))).subscribe({
+    this.ctx.addFreeItems(reqs).subscribe({
       next: () => {
         this.toast.success('เพิ่มของแถมเรียบร้อย')
         this.appendFreeItemForm()?.reset()

@@ -72,4 +72,11 @@ export class OrderContractAccrualsPageComponent {
       },
     })
   }
+
+  onDeleteEntry(entryId: number): void {
+    this.ctx.deleteIncomeEntry(entryId).subscribe({
+      next: () => this.toast.success('ลบรายการเรียบร้อย'),
+      error: (err) => this.toast.danger(err?.error?.error ?? 'เกิดข้อผิดพลาด'),
+    })
+  }
 }

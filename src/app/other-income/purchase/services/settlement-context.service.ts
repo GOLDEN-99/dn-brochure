@@ -56,11 +56,14 @@ export class SettlementContextService {
     )
   }
 
-  addFreeItem(req: TPostFreeItemReq): Observable<{ id: number }> {
+  addFreeItems(reqs: TPostFreeItemReq[]): Observable<{ ids: number[] }> {
     const settlementId = this.settlement()?.id
     if (settlementId == null) throw new Error('Settlement not loaded')
-    return this.api.postFreeItem(settlementId, req).pipe(
-      tap(({ id }) => this.settlement.update(s => s && { ...s, freeItems: [...s.freeItems, { id, ...req }] }))
+    return this.api.postFreeItems(settlementId, reqs).pipe(
+      tap(({ ids }) => this.settlement.update(s => s && {
+        ...s,
+        freeItems: [...s.freeItems, ...reqs.map((req, i) => ({ id: ids[i], ...req }))],
+      }))
     )
   }
 

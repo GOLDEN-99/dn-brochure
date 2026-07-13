@@ -43,7 +43,7 @@ describe('OrderContractContextService', () => {
     api = jasmine.createSpyObj('OtherIncomePurchaseApiService', [
       'getOrderContract', 'getIncomeEntries', 'getSettlements', 'getPairedIncomeEntries',
       'postCnCorrection', 'postLagCorrection', 'postManualCorrection', 'postOrderSettlement', 'postPairedSettlement',
-      'deleteOrderContract',
+      'deleteOrderContract', 'deleteIncomeEntry',
     ]);
     api.getOrderContract.and.returnValue(of(contract));
     api.getIncomeEntries.and.returnValue(of(entries));
@@ -212,5 +212,17 @@ describe('OrderContractContextService', () => {
 
   it('throws if deleteContract is called before a contract is loaded', () => {
     expect(() => service.deleteContract()).toThrowError('Contract not loaded');
+  });
+
+  it('deleteIncomeEntry calls the api and reloads income entries after the request resolves', async () => {
+    await load(1);
+    api.getIncomeEntries.calls.reset();
+    api.deleteIncomeEntry.and.returnValue(of(undefined));
+
+    service.deleteIncomeEntry(100).subscribe();
+    await flush();
+
+    expect(api.deleteIncomeEntry).toHaveBeenCalledWith(100);
+    expect(api.getIncomeEntries).toHaveBeenCalledTimes(1);
   });
 });

@@ -161,6 +161,10 @@ export class OtherIncomePurchaseApiService {
     return this.api.post(`${this.url}/v2/income-entries/correction`, req)
   }
 
+  deleteIncomeEntry(id: number): Observable<void> {
+    return this.api.delete(`${this.url}/v2/income-entries/${id}`)
+  }
+
   // ─────────────── Group B — Branch contracts ───────────────
 
   getBranchContracts(params?: { compCode?: string; compType?: string; startDate?: string; endDate?: string }): Observable<TBranchContractListItem[]> {
@@ -255,16 +259,16 @@ export class OtherIncomePurchaseApiService {
     return this.api.delete(`${this.url}/v2/settlements/${id}`)
   }
 
-  postBillDiscount(settlementId: number, req: TPostBillDiscountReq): Observable<{ id: number }> {
-    return this.api.post(`${this.url}/v2/settlements/${settlementId}/bill-discounts`, req)
+  postBillDiscount(settlementId: number, billDiscounts: TPostBillDiscountReq): Observable<{ id: number }> {
+    return this.api.post(`${this.url}/v2/settlements/${settlementId}/bill-discounts`, { billDiscounts })
   }
 
   deleteBillDiscount(settlementId: number, itemId: number): Observable<void> {
     return this.api.delete(`${this.url}/v2/settlements/${settlementId}/bill-discounts/${itemId}`)
   }
 
-  postFreeItem(settlementId: number, req: TPostFreeItemReq): Observable<{ id: number }> {
-    return this.api.post(`${this.url}/v2/settlements/${settlementId}/free-items`, req)
+  postFreeItems(settlementId: number, freeItems: TPostFreeItemReq[]): Observable<{ ids: number[] }> {
+    return this.api.post(`${this.url}/v2/settlements/${settlementId}/free-items`, { freeItems })
   }
 
   deleteFreeItem(settlementId: number, itemId: number): Observable<void> {

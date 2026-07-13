@@ -97,6 +97,10 @@ export class OrderContractContextService implements ForContractData {
     return this.api.postManualCorrection(req).pipe(tap(() => this.incomeEntriesResource.reload()))
   }
 
+  deleteIncomeEntry(entryId: number): Observable<void> {
+    return this.api.deleteIncomeEntry(entryId).pipe(tap(() => this.incomeEntriesResource.reload()))
+  }
+
   addSettlement(req: TPostSettlementReq): Observable<TSettlementListItem> {
     return this.api.postOrderSettlement(req).pipe(
       tap(() => {

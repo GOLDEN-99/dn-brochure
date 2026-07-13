@@ -33,7 +33,7 @@ describe('SettlementContextService', () => {
 
   beforeEach(() => {
     api = jasmine.createSpyObj('OtherIncomePurchaseApiService', [
-      'getSettlementDetail', 'postBillDiscount', 'deleteBillDiscount', 'postFreeItem', 'deleteFreeItem',
+      'getSettlementDetail', 'postBillDiscount', 'deleteBillDiscount', 'postFreeItems', 'deleteFreeItem',
     ]);
     TestBed.configureTestingModule({
       providers: [SettlementContextService, { provide: OtherIncomePurchaseApiService, useValue: api }],
@@ -84,17 +84,17 @@ describe('SettlementContextService', () => {
     expect(api.deleteBillDiscount).toHaveBeenCalledWith(900, 10);
   });
 
-  it('appends the new row to freeItems after addFreeItem resolves', () => {
+  it('appends the new rows to freeItems after addFreeItems resolves', () => {
     api.getSettlementDetail.and.returnValue(of(settlement));
     service.load(900);
 
     const req = { orderNumb: 'PO-2', receNumb: 'REC-2', goodCode: 'G001', subtotalAmount: 200, remark: '' };
-    api.postFreeItem.and.returnValue(of({ id: 20 }));
+    api.postFreeItems.and.returnValue(of({ ids: [20] }));
 
-    service.addFreeItem(req).subscribe();
+    service.addFreeItems([req]).subscribe();
 
     expect(service.settlement()?.freeItems).toEqual([{ id: 20, ...req }]);
-    expect(api.postFreeItem).toHaveBeenCalledWith(900, req);
+    expect(api.postFreeItems).toHaveBeenCalledWith(900, [req]);
   });
 
   it('removes the row from freeItems after removeFreeItem resolves', () => {
@@ -112,7 +112,7 @@ describe('SettlementContextService', () => {
     expect(() => service.addBillDiscount({ orderNumb: '', receNumb: '', subtotalAmount: 0, remark: '' })).toThrowError('Settlement not loaded');
   });
 
-  it('throws if addFreeItem is called before a settlement is loaded', () => {
-    expect(() => service.addFreeItem({ orderNumb: '', receNumb: '', goodCode: '', subtotalAmount: 0, remark: '' })).toThrowError('Settlement not loaded');
+  it('throws if addFreeItems is called before a settlement is loaded', () => {
+    expect(() => service.addFreeItems([{ orderNumb: '', receNumb: '', goodCode: '', subtotalAmount: 0, remark: '' }])).toThrowError('Settlement not loaded');
   });
 });
