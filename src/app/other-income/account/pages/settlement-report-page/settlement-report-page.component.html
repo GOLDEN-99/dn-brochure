@@ -60,6 +60,8 @@
           <th>บริษัท</th>
           <th>ซัพพลายเออร์</th>
           <th>สัญญา</th>
+          <th>เงื่อนไขการคำนวณ</th>
+          <th>ขั้นบันได</th>
           <th>งวด</th>
           <th>เริ่ม</th>
           <th>จบ</th>
@@ -81,6 +83,8 @@
             </td>
             <td>{{ row.contract.compCode }} {{ row.contract.compName }}</td>
             <td>{{ row.contract.contractLabelName }}</td>
+            <td>{{ formatSpec(row.contract.spec) }}</td>
+            <td>{{ formatSteps(row.contract.steps) }}</td>
             <td>{{ row.periodName }}</td>
             <td>{{ row.startDate | date: "dd/MM/yyyy" }}</td>
             <td>{{ row.endDate | date: "dd/MM/yyyy" }}</td>
@@ -95,7 +99,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="14" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
+            <td colspan="16" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
           </tr>
         }
       </tbody>

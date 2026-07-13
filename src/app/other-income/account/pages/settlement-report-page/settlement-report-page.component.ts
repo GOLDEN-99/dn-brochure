@@ -8,11 +8,35 @@ import { EMPTY, switchMap } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { OtherIncomeAccountApiService } from '../../services/other-income-account-api.service';
-import { TSettlementReportRow } from '../../../shared/types/other-income.type';
+import { TSettlementReportRow, TSettlementContractResponse, CALC_TYPE_LABEL } from '../../../shared/types/other-income.type';
 import { COMP_TYPE_LABEL } from '../../../shared/libs/settlement-labels';
 import { XLSXReportService, TAoaConfig } from '../../../../service/xlsx-report/xlsx-report.service';
 import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 import { isoToNgbDate, ngbDateToIso, startOfYearRange } from '../../../shared/libs/date-time';
+
+const EXCLUDE_LABELS: Array<[keyof TSettlementContractResponse['spec'], string]> = [
+  ['excludeVat', 'VAT'],
+  ['excludeDc', 'DC'],
+  ['excludeRebate', 'Rebate'],
+  ['excludeInce', 'Incentive'],
+  ['excludeComp', 'Comp'],
+]
+
+export function formatSpec(spec: TSettlementContractResponse['spec']): string {
+  const parts = [
+    `รูปแบบ ${CALC_TYPE_LABEL[spec.calcType] ?? spec.calcType}`,
+    `เพดานยอดซื้อ ${spec.capAmount ?? 'ไม่กำหนด'} บาท`,
+  ]
+  const excludes = EXCLUDE_LABELS.filter(([key]) => spec[key]).map(([, label]) => label)
+  if (excludes.length) parts.push(`ไม่รวม ${excludes.join(', ')}`)
+  return parts.join(', ')
+}
+
+export function formatSteps(steps: TSettlementContractResponse['steps']): string {
+  return steps
+    .map(s => `ตั้งแต่ ${s.min.toLocaleString('th-TH')} บาท คิด ${s.rate}%`)
+    .join(', ')
+}
 
 const exportConfig: TAoaConfig<TSettlementReportRow> = {
   sheetName: 'ปรับปรุงประมาณการ',
@@ -21,6 +45,8 @@ const exportConfig: TAoaConfig<TSettlementReportRow> = {
     { header: 'รหัสซัพพลายเออร์', valueMapper: row => row.contract.compCode },
     { header: 'ชื่อซัพพลายเออร์', valueMapper: row => row.contract.compName },
     { header: 'สัญญา', valueMapper: row => row.contract.contractLabelName },
+    { header: 'เงื่อนไขการคำนวณ', valueMapper: row => formatSpec(row.contract.spec) },
+    { header: 'ขั้นบันได', valueMapper: row => formatSteps(row.contract.steps) },
     { header: 'งวด', valueMapper: row => row.periodName },
     { header: 'เริ่ม', valueMapper: row => row.startDate?.slice(0, 10) },
     { header: 'จบ', valueMapper: row => row.endDate?.slice(0, 10) },
@@ -48,6 +74,8 @@ export class SettlementReportPageComponent {
   private readonly xlsx = inject(XLSXReportService)
 
   readonly compTypeLabel = COMP_TYPE_LABEL
+  readonly formatSpec = formatSpec
+  readonly formatSteps = formatSteps
 
   rows = signal<TSettlementReportRow[]>([])
   loading = signal(false)
