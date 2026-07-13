@@ -38,6 +38,12 @@ export const ACCOUNT_ROUTES: Route = {
                 .catch(handleLazyLoadError('account free-item-states'))
         },
         {
+            path: 'report/settlement',
+            loadComponent: () => import('../account/pages/settlement-report-page/settlement-report-page.component')
+                .then(c => c.SettlementReportPageComponent)
+                .catch(handleLazyLoadError('account settlement-report'))
+        },
+        {
             path: 'report/order',
             loadComponent: () => import('../account/pages/accrual-order-report-page/accrual-order-report-page.component')
                 .then(c => c.AccrualOrderReportPageComponent)

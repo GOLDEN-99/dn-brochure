@@ -1,0 +1,104 @@
+<h1 class="text-center">รายงานปรับปรุงประมาณการ</h1>
+
+<div class="d-flex gap-2 mb-3">
+  <app-date-picker
+    style="max-width: 160px"
+    [value]="startDateValue()"
+    (valueChange)="onStartDateChange($event)"
+  />
+  <app-date-picker
+    style="max-width: 160px"
+    [value]="endDateValue()"
+    (valueChange)="onEndDateChange($event)"
+  />
+  <select
+    class="form-select"
+    style="max-width: 120px"
+    [ngModel]="compType()"
+    (ngModelChange)="setCompType($event)"
+  >
+    <option [ngValue]="null">ทุกบริษัท</option>
+    <option value="DN">{{ compTypeLabel.DN }}</option>
+    <option value="HU">{{ compTypeLabel.HU }}</option>
+  </select>
+  <select
+    class="form-select"
+    style="max-width: 260px"
+    [ngModel]="contractFilter()"
+    (ngModelChange)="setContractFilter($event)"
+  >
+    <option [ngValue]="null">ทุกสัญญา</option>
+    @for (opt of contractOptions(); track opt.id) {
+      <option [ngValue]="opt.id">{{ opt.label }}</option>
+    }
+  </select>
+  <button
+    class="btn btn-outline-success ms-auto"
+    [disabled]="loading() || filteredRows().length === 0"
+    (click)="exportExcel()"
+  >
+    <i class="bi bi-file-earmark-excel"></i>
+    Export Excel
+  </button>
+</div>
+
+@if (loading()) {
+  <div class="text-center py-4">
+    <div
+      class="spinner-border spinner-border-sm text-secondary"
+      role="status"
+    ></div>
+    <span class="ms-2 text-muted">กำลังโหลด...</span>
+  </div>
+} @else if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+} @else {
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered" style="font-size: 12px">
+      <thead>
+        <tr>
+          <th>บริษัท</th>
+          <th>ซัพพลายเออร์</th>
+          <th>สัญญา</th>
+          <th>งวด</th>
+          <th>เริ่ม</th>
+          <th>จบ</th>
+          <th class="text-end">ยอดสั่งซื้อ (ระบบ)</th>
+          <th class="text-end">รายได้ (ระบบ)</th>
+          <th class="text-end">ยอดสั่งซื้อ (ซัพพลายเออร์)</th>
+          <th class="text-end">รายได้ (ซัพพลายเออร์)</th>
+          <th class="text-end">CN มากับบิล</th>
+          <th class="text-end">สินค้าแถม</th>
+          <th class="text-end">ใบแจ้งหนี้</th>
+          <th class="text-end">CN</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of filteredRows(); track row.settlementId) {
+          <tr>
+            <td>
+              <span class="badge text-bg-light">{{ row.contract.compType }}</span>
+            </td>
+            <td>{{ row.contract.compCode }} {{ row.contract.compName }}</td>
+            <td>{{ row.contract.contractLabelName }}</td>
+            <td>{{ row.periodName }}</td>
+            <td>{{ row.startDate | date: "dd/MM/yyyy" }}</td>
+            <td>{{ row.endDate | date: "dd/MM/yyyy" }}</td>
+            <td class="text-end">{{ row.systemOrderAmount !== null && row.systemOrderAmount !== undefined ? (row.systemOrderAmount | number: "1.2-2") : "-" }}</td>
+            <td class="text-end">{{ row.systemIncome | number: "1.2-2" }}</td>
+            <td class="text-end">{{ row.supplierOrderAmount !== null && row.supplierOrderAmount !== undefined ? (row.supplierOrderAmount | number: "1.2-2") : "-" }}</td>
+            <td class="text-end">{{ row.supplierIncome | number: "1.2-2" }}</td>
+            <td class="text-end">{{ row.billDiscountTotal | number: "1.2-2" }}</td>
+            <td class="text-end">{{ row.freeItemTotal | number: "1.2-2" }}</td>
+            <td class="text-end">{{ row.invoiceTotal | number: "1.2-2" }}</td>
+            <td class="text-end">{{ row.creditNoteTotal | number: "1.2-2" }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="14" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

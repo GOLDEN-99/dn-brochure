@@ -13,6 +13,8 @@ import {
   TBillDiscountStateRow,
   TFreeItemStateRow,
   TCheckStateParams,
+  TSettlementReportRow,
+  TSettlementReportParams,
 } from '../../shared/types/other-income.type';
 
 /**
@@ -70,6 +72,10 @@ export class OtherIncomeAccountApiService {
 
   getAccrualPromoReport(params?: TAccrualReportParams): Observable<TAccrualPromoReportRow[]> {
     return this.api.get(`${this.url}/v2/report/accrual/promo`, { params: compact(params ?? {}) })
+  }
+
+  getSettlementReport(params: TSettlementReportParams): Observable<TSettlementReportRow[]> {
+    return this.api.get(`${this.url}/v2/report/settlement`, { params: compact(params) })
   }
 
   getBillDiscountStates(params?: TCheckStateParams): Observable<TBillDiscountStateRow[]> {

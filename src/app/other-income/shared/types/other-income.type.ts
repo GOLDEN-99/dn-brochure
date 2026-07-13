@@ -643,6 +643,33 @@ export type TAccrualReportParams = {
   compType?: 'DN' | 'HU'
 }
 
+// ---------- Settlement report (GET /v2/report/settlement) ----------
+
+export type TSettlementContractResponse = Omit<TOrderContractDetail, 'products'>
+
+export type TSettlementReportRow = {
+  contract: TSettlementContractResponse
+  pair: TMaybe<TSupplierPair>
+  settlementId: number
+  periodName: string
+  startDate: string
+  endDate: string
+  systemOrderAmount: TMaybe<number>
+  systemIncome: number
+  supplierOrderAmount: TMaybe<number>
+  supplierIncome: number
+  billDiscountTotal: number
+  freeItemTotal: number
+  invoiceTotal: number
+  creditNoteTotal: number
+}
+
+export type TSettlementReportParams = {
+  startDate: string
+  endDate: string
+  compType?: 'DN' | 'HU'
+}
+
 // ---------- Order confirmation report (GET /v2/report/order-confirmation/{contractId}) ----------
 
 export type TOrderConfirmationReportLine = {
