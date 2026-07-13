@@ -259,7 +259,7 @@ export class OtherIncomePurchaseApiService {
     return this.api.delete(`${this.url}/v2/settlements/${id}`)
   }
 
-  postBillDiscount(settlementId: number, billDiscounts: TPostBillDiscountReq): Observable<{ id: number }> {
+  postBillDiscounts(settlementId: number, billDiscounts: TPostBillDiscountReq[]): Observable<{ ids: number[] }> {
     return this.api.post(`${this.url}/v2/settlements/${settlementId}/bill-discounts`, { billDiscounts })
   }
 
