@@ -33,6 +33,7 @@ Nested `CLAUDE.md` files exist for individual modules and should be read when wo
 - `src/app/cn/CLAUDE.md` — CN (credit note / return request) module
 - `src/app/other-income/CLAUDE.md` — Other Income v2 module
 - `src/app/other-income/shared/libs/CLAUDE.md` — `ContractListController` URL-driven filter/pagination pattern
+- `src/app/pages/crm-promotion/CLAUDE.md` — CRM Promotion module (note: its components, services, factories and types live in the top-level `components/`, `service/`, `factory/`, `types/` folders, not under the pages folder)
 
 ### State management conventions (see `note.md` for the full guideline doc)
 

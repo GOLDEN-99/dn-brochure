@@ -46,7 +46,11 @@
                 </span>
               </td>
               <td>
-                @if (!isAccount() && entry.entryType !== "AUTO" && !entry.settlementId) {
+                @if (
+                  !isAccount() &&
+                  entry.entryType !== "AUTO" &&
+                  !entry.settlementId
+                ) {
                   <button
                     class="btn btn-sm btn-outline-danger"
                     (click)="onDeleteEntry(entry.id)"
@@ -71,7 +75,7 @@
   @if (!isAccount()) {
     <!-- CN correction -->
     <div class="card mb-3">
-      <div class="card-header fw-bold">บันทึก CN (ยกเลิกคำสั่งซื้อ)</div>
+      <div class="card-header fw-bold">บันทึก CN</div>
       <div class="card-body">
         <other-income-cn-correction-form
           [contractId]="contract.id"
@@ -96,7 +100,9 @@
 
     <!-- Manual correction -->
     <div class="card mb-3">
-      <div class="card-header fw-bold">บันทึก Manual Correction (กรณีอื่นๆ)</div>
+      <div class="card-header fw-bold">
+        บันทึก Manual Correction (กรณีอื่นๆ)
+      </div>
       <div class="card-body">
         <other-income-manual-correction-form
           [contractId]="contract.id"
