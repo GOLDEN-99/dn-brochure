@@ -1,0 +1,26 @@
+@let i = goodInfo();
+<div>
+  <div>รหัสสินค้า: {{ i.goodCode }}</div>
+  <div>บาร์โค้ด: {{ i.barCode }}</div>
+  <div>ชื่อสินค้า: {{ i.goodName }}</div>
+  <div>หน่วยสินค้า: {{ i.unitDesc }}</div>
+  <div class="">
+    <label class="form-label" [htmlFor]="id()">ระบุจำนวน</label>
+    <input
+      class="form-control"
+      type="number"
+      [name]="name()"
+      [id]="id()"
+      [(ngModel)]="value"
+      [required]="required()"
+      [readOnly]="readonly()"
+      [class.is-invalid]="invalid()"
+    />
+  </div>
+  <div class="d-flex flex-column invalid-feedback">
+    @for (error of errors(); track $index) {
+      <span class="text-danger">{{ error.message }}</span>
+    }
+  </div>
+  <hr />
+</div>

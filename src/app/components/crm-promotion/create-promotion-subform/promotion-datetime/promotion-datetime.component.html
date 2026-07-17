@@ -1,0 +1,12 @@
+@let formField = form();
+<!--dow-->
+<app-day-checkboox [(activeDay)]="formField.activeDay().controlValue" />
+<app-form-alert-text [formState]="formField.activeDay()" />
+<hr />
+<!--time span-->
+<app-timespan-picker
+[required]="formField.timeSpan().required()"
+  [(limitTime)]="formField.limitTime().controlValue"
+  [(timeSpan)]="formField.timeSpan().controlValue"
+/>
+<app-form-alert-text [formState]="formField.timeSpan()" />

@@ -1,0 +1,74 @@
+@if (ctx.contract(); as contract) {
+  <!-- Spec card -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">เงื่อนไขการคำนวณ</div>
+    <div class="card-body">
+      <div class="row row-cols-2 row-cols-md-4 g-2">
+        <div>
+          <small class="text-muted d-block">จำนวนสาขาสูงสุด</small
+          >{{ contract.spec.maxBranches }}
+        </div>
+        <div>
+          <small class="text-muted d-block">อัตราต่อสาขา/เดือน (บาท)</small
+          >{{ contract.spec.ratePerBranch }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Branch entries -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">
+      รายการสาขา <span>({{ contract.branches.length }} สาขา)</span>
+    </div>
+    <div class="card-body p-0">
+      <table
+        class="table table-sm table-striped table-bordered mb-0"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>รหัสสาขา</th>
+            <th>ชื่อสาขา</th>
+            <th>วันที่เปิด</th>
+            <th>วันที่ปิด</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (branch of contract.branches; track branch.id) {
+            <tr>
+              <td>{{ branch.branchCode }}</td>
+              <td>{{ branch.branchName ?? "-" }}</td>
+              <td>{{ branch.openDate | date: "dd/MM/yyyy" }}</td>
+              <td>
+                @if (branch.closeDate) {
+                  {{ branch.closeDate | date: "dd/MM/yyyy" }}
+                } @else {
+                  <span class="badge bg-warning">เปิดอยู่</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="text-center text-muted py-3">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add branch -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">เพิ่มสาขา</div>
+    <div class="card-body">
+      <other-income-add-branch-form
+        [contractId]="contract.id"
+        [submitting]="submittingAddBranch()"
+        (submitAddBranch)="onSubmitAddBranch($event)"
+      ></other-income-add-branch-form>
+    </div>
+  </div>
+}

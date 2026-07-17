@@ -1,5 +1,4 @@
 import { catchError, debounceTime, distinctUntilChanged, Observable, of, pipe, throwError } from "rxjs";
-import * as XLSX from "xlsx"
 
 export const catchErrorAndRethrow = <T>() => catchError<T, Observable<never>>((err) => throwError(() => err))
 
@@ -15,30 +14,51 @@ export const deepEqual = <T>(prev: T, current: T): boolean => {
         const prevKeys = Object.keys(prev) as Array<keyof T>;
         const currentKeys = Object.keys(current) as Array<keyof T>;
         if (prevKeys.length !== currentKeys.length) return false
-        return prevKeys.every((pk) => deepEqual(prev[pk], current[pk]) && pk in currentKeys)
+        return prevKeys.every((pk) => deepEqual(prev[pk], current[pk]) && currentKeys.includes(pk))
     }
     return prev === current;
 
 };
 
 export const toXlxs = async (filename: string, sheetName: string, data: any[]) => {
+    const XLSX = await import('xlsx')
     const wb = XLSX.utils.book_new()
     const ws = XLSX.utils.aoa_to_sheet(data)
     XLSX.utils.book_append_sheet(wb, ws, sheetName)
-    await XLSX.writeFileXLSX(wb, filename)
+    XLSX.writeFileXLSX(wb, filename)
+}
+
+function toXlxsV2(filename: string, sheetName: string,) {
+    return function (data: unknown[][]) {
+        return new Observable<void>((sub) => {
+            import('xlsx').then((XLSX) => {
+                const wb = XLSX.utils.book_new()
+                const ws = XLSX.utils.aoa_to_sheet(data)
+                XLSX.utils.book_append_sheet(wb, ws, sheetName)
+                try {
+                    XLSX.writeFileXLSX(wb, filename)
+                    sub.next()
+                } catch (err) {
+                    sub.error(err)
+                } finally {
+                    sub.complete()
+                }
+            }).catch((err) => sub.error(err))
+        })
+    }
 }
 
 export const toManyXlxs = async (filename: string, sheetList: string[], data: any[]) => {
+    const XLSX = await import('xlsx')
     const wb = XLSX.utils.book_new()
     for (let i = 0; i < sheetList.length; i++) {
         const ws = XLSX.utils.aoa_to_sheet(data[i])
         XLSX.utils.book_append_sheet(wb, ws, sheetList[i])
     }
-    await XLSX.writeFileXLSX(wb, filename)
+    XLSX.writeFileXLSX(wb, filename)
 }
 
 export const getOrElse = <In, Out = In>(fallback: Out) => catchError<In, Observable<Out>>((err) => {
-    console.log(err);
     return of(fallback)
 })
 

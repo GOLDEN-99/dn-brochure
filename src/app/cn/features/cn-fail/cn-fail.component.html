@@ -1,0 +1,29 @@
+<div class="d-flex justify-content-center flex-column align-items-center">
+  <div
+    class="d-flex align-items-center justify-content-center"
+    style="gap: 16px"
+  >
+    <i class="bi bi-x-circle text-danger" style="font-size: 2rem"></i>
+    <h1 style="margin: 0; text-align: center">มีข้อผิดพลาด</h1>
+  </div>
+  @if (error(); as err) {
+    <p class="text-center">{{ err.message }}</p>
+    <div style="width: 14rem" class="mb-3">
+      <div class="d-flex justify-content-between" style="font-size: 18px">
+        <span class="fw-semibold">เลขที่ใบสั่ง</span>
+        <span>{{ err.request.wholeNumb }}</span>
+      </div>
+      <div class="d-flex justify-content-between" style="font-size: 18px">
+        <span class="fw-semibold">รหัสร้านค้า</span>
+        <span>{{ err.request.wholeCode }}</span>
+      </div>
+      <div class="d-flex justify-content-between" style="font-size: 18px">
+        <span class="fw-semibold">รหัสพนักงาน</span>
+        <span>{{ err.request.saleCode }}</span>
+      </div>
+    </div>
+  }
+  <div style="font-size: 18px" class="text-center">
+    กดปิด (X) เพื่อกลับสู่แอป
+  </div>
+</div>

@@ -1,0 +1,7 @@
+  @let dayactiveErr = formState().errors();
+  @if (dayactiveErr.length > 0) {
+  <div class="d-flex flex-column text-danger">
+    @for (e of dayactiveErr; track $index) {
+      <span>*** {{e.message}}</span>
+    }
+  </div>}

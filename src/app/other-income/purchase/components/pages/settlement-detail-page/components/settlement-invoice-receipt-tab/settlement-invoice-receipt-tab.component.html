@@ -1,0 +1,140 @@
+<div class="card mb-3">
+  <div class="card-header fw-bold">ใบแจ้งหนี้</div>
+  <div class="card-body">
+    @if (canAppend()) {
+      <other-income-append-invoice
+        [openSettlement]="openSettlementAmount()"
+        [submitting]="submittingInvoice()"
+        (submitInvoice)="onSubmitInvoice($event)"
+      ></other-income-append-invoice>
+    }
+    <div class="table-responsive">
+      <table
+        class="table table-sm table-striped table-bordered mb-3"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>เลขที่</th>
+            <th>วันที่</th>
+            <th>ยอด</th>
+            <th>จับคู่แล้ว</th>
+            <th>คงเหลือ</th>
+            <th>หมายเหตุ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of ctx.settlement()?.invoices ?? []; track row.id) {
+            <tr>
+              <td>{{ row.invoiceNumb }}</td>
+              <td>{{ row.invoiceDate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ row.invoiceAmount }}</td>
+              <td>{{ matchedByInvoiceId().get(row.id) ?? 0 }}</td>
+              <td
+                [class.text-danger]="
+                  row.invoiceAmount -
+                    (matchedByInvoiceId().get(row.id) ?? 0) !==
+                  0
+                "
+              >
+                {{
+                  row.invoiceAmount -
+                    (matchedByInvoiceId().get(row.id) ?? 0)
+                }}
+              </td>
+              <td>{{ row.invoiceRemark }}</td>
+              <td>
+                @if (canAppend()) {
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="onDeleteInvoice(row.id)"
+                  >
+                    ลบ
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="text-center text-muted py-2">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header fw-bold">ใบเสร็จ</div>
+  <div class="card-body">
+    @if (canAppend()) {
+      <other-income-append-receipt
+        [submitting]="submittingReceipt()"
+        [invoices]="ctx.settlement()?.invoices ?? []"
+        [matches]="ctx.settlement()?.matches ?? []"
+        (submitReceipt)="onSubmitReceipt($event)"
+      ></other-income-append-receipt>
+    }
+    <div class="table-responsive">
+      <table
+        class="table table-sm table-striped table-bordered mb-3"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>เลขที่</th>
+            <th>วันที่</th>
+            <th>ยอด</th>
+            <th>จับคู่แล้ว</th>
+            <th>คงเหลือ</th>
+            <th>หมายเหตุ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of ctx.settlement()?.receipts ?? []; track row.id) {
+            <tr>
+              <td>{{ row.receNumb }}</td>
+              <td>{{ row.receDate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ row.receAmount }}</td>
+              <td>{{ matchedByReceiptId().get(row.id) ?? 0 }}</td>
+              <td
+                [class.text-danger]="
+                  row.receAmount -
+                    (matchedByReceiptId().get(row.id) ?? 0) !==
+                  0
+                "
+              >
+                {{
+                  row.receAmount -
+                    (matchedByReceiptId().get(row.id) ?? 0)
+                }}
+              </td>
+              <td>{{ row.receRemark }}</td>
+              <td>
+                @if (canAppend()) {
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="onDeleteReceipt(row.id)"
+                  >
+                    ลบ
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="text-center text-muted py-2">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

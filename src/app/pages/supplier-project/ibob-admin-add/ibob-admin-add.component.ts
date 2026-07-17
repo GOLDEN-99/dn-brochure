@@ -82,24 +82,24 @@ export class IbobAdminAddComponent {
   onDelete = (orderNumb: string) => this.orderState.update(({ [orderNumb]: _, ...res }) => ({ ...res }))
   totalBox = computed(() => this.poList().reduce((acc, cur) => acc + cur.box, 0))
 
-  private api = inject(ApiService)
+  private readonly api = inject(ApiService)
   compType = signal("DN")
-  private compType$ = toObservable(this.compType).pipe(filter(c => c !== ''))
+  private readonly compType$ = toObservable(this.compType).pipe(filter(c => c !== ''))
   term = signal("")
-  private term$ = toObservable(this.term).pipe(filter(t => t !== ''), distinctUntilChanged(), debounceTime(300))
-  private searchCompParam$ = combineLatest([this.compType$, this.term$])
-  private searchComp = (compType: string, term: string) =>
+  private readonly term$ = toObservable(this.term).pipe(filter(t => t !== ''), distinctUntilChanged(), debounceTime(300))
+  private readonly searchCompParam$ = combineLatest([this.compType$, this.term$])
+  private readonly searchComp = (compType: string, term: string) =>
     this.api.get<TExtendedComp[]>(`${environment.oi}/comp/${compType}`, { params: { term } })
       .pipe(getOrElse<TExtendedComp[], TExtendedComp[]>([])
       )
 
-  private searchTimeSlot = (doorId: string, date: string) =>
+  private readonly searchTimeSlot = (doorId: string, date: string) =>
     this.api.get<TGetIbObRes>(`${environment.ibob}/GetInBound/${doorId}/${date}`)
       .pipe(
         map(({ slots }) => slots),
         getOrElse<TTimeSlot[], TTimeSlot[]>([])
       );
-  private timeslot$ = this.searchTimeslotParam$
+  private readonly timeslot$ = this.searchTimeslotParam$
     .pipe(
       switchMap(p => this.searchTimeSlot(...p))
     )
@@ -123,7 +123,7 @@ export class IbobAdminAddComponent {
   activeSlot = signal<string[]>([])
   btnClass = (cur: string) => this.activeSlot().some(a => a === cur) ? 'btn btn-success' : 'btn btn-outline-secondary'
 
-  private queryOrder$ = this.compCode$.pipe(switchMap(c => this.ibobQueryService.searchOrder(c)))
+  private readonly queryOrder$ = this.compCode$.pipe(switchMap(c => this.ibobQueryService.searchOrder(c)))
   queryOrder = toSignal(this.queryOrder$, { initialValue: [] })
   resultComp$ = this.searchCompParam$.pipe(
     switchMap(search => this.searchComp(...search))
@@ -131,7 +131,7 @@ export class IbobAdminAddComponent {
 
   resultComp = toSignal(this.resultComp$, { initialValue: [] })
 
-  private modalService = inject(NgbModal)
+  private readonly modalService = inject(NgbModal)
   openModal = (ref: any) => this.modalService.open(ref)
 
   onSelectComp({ compName, compEmail, compPhone, compCode, compType }: TExtendedComp) {
@@ -140,9 +140,9 @@ export class IbobAdminAddComponent {
     this.modalService.dismissAll()
   }
 
-  private toast = inject(ToastService)
+  private readonly toast = inject(ToastService)
 
-  private ibobAdd = inject(IbobAddService)
+  private readonly ibobAdd = inject(IbobAddService)
   createReservation = this.ibobAdd.adminCreateReservation
   onSubmit() {
     const baseReq = this.getReservation
@@ -179,8 +179,8 @@ export class IbobAdminAddComponent {
   }
 
 
-  private ibobQueryService = inject(IbobQueryReservationService)
-  private searchOrderModal = viewChild('searchOrderModal')
+  private readonly ibobQueryService = inject(IbobQueryReservationService)
+  private readonly searchOrderModal = viewChild('searchOrderModal')
   orderNumb = signal('')
   displayOrder = computed(() => this.queryOrder().filter(({ orderNumb }) => {
     const po = this.orderNumb()

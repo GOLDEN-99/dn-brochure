@@ -1,0 +1,27 @@
+<h4>รายงานเพื่อออกใบแจ้งหนี้</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-dn col" (click)="exportInvoice('DN')">
+    DN - รอออกใบแจ้งหนี้
+  </button>
+  <button class="btn btn-hu col" (click)="exportInvoice('HU')">
+    HU - รอออกใบแจ้งหนี้
+  </button>
+</div>
+<h4>รายงานเพื่อออกใบลดหนี้</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-dn col" (click)="exportCredit('DN')">
+    DN - รอออกใบลดหนี้
+  </button>
+  <button class="btn btn-hu col" (click)="exportCredit('HU')">
+    HU - รอออกใบลดหนี้
+  </button>
+</div>
+<h4>รายงานรอรับใบเสร็จ</h4>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-dn col" (click)="exportReceipt('DN')">
+    DN - รอออกใบเสร็จ
+  </button>
+  <button class="btn btn-hu col" (click)="exportReceipt('HU')">
+    HU - รอออกใบเสร็จ
+  </button>
+</div>

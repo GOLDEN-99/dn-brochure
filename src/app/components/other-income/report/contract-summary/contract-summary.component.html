@@ -1,0 +1,49 @@
+<h2>ประมาณการรายได้อื่นๆ ตามวันที่รับเข้า และวันที่บิล supplier</h2>
+
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-dn col" (click)="onExportNotLightDetail('DN')">
+    DN - ประมาณการรายได้เปรียบเทียบ
+  </button>
+  <button class="btn btn-hu col" (click)="onExportNotLightDetail('HU')">
+    HU - ประมาณการรายได้เปรียบเทียบ
+  </button>
+</div>
+<h2>สรุปรายการรายได้อื่นๆ</h2>
+<div class="row">
+  <span class="text-danger">***จัดซื้อ - ดูสัญญารายได้อื่นๆทั้งหมด***</span>
+  <span class="text-danger"
+    >***บัญชี - ดูประมาณการ ใบแจ้งหนี้ ใบลดหนี้ ใบเสร็จรับเงิน สะสม***</span
+  >
+</div>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-dn col" (click)="onExportContract('DN')">
+    DN - สรุปรายการ
+  </button>
+  <button class="btn btn-hu col" (click)="onExportContract('HU')">
+    HU - สรุปรายการ
+  </button>
+</div>
+<!-- <div class="row">
+  <span class="text-danger"
+    >***บัญชี - ต้องการตรวจสอบความต่างของยอดซื้อจากวันรับเข้าเทียบกับวันที่บิล
+    supplier</span
+  >
+  <span class="text-danger"
+    >ไม่สามรถดึงข้อมูลจากเงื่อนไขของจัดซื้โดยตรงได้ เพราะ "การคำนวณมากเกินไป"
+  </span>
+  <span class="text-danger">
+    จากการคิดยอดสินค้า ณ วันที่ 2026-05-08 พบว่าเงื่อนไขทั้งหมด 539 เงื่อนไข
+    เหมือนกันหมด คือไม่หักส่วนลด และไม่รวมภาษี
+  </span>
+  <span class="text-danger"
+    >ดังนั้นจึงถอด vat ออกเท่านั้น ส่วนลดมีโอกาสไม่ตรง เพราะส่วนลด
+  </span>
+</div>
+<div class="row mb-3 px-3" style="gap: 1rem">
+  <button class="btn btn-dn col" (click)="onCheckDifference('DN')">
+    DN - ตรวจสอบความแตกต่าง
+  </button>
+  <button class="btn btn-hu col" (click)="onCheckDifference('HU')">
+    HU - ตรวจสอบความแตกต่าง
+  </button>
+</div> -->

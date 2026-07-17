@@ -13,11 +13,8 @@ import { RouterOutlet } from '@angular/router';
   styles: `
     .layout {
       margin: auto;
-      padding: 1rem;
+      padding: 1rem 4rem; 
       width: 100%;
-      @media (min-width: 992px) {
-        width: 920px;
-      }
     }
 `
 })

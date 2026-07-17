@@ -1,0 +1,139 @@
+$sidebar-width: 260px;
+
+.layout-wrapper {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+// ── Sidebar ──────────────────────────────────────────────
+.sidebar {
+  width: $sidebar-width;
+  height: 100%;
+  overflow-y: auto;
+  background: #1e2a3a;
+  color: #c8d6e5;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+
+  // Off-screen on < xl
+  @media (max-width: 1199.98px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1050;
+    transform: translateX(-100%);
+
+    &--open {
+      transform: translateX(0);
+    }
+  }
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar__title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.sidebar__close {
+  color: #c8d6e5;
+  padding: 0;
+  &:hover {
+    color: #fff;
+  }
+}
+
+.sidebar__nav {
+  padding: 0.75rem 0;
+
+  .nav-link {
+    color: #c8d6e5;
+    padding: 0.55rem 1.25rem;
+    border-radius: 0;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      background: #2c3e52;
+      color: #ffffff;
+    }
+
+    &.active {
+      background: #344d63;
+      color: #ffffff;
+      font-weight: 500;
+    }
+  }
+}
+
+.sidebar__section-label {
+  display: block;
+  padding: 0.25rem 1.25rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(200, 214, 229, 0.5);
+}
+
+// ── Backdrop ─────────────────────────────────────────────
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1049;
+}
+
+// ── Main ─────────────────────────────────────────────────
+.layout-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+}
+
+// ── Topbar (hamburger, < xl only) ─────────────────────────
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: #fff;
+  border-bottom: 1px solid #dee2e6;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topbar__hamburger {
+  color: #495057;
+  padding: 0.25rem;
+  &:hover {
+    color: #000;
+  }
+}
+
+.topbar__title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+// ── Content ───────────────────────────────────────────────
+.layout-content {
+  flex: 1;
+  padding: 1.5rem;
+}

@@ -7,9 +7,9 @@ export function getPeriodStatusLabel(status: PeriodStatus | null | undefined): s
   switch (status) {
     case PeriodStatus.Complete:
       return 'สำเร็จ';
-    case PeriodStatus.Invoice:
+    case PeriodStatus.WaitForInvoice:
       return 'รอเพิ่มใบแจ้งหนี้';
-    case PeriodStatus.Receipt:
+    case PeriodStatus.WaitForReceipt:
       return 'รอเพิ่มใบเสร็จ';
     default:
       return '-';
@@ -26,9 +26,9 @@ export function getPeriodStatusBadgeClass(status: PeriodStatus | null | undefine
   switch (status) {
     case PeriodStatus.Complete:
       return 'badge bg-success';
-    case PeriodStatus.Invoice:
+    case PeriodStatus.WaitForInvoice:
       return 'badge bg-primary';
-    case PeriodStatus.Receipt:
+    case PeriodStatus.WaitForReceipt:
       return 'badge bg-warning';
     default:
       return 'badge bg-secondary';

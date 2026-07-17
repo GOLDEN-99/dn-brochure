@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ProchureComponent } from '../../../components/brochure-component/prochure/prochure.component';
 import { PromotionPipe } from '../../../pipe/promotion/promotion-pipe.pipe';
 import { NavigateBtnComponent } from '../../../components/navigate-btn/navigate-btn.component';
-import { BROCHURE_PRICE_TYPE_TOKEN, BROCHURE_TOKEN, exporter } from '../../../lib';
+import { BROCHURE_PRICE_TYPE_TOKEN, BROCHURE_TOKEN } from '../../../lib';
 import { TItem } from '../../../types';
 import { ToastService } from '../../../service/toast/toast.service';
 
@@ -44,6 +44,7 @@ export class BaseBrochureComponent implements OnInit {
     const b = document.querySelectorAll('.static.prochure')
     try {
       this.inprogress.update(() => true)
+      const { exporter } = await import('../../../lib/brochure/pdf')
       await exporter(Array.from(b) as HTMLElement[], `${this.head()?.wholeName}-${this.head()?.promotionType}`)
       this.toastService.success("export สำเร็จ")
       this.inprogress.update(() => false)

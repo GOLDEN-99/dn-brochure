@@ -1,0 +1,60 @@
+<div class="modal-header">
+  <h4 class="modal-title">เพิ่มใบลดหนี้</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="closeModal.emit()"
+  ></button>
+</div>
+<div class="modal-body">
+  <div class="mb-3">
+    <label for="credit-date-input" class="form-label">วันที่ใบลดหนี้</label>
+    <app-signal-datepicker
+      [formField]="createForm.creditDate"
+      id="credit-date-input"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="credit-numb-input">เลขที่ใบลดหนี้</label>
+    <input
+      type="text"
+      [formField]="createForm.creditNumb"
+      id="credit-numb-input"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="total-income">รายได้ตามรอบบัญชี</label>
+    <input [ngModel]="totalIncome()" name="total-income" readonly />
+  </div>
+  <div class="app-form-field">
+    <label for="remain-income">รายได้ตามรอบบัญชีคงเหลือ</label>
+    <input type="number" [formField]="createForm.remainingIncome" />
+  </div>
+  <div class="app-form-field">
+    <label for="credit-amount-input">ยอดใบลดหนี้</label>
+    <input
+      type="text"
+      [formField]="createForm.creditAmount"
+      id="credit-amount-input"
+      inputmode="numeric"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="credit-remark-text">หมายเหตุ</label>
+    <textarea
+      type="text"
+      [formField]="createForm.creditRemark"
+      id="credit-remark-text"
+    ></textarea>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    class="btn btn-primary w-100"
+    [disabled]="cannotSubmit()"
+    (click)="onSubmit()"
+  >
+    บันทึก
+  </button>
+</div>

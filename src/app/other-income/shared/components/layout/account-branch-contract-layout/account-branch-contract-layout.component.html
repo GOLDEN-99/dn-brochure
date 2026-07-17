@@ -1,0 +1,85 @@
+<div class="d-flex align-items-center gap-2 mb-3">
+  <button
+    type="button"
+    (click)="goBack()"
+    class="btn btn-sm btn-outline-secondary"
+  >
+    &laquo; ย้อนกลับ
+  </button>
+  <h1 class="mb-0">รายละเอียดสัญญา Branch Contract (Display Fee)</h1>
+</div>
+
+@if (ctx.loading()) {
+  <div class="text-center py-4">
+    <output class="spinner-border spinner-border-sm text-secondary"></output>
+    <span class="ms-2 text-muted">กำลังโหลด...</span>
+  </div>
+} @else if (ctx.error()) {
+  <div class="alert alert-danger d-flex align-items-center gap-2">
+    {{ ctx.error() }}
+    <button
+      class="btn btn-sm btn-outline-danger ms-auto"
+      (click)="ctx.refresh()"
+    >
+      ลองใหม่
+    </button>
+  </div>
+} @else if (ctx.contract(); as contract) {
+  <!-- Header card -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">ข้อมูลทั่วไป</div>
+    <div class="card-body">
+      <div class="row row-cols-2 row-cols-md-4 g-2">
+        <div>
+          <small class="text-muted d-block">ซัพพลายเออร์</small
+          >{{ contract.compCode }} - {{ contract.compName ?? "-" }}
+        </div>
+        <div>
+          <small class="text-muted d-block">ประเภท</small
+          >{{ contract.compType }}
+        </div>
+        <div>
+          <small class="text-muted d-block">ประเภทกิจกรรม</small
+          >{{ contract.contractLabelName }}
+        </div>
+        <div>
+          <small class="text-muted d-block">รอบชำระ (เดือน)</small
+          >{{ contract.settlementPeriod }}
+        </div>
+        <div>
+          <small class="text-muted d-block">เริ่ม</small
+          >{{ contract.startDate | date: "dd/MM/yyyy" }}
+        </div>
+        <div>
+          <small class="text-muted d-block">จบ</small
+          >{{ contract.endDate | date: "dd/MM/yyyy" }}
+        </div>
+        <div>
+          <small class="text-muted d-block">สร้างเมื่อ</small
+          >{{ contract.createdAt | date: "dd/MM/yyyy HH:mm" }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="./spec" routerLinkActive="active">
+        สเปคสัญญา
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="./accruals" routerLinkActive="active">
+        ประมาณการรายได้
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="./settlements" routerLinkActive="active">
+        Settlements
+      </a>
+    </li>
+  </ul>
+
+  <router-outlet />
+}

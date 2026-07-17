@@ -1,0 +1,43 @@
+@let filterForm = form();
+
+<app-product-picker
+  [exclusionPool]="currentProductList()"
+  (productAdd)="onUpdateProductList($event)"
+/>
+<div class="row mb-3">
+  @let curFilterType = filterForm.filterType().value();
+  @if (curFilterType !== "EXIST") {
+    <div class="col-md">
+      <div>
+        <label
+          class="form-label fw-semibold text-muted small mb-1"
+          [htmlFor]="filterForm.filterValue().name()"
+          >{{ curFilterType | promotionThreshold }}</label
+        >
+        <input
+          [id]="'threshold-value-' + id"
+          type="number"
+          class="form-control form-control-sm"
+          [formField]="filterForm.filterValue"
+        />
+      </div>
+    </div>
+  }
+  <div class="col-md d-flex flex-column gap-2">
+    @for (product of currentProductList(); track product.goodCode) {
+      <div class="d-flex justify-content-between align-items-end">
+        <span class="form-control-plaintext">{{ product | productName }}</span>
+
+        <span>
+          <button
+            class="btn btn-danger btn-squre"
+            (click)="onRemoveProduct(product.goodCode)"
+          >
+            <i class="bi bi-x"></i>
+          </button>
+        </span>
+      </div>
+    }
+    <app-form-alert-text [formState]="filterForm.productList()" />
+  </div>
+</div>

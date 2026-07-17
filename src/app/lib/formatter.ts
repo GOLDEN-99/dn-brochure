@@ -4,11 +4,26 @@ export const formatLocalNumber = (v: number) => v.toLocaleString('en-US', {
 })
 
 export const customFormatMonth = (iso: string) => {
-    const [yy, mm, dd] = iso.split('T')[0].split('-')
+    const [yy, mm, _] = iso.split('T')[0].split('-')
     return `${mm}/${yy}`
 }
 
 export const customFormatDate = (iso: string) => {
     const [yy, mm, dd] = iso.split('T')[0].split('-').map(Number)
     return `${dd}/${mm}/${yy}`
+}
+
+export const extractYearFromIso = (iso: string) => {
+    const [year, _] = iso.split('T')[0].split('-')
+    return year
+}
+
+export const mapIncomeType = (incomeType: number) => {
+    switch (incomeType) {
+        case 1: return "สินค้าแถม"
+        case 2: return "CN ลดมากับบิล"
+        case 3: return "ใบแจ้งหนี้"
+        case 4: return "ใบลดหนี้"
+        default: return "ประเภทไม่ถูกต้อง"
+    }
 }

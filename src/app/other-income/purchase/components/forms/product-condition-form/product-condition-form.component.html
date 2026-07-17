@@ -1,0 +1,48 @@
+@let createForm = excludeFlagsForm();
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="me-1 form-check-input"
+    [formField]="createForm.excludeDc"
+    id="exclude-dc"
+  />
+  <label class="form-check-label" for="exclude-dc">หักส่วนลด dc</label>
+</div>
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    [formField]="createForm.excludeRebate"
+    id="exclude-rebate"
+  />
+  <label class="form-check-label" for="exclude-rebate">หักส่วนลด rebate</label>
+</div>
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    [formField]="createForm.excludeComp"
+    id="exclude-comp"
+  />
+  <label class="form-check-label" for="exclude-comp"
+    >หักส่วนลด compensate</label
+  >
+</div>
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    [formField]="createForm.excludeInce"
+    id="exclude-ince"
+  />
+  <label class="form-check-label" for="exclude-ince">หักส่วนลด intensive</label>
+</div>
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    [formField]="createForm.excludeVat"
+    id="exclude-vat"
+  />
+  <label class="form-check-label" for="exclude-vat">หัก vat</label>
+</div>

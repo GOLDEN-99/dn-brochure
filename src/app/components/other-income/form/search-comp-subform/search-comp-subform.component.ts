@@ -22,8 +22,8 @@ export class SearchCompSubformComponent {
 
   hasSelectComp = computed(() => this.compName() !== '' && this.compCode() !== '')
 
-  private modalService = inject(NgbModal)
-  private searchSupplierModal = viewChild('searchSupplierModal')
+  private readonly modalService = inject(NgbModal)
+  private readonly searchSupplierModal = viewChild('searchSupplierModal')
   openSearchSupplier() {
     const ref = this.modalService.open(this.searchSupplierModal())
   }
@@ -36,7 +36,7 @@ export class SearchCompSubformComponent {
     this.compTypeChange.emit(type)
   }
 
-  private searchComp = inject(CompanyService)
+  private readonly searchComp = inject(CompanyService)
   group = this.searchComp.group
   term = this.searchComp.term
   field = this.searchComp.field

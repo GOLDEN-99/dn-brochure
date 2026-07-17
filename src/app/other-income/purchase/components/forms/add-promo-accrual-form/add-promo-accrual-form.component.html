@@ -1,0 +1,43 @@
+<div class="row row-cols-1 row-cols-md-4 g-2 align-items-end mb-2">
+  <div class="col">
+    <label
+      [htmlFor]="addPromoAccrualForm.month().name()"
+      class="form-label small text-muted mb-1"
+      >เดือน
+      @if (addPromoAccrualForm.month().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <app-signal-month-picker
+      [id]="addPromoAccrualForm.month().name()"
+      [formField]="addPromoAccrualForm.month"
+    />
+  </div>
+
+  <div class="col">
+    <label
+      [htmlFor]="addPromoAccrualForm.amount().name()"
+      class="form-label small text-muted mb-1"
+      >ยอดเงิน (บาท)
+      @if (addPromoAccrualForm.amount().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <input
+      [id]="addPromoAccrualForm.amount().name()"
+      type="number"
+      class="form-control form-control-sm"
+      [formField]="addPromoAccrualForm.amount"
+    />
+    <app-form-alert-text [formState]="addPromoAccrualForm.amount()" />
+  </div>
+</div>
+
+<button
+  type="button"
+  class="btn btn-sm btn-primary"
+  [disabled]="!canSubmit()"
+  (click)="onSubmit()"
+>
+  บันทึกรายได้ Promo
+</button>

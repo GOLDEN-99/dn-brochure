@@ -2,7 +2,6 @@ import { RedirectCommand, ResolveFn, Router } from '@angular/router';
 import { headIdHandler } from '../../lib/paramsHandler';
 import { inject } from '@angular/core';
 import { OiNotLightService } from '../../service/other-income/oi-not-light.service';
-import { OrderService } from '../../service/other-income/order.service';
 
 export const getOtherIncomeNotLightIdResolver: ResolveFn<boolean> = (route, state) => {
   try {

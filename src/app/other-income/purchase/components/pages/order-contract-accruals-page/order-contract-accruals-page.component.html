@@ -1,0 +1,116 @@
+@if (ctx.contract(); as contract) {
+  <!-- Income entries -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">รายการตั้งประมาณการรายได้</div>
+    <div class="card-body p-0">
+      <table
+        class="table table-sm table-striped table-bordered mb-0"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>เดือน</th>
+            <th>ประเภท</th>
+            <th>ยอดสั่งซื้อ</th>
+            <th>จำนวนรายได้</th>
+            <th>หมายเหตุ</th>
+            <th>สถานะ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (entry of ctx.incomeEntries(); track entry.id) {
+            <tr>
+              <td>{{ entry.month | date: "MM/yyyy" }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.bg-secondary]="entry.entryType === 'AUTO'"
+                  [class.bg-info]="entry.entryType === 'CN_CORRECTION'"
+                  [class.bg-primary]="entry.entryType === 'LAG_CORRECTION'"
+                  [class.bg-dark]="entry.entryType === 'MANUAL_CORRECTION'"
+                >
+                  {{ entry.entryType }}
+                </span>
+              </td>
+              <td>{{ entry.orderAmount ?? "-" }}</td>
+              <td>{{ entry.amount }}</td>
+              <td>{{ entry.note ?? "-" }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.bg-warning]="!entry.settlementId"
+                  [class.bg-success]="entry.settlementId"
+                >
+                  {{ entry.settlementId ? "picked" : "open" }}
+                </span>
+              </td>
+              <td>
+                @if (
+                  !isAccount() &&
+                  entry.entryType !== "AUTO" &&
+                  !entry.settlementId
+                ) {
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="onDeleteEntry(entry.id)"
+                  >
+                    ลบ
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="text-center text-muted py-3">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  @if (!isAccount()) {
+    <!-- CN correction -->
+    <div class="card mb-3">
+      <div class="card-header fw-bold">บันทึก CN</div>
+      <div class="card-body">
+        <other-income-cn-correction-form
+          [contractId]="contract.id"
+          [products]="contract.products"
+          [submitting]="submittingCnCorrection()"
+          (submitCorrection)="onSubmitCnCorrection($event)"
+        ></other-income-cn-correction-form>
+      </div>
+    </div>
+
+    <!-- Lag correction -->
+    <div class="card mb-3">
+      <div class="card-header fw-bold">บันทึก Lag Correction (ข้อมูลมาช้า)</div>
+      <div class="card-body">
+        <other-income-lag-correction-form
+          [contractId]="contract.id"
+          [submitting]="submittingLagCorrection()"
+          (submitCorrection)="onSubmitLagCorrection($event)"
+        ></other-income-lag-correction-form>
+      </div>
+    </div>
+
+    <!-- Manual correction -->
+    <div class="card mb-3">
+      <div class="card-header fw-bold">
+        บันทึก Manual Correction (กรณีอื่นๆ)
+      </div>
+      <div class="card-body">
+        <other-income-manual-correction-form
+          [contractId]="contract.id"
+          [contractType]="'ORDER'"
+          [submitting]="submittingManualCorrection()"
+          (submitCorrection)="onSubmitManualCorrection($event)"
+        ></other-income-manual-correction-form>
+      </div>
+    </div>
+  }
+}

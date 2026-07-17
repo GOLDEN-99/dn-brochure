@@ -1,4 +1,4 @@
-import { Component, computed, effect, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { TColor, TCardProps, TPrice } from '../../../types';
 import { environment } from '../../../../environments/environment';
 import { DecimalPipe } from '@angular/common';

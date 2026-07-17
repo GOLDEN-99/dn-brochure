@@ -1,5 +1,4 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { export2Img } from '../../../lib';
 import { FlashSaleService } from '../../../service/brochure/flash-sale/flash-sale.service';
 import { FsBrochureComponent } from '../../../components/brochure-component/fs-brochure/fs-brochure.component';
 import { ToastService } from '../../../service/toast/toast.service';
@@ -48,6 +47,7 @@ export class FlashSaleComponent {
     try {
 
       if (!b) throw new Error('no target file')
+      const { export2Img } = await import('../../../lib/brochure/pdf')
       await export2Img(b as HTMLElement, `${this.head()?.name}`)
       this.toastService.success("export สำเร็จ")
 

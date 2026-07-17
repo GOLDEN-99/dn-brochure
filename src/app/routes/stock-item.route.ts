@@ -2,7 +2,7 @@ import { Route } from '@angular/router';
 import { PurchaseLayoutComponent, STOCK_ITEM_TOKEN, TAB_TOKEN } from '../layout/other-income/purchase-layout/purchase-layout.component';
 import { stockSetupResolver } from '../resolvers/stock-item/stock-setup.resolver';
 import { StockItemReportComponent } from '../pages/stock-item/stock-item-report/stock-item-report.component';
-import { handleLazyLoadError } from '../utils/lazy-load-error-handler';
+import { handleLazyLoadError, lazyLoadWithRetry } from '../utils/lazy-load-error-handler';
 
 export const STOCK_ITEM_ROUTES: Route[] = [
     {
@@ -17,11 +17,9 @@ export const STOCK_ITEM_ROUTES: Route[] = [
         children: [
             {
                 path: '',
-                loadComponent() {
-                    return import('../pages/stock-item/stock-item-home/stock-item-home.component')
-                        .then(r => r.StockItemHomeComponent)
-                        .catch(handleLazyLoadError('stock-item'))
-                },
+                loadComponent: () => lazyLoadWithRetry(() => import('../pages/stock-item/stock-item-home/stock-item-home.component'))
+                    .then(r => r.StockItemHomeComponent)
+                    .catch(handleLazyLoadError('stock-item')),
             },
             {
                 path: 'report',
@@ -32,7 +30,7 @@ export const STOCK_ITEM_ROUTES: Route[] = [
     {
         path: 'stock-item/add',
         resolve: [stockSetupResolver],
-        loadComponent: () => import('../pages/stock-item/stock-item-add/stock-item-add.component')
+        loadComponent: () => lazyLoadWithRetry(() => import('../pages/stock-item/stock-item-add/stock-item-add.component'))
             .then(r => r.StockItemAddComponent).catch(handleLazyLoadError('stock-item/add')),
     },
 ];

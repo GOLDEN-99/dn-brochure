@@ -1,0 +1,77 @@
+<section class="m-3">
+  <ng-content select="[slot=header]" />
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="card-title">ข้อมูลทั่วไป</h2>
+      <app-promotion-master [form]="promotionForm.promotionMaster" />
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="card-title">เงื่อนไขวัน เวลา</h2>
+      <app-promotion-datetime [form]="promotionForm.promotionDatetime" />
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="card-title">เงื่อนไขตามสมาชิก</h2>
+      <app-promotion-limit-usage
+        [branchForm]="promotionForm.promotionBranch"
+        [memberForm]="promotionForm.promotionMember"
+      />
+    </div>
+  </div>
+
+  @if (showFilterOption()) {
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <h2 class="card-title">เงื่อนไขตามสินค้า</h2>
+          <div class="d-flex justify-content-end gap-1">
+            @if (!showItem()) {
+              <button
+                class="btn btn-outline-primary"
+                (click)="onAddSkuProductCount()"
+              >
+                เพิ่มเงื่อนไขตามจำนวน(ชิ้น)
+              </button>
+              <button
+                class="btn btn-outline-success"
+                (click)="onAddSkuProductSubtotal()"
+              >
+                เพิ่มเงื่อนไขตามยอด(บาท)
+              </button>
+            }
+          </div>
+        </div>
+        <app-promotion-product-filter [form]="promotionForm" />
+      </div>
+    </div>
+  }
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="card-title">สิทธิประโยชน์</h2>
+      @if (formModel().promotionMaster.promotionType === "ITEM") {
+        <app-inline-benefit [form]="promotionForm.promotionBenefit" />
+      } @else {
+        <app-benefit-select [form]="promotionForm.promotionBenefit" />
+      }
+    </div>
+  </div>
+
+  <button
+    class="btn btn-primary w-100"
+    [disabled]="!canSubmit()"
+    (click)="onSubmit()"
+  >
+    @if (submitting()) {
+      กำลังบันทึก...
+    } @else {
+      {{ submitLabel() }}
+    }
+  </button>
+</section>

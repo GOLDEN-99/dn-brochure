@@ -1,0 +1,28 @@
+<div class="row mb-3">
+  <div class="form-field col-md">
+    <label class="form-label" [htmlFor]="form().action().name()">สิทธิ</label>
+    <select
+      id="inline-benefit-type"
+      class="form-select"
+      [formField]="form().action"
+    >
+      @for (opt of rewardOption(); track $index) {
+        <option [value]="opt.action">{{ opt.label }}</option>
+      }
+    </select>
+  </div>
+  @for (tier of form().tiers; track $index) {
+    <div class="form-field col-md">
+      <label class="form-label" [htmlFor]="tier().name()"
+        >{{ action() | promotionBenefitName }}
+      </label>
+      <input
+        class="form-control"
+        id="inline-reward"
+        type="number"
+        [formField]="tier.rewardValue"
+      />
+      <app-form-alert-text [formState]="tier.rewardValue()" />
+    </div>
+  }
+</div>

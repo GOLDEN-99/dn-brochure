@@ -1,4 +1,4 @@
-import { Directive, inject, output, viewChild } from '@angular/core';
+import { Directive, inject, output } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 /**

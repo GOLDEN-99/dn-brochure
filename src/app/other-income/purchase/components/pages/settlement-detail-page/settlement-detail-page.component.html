@@ -1,0 +1,119 @@
+@if (ctx.loading()) {
+  <div class="text-center py-4">
+    <output class="spinner-border spinner-border-sm text-secondary"></output>
+    <span class="ms-2 text-muted">กำลังโหลด...</span>
+  </div>
+} @else if (ctx.error()) {
+  <div class="alert alert-danger d-flex align-items-center gap-2">
+    {{ ctx.error() }}
+    <button
+      class="btn btn-sm btn-outline-danger ms-auto"
+      (click)="ctx.refresh()"
+    >
+      ลองใหม่
+    </button>
+  </div>
+} @else if (ctx.settlement(); as settlement) {
+  <app-settlement-summary-card
+    [settlement]="settlement"
+    [balance]="balance()"
+    [isAccount]="isAccount()"
+    (deleteSettlement)="onDeleteSettlement()"
+  ></app-settlement-summary-card>
+
+  @if (availableTabs().length > 0) {
+    <!-- Document type tabs -->
+    <ul class="nav nav-tabs mb-3">
+      @if (availableTabs().includes("bill")) {
+        <li class="nav-item">
+          <button
+            type="button"
+            class="nav-link"
+            [class.active]="currentTab() === 'bill'"
+            (click)="setTab('bill')"
+          >
+            ส่วนลดบิล
+            <span class="badge text-bg-secondary ms-1">{{
+              settlement.billDiscounts.length
+            }}</span>
+          </button>
+        </li>
+      }
+      @if (availableTabs().includes("freeItem")) {
+        <li class="nav-item">
+          <button
+            type="button"
+            class="nav-link"
+            [class.active]="currentTab() === 'freeItem'"
+            (click)="setTab('freeItem')"
+          >
+            ของแถม
+            <span class="badge text-bg-secondary ms-1">{{
+              settlement.freeItems.length
+            }}</span>
+          </button>
+        </li>
+      }
+      @if (availableTabs().includes("invoice")) {
+        <li class="nav-item">
+          <button
+            type="button"
+            class="nav-link"
+            [class.active]="currentTab() === 'invoice'"
+            (click)="setTab('invoice')"
+          >
+            ใบแจ้งหนี้ / ใบเสร็จ
+            <span class="badge text-bg-secondary ms-1">{{
+              settlement.invoices.length + settlement.receipts.length
+            }}</span>
+          </button>
+        </li>
+      }
+      @if (availableTabs().includes("creditNote")) {
+        <li class="nav-item">
+          <button
+            type="button"
+            class="nav-link"
+            [class.active]="currentTab() === 'creditNote'"
+            (click)="setTab('creditNote')"
+          >
+            ใบลดหนี้
+            <span class="badge text-bg-secondary ms-1">{{
+              settlement.creditNotes.length
+            }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+
+    @switch (currentTab()) {
+      @case ("bill") {
+        <app-settlement-bill-tab
+          [search]="searchBillDiscounts"
+          [canAppend]="!isAccount()"
+        ></app-settlement-bill-tab>
+      }
+      @case ("freeItem") {
+        <app-settlement-free-item-tab
+          [search]="searchFreeProducts"
+          [canAppend]="!isAccount()"
+        ></app-settlement-free-item-tab>
+      }
+      @case ("invoice") {
+        <app-settlement-invoice-receipt-tab
+          [openSettlementAmount]="openSettlementAmount()"
+          [canAppend]="isAccount()"
+        ></app-settlement-invoice-receipt-tab>
+      }
+      @case ("creditNote") {
+        <app-settlement-credit-note-tab
+          [canAppend]="isAccount()"
+        ></app-settlement-credit-note-tab>
+      }
+    }
+  } @else {
+    <div class="alert alert-secondary">
+      สัญญานี้ไม่มีประเภทรายได้ที่ตั้งค่าไว้
+    </div>
+  }
+}

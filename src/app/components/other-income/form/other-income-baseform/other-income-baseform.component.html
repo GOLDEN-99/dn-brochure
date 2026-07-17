@@ -19,10 +19,23 @@
   [filter]="mode()"
   (isLightChange)="onSelectEventTypeChange($event)"
 />
-<app-income-select
-  [incomeId]="formData.incomeId"
-  (incomeIdChange)="updateIncome($event)"
-/>
+<div class="border rounded p-3 mb-3">
+  <p class="fw-semibold mb-2 text-muted small">รับรู้รายได้เป็น</p>
+  <div class="row row-cols-2 g-2">
+    <div class="col">
+      <app-income-select [incomeId]="incomeIdType1()" [incomeType]="1" (incomeIdChange)="updateIncomeByType(1, $event)" />
+    </div>
+    <div class="col">
+      <app-income-select [incomeId]="incomeIdType2()" [incomeType]="2" (incomeIdChange)="updateIncomeByType(2, $event)" />
+    </div>
+    <div class="col">
+      <app-income-select [incomeId]="incomeIdType3()" [incomeType]="3" (incomeIdChange)="updateIncomeByType(3, $event)" />
+    </div>
+    <div class="col">
+      <app-income-select [incomeId]="incomeIdType4()" [incomeType]="4" (incomeIdChange)="updateIncomeByType(4, $event)" />
+    </div>
+  </div>
+</div>
 <!-- period -->
 <div class="mb-3">
   <label for="period" class="form-label">ระยะเวลาเก็บเงิน</label>
@@ -66,12 +79,31 @@
   [compName]="formData.compName"
   (compNameChange)="updateCompName($event)"
 />
-@let products = productList(); @if (products !== null && formData.compCode !==
-'' && eventType() === 1) {
-<app-search-product-subform
-  [comp]="searchProductParam()"
-  [selectProducts]="products"
-  (onAdd)="handleAdd($event)"
-  (onDelete)="handleDelete($event)"
-/>
+@let products = productList();
+@if (eventType() === 1) {
+  @if (validPair().length > 0) {
+    <div class="mb-3">
+      <label for="pairId" class="form-label">เชื่อมกับหัวร่วม (ถ้ามี)</label>
+      <select
+        name="pairId"
+        id="pairId"
+        class="form-select"
+        [ngModel]="pairId()"
+        (ngModelChange)="updateDualPairId($event)"
+      >
+        <option [ngValue]="null">ไม่เชื่อม</option>
+        @for (pair of validPair(); track pair.id) {
+          <option [ngValue]="pair.id">{{ pair.displayName }}</option>
+        }
+      </select>
+    </div>
+  }
+  @if (products !== null && formData.compCode !== "") {
+    <app-search-product-subform
+      [comp]="searchProductParam()"
+      [selectProducts]="products"
+      (onAdd)="handleAdd($event)"
+      (onDelete)="handleDelete($event)"
+    />
+  }
 }

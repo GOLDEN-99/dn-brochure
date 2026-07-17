@@ -11,7 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './search-product-subform.component.scss'
 })
 export class SearchProductSubformComponent {
-  private productService = inject(OiProductService)
+  private readonly productService = inject(OiProductService)
   comp = input.required<{ compCode: string, compType: string }>()
   term = this.productService.term
   result = this.productService.product
@@ -38,7 +38,7 @@ export class SearchProductSubformComponent {
   onRemoveProduct = (goodCode: string) => this.productList.update(prev => prev.filter((p) => p.goodCode !== goodCode))
 
   productModal = viewChild("searchProductModal")
-  private modalService = inject(NgbModal)
+  private readonly modalService = inject(NgbModal)
   openSearchProduct() {
     const { compCode, compType } = this.comp();
     this.productService.setComp(compCode, compType);

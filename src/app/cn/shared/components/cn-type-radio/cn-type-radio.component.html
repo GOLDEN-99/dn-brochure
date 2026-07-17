@@ -1,0 +1,40 @@
+<div class="mb-3">
+  <div class="form-label d-flex gap-1">
+    <span>เลือก cn บางรายการ/ทั้งบิล</span>
+    @if (required()) {
+      <span class="text-danger">*</span>
+    }
+  </div>
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="cnType"
+      id="cnSome"
+      value="some"
+      [(ngModel)]="value"
+    />
+    <label class="form-check-label" for="cnSome"> CN บางรายการ </label>
+  </div>
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="cnType"
+      id="cnWhole"
+      value="whole"
+      [(ngModel)]="value"
+      [disabled]="cannotCNWhole()"
+    />
+    <label class="form-check-label" for="cnWhole"> CN ทั้งบิล </label>
+    @if (cannotCNWhole()) {
+      <i
+        class="bi bi-info-circle ms-1"
+        style="color: #333"
+        [ngbTooltip]="'ไม่สามารถ CN ทั้งบิลได้ เนื่องจากมี CN บางรายการแล้ว'"
+        placement="end"
+        triggers="hover click"
+      ></i>
+    }
+  </div>
+</div>

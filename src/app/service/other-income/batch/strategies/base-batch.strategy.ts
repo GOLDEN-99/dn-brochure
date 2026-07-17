@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PeriodService, TBatchResult } from '../../period.service';
-import { TPreviewRow } from '../../batch-excel.service';
+import type { TPreviewRow } from '../../batch-excel.service';
 import { IBatchStrategy, IBatchTypeConfig, TBatchPayload } from '../batch-strategy.interface';
 
 /**

@@ -1,0 +1,42 @@
+<h1 class="text-center">รายการสินค้า</h1>
+
+<p class="text-center">จำนวน {{ checkCount() }} รายการ</p>
+<table class="table">
+  <thead>
+    <tr>
+      <th style="width: 10%"></th>
+      <th style="width: 60%">รหัสและชื่อสินค้า</th>
+      <th>ราคา (บาท)</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (itemForm of requestForm.returnList; track itemForm().keyInParent()) {
+      @let item = itemForm().value().good;
+      <tr [class.text-muted]="itemForm.check().disabled()">
+        <td>
+          <div class="form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              [formField]="itemForm.check"
+              [id]="'select-item-' + item.barCode"
+            />
+          </div>
+        </td>
+        <td>{{ "(" + item.barCode + ") " + item.goodName }}</td>
+        <td>{{ item.subTotal | number: "1.2-2" }}</td>
+      </tr>
+    }
+  </tbody>
+</table>
+<cn-product-picker [formField]="requestForm.returnList" />
+<div class="btn-wrapper">
+  <a routerLink=".." class="btn btn-danger">ย้อนกลับ</a>
+  <a
+    [routerLink]="disable() ? '.' : 'detail'"
+    role="button"
+    [attr.aria-disabled]="disable()"
+    [className]="nextBtnClassName()"
+    >ถัดไป</a
+  >
+</div>

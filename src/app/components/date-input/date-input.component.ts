@@ -1,6 +1,8 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+
+let id = 0;
 
 @Component({
   selector: 'app-date-input',
@@ -17,7 +19,7 @@ import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bo
         #cal="ngbDatepicker"
         tabindex="-1"
         [ngModel]="date()"
-        (ngModelChange)="onClick($event)"
+        (ngModelChange)="onChange($event)"
         style="border: none"
       />
     </div>
@@ -31,10 +33,14 @@ import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bo
         [value]="displayDate()"
         name="dpFromDate"
         readonly
+        [required]="required()"
       />
-      <label class="form-label" [attr.for]="'date-input-' + id">{{
-        label()
-      }}</label>
+      <label class="form-label" [attr.for]="'date-input-' + id">
+        {{ label() }}
+        @if (required()) {
+          <span class="text-danger">*</span>
+        }
+      </label>
     </div>
     <button
       class="btn btn-outline-secondary bi bi-calendar3"
@@ -45,21 +51,26 @@ import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bo
   </div>
 </div>
   `,
-  styles: ''
+  styles: `
+    .dp-hidden {
+
+    }
+  `
 })
 export class DateInputComponent {
-  private calendar = inject(NgbCalendar)
-  id = Math.floor(Math.random() * 1000)
-  date = input<NgbDateStruct>(this.calendar.getToday())
+  private readonly calendar = inject(NgbCalendar)
+  id = id++
+  date = model<NgbDateStruct>(this.calendar.getToday())
+
   label = input.required<string>()
   disableClick = input(false)
+  required = input(false)
   thaiDate(date: NgbDateStruct | null) {
     if (!date) return "กรุณาเลือกวันที่"
     return `${date.day}/${date.month}/${date.year}`
   }
   displayDate = computed(() => this.thaiDate(this.date()))
-  dateChange = output<NgbDate>()
-  onClick(date: NgbDate) {
-    this.dateChange.emit(date)
+  onChange(date: NgbDate) {
+    this.date.set(date)
   }
 }

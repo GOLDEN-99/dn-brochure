@@ -1,84 +1,86 @@
 <section class="app-container">
   @if (invalidValue()) {
-  <div>ไม่พบเอกสาร</div>
-  }@else{
-  <!---->
-  @let e = currentResult(); @let comp = e.company;@let incomes =
-  e.incomeList;@let periods = e.periodList;@let h = e.head;
-  <app-other-income-head-edit
-    [head]="e.head"
-    [event]="e.event"
-    [income]="e.income"
-    [comp]="e.company"
-    [canEdit]="false"
-  />
-  <!---->
-  <app-other-income-product-edit [productList]="e.productList" />
+    <div>ไม่พบเอกสาร</div>
+  } @else {
+    <!---->
+    @let e = currentResult(); @let comp = e.company;@let incomes = e.incomeList;
+    @let h = e.head;@let periods = e.periodList;
+    <app-other-income-head-edit
+      [headIncomeList]="e.headIncomeList"
+      [head]="e.head"
+      [event]="e.event"
+      [comp]="e.company"
+      [canEdit]="false"
+    />
+    <!---->
+    <app-other-income-product-edit [productList]="e.productList" />
 
-  @if(e.event.eventType === 1){
-  <!---->
-  <app-other-income-not-light-edit
-    [steps]="e.stepList"
-    [notLight]="e.notLight"
-    [canEdit]="false"
-  />
-  <app-other-income-monthly-edit
-    [eventType]="e.event.eventType"
-    [id]="h.id"
-    [compType]="e.company.compType"
-    [accAmount]="e.head.accAmount"
-    [accIncome]="e.head.accIncome"
-    [stepType]="e.notLight.stepType"
-    [stepList]="e.stepList"
-    [capAmount]="e.notLight.capAmount"
-    [canEdit]="isPurchase"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-  />
-  <app-other-income-monthly-list
-    [isDc]="[1, 2].includes(e.event.eventType)"
-    [incomeList]="e.incomeList"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-  />
+    @if (e.event.eventType === 1) {
+      <!---->
+      <app-other-income-not-light-edit
+        [steps]="e.stepList"
+        [notLight]="e.notLight"
+        [canEdit]="false"
+      />
+      <app-other-income-monthly-edit
+        [eventType]="e.event.eventType"
+        [id]="h.id"
+        [compType]="e.company.compType"
+        [accAmount]="e.head.accAmount"
+        [accIncome]="e.head.accIncome"
+        [stepType]="e.notLight.stepType"
+        [stepList]="e.stepList"
+        [capAmount]="e.notLight.capAmount"
+        [canEdit]="isPurchase"
+        (success)="onSuccess($event)"
+        (fail)="onFail($event)"
+      />
+      <app-other-income-monthly-list
+        [isDc]="[1, 2].includes(e.event.eventType)"
+        [incomeList]="e.incomeList"
+        (success)="onSuccess($event)"
+        (fail)="onFail($event)"
+      />
+    }
+    <!--add incentive income here-->
+    @if (e.event.eventType === 3) {
+      <app-other-income-monthly-incentive-edit
+        [canEdit]="isPurchase"
+        [id]="e.head.id"
+        [eventType]="e.event.eventType"
+        [incomeList]="e.incomeList"
+        [headPeriod]="e.head.period"
+        [productList]="e.productList"
+        (success)="onSuccess($event)"
+        (fail)="onFail($event)"
+      />
+    }
+    <!---->
+    @if (isPurchase) {
+      <app-create-period
+        [eventType]="e.event.eventType"
+        [incomeList]="incomes"
+        [headId]="e.head.id"
+        [compCode]="comp.compCode"
+        [compType]="comp.compType"
+        (success)="onSuccess($event)"
+        (fail)="onFail($event)"
+      />
+    }
+    <!---->
+    @for (period of periods; track period.id) {
+      <app-other-income-period-display
+        [possibleIncome]="e.headIncomeList"
+        [period]="period"
+        [canEdit]="isPurchase"
+        [isPurchase]="isPurchase"
+        [compCode]="comp.compCode"
+        [compType]="comp.compType"
+        (success)="onSuccess($event)"
+        (fail)="onFail($event)"
+      />
+    }
   }
-  <!--add incentive income here-->
-  @if (e.event.eventType === 3) {
-  <app-other-income-monthly-incentive-edit
-    [canEdit]="isPurchase"
-    [id]="e.head.id"
-    [eventType]="e.event.eventType"
-    [incomeList]="e.incomeList"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-  />
-  }
-  <!---->
-  @if (isPurchase) {
-  <app-create-period
-    [incomeType]="e.income.incomeType"
-    [eventType]="e.event.eventType"
-    [incomeList]="incomes"
-    [headId]="e.head.id"
-    [compCode]="comp.compCode"
-    [compType]="comp.compType"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-  />
-  }
-  <!---->
-  @for (period of periods; track period.id) {
-  <app-other-income-period-display
-    [period]="period"
-    [incomeType]="e.income.incomeType"
-    [canEdit]="isPurchase"
-    [isPurchase]="isPurchase"
-    [compCode]="comp.compCode"
-    [compType]="comp.compType"
-    (success)="onSuccess($event)"
-    (fail)="onFail($event)"
-  />
-  } }
 
   <button (click)="onDelete()" class="btn btn-danger w-100">ลบ</button>
   <a routerLink=".." class="btn btn-secondary w-100 mt-2">กลับ</a>

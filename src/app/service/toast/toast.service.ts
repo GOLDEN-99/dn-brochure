@@ -6,8 +6,6 @@ import { Subject } from 'rxjs';
 })
 export class ToastService {
 
-  constructor() { }
-
   message$ = new Subject<TToastProps>()
 
   success(message: string) {
@@ -19,9 +17,9 @@ export class ToastService {
   }
 }
 
-type TToastServerity = 'success' | 'danger'
+export type TToastSeverity = 'success' | 'danger'
 
-type TToastProps = {
+export type TToastProps = {
   message: string
-  severity: TToastServerity
+  severity: TToastSeverity
 }

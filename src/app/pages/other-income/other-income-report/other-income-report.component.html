@@ -10,7 +10,7 @@
         (ngModelChange)="changeMonth($event)"
       >
         @for (month of monthArray; track month) {
-        <option [ngValue]="month">{{ month }}</option>
+          <option [ngValue]="month">{{ month }}</option>
         }
       </select>
     </div>
@@ -23,7 +23,7 @@
         (ngModelChange)="changeYear($event)"
       >
         @for (year of yearArray; track year) {
-        <option [ngValue]="year">{{ year }}</option>
+          <option [ngValue]="year">{{ year }}</option>
         }
       </select>
     </div>
@@ -61,58 +61,12 @@
     รายงานซัพพลายเออร์ HU รายเดือน (ละเอียด)
   </button>
 </div>
-<!-- <app-other-income-order-report [year]="date().year" /> -->
-<h4>รายงานเพื่อออกใบแจ้งหนี้</h4>
-<div class="row">
-  <div class="app-form-select col">
-    <label for="month-month-buy">เดือน</label>
-    <select
-      name="month-month-buy"
-      id="month-month-buy"
-      [ngModel]="date().month"
-      (ngModelChange)="changeMonth($event)"
-    >
-      @for (month of monthArray; track month) {
-      <option [ngValue]="month">{{ month }}</option>
-      }
-    </select>
-  </div>
-  <div class="app-form-select col">
-    <label for="year-month-buy">ปี</label>
-    <select
-      name="year-month-buy"
-      id="year-month-buy"
-      [ngModel]="date().year"
-      (ngModelChange)="changeYear($event)"
-    >
-      @for (year of yearArray; track year) {
-      <option [ngValue]="year">{{ year }}</option>
-      }
-    </select>
-  </div>
-</div>
-<div class="row mb-3 px-3" style="gap: 1rem">
-  <button class="btn btn-primary col" (click)="exportInvoice(1)">
-    รายงาน DN
-  </button>
-  <button class="btn btn-success col" (click)="exportInvoice(2)">
-    รายงาน HU
-  </button>
-</div>
-<h4>รายงานเพื่อออกใบลดหนี้</h4>
-<div class="row mb-3 px-3" style="gap: 1rem">
-  <button class="btn btn-primary col" (click)="exportCredit(1)">
-    รายงาน DN
-  </button>
-  <button class="btn btn-success col" (click)="exportCredit(2)">
-    รายงาน HU
-  </button>
-</div>
-<h4>รายงานเพื่อออกใบเสร็จ</h4>
-<div class="row mb-3 px-3" style="gap: 1rem">
-  <button class="btn btn-primary col" (click)="exportRece(1)">รายงาน DN</button>
-  <button class="btn btn-success col" (click)="exportRece(2)">รายงาน HU</button>
-</div>
+
+<app-account-issuing-document-report
+  (fail)="onError($event)"
+  (loading)="onLoading($event)"
+  (success)="onSuccess($event)"
+/>
 
 <h4>สรุปรายได้รายปี</h4>
 <div class="row mb-3 px-3" style="gap: 1rem">
@@ -134,7 +88,7 @@
       (ngModelChange)="changeMonth($event)"
     >
       @for (month of monthArray; track month) {
-      <option [ngValue]="month">{{ month }}</option>
+        <option [ngValue]="month">{{ month }}</option>
       }
     </select>
   </div>
@@ -147,7 +101,7 @@
       (ngModelChange)="changeYear($event)"
     >
       @for (year of yearArray; track year) {
-      <option [ngValue]="year">{{ year }}</option>
+        <option [ngValue]="year">{{ year }}</option>
       }
     </select>
   </div>

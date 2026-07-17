@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { TBatchResult, TPeriodCreditBatch, TPeriodInvBatch, TPeriodReceBatch } from '../period.service';
-import { TColumnHeader, TPreviewRow } from '../batch-excel.service';
+import type { TColumnHeader, TPreviewRow } from '../batch-excel.service';
 
 /**
  * Batch type discriminator

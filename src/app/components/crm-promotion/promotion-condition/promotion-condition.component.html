@@ -1,0 +1,41 @@
+<div class="row">
+  <div class="col-md">
+    <div>
+      <label
+        [htmlFor]="conditionForm.field().name()"
+        class="form-label fw-semibold text-muted small mb-1"
+        >ขั้นต่ำ</label
+      >
+      <select
+        class="form-select form-select-sm"
+        [formField]="conditionForm.field"
+      >
+        <option value="COUNT">จำนวน(ชิ้น)</option>
+        <option value="SUBTOTAL">ยอด(บาท)</option>
+      </select>
+    </div>
+  </div>
+  <!-- <div class="col-md">
+    <div class="app-form-field">
+      <label for="contion-op">ต้อง</label>
+      <select name="condition-op" class="form-select">
+        <option value="EQ">เท่ากับ</option>
+        <option value="GTE">มากกว่าเท่ากับ</option>
+      </select>
+    </div>
+  </div> -->
+  <div class="col-md">
+    <div>
+      <label
+        class="form-label fw-semibold text-muted small mb-1"
+        [htmlFor]="conditionForm.value().name()"
+        >ยอด</label
+      >
+      <input
+        type="number"
+        class="form-control form-control-sm"
+        [formField]="conditionForm.value"
+      />
+    </div>
+  </div>
+</div>

@@ -13,16 +13,17 @@ import { PeriodStatus } from '../../types/other-income';
 })
 export class PeriodNotLightService {
 
-  constructor() { }
+  private readonly url = environment.oi
+  private readonly api = inject(ApiService)
 
-  private url = environment.oi
-  private api = inject(ApiService)
+  params = signal<TAccountQueryReqState>({ filter: 0, compType: 1, mode: 1, eventId: 0, term: '', goodCode: '', compCode: '' })
+  private readonly refresh = signal(0)
+  refetch() { this.refresh.update(n => n + 1) }
 
-  params = signal<TAccountQueryReqState>({ filter: 1, compType: 1, mode: 1, eventId: 0, term: '', goodCode: '', compCode: '' })
-  private params$ = toObservable(this.params).pipe(
-    filter(({ goodCode, compCode, eventId, mode }) => {
+  private readonly params$ = toObservable(this.params).pipe(
+    filter(({ goodCode, eventId, mode }) => {
       switch (mode) {
-        case 1: return compCode !== ''
+        case 1: return true
         case 2: return goodCode !== ''
         case 3: return eventId !== 0
         default: return false
@@ -46,7 +47,9 @@ export class PeriodNotLightService {
       }
     })
   )
-  private data$ = this.params$.pipe(switchMap(({ compType, ...res }) => this.getMany(compType, { ...res })))
+  private readonly data$ = combineLatest([this.params$, toObservable(this.refresh)]).pipe(
+    switchMap(([{ compType, ...res }]) => this.getMany(compType, { ...res }))
+  )
 
 
   private getMany(comp: number, params: TQueryReq): Observable<TPeriodSummary[]> {
@@ -56,10 +59,9 @@ export class PeriodNotLightService {
   periods = toSignal(this.data$, { initialValue: [] })
   modPeriod = computed(() => this.periods())
 
-  private isProduct = (incomeType: number) => [1, 2].includes(incomeType)
 }
 
-type TPeriodSummary = {
+export type TPeriodSummary = {
   id: number
   displayName: string
   cn: string

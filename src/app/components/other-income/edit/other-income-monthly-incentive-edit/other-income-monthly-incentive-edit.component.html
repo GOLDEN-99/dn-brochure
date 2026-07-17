@@ -3,53 +3,127 @@
   <div class="row" style="justify-content: space-between">
     <h2 class="col-auto">รายการรับรู้รายเดือน</h2>
     @if (canEdit()) {
-    <div class="col-auto">
-      <button class="btn btn-primary" (click)="openModal(monthlyModal)">
-        เพิ่มรายได้รายเดือน
-      </button>
-    </div>
+      <div class="col-auto d-flex gap-2">
+        <button class="btn btn-primary" (click)="openModal(monthlyModal)">
+          เพิ่มรายได้รายเดือน
+        </button>
+        @if (showCreateWithPeriod()) {
+          <button
+            class="btn btn-success"
+            (click)="openCreateWithPeriod(createWithPeriodModal)"
+          >
+            สร้างและสรุป(กรณี 1 เดือน)
+          </button>
+        }
+      </div>
     }
   </div>
   <table class="table">
     <thead>
       <tr>
         <th>งวด</th>
-        <th>ยอดคำนวน</th>
-        <th>cn</th>
-        <th>ยอดจริง</th>
-        <th>ส่วนต่าง</th>
-        <th>สาเหตุ</th>
         <th>รายได้</th>
+        <th>หมายเหตุ</th>
         <th></th>
       </tr>
     </thead>
     <tbody>
       @for (income of incomes; track $index) {
-      <tr>
-        <td>{{ formatMonth(income.startDate) }}</td>
-        <td>{{ income.calAmount | number : "1.2-2" }}</td>
-        <td>{{ income.cn | number : "1.2-2" }}</td>
-        <td>{{ income.actualAmount | number : "1.2-2" }}</td>
-        <td>
-          {{
-            income.calAmount - income.cn - income.actualAmount
-              | number : "1.2-2"
-          }}
-        </td>
-        <td>{{ income.reason }}</td>
-        <td>{{ income.incomeAmount | number : "1.2-2" }}</td>
-        <td>
-          @if (incomes.length -1 === $index && income.checkDate === null) {
-          <button class="btn btn-danger" (click)="onDelete(income.id)">
-            <i class="bi bi-trash"></i>
-          </button>
-          }
-        </td>
-      </tr>
+        <tr>
+          <td>{{ formatMonth(income.startDate) }}</td>
+          <td>{{ income.incomeAmount | number: "1.2-2" }}</td>
+          <td>{{ income.reason }}</td>
+          <td>
+            @if (income.checkDate === null) {
+              <button class="btn btn-warning me-1" (click)="onEdit(income)">
+                <i class="bi bi-pen"></i>
+              </button>
+            }
+            @if (incomes.length - 1 === $index && income.checkDate === null) {
+              <button class="btn btn-danger" (click)="onDelete(income.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            }
+          </td>
+        </tr>
       }
     </tbody>
   </table>
 </div>
+
+<ng-template #createWithPeriodModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">สร้างรายได้และสรุป Period (1 เดือน)</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+      [disabled]="creatingWithPeriod()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <app-date-input label="วันที่เริ่มต้น" [(date)]="cwpStartDate" />
+    </div>
+    <div class="mb-3">
+      <label for="cwpIncomeAmount" class="form-label"
+        >รายได้ <span class="text-danger">*</span></label
+      >
+      <input
+        id="cwpIncomeAmount"
+        type="number"
+        class="form-control"
+        [ngModel]="cwpIncomeAmount()"
+        (ngModelChange)="cwpIncomeAmount.set(+$event)"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="cwpPeriodName" class="form-label"
+        >ชื่อเพื่อออกใบแจ้งหนี้/ลดหนี้</label
+      >
+      <input
+        id="cwpPeriodName"
+        type="text"
+        class="form-control"
+        [ngModel]="cwpPeriodName()"
+        (ngModelChange)="cwpPeriodName.set($event)"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="cwpPeriodRemark" class="form-label">หมายเหตุ Period</label>
+      <input
+        id="cwpPeriodRemark"
+        type="text"
+        class="form-control"
+        [ngModel]="cwpPeriodRemark()"
+        (ngModelChange)="cwpPeriodRemark.set($event)"
+      />
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="modal.dismiss()"
+      [disabled]="creatingWithPeriod()"
+    >
+      ยกเลิก
+    </button>
+    <button
+      type="button"
+      class="btn btn-success"
+      (click)="onCreateWithPeriod()"
+      [disabled]="creatingWithPeriod()"
+    >
+      @if (creatingWithPeriod()) {
+        <span class="spinner-border spinner-border-sm me-1"></span>กำลังสร้าง...
+      } @else {
+        สร้างและสรุป
+      }
+    </button>
+  </div>
+</ng-template>
 
 <ng-template #monthlyModal let-modal>
   <div class="modal-header">
@@ -89,5 +163,48 @@
   </div>
   <div class="modal-footer">
     <button class="btn btn-primary w-100" (click)="onSubmit()">บันทึก</button>
+  </div>
+</ng-template>
+
+<ng-template #monthlyEditModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">แก้ไขรับรู้รายเดือน {{ editMonth() }}</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="app-form-field-inline" style="justify-content: space-between">
+      <div>
+        <label for="editReason">หมายเหตุ</label>
+      </div>
+      <div>
+        <input
+          type="text"
+          id="editReason"
+          [ngModel]="editReason()"
+          (ngModelChange)="updateReason($event)"
+        />
+      </div>
+    </div>
+    <div class="app-form-field-inline" style="justify-content: space-between">
+      <div>
+        <label for="editIncome">รายได้</label>
+      </div>
+      <div>
+        <input
+          type="number"
+          id="editIncome"
+          [ngModel]="editIncome()"
+          (ngModelChange)="updateIncome(+$event)"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary w-100" (click)="onSaveEdit()">บันทึก</button>
   </div>
 </ng-template>

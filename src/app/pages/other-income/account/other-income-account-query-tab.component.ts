@@ -45,10 +45,10 @@ import { TAccountQueryReqState } from '../../../service/other-income/period-not-
         (ngModelChange)="statusChange($event)"
         class="form-select"
       >
-        <option [ngValue]="1">ทั้งหมด</option>
-        <option [ngValue]="2">สำเร็จ</option>
-        <option [ngValue]="3">รอเพิ่มใบแจ้งหนี้</option>
-        <option [ngValue]="4">รอเพิ่มใบเสร็จ</option>
+        <option [ngValue]="0">ทั้งหมด</option>
+        <option [ngValue]="3">สำเร็จ</option>
+        <option [ngValue]="1">รอเพิ่มใบแจ้งหนี้</option>
+        <option [ngValue]="2">รอเพิ่มใบเสร็จ</option>
       </select>
     </div>
   @if(cur.mode === 1){

@@ -1,0 +1,48 @@
+<section class="p-3 container-md">
+  <div class="row">
+    <div class="col">
+      <div class="app-form-field-inline">
+        <div><label for="search-branch-group">ค้นหา กลุ่มสินค้า</label></div>
+        <div>
+          <input
+            type="text"
+            id="search-branch-group"
+            placeholder="กรอกชื่อกลุ่มสินค้า"
+            [(ngModel)]="searchTerm"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ชื่อกลุ่มสินค้า</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @let group = renderGroup();
+      @if (group.length === 0) {
+        <tr>
+          <td colspan="2" class="text-center">ไม่มีข้อมูล</td>
+        </tr>
+      } @else {
+        @for (g of group; track $index) {
+          <tr>
+            <td>{{ g.name }}</td>
+            <td>
+              <div>
+                <a class="btn btn-primary me-3" [routerLink]="g.id + ''">
+                  แก้ไข
+                </a>
+              </div>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</section>

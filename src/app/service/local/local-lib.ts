@@ -2,7 +2,7 @@ import { TFormattedLoginResponse, TLoginOrder, TModifiedComp } from "../../types
 import { TPraser, TPraserOption } from "./local-lib.type"
 
 const isExp = (exp: number) => {
-    const unix = (new Date()).getTime()
+    const unix = Date.now()
     return unix > exp
 }
 
@@ -16,7 +16,7 @@ export const getItem = <T, K>({ praser, fallback }: TPraserOption<T, K>) => (key
     try {
         const txtData = localStorage.getItem(key)
         if (!txtData) return fallback
-        const { data, exp } = JSON.parse(txtData) as any
+        const { data, exp } = JSON.parse(txtData)
         if (isExp(exp)) return fallback
         const prasedData = praser(data)
         return prasedData

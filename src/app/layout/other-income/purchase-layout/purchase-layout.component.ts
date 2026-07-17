@@ -1,6 +1,7 @@
-import { Component, inject, InjectionToken } from '@angular/core';
+import { afterNextRender, Component, inject, InjectionToken, TemplateRef, viewChild } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { takeLast } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { getItem, setItem } from '../../../service/local/local-lib';
 
 type TTabItem = {
   label: string
@@ -26,7 +27,17 @@ export const PURCHASE_TAB_TOKEN: ITabSetting = {
       exact: false
     },
     {
-      label: 'report',
+      label: 'รายได้อื่นๆ 2 หัว',
+      link: './not-light-dual',
+      exact: false
+    },
+    {
+      label: 'รายงานใหม่',
+      link: './monthly-report',
+      exact: false
+    },
+    {
+      label: 'รายงานเดิม',
       link: './report',
       exact: false
     }
@@ -51,10 +62,21 @@ export const ACCOUNT_TAB_TOKEN: ITabSetting = {
     //   exact: false
     // },
     {
-      label: 'report',
+      label: 'รายงานใหม่',
+      link: './monthly-report',
+      exact: false
+    },
+    {
+      label: 'รายงานเดิม',
       link: './report',
       exact: false
+    },
+    {
+      label: 'ตรวจใบแจ้งหนี้',
+      link: 'invoices',
+      exact: false
     }
+
   ]
 }
 
@@ -153,6 +175,14 @@ export const QUOTA_ITEM_TOKEN = {
   ]
 }
 
+const DISMISS_KEY = 'announcement-modal-dismiss-2026-05-20'
+const fiveDaysFromNow = () => Date.now() + 120 * 24 * 60 * 60 * 1000
+const setDismissed = setItem(DISMISS_KEY, fiveDaysFromNow)
+const getDismissed = getItem<boolean, null>({
+  praser: (data: any): boolean => data === true,
+  fallback: null
+})(DISMISS_KEY)
+
 @Component({
   selector: 'app-purchase-layout',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
@@ -175,15 +205,40 @@ export const QUOTA_ITEM_TOKEN = {
         <router-outlet />
       </div>
     </div>
+
+    <ng-template #announcementModal let-modal>
+      <div class="modal-header">
+        <h2>อัพเดตระบบรายได้อื่นๆ</h2>
+      </div>
+      <div class="modal-body">
+        
+      <!---->
+        <h4>บัญชี</h4>
+        <ul>
+          <li>ประมาณการรายได้ dc rebate โดยการใช้ report ใหม่ เพื่อตั้งประมาณการ และเปรียบเทียบรายได้ตามรอบบิล supplier และรอบวันที่รับเข้า</li>
+        </ul>
+        <!---->
+        <h4>จัดซื้อ</h4>
+      <!---->
+        <h4>อื่นๆ</h4>
+
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-info w-100"
+          (click)="dismissAnnouncement(modal)"
+        >
+          ไม่แสดงอีก
+        </button>
+      </div>
+    </ng-template>
   `,
   styles: `
     .form-wrapper {
       margin: auto;
       padding: 1rem;
-      width: 100%;
-      @media (min-width: 992px) {
-        width: 920px;
-      }
+
     }
 
     a.nav-link {
@@ -202,6 +257,23 @@ export const QUOTA_ITEM_TOKEN = {
   `
 })
 export class PurchaseLayoutComponent {
-  private token = inject(TAB_TOKEN)
+  private readonly token = inject(TAB_TOKEN)
   tabs = this.token.tabList
+
+  private readonly modalServ = inject(NgbModal)
+  private readonly announcementModal = viewChild<TemplateRef<any>>('announcementModal')
+
+  constructor() {
+    afterNextRender(() => {
+      if (getDismissed() === null) {
+        const ref = this.announcementModal()
+        if (ref) this.modalServ.open(ref, { size: 'lg', backdrop: 'static', keyboard: false })
+      }
+    })
+  }
+
+  dismissAnnouncement(modal: any) {
+    setDismissed(true)
+    modal.close()
+  }
 }

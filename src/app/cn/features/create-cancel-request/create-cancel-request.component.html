@@ -1,0 +1,112 @@
+<h1 class="text-center">แจ้ง CN สินค้า</h1>
+<div class="card mb-3">
+  <div class="card-header">
+    <span>ข้อมูลใบขาย</span>
+  </div>
+  <div class="card-body">
+    <!--readonly-->
+    <div class="app-form-field">
+      <label for="wholeCode">รหัสร้านค้า</label>
+      <input
+        type="text"
+        id="wholeCode"
+        [formField]="createForm.metadata.wholeCode"
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="wholeName">ชื่อร้านค้า</label>
+      <input
+        type="text"
+        id="wholeName"
+        [formField]="createForm.metadata.wholeName"
+      />
+    </div>
+    <div class="app-form-field">
+      <label for="ws">เลขที่ใบขาย</label>
+      <input type="text" id="ws" [formField]="createForm.metadata.wholeNumb" />
+    </div>
+  </div>
+</div>
+<div class="app-form-field">
+  <label for="showBank">สถานะ</label>
+  <select
+    id="showBank"
+    [formField]="createForm.stepOne.cusStat"
+    class="form-select"
+  >
+    <option value="" disabled>กรุณาเลือก</option>
+    <option value="0">ไม่โอนเงินคืน</option>
+    <option value="1" [disabled]="!createForm.metadata.bankNumb().value()">
+      โอนเงินคืน
+    </option>
+  </select>
+  @if (!createForm.metadata.bankNumb().value()) {
+    <small id="showBankHelper" class="form-text text-muted"
+      >หมายเหตุ: ไม่สามารถเลือก "โอนเงินคืน" ได้
+      เนื่องจากไม่พบข้อมูลบัญชี</small
+    >
+  }
+</div>
+@if (showBankAccountDetail()) {
+  <div class="card mb-3">
+    <div class="card-header"><span>ข้อมูลการโอน</span></div>
+    <div class="card-body">
+      <div class="app-form-field">
+        <label for="name">ธนาคาร</label>
+        <input type="text" id="name" [formField]="createForm.metadata.name" />
+      </div>
+      <div class="app-form-field">
+        <label for="bankNumb">เลขที่บัญชี</label>
+        <input
+          type="text"
+          id="bankNumb"
+          [formField]="createForm.metadata.bankNumb"
+        />
+      </div>
+      <div class="app-form-field">
+        <label for="bankAcName">ชื่อบัญชี</label>
+        <input
+          type="text"
+          id="bankAcName"
+          [formField]="createForm.metadata.bankAcName"
+        />
+      </div>
+    </div>
+  </div>
+}
+<!--core form-->
+
+<app-remark-select [formField]="createForm.stepOne.remarkOpt" />
+<!---->
+@let rt = resultType();
+@if (rt === ref.all) {
+  <cn-result-select
+    [resultType]="ref.all"
+    [formField]="createForm.stepOne.resultAll"
+  />
+}
+@if (rt === ref.notAccept) {
+  <cn-result-select
+    [resultType]="ref.notAccept"
+    [formField]="createForm.stepOne.resultNotAccept"
+  />
+}
+@if (rt === ref.notChange) {
+  <cn-result-select
+    [resultType]="ref.notChange"
+    [formField]="createForm.stepOne.resultNotChange"
+  />
+}
+<!---->
+@if (showCN()) {
+  <cn-type-radio
+    [formField]="createForm.stepOne.cnType"
+    [cnCount]="createForm.stepOne.cnCount().value()"
+  />
+}
+<div class="app-form-field">
+  <label for="note">หมายเหตุ</label>
+  <textarea id="note" [formField]="createForm.stepOne.remark"></textarea>
+</div>
+
+<a [className]="btnClass()" role="button" [routerLink]="endPoint()">ถัดไป</a>

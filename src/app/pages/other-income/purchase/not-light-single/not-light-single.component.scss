@@ -1,0 +1,14 @@
+.app-container {
+  margin: auto;
+  padding: 1rem;
+  width: 100%;
+  @media (min-width: 992px) {
+    width: 992px;
+  }
+  @media (min-width: 1024px) {
+    width: 1024px;
+  }
+  @media (min-width: 1440px) {
+    width: 1440px;
+  }
+}

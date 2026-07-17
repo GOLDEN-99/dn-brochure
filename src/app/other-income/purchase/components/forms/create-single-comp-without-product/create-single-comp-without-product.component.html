@@ -1,0 +1,35 @@
+@let comp = value();
+@if (comp.compCode !== "") {
+  <div class="row mb-3">
+    <div class="col-4">
+      <span class="text-muted small">รหัสซัพ</span>
+      <div>{{ comp.compCode }}</div>
+    </div>
+    <div class="col">
+      <span class="text-muted small">ชื่อซัพ</span>
+      <div>{{ comp.compName }}</div>
+    </div>
+    <div class="col-auto">
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary"
+        (click)="clearComp()"
+      >
+        เปลี่ยน
+      </button>
+    </div>
+  </div>
+} @else {
+  <div class="mb-3 position-relative">
+    <label class="form-label" for="search-comp-name">ค้นหาชื่อบริษัท</label>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="พิมพ์ชื่อบริษัท..."
+      id="search-comp-name"
+      [ngbTypeahead]="handleTypeCompName"
+      [resultFormatter]="formatComp"
+      (selectItem)="handleSelectComp($event)"
+    />
+  </div>
+}

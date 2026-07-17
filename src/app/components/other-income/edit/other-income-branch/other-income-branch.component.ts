@@ -16,7 +16,7 @@ import { OiLightService } from '../../../../service/other-income/oi-light.servic
   styleUrl: './other-income-branch.component.scss'
 })
 export class OtherIncomeBranchComponent implements OnInit, OnDestroy {
-  private branchSet = new Set<string>()
+  private readonly branchSet = new Set<string>()
   ngOnInit(): void {
     this.branchList().forEach(({ branchCode }) => this.branchSet.add(branchCode))
   }
@@ -28,16 +28,16 @@ export class OtherIncomeBranchComponent implements OnInit, OnDestroy {
   lightId = input.required<number>()
   branchList = input<TBranchItem[]>([])
   canEdit = input(false)
-  private toastServ = inject(ToastService)
-  private branchModal = viewChild('branchModal')
-  private modalService = inject(NgbModal)
+  private readonly toastServ = inject(ToastService)
+  private readonly branchModal = viewChild('branchModal')
+  private readonly modalService = inject(NgbModal)
   openModal() {
     this.modalService.open(this.branchModal())
   }
-  private cal = inject(NgbCalendar)
-  private today = this.cal.getToday()
+  private readonly cal = inject(NgbCalendar)
+  private readonly today = this.cal.getToday()
   openDate = signal<NgbDate>(this.today)
-  private branchServ = inject(BranchService)
+  private readonly branchServ = inject(BranchService)
   term = this.branchServ.term
   queryBranch = this.branchServ.queryBranch
   filteredBranch = computed(() => {
@@ -45,7 +45,7 @@ export class OtherIncomeBranchComponent implements OnInit, OnDestroy {
     return this.queryBranch().filter(({ branchCode }) => this.branchSet.has(branchCode) === false)
   }
   )
-  private monthServ = inject(MonthlyService)
+  private readonly monthServ = inject(MonthlyService)
   addBranch(branchCode: string) {
     if (this.branchSet.has(branchCode)) {
       this.toastServ.danger('มีร้านนี้แล้ว')

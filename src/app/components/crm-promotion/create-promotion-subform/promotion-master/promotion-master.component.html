@@ -1,0 +1,91 @@
+@let master = form();
+<div class="row">
+  <div class="col-lg-3">
+    <div class="app-form-field">
+      <label [htmlFor]="master.promotionName().name()">ชื่อโปรโมชั่น </label>
+
+      <input type="text" id="pro-name" [formField]="master.promotionName" />
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="app-form-field">
+      <label [htmlFor]="master.source().name()">โปรโมชั่นของ</label>
+
+      <select class="form-select" id="source" [formField]="master.source">
+        @for (sourceOption of promotionSourceOptions; track $index) {
+          <option [value]="sourceOption">
+            {{ sourceOption | promotionSource }}
+          </option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="col-lg-3">
+    <div class="app-form-field">
+      <label for="priority"> ใช้ร่วมกับโปรโมชั่นอื่น </label>
+      <select
+        [formField]="master.promotionPriority"
+        id="priority"
+        class="form-select"
+      >
+        <option value="0">ใช้ร่วมกันได้</option>
+        <option value="1">priority 1</option>
+        <option value="2">priority 2</option>
+        <option value="3">priority 3</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="app-form-field">
+      <label for="order">ลำดับการคำนวน</label>
+      <select
+        id="order"
+        class="form-select"
+        [formField]="master.promotionOrder"
+      >
+        <option value="0">ลำดับสุดท้าย</option>
+        <option value="1">ลำดับก่อนสุดท้าย</option>
+        <option value="2">ลำดับกลาง</option>
+        <option value="3">ลำดับแรก</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- datetime-->
+  @let dateRangeForm = master.dateRange;
+  <div class="col-lg-6">
+    <div class="app-form-field">
+      <label [htmlFor]="dateRangeForm.startDate().name()">
+        วันที่เริ่ม
+        @if (dateRangeForm.startDate().required()) {
+          <span class="text-danger">*</span>
+        }
+      </label>
+      <app-signal-datepicker
+        [id]="dateRangeForm.startDate().name()"
+        [formField]="dateRangeForm.startDate"
+      />
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="app-form-field">
+      <label [htmlFor]="dateRangeForm.endDate().name()">
+        วันที่สิ้นสุด
+        @if (dateRangeForm.endDate().required()) {
+          <span class="text-danger">*</span>
+        }
+      </label>
+      <app-signal-datepicker
+        [id]="dateRangeForm.endDate().name()"
+        [formField]="dateRangeForm.endDate"
+      />
+    </div>
+  </div>
+  <app-form-alert-text [formState]="dateRangeForm()" />
+</div>
+<!-- description -->
+<div class="app-form-field">
+  <label [htmlFor]="master.promotionDesc().name()">รายละเอียด</label>
+  <textarea [formField]="master.promotionDesc" id="pro-desc"> </textarea>
+</div>

@@ -15,72 +15,72 @@ import { TAccountReportQuery, TAnnualIncomeReport, TAnnualReport, TIncomeListRep
 export class OiAccountReportService {
 
   constructor() { }
-  private _cal = inject(NgbCalendar)
-  private _today = this._cal.getToday()
-  private _initValue: TAccountReportQuery = {
+  private readonly _cal = inject(NgbCalendar)
+  private readonly _today = this._cal.getToday()
+  private readonly _initValue: TAccountReportQuery = {
     compType: 1,
     day: this._today.day,
     month: this._today.month,
     year: this._today.year,
   }
   param = signal<TAccountReportQuery>(this._initValue)
-  private _params$ = toObservable(this.param)
-  private _baseQuery$ = this._params$.pipe(map(q => this._formatQuery(q)))
-  private _monthQuery$ = this._params$.pipe(map(q => this._formateMonthQuery(q)))
-  private _yearQuery$ = this._params$.pipe(map(q => this._formateYearQuery(q)))
-  private _formatQuery = ({ compType: compTypeEnum }: TAccountReportQuery) => {
+  private readonly _params$ = toObservable(this.param)
+  private readonly _baseQuery$ = this._params$.pipe(map(q => this._formatQuery(q)))
+  private readonly _monthQuery$ = this._params$.pipe(map(q => this._formateMonthQuery(q)))
+  private readonly _yearQuery$ = this._params$.pipe(map(q => this._formateYearQuery(q)))
+  private readonly _formatQuery = ({ compType: compTypeEnum }: TAccountReportQuery) => {
     const compType = this._formatCompType(compTypeEnum)
     return { compType }
   }
-  private _formateYearQuery = ({ compType: compTypeEnum, year: curYear }: TAccountReportQuery) => {
+  private readonly _formateYearQuery = ({ compType: compTypeEnum, year: curYear }: TAccountReportQuery) => {
     const compType = this._formatCompType(compTypeEnum)
     const year = this._getIso({ year: curYear, month: 1, day: 1 })
     return { compType, year }
   }
-  private _formateMonthQuery = ({ compType: compTypeEnum, ...res }: TAccountReportQuery) => {
+  private readonly _formateMonthQuery = ({ compType: compTypeEnum, ...res }: TAccountReportQuery) => {
     const compType = this._formatCompType(compTypeEnum)
     const month = this._getIso({ ...res, day: 1 })
     return { compType, month }
   }
-  private _catchSilent = <T>(fallback: T) => catchError<T, Observable<T>>((err) => { console.log(err); return of(fallback) })
-  private url = environment.oi
-  private basePath = `${this.url}/report/account`
-  private _api = inject(ApiService)
-  private _getIso = convertToIso
-  private _formatCompType = (compType: number) => compType === 1 ? 'DN' : 'HU'
-  private _getInvoiceReport = (compType: string, reportType: string) => this._api.get<TInvocieReport[]>(`${this.basePath}/${compType}/invoices`, { params: { reportType } })
-  private _getReceiptReport = (compType: string) => this._api.get<TReceiptReport[]>(`${this.basePath}/${compType}/receipts`)
-  private _getAnnualReport = ({ compType, year }: TQueryWithYear) => this._api.get<TAnnualReport[]>(`${this.basePath}/${compType}`, { params: { year } })
-  private _getLighyBoxReport = ({ compType, year }: TQueryWithYear) => this._api.get<TLightBoxReport[]>(`${this.basePath}/${compType}/annual/light-box`, { params: { year } })
-  private _getAnnualIncomeReport = ({ compType, year }: TQueryWithYear) => this._api.get<TAnnualIncomeReport[]>(`${this.basePath}/${compType}/annual`, { params: { year } })
-  private _getMonthBuyReport = ({ compType, month }: TQueryWithMonth) => this._api.get<TMonthBuyReport[]>(`${this.basePath}/${compType}/month/buy-list`, { params: { month } })
-  private _getMonthInceReport = ({ compType, month }: TQueryWithMonth) => this._api.get<TMonthInceReport[]>(`${this.basePath}/${compType}/month/ince`, { params: { month } })
-  private _getRangeBillReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeBillReport[]>(`${this.basePath}/${compType}/range/bill`, { params: { startDate, endDate } })
-  private _getRangeProductReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeBillReport[]>(`${this.basePath}/${compType}/range/product`, { params: { startDate, endDate } })
-  private _getRangeInvReceReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeInvReceReport[]>(`${this.basePath}/${compType}/range/inv-rece`, { params: { startDate, endDate } })
-  private _getRangeCreditReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeCreditReport[]>(`${this.basePath}/${compType}/range/credit`, { params: { startDate, endDate } })
+  private readonly _catchSilent = <T>(fallback: T) => catchError<T, Observable<T>>((err) => { console.log(err); return of(fallback) })
+  private readonly url = environment.oi
+  private readonly basePath = `${this.url}/report/account`
+  private readonly _api = inject(ApiService)
+  private readonly _getIso = convertToIso
+  private readonly _formatCompType = (compType: number) => compType === 1 ? 'DN' : 'HU'
+  private readonly _getInvoiceReport = (compType: string, reportType: string) => this._api.get<TInvocieReport[]>(`${this.basePath}/${compType}/invoices`, { params: { reportType } })
+  private readonly _getReceiptReport = (compType: string) => this._api.get<TReceiptReport[]>(`${this.basePath}/${compType}/receipts`)
+  // private readonly _getAnnualReport = ({ compType, year }: TQueryWithYear) => this._api.get<TAnnualReport[]>(`${this.basePath}/${compType}`, { params: { year } })
+  private readonly _getLighyBoxReport = ({ compType, year }: TQueryWithYear) => this._api.get<TLightBoxReport[]>(`${this.basePath}/${compType}/annual/light-box`, { params: { year } })
+  private readonly _getAnnualIncomeReport = ({ compType, year }: TQueryWithYear) => this._api.get<TAnnualIncomeReport[]>(`${this.basePath}/${compType}/annual`, { params: { year } })
+  private readonly _getMonthBuyReport = ({ compType, month }: TQueryWithMonth) => this._api.get<TMonthBuyReport[]>(`${this.basePath}/${compType}/month/buy-list`, { params: { month } })
+  private readonly _getMonthInceReport = ({ compType, month }: TQueryWithMonth) => this._api.get<TMonthInceReport[]>(`${this.basePath}/${compType}/month/ince`, { params: { month } })
+  private readonly _getRangeBillReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeBillReport[]>(`${this.basePath}/${compType}/range/bill`, { params: { startDate, endDate } })
+  private readonly _getRangeProductReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeBillReport[]>(`${this.basePath}/${compType}/range/product`, { params: { startDate, endDate } })
+  private readonly _getRangeInvReceReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeInvReceReport[]>(`${this.basePath}/${compType}/range/inv-rece`, { params: { startDate, endDate } })
+  private readonly _getRangeCreditReport = ({ compType, startDate, endDate }: TQueryWithRange) => this._api.get<TRangeCreditReport[]>(`${this.basePath}/${compType}/range/credit`, { params: { startDate, endDate } })
 
-  private invoice$ = this._baseQuery$.pipe(
+  private readonly invoice$ = this._baseQuery$.pipe(
     switchMap(({ compType }) => this._getInvoiceReport(compType, 'invoice')),
     this._catchSilent<TAnnualReport[]>([])
   )
   invoice = toSignal(this.invoice$, { initialValue: [] })
-  private credit$ = this._baseQuery$.pipe(
+  private readonly credit$ = this._baseQuery$.pipe(
     switchMap(({ compType }) => this._getInvoiceReport(compType, 'credit')),
     this._catchSilent<TAnnualReport[]>([])
   )
   cresit = toSignal(this.credit$, { initialValue: [] })
-  private receipt$ = this._baseQuery$.pipe(
+  private readonly receipt$ = this._baseQuery$.pipe(
     switchMap(({ compType }) => this._getReceiptReport(compType)),
     this._catchSilent<TReceiptReport[]>([])
   )
   receipt = toSignal(this.receipt$, { initialValue: [] })
-  private annual$ = this._yearQuery$.pipe(
-    switchMap(q => this._getAnnualReport(q)),
-    this._catchSilent<TAnnualReport[]>([])
-  )
-  annual = toSignal(this.annual$, { initialValue: [] })
-  private _mapToAoa = <T extends TObj>(mapper: TFieldSelector<T>[]) =>
+  // private readonly annual$ = this._yearQuery$.pipe(
+  //   switchMap(q => this._getAnnualReport(q)),
+  //   this._catchSilent<TAnnualReport[]>([])
+  // )
+  // annual = toSignal(this.annual$, { initialValue: [] })
+  private readonly _mapToAoa = <T extends TObj>(mapper: TFieldSelector<T>[]) =>
     (data: T[]) => [mapper.map(({ label }) => label), ...data.map(d => mapper.map(({ fn }) => fn(d)))]
 
   exportInvoiceReport(compType: number, reportType: string) {

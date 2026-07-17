@@ -1,0 +1,43 @@
+@if (loading()) {
+  <div class="loading">
+    <output
+      class="spinner-border text-success"
+      style="width: 10rem; height: 10rem"
+    >
+      <span class="sr-only"></span>
+    </output>
+  </div>
+} @else {
+  @let res = result();
+  @if (!res) {
+    <section>
+      <h1>ไม่พบข้อมูล</h1>
+    </section>
+  } @else {
+    <section class="container" style="overflow: hidden; padding: 0">
+      <brochure-flash-sale
+        [head]="res.head"
+        [items]="res.list"
+        [isStatic]="false"
+      />
+
+      <div
+        class="d-flex align-items-center my-3 justify-content-between action"
+      >
+        <button
+          class="btn btn-primary"
+          style="flex: 1 1 auto"
+          [disabled]="exporting()"
+          (click)="onExport()"
+        >
+          export
+        </button>
+      </div>
+    </section>
+    <brochure-flash-sale
+      [head]="res.head"
+      [items]="res.list"
+      [isStatic]="true"
+    />
+  }
+}

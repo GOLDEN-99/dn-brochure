@@ -1,9 +1,12 @@
 import { Component, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
+import { debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
+import { EventService, TEvent } from '../../../service/other-income/event.service';
 
 @Component({
   selector: 'app-other-income-purchasing-query-tab',
-  imports: [FormsModule],
+  imports: [FormsModule, NgbTypeahead],
   template: `
   <div class="row">
     <div class="mb-3 col-md">
@@ -15,8 +18,8 @@ import { FormsModule } from '@angular/forms';
         (ngModelChange)="compTypeChange.emit($event)"
         class="form-select"
       >
-        <option [ngValue]="1">DN</option>
-        <option [ngValue]="2">HU</option>
+        <option ngValue="DN">DN</option>
+        <option ngValue="HU">HU</option>
       </select>
     </div>
     <div class="mb-3 col-md">
@@ -34,7 +37,20 @@ import { FormsModule } from '@angular/forms';
         <option [ngValue]="3">รหัสสินค้า</option>
       </select>
     </div>
-
+    <div class="mb-3">
+      <label for="event-filter" class="form-label">กรองกิจกรรม</label>
+      <input
+        type="text"
+        id="event-filter"
+        class="form-control"
+        [(ngModel)]="eventModel"
+        (ngModelChange)="onEventModelChange($event)"
+        [ngbTypeahead]="searchEvents"
+        [inputFormatter]="formatEvent"
+        [resultFormatter]="formatEvent"
+        placeholder="พิมพ์เพื่อกรองกิจกรรม..."
+      />
+    </div>
     <div class="app-form-field">
       <label for="acc-search-term">คำค้นหา</label>
       <input
@@ -45,14 +61,13 @@ import { FormsModule } from '@angular/forms';
         (ngModelChange)="termChange.emit($event)"
       />
     </div>
-    <div class="mb-3">
-      <button class="btn btn-primary w-100" (click)="click.emit()">ค้นหากิจกรรม</button>
-    </div>
+
+
   </div>
   `,
 })
 export class OtherIncomePurchasingQueryTabComponent {
-  compType = input<number>(1)
+  compType = input<'DN' | 'HU'>('DN')
   compTypeChange = output<number>()
 
   field = input<number>(1)
@@ -61,8 +76,29 @@ export class OtherIncomePurchasingQueryTabComponent {
   term = input('')
   termChange = output<string>()
 
+  eventFilter = input('')
+  eventFilterChange = output<string>()
+
   disbleMode = input<boolean>(false)
 
-  click = output<void>()
+  private readonly eventService = inject(EventService)
 
+  searchEvents = (text$: Observable<string>): Observable<TEvent[]> =>
+    text$.pipe(
+      debounceTime(150),
+      distinctUntilChanged(),
+      map(term => {
+        const lower = term.trim().toLowerCase()
+        if (!lower) return []
+        return this.eventService.event().filter(e => e.eventName.toLowerCase().includes(lower)).slice(0, 10)
+      })
+    )
+
+  eventModel: TEvent | string = ''
+
+  formatEvent = (e: TEvent | string) => typeof e === 'string' ? e : e.eventName
+
+  onEventModelChange(value: TEvent | string) {
+    this.eventFilterChange.emit(typeof value === 'string' ? value : value.eventName)
+  }
 }

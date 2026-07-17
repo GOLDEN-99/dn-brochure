@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { DiscountSelectComponent } from "../../form/discount-select/discount-select.component";
 import { OrderService, TOiGood, TOiOrder } from '../../../../service/other-income/order.service';
 import { PeriodService } from '../../../../service/other-income/period.service';
@@ -60,7 +61,7 @@ export class OtherIncomeGoodOrderModalComponent {
   close = output<void>()
 
   private periodService = inject(PeriodService)
-  selectOrder = signal<Array<TOiOrder & { receNumb: string, remark: string }>>([])
+  selectOrder = signal<Array<TOiOrder & { receNumb: string, goodCode: string, remark: string }>>([])
   invalidOrder = computed(() => this.selectOrder().some(({ orderNumb }) => orderNumb === ''))
   sum = computed(() => this.selectOrder().reduce((acc, { discount }) => acc + discount, 0))
   periodAmount = input.required<number>()
@@ -69,14 +70,14 @@ export class OtherIncomeGoodOrderModalComponent {
     const polist = this.orderList()
     const modPoList = polist.flatMap(({ orderNumb, discount, productList, remark }) => currentOrder.includes(orderNumb)
       ? []
-      : [{ orderNumb, discount, receNumb: productList[0].receNumb, remark }])
+      : [{ orderNumb, discount, receNumb: productList[0].receNumb, goodCode: productList[0].goodCode, remark }])
     this.selectOrder.update(prev => [...prev, ...modPoList])
   }
   addSingleOrder = ({ orderNumb, discount, productList, remark }: TOiGood) => {
     const current = this.selectOrder()
     const occuranceIndex = current.findIndex(c => c.orderNumb === orderNumb)
     if (occuranceIndex === -1) {
-      this.selectOrder.update((prev) => [...prev, { orderNumb, discount, receNumb: productList[0].receNumb, remark }])
+      this.selectOrder.update((prev) => [...prev, { orderNumb, discount, receNumb: productList[0].receNumb, goodCode: productList[0].goodCode, remark }])
     }
   }
   deleteOrder(orderNumb: string) {
@@ -92,14 +93,12 @@ export class OtherIncomeGoodOrderModalComponent {
 
   onSubmit() {
     const periodId = this.periodId()
-    const poList = this.selectOrder().map(({ discount, orderNumb, receNumb, remark }) => ({ actualAmount: discount, orderNumb, receNumb, remark }))
-    this.periodService.insertPo(periodId, poList).subscribe({
-      next: (res) => {
-        this.success.emit('เพิ่ม po สำเร็จ');
-      },
-      error: (err) => {
-        this.fail.emit(err.message);
-      }
+    const requests = this.selectOrder().map(({ discount, orderNumb, receNumb, goodCode, remark }) =>
+      this.periodService.insertFreeItem(periodId, { actualAmount: discount, orderNumb, receNumb, goodCode, remark })
+    )
+    forkJoin(requests).subscribe({
+      next: () => this.success.emit('เพิ่ม po สำเร็จ'),
+      error: (err) => this.fail.emit(err.message),
     })
   }
 }

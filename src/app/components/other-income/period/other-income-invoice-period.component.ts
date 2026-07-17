@@ -1,34 +1,24 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, input, viewChild } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { OtherIncomeInvoiceModalComponent } from './other-income-invoice-modal.component';
 import { TInviceItemDto } from '../../../service/other-income/base-oi';
 import { BasePeriodComponent } from './base-period.component';
+import { PeriodService } from '../../../service/other-income/period.service';
 
 @Component({
   selector: 'app-other-income-invoice-period',
-  imports: [FormsModule, DecimalPipe, OtherIncomeInvoiceModalComponent, DatePipe],
+  imports: [FormsModule, DecimalPipe, DatePipe],
   template: `
     <div class="mb-3">
-
-        <table class="table">
+        <div class="px-3 py-2 text-muted small fw-semibold border-bottom">ใบแจ้งหนี้</div>
+        <table class="table table-sm table-hover">
           <thead>
             <tr>
-              <th scope="col">ใบแจ้งหนี้</th>
-              <th scope="col">ยอดใบแจ้งหนี้</th>
-              <th scope="col">หมายเหตุ</th>
-              <th scope="col">วันที่ใบแจ้งหนี้</th>
-              @if(canEdit()){
-              <th scope="col">
-                  <button
-                  class="btn btn-sm btn-primary me-1"
-                  (click)="openInvoice()"
-                  [disabled]="disabled()"
-                  >
-                  เพิ่มใบแจ้งหนี้
-                </button>
-              </th>
-            }
+              <th scope="col" style="width: 20%;">ใบแจ้งหนี้</th>
+              <th scope="col" style="width: 20%;">ยอดใบแจ้งหนี้</th>
+              <th scope="col" style="width: 20%;">หมายเหตุ</th>
+              <th scope="col" style="width: 20%;">วันที่ใบแจ้งหนี้</th>
+              <th scope="col" style="width: 20%;"></th> 
             </tr>
           </thead>
           <tbody>
@@ -37,40 +27,42 @@ import { BasePeriodComponent } from './base-period.component';
               <td scope="row">{{ inv.invNumb }}</td>
               <td>{{ inv.invAmount| number : "1.2-2" }}</td>
               <td>{{ inv.invRemark }}</td>
-              @if(canEdit()){
-                <td colspan="2">{{ inv.invDate |date }}</td>
-              } @else {
-                <td>{{ inv.invDate |date }}</td>
-              }
+
+              <td>{{ inv.invDate |date }}</td>
+              @if (invoiceList().at(-1)?.id === inv.id) {
+                <td><button class="btn btn-squre btn-danger" (click)="onDelete(inv.id)" [disabled]="deleting() || disabled() || !canEdit()"><i class="bi bi-trash"></i></button></td>
+              }@else{<td></td>}
+
             </tr>
             }
           </tbody>
         </table>
       </div>
-
-    <ng-template #invoiceModal let-modal>
-      <app-other-income-invoice-modal
-        [periodId]="periodId()"
-        [incomeAmount]="incomeAmount()"
-        [addedAmount]="addedAmount()"
-        (success)="onSuccess($event)"
-        (fail)="onFail($event)"
-        (close)="modal.dismiss()"
-      />
-    </ng-template>
   `,
 })
 export class OtherIncomeInvoicePeriodComponent extends BasePeriodComponent {
+
+  private readonly periodService = inject(PeriodService);
+
   canEdit = input(false);
   invoiceList = input.required<TInviceItemDto[]>();
   periodId = input.required<number>();
   incomeAmount = input.required<number>();
   addedAmount = input.required<number>();
   disabled = input(false);
+  deleting = signal(false);
 
-  private readonly invoiceModal = viewChild('invoiceModal');
-
-  openInvoice() {
-    this.openModal(this.invoiceModal());
+  onDelete(invoiceId: number) {
+    this.deleting.set(true);
+    this.periodService.deleteInvoice(this.periodId(), invoiceId).subscribe({
+      next: () => {
+        this.deleting.set(false);
+        this.success.emit('ลบใบแจ้งหนี้สำเร็จ');
+      },
+      error: (err) => {
+        this.deleting.set(false);
+        this.fail.emit(err?.error?.message ?? 'ลบใบแจ้งหนี้ไม่สำเร็จ');
+      }
+    });
   }
 }

@@ -12,17 +12,10 @@ import { DecimalPipe } from '@angular/common';
   styleUrl: './create-period.component.scss'
 })
 export class CreatePeriodComponent {
-  private cal = inject(NgbCalendar)
-  private today = this.cal.getToday();
+  private readonly cal = inject(NgbCalendar)
+  private readonly today = this.cal.getToday();
   date = signal({ day: 1, month: this.today.month, year: this.today.year })
-  incomeType = input.required<number>()
   eventType = input.required<number>()
-  modalName = computed(() => {
-    const it = this.incomeType()
-    if (it === 3) return 'ชื่อใบแจ้งหนี้'
-    if (it === 4) return 'ชื่อใบลดหนี้'
-    return 'ชื่อ period'
-  })
   compType = input.required<string | undefined>()
   compCode = input.required<string | undefined>()
   headId = input.required<number>();
@@ -48,8 +41,8 @@ export class CreatePeriodComponent {
   canEdit = input(false)
   isProduct = input(true)
 
-  private modalServ = inject(NgbModal)
-  private periodModal = viewChild('periodModal')
+  private readonly modalServ = inject(NgbModal)
+  private readonly periodModal = viewChild('periodModal')
   openPeriod() {
     const incomeList = this.incomeList()
     const modIncome = incomeList
@@ -62,7 +55,7 @@ export class CreatePeriodComponent {
   }
 
   formateDate(iso: string) {
-    const [yy, mm, dd] = iso.split('T')[0].split('-')
+    const [yy, mm, _] = iso.split('T')[0].split('-')
     return `${mm}/${yy}`
   }
   get period() {
@@ -73,7 +66,7 @@ export class CreatePeriodComponent {
     const summary = this.sum()
     return { periodName, periodRemark, ...summary, monthlyList }
   }
-  private periodservice = inject(PeriodService)
+  private readonly periodservice = inject(PeriodService)
   onAddPeriod() {
     const req = this.period
     const headId = this.headId()

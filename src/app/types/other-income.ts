@@ -107,7 +107,7 @@ export type TBaseOIHead<T extends TFormat> = {
     timestamp: string //iso
 }
 
-export type TBaseOiInsert<T extends TFormat> = Pick<TBaseOIHead<T>, 'eventId' | 'incomeId' | 'displayName' | 'compCode' | 'compName' | 'compType' | 'period' | 'startDate' | 'endDate'>
+export type TBaseOiInsert<T extends TFormat> = Pick<TBaseOIHead<T>, 'eventId' | 'displayName' | 'compCode' | 'compName' | 'compType' | 'period' | 'startDate' | 'endDate'> & { incomeIds: number[]; dualPairId?: number | null }
 
 export interface IBaseOiHeadDTO {
     id?: number
@@ -205,8 +205,8 @@ export interface IOtherIncomePageToke {
 }
 
 export enum PeriodStatus {
-    All = 1,
-    Complete = 2,
-    Invoice = 3,
-    Receipt = 4
+    All = 0,
+    WaitForInvoice = 1,
+    WaitForReceipt = 2,
+    Complete = 3,
 }

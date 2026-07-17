@@ -13,10 +13,14 @@ import { PurchasingLightHomeComponent } from '../pages/other-income/purchase/pur
 import { getOtherIncomeLightIdResolver } from '../resolvers/other-income/get-other-income-light-id.resolver';
 import { getOtherIncomeNotLightIdResolver } from '../resolvers/other-income/get-other-income-not-light-id.resolver';
 import { NotLightSingleComponent } from '../pages/other-income/purchase/not-light-single/not-light-single.component';
+import { NotLightSingleDualComponent } from '../pages/other-income/purchase/not-light-single-dual/not-light-single-dual.component';
 import { LightSingleComponent } from '../pages/other-income/purchase/light-single/light-single.component';
 import { AccountNotLightInvoiceComponent } from '../pages/other-income/account/account-not-light-invoice.component';
 import { AccountLightBoxComponent } from '../pages/other-income/account/account-light-box.component';
-import { handleLazyLoadError } from '../utils/lazy-load-error-handler';
+import { handleLazyLoadError, lazyLoadWithRetry } from '../utils/lazy-load-error-handler';
+import { NotLightDualDetailComponent } from '../pages/other-income/purchase/not-light-dual-detail/not-light-dual-detail.component';
+import { getOtherIncomeNotLightDualIdResolver } from '../resolvers/other-income/get-other-income-not-light-dual-id.resolver';
+import { AccountMonthlyReportComponent } from '../pages/other-income/account/account-monthly-report/account-monthly-report.component';
 
 export const OTHER_INCOME_ROUTES: Route[] = [
     {
@@ -44,7 +48,15 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                     {
                         path: 'report',
                         component: PurchaseReportComponent
-                    }
+                    },
+                    {
+                        path: 'not-light-dual',
+                        component: NotLightSingleDualComponent
+                    },
+                    {
+                        path: 'monthly-report',
+                        component: AccountMonthlyReportComponent
+                    },
                 ]
             },
             {
@@ -88,8 +100,22 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                     {
                         path: ":headId",
                         component: OtherIncomeLightFormComponent
-                    }
+                    },
                 ]
+            },
+            {
+                path: 'purchase/not-light/create-pair',
+                component: BaseLayoutComponent,
+                providers: [
+                    {
+                        provide: LABEL_TOKEN,
+                        useValue: { label: "DC/Rebate 2 หัว" }
+                    },
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: true }
+                    }
+                ],
             },
             {
                 path: 'purchase/light/:headId',
@@ -112,6 +138,17 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                     }
                 ],
                 component: NotLightSingleComponent
+            },
+            {
+                path: 'purchase/not-light-dual/:dualPairId',
+                resolve: { detail: getOtherIncomeNotLightDualIdResolver },
+                providers: [
+                    {
+                        provide: OTHER_INCOME_PAGE_TOKEN,
+                        useValue: { isPurchase: true }
+                    }
+                ],
+                component: NotLightDualDetailComponent
             },
             {
                 path: "account",
@@ -140,10 +177,20 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                         component: OtherIncomeReportComponent
                     },
                     {
+                        path: 'monthly-report',
+                        component: AccountMonthlyReportComponent
+                    },
+                    {
                         path: 'batch',
-                        loadComponent: () => import("../pages/other-income/account/other-income-account-batch/other-income-account-batch.component")
+                        loadComponent: () => lazyLoadWithRetry(() => import("../pages/other-income/account/other-income-account-batch/other-income-account-batch.component"))
                             .then(r => r.OtherIncomeAccountBatchComponent)
                             .catch(handleLazyLoadError('other-income/account/batch'))
+                    },
+                    {
+                        path: 'invoices',
+                        loadComponent: () => lazyLoadWithRetry(() => import("../pages/other-income/account/account-invoice-page/account-invoice-page.component"))
+                            .then(r => r.AccountInvoicePageComponent)
+                            .catch(handleLazyLoadError('other-income/account/invoices'))
                     }
                 ]
             },

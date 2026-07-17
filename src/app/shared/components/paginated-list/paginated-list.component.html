@@ -1,0 +1,27 @@
+<div class="row">
+  <div class="d-flex flex-column w-100">
+    @for (item of pagedItems(); track $index) {
+      <ng-container
+        [ngTemplateOutlet]="rowTemplate()"
+        [ngTemplateOutletContext]="{ $implicit: item, index: $index }"
+      />
+    }
+  </div>
+  @if (totalPages() > 1) {
+    <nav class="mt-2 d-flex justify-content-center w-100">
+      <ul class="pagination pagination-sm mb-0">
+        @for (p of pageNumbers(); track p) {
+          <li class="page-item">
+            <button
+              type="button"
+              (click)="setPage(p)"
+              [class]="p === page() ? 'page-link active' : 'page-link'"
+            >
+              {{ p + 1 }}
+            </button>
+          </li>
+        }
+      </ul>
+    </nav>
+  }
+</div>

@@ -1,0 +1,100 @@
+<!-- Open button + selected count -->
+<div class="d-flex align-items-center gap-3 mb-2">
+  <button
+    #openButton
+    type="button"
+    class="btn btn-warning btn-sm"
+    [disabled]="disabled()"
+    (click)="openModal()"
+  >
+    ค้นหาสินค้า
+  </button>
+  @if (value().length > 0) {
+    <span class="small text-muted">เลือกแล้ว {{ value().length }} รายการ</span>
+  }
+</div>
+
+<!-- Selected product list -->
+@if (value().length > 0) {
+  <div class="d-flex flex-column gap-1 mb-2">
+    @for (product of value(); track product.goodCode) {
+      <div class="d-flex align-items-center gap-2 border rounded px-2 py-1">
+        <span class="flex-grow-1 small">
+          @if (product.barCode) {
+            <span class="text-muted me-1">({{ product.barCode }})</span>
+          }
+          {{ product.goodName }}
+        </span>
+        <button
+          type="button"
+          class="btn btn-link btn-sm text-danger p-0"
+          [disabled]="disabled()"
+          (click)="removeProduct(product.goodCode)"
+        >
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    }
+  </div>
+}
+
+<!-- Errors -->
+@for (error of errors(); track $index) {
+  <div class="text-danger small">{{ error.message }}</div>
+}
+
+<!-- Modal -->
+<ng-template #productModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">ค้นหาสินค้า</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body" style="max-height: 60vh; overflow-y: auto">
+    @let results = searchResult();
+    @if (results.length === 0) {
+      <p class="text-muted small">ไม่พบสินค้า</p>
+    } @else {
+      <div class="row align-items-center px-1 mb-2">
+        <div class="col-auto">
+          <input
+            type="checkbox"
+            [ngModel]="isSelectAll()"
+            (ngModelChange)="selectAll($event)"
+          />
+        </div>
+        <div class="col fw-medium small">ทั้งหมด</div>
+      </div>
+      <div class="d-flex flex-column gap-1">
+        @for (product of results; track product.goodCode) {
+          <div class="row align-items-center px-1">
+            <div class="col-auto">
+              <input
+                type="checkbox"
+                [ngModel]="product.check"
+                (ngModelChange)="toggleProduct(product.goodCode)"
+              />
+            </div>
+            <div class="col small">
+              @if (product.barCode) {
+                <span class="text-muted me-1">({{ product.barCode }})</span>
+              }
+              {{ product.goodName }}
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-secondary btn-sm"
+      (click)="modal.dismiss()"
+    >
+      ยกเลิก
+    </button>
+    <button type="button" class="btn btn-primary btn-sm" (click)="submit()">
+      บันทึก
+    </button>
+  </div>
+</ng-template>

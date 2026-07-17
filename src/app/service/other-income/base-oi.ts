@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { TOIComp } from "./company.service";
 import { TEvent } from "./event.service";
 import { TIncome } from "./income.service";
-import { TOIStepItem, PeriodStatus } from "../../types";
+import { TOIStepItem, PeriodStatus, TCompType } from "../../types";
 import { environment } from "../../../environments/environment";
 
 export abstract class BaseOiService {
@@ -81,6 +81,9 @@ export type TContactHead = {
     incomeDate: string | null
     receAmount: number
     invAmount: number
+    orderAmount: number
+    billAmount: number
+    creditAmount: number
 }
 
 export type TContactNotLight = {
@@ -103,6 +106,8 @@ export type TPeriodResult = {
     invDate: string | null
     orderAmount: number
     orderDate: string | null
+    freeItemAmount: number
+    billDiscountAmount: number
     receAmount: number
     receDate: string | null
     creditAmount: number
@@ -120,12 +125,32 @@ export type TOrderItemDto = {
     receNumb: string | null
 }
 
+export type TFreeItemDto = {
+    id: number
+    orderNumb: string
+    actualAmount: number
+    supInvNumb: string | null
+    supInvDate: string | null
+    receNumb: string | null
+}
+
+export type TBillDiscountDto = {
+    id: number
+    orderNumb: string
+    actualAmount: number
+    supInvNumb: string | null
+    supInvDate: string | null
+    receNumb: string | null
+}
+
 export type TInviceItemDto = {
     id: number
     invNumb: string
     invAmount: number
     invDate: string
     invRemark: string
+    matchedAmount: number
+    remainingAmount: number
     checkDate: string | null
 }
 
@@ -145,10 +170,14 @@ export type TReceiptItemDto = {
     receRemark: string
     receDate: string
     checkDate: string | null
+    matchedAmount: number
+    remainingAmount: number
 }
 
 export type TPopulatedPeriodResult = {
     orderList: TOrderItemDto[]
+    freeItemList: TFreeItemDto[]
+    billDiscountList: TBillDiscountDto[]
     invoiceList: TInviceItemDto[]
     receiptList: TReceiptItemDto[]
     creditList: TCreditNoteDto[]
@@ -162,8 +191,9 @@ export type NotLightSingle = {
     incomeList: TIncomeItem[]
     periodList: TPopulatedPeriodResult[]
     company: TOIComp
-    event: TEvent,
-    income: TIncome,
+    event: TEvent
+    //income: TIncome
+    headIncomeList: TIncome[]
 }
 
 
@@ -178,6 +208,8 @@ export type TIncomeItem = {
     checkDate: string | null
     incomeAmount: number
 }
+
+export type TExtendedIncomeItem = TIncomeItem & { compType: TCompType }
 
 export type TEnchanceIncomeItem = TIncomeItem & {
     accPurchase: number
@@ -203,6 +235,7 @@ export type TLightSummary = {
     company: TOIComp
     event: TEvent,
     income: TIncome,
+    headIncomeList: TIncome[]
 }
 
 

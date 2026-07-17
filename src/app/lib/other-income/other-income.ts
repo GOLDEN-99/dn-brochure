@@ -13,6 +13,7 @@ const invocieMapper: TFieldSelector<TInvocieReport>[] = [
     { label: 'กิจกรรม', fn: v => v.eventName },
     { label: 'รหัสซัพ', fn: v => v.compCode },
     { label: 'ชื่อซัพ', fn: v => v.compName },
+    { label: 'ระยะเวลาเก็บเงิน', fn: v => v.periodDuration },
     { label: 'เริ่ม', fn: v => v.periodStart.split('T')[0] },
     { label: 'จบ', fn: v => v.periodEnd.split('T')[0] },
     { label: 'ยอดซื้อ', fn: v => v.totalAmount },

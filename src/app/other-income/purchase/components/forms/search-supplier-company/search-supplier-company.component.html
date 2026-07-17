@@ -1,0 +1,38 @@
+<div class="row">
+  <div class="col-6">
+    <label class="form-label" for="seach-comp">ค้นหาชือบริษัท</label>
+    <input
+      class="form-control"
+      type="text"
+      [ngbTypeahead]="onSearchCompName"
+      (selectItem)="onSelect($event)"
+    />
+  </div>
+
+  <div class="col-6">
+    <label class="form-label" for="seach-comp">ค้นหารหัสบริษัท</label>
+    <input
+      class="form-control"
+      type="text"
+      [ngbTypeahead]="onSearchCompCode"
+      (selectItem)="onSelect($event)"
+    />
+  </div>
+  @let comp = value();
+  @if (comp) {
+    <div class="col-4">
+      <span>รหัสซัพ</span>
+      <span>{{ comp.compCode }}</span>
+    </div>
+    <div class="col-4">
+      <span>ชื่อซัพ</span>
+      <span>{{ comp.compName }}</span>
+    </div>
+    <div class="col-4">
+      <span>ชื่อซัพ 2</span>
+      <span>{{ comp.compName2 }}</span>
+    </div>
+  } @else {
+    <div class="col">ยังไม่ไดเลือกบริษัท</div>
+  }
+</div>

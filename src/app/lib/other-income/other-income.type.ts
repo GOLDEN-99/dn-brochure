@@ -31,6 +31,7 @@ export type TInvocieReport = {
     periodEnd: string
     totalAmount: number
     totalIncome: number
+    periodDuration: number
 } & TBaseReport
 
 export type TReceiptReport = {

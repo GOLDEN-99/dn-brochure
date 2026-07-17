@@ -27,9 +27,9 @@ import { PeriodStatus } from '../../../types/other-income';
         <thead>
           <tr>
             <th>กิจกรรม</th>
-            <th>ชื่อเรียก</th>
+            <th>ชื่อรายรับภายใน</th>
             <th>ชื่อซัพพลายเออร์</th>
-            <th>ชื่อ period</th>
+            <th>ชื่อเพื่ออกใบแจ้งหนี้</th>
             <th>สถานะ</th>
             <th>รายละเอียด</th>
           </tr>
@@ -73,4 +73,5 @@ export class AccountNotLightInvoiceComponent {
   genUrl(compCode: string, compType: string, id: number) {
     return this.router.createUrlTree([id], { relativeTo: this.route, queryParams: { compCode, compType } })
   }
+
 }

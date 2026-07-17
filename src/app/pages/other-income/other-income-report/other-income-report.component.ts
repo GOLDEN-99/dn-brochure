@@ -8,17 +8,19 @@ import { convertToIso } from '../../../lib';
 import { LoadingService } from '../../../service/loading/loading.service';
 import { toXlxs } from '../../../lib/utli';
 import { DateInputComponent } from "../../../components/date-input/date-input.component";
+import { AccountIssuingDocumentReportComponent } from "../../../components/other-income/report/account-issuing-document-report/account-issuing-document-report.component";
+
 @Component({
   selector: 'app-other-income-report',
-  imports: [FormsModule, DateInputComponent],
+  imports: [FormsModule, DateInputComponent, AccountIssuingDocumentReportComponent],
   templateUrl: './other-income-report.component.html',
   styleUrl: './other-income-report.component.scss'
 })
 export class OtherIncomeReportComponent {
-  private calServ = inject(NgbCalendar)
-  private today = this.calServ.getToday()
-  private toast = inject(ToastService)
-  private loading = inject(LoadingService)
+  private readonly calServ = inject(NgbCalendar)
+  private readonly today = this.calServ.getToday()
+  private readonly toast = inject(ToastService)
+  private readonly loading = inject(LoadingService)
   compCode = signal("")
   date = signal({
     day: this.today.day,
@@ -30,15 +32,22 @@ export class OtherIncomeReportComponent {
     month: this.today.month,
     year: this.today.year + 1
   })
-  private _iso = convertToIso(this.today)
-  private _invName = `รายงานออกใบแจ้งหนี้วันที่-${this._iso}.xlsx`
-  private _invSheet = 'รอออกใบแจ้งหนี้'
-  private _creditName = `รายงานออกใบลดหนี้วันที่-${this._iso}.xlsx`
-  private _creditSheet = 'รอออกใบลดหนี้'
-  private _receName = `รายงานออกใบเสร็จวันที่-${this._iso}.xlsx`
-  private _receSheet = 'รอออกใบเสร็จ'
-  private _lightName = `รายงาน lightBox-${this._iso}.xlsx`
-  private _lightSheet = 'lightBox'
+
+  fdom = computed(() => {
+    const { month, year } = this.date()
+    return `${year}-${String(month).padStart(2, '0')}-01`
+  })
+
+
+  private readonly _iso = convertToIso(this.today)
+  private readonly _invName = `รายงานออกใบแจ้งหนี้วันที่-${this._iso}.xlsx`
+  private readonly _invSheet = 'รอออกใบแจ้งหนี้'
+  private readonly _creditName = `รายงานออกใบลดหนี้วันที่-${this._iso}.xlsx`
+  private readonly _creditSheet = 'รอออกใบลดหนี้'
+  private readonly _receName = `รายงานออกใบเสร็จวันที่-${this._iso}.xlsx`
+  private readonly _receSheet = 'รอออกใบเสร็จ'
+  private readonly _lightName = `รายงาน lightBox-${this._iso}.xlsx`
+  private readonly _lightSheet = 'lightBox'
   monthArray = Array.from({ length: 12 }).map((_, i) => i + 1)
 
   changeMonth(month: number) {
@@ -53,9 +62,9 @@ export class OtherIncomeReportComponent {
   }
   compType = signal("")
   disable1 = computed(() => !this.compCode())
-  private reportServ = inject(SupplierReportService)
+  private readonly reportServ = inject(SupplierReportService)
   yearDis = this.reportServ.displayYear
-  private accReport = inject(OiAccountReportService)
+  private readonly accReport = inject(OiAccountReportService)
   exportInvoice(compType: number) {
     this.loading.startLoad()
     this.accReport.exportInvoiceReport(compType, 'invoice').subscribe({
@@ -82,6 +91,7 @@ export class OtherIncomeReportComponent {
       complete: () => this.loading.endLoad()
     })
   }
+
   exportLight(compType: number) {
     this.loading.startLoad()
     this.accReport.exportLightReport(compType, this.date()).subscribe({
@@ -160,7 +170,7 @@ export class OtherIncomeReportComponent {
     })
   }
 
-  private toXlsx = toXlxs
+  private readonly toXlsx = toXlxs
 
   exportSupplierAnnual(compType: number) {
     const compCode = this.compCode()
@@ -190,20 +200,40 @@ export class OtherIncomeReportComponent {
     const compCode = this.compCode()
     const { month, year } = this.date()
     this.loading.startLoad()
-    this.reportServ.exportSupplierMonthDetialReport(compType, compCode, { year, month, day: 1 }).subscribe({
-      next: async (res) => {
-        if (res.length === 0) {
-          this.toast.danger('ไม่มีข้อมูล')
+    this.reportServ
+      .exportSupplierMonthDetialReport(compType, compCode, { year, month, day: 1 })
+      .subscribe({
+        next: async (res) => {
+          if (res.length === 0) {
+            this.toast.danger('ไม่มีข้อมูล')
+            this.loading.endLoad()
+            return
+          }
+          await this.reportServ.exportManySheet(res,)
+          this.toast.success('สำเร็จ')
           this.loading.endLoad()
-          return
+        }, error: (err) => {
+          this.toast.danger(err);
+          this.loading.endLoad();
         }
-        await this.reportServ.exportManySheet(res,)
-        this.toast.success('สำเร็จ')
-        this.loading.endLoad()
-      }, error: (err) => {
-        this.toast.danger(err);
-        this.loading.endLoad();
-      }
-    })
+      })
+  }
+
+
+  onLoading(loading: boolean) {
+    if (loading) {
+      this.loading.startLoad()
+      return
+    }
+    this.loading.endLoad();
+  }
+
+
+  onSuccess(msg: string) {
+    this.toast.success(msg)
+  }
+
+  onError(err: string) {
+    this.toast.danger(err)
   }
 }
