@@ -1,0 +1,9 @@
+@if (!checked()) {
+  <div class="empl-gate-loading">กำลังตรวจสอบสิทธิ์ผู้ใช้งาน...</div>
+} @else if (!employee()) {
+  <div class="empl-gate-blocked">
+    <p>ไม่พบข้อมูลพนักงาน กรุณาเข้าใช้งานผ่านลิงก์ที่ระบุรหัสพนักงาน (emplCode)</p>
+  </div>
+} @else {
+  <router-outlet />
+}

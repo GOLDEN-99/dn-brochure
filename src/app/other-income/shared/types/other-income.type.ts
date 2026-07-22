@@ -8,6 +8,11 @@ export type TDateRangeFormState = {
 
 // ---------- Master data ----------
 
+export type TEmployee = {
+  emplCode: string
+  emplName: string
+}
+
 export type TOtherIncomeCompanyRes = {
   compCode: string
   compName: string
