@@ -62,7 +62,7 @@ export class CnUploadComponent {
 
     this.loading.startLoad()
     this.cnClient.submit({
-      bankcode: bankCode, ...meta,
+      bankcode: bankCode || '0', ...meta,
       ...temp,
       totalprice: totalprice,
       goodList: [],
