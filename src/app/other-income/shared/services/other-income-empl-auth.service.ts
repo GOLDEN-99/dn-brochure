@@ -33,7 +33,7 @@ export class OtherIncomeEmplAuthService {
     const current = this.employee()
     if (this.checked() && current?.emplCode === emplCode) return of(current)
 
-    return this.api.get<TEmployee>(`${this.url}/v2/employees/${emplCode}`).pipe(
+    return this.api.get<TEmployee>(`${this.url}/v2/master/employees/${emplCode}`).pipe(
       tap(employee => {
         this.employee.set(employee)
         this.storeEmplCode(employee.emplCode)
