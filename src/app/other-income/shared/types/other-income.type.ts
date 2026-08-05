@@ -344,6 +344,7 @@ export type TInvoiceStateRow = {
   contractLabelName: string
   incomeLabelName: string | null
   invoiceNumb: string
+  invoiceDate: string | null
   invoiceAmount: number
   matchedAmount: number
   invoiceState: 'UNMATCHED' | 'MATCHED'
@@ -364,7 +365,11 @@ export type TBillDiscountStateRow = {
   contractLabelName: string
   incomeLabelName: string | null
   orderNumb: string
+  orderDate: string | null
   receNumb: string
+  receDate: string | null
+  contractStartDate: string | null
+  contractEndDate: string | null
   subtotalAmount: number
   checkState: TCheckState
   checkedAt: string | null
@@ -382,7 +387,11 @@ export type TFreeItemStateRow = {
   contractLabelName: string
   incomeLabelName: string | null
   orderNumb: string
+  orderDate: string | null
   receNumb: string
+  receDate: string | null
+  contractStartDate: string | null
+  contractEndDate: string | null
   goodCode: string
   subtotalAmount: number
   checkState: TCheckState
@@ -625,6 +634,8 @@ export type TAccrualReportRowBase = {
   compType: 'DN' | 'HU'
   contractLabelId: number
   contractLabelName: string
+  startDate: string | null
+  endDate: string | null
   incomeTypes: TContractIncomeType[]
 }
 

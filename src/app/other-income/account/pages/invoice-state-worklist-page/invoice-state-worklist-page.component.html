@@ -67,11 +67,12 @@
         <th>ชื่อซัพ</th>
         <th>ประเภทกิจกรรม</th>
         <th>เลขที่ใบแจ้งหนี้</th>
+        <th>วันที่ใบแจ้งหนี้</th>
         <th class="text-end">ยอดใบแจ้งหนี้</th>
         <th class="text-end">ยอดจับคู่แล้ว</th>
         <th>สถานะ</th>
         <th>เลขที่ใบเสร็จ</th>
-        <th>รับล่าสุด</th>
+        <th>วันที่ใบเสร็จรับเงินล่าสุด</th>
         <th></th>
       </tr>
     </thead>
@@ -82,6 +83,9 @@
           <td>{{ row.compName }}</td>
           <td>{{ row.contractLabelName }}</td>
           <td>{{ row.invoiceNumb }}</td>
+          <td>
+            {{ row.invoiceDate ? (row.invoiceDate | date: "dd/MM/yyyy") : "-" }}
+          </td>
           <td class="text-end">{{ row.invoiceAmount | number: "1.2-2" }}</td>
           <td class="text-end">{{ row.matchedAmount | number: "1.2-2" }}</td>
           <td>
@@ -90,11 +94,19 @@
               [class.text-bg-warning]="row.invoiceState === 'UNMATCHED'"
               [class.text-bg-info]="isPartiallyReceived(row)"
               [class.text-bg-success]="row.invoiceState === 'MATCHED'"
-              >{{ isPartiallyReceived(row) ? "PARTIAL" : row.invoiceState }}</span
+              >{{
+                isPartiallyReceived(row) ? "PARTIAL" : row.invoiceState
+              }}</span
             >
           </td>
           <td>{{ row.receiptNumbs ?? "-" }}</td>
-          <td>{{ row.lastReceiptDate ? (row.lastReceiptDate | date: "dd/MM/yyyy") : "-" }}</td>
+          <td>
+            {{
+              row.lastReceiptDate
+                ? (row.lastReceiptDate | date: "dd/MM/yyyy")
+                : "-"
+            }}
+          </td>
           <td>
             <a
               [routerLink]="[
@@ -113,7 +125,7 @@
         </tr>
       } @empty {
         <tr>
-          <td colspan="10" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
+          <td colspan="11" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
         </tr>
       }
     </tbody>

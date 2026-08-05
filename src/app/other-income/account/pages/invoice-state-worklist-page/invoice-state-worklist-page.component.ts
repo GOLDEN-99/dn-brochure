@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { OtherIncomeAccountApiService } from '../../services/other-income-account-api.service';
 import { TInvoiceStateRow } from '../../../shared/types/other-income.type';
 import { CONTRACT_TYPE_PATH, CONTRACT_TYPE_LABEL, COMP_TYPE_LABEL } from '../../../shared/libs/settlement-labels';
+import { toIsoDateOnly } from '../../../shared/libs/date-time';
 import { XLSXReportService, TAoaConfig } from '../../../../service/xlsx-report/xlsx-report.service';
 
 const invoiceFilterSchema = z.object({
@@ -19,18 +20,19 @@ const invoiceFilterSchema = z.object({
 })
 
 const invoiceStateExportConfig: TAoaConfig<TInvoiceStateRow> = {
-  sheetName: 'Invoice States',
+  sheetName: 'ใบแจ้งหนี้',
   config: [
     { header: 'รหัสซัพ', valueMapper: row => row.compCode },
     { header: 'ชื่อซัพ', valueMapper: row => row.compName },
     { header: 'ประเภทสัญญา', valueMapper: row => CONTRACT_TYPE_LABEL[row.contractType] },
     { header: 'ประเภทกิจกรรม', valueMapper: row => row.contractLabelName },
     { header: 'เลขที่ใบแจ้งหนี้', valueMapper: row => row.invoiceNumb },
+    { header: 'วันที่ใบแจ้งหนี้', valueMapper: row => toIsoDateOnly(row.invoiceDate) },
     { header: 'ยอดใบแจ้งหนี้', valueMapper: row => row.invoiceAmount },
     { header: 'ยอดจับคู่แล้ว', valueMapper: row => row.matchedAmount },
     { header: 'สถานะ', valueMapper: row => row.invoiceState },
     { header: 'เลขที่ใบเสร็จ', valueMapper: row => row.receiptNumbs ?? '' },
-    { header: 'รับล่าสุด', valueMapper: row => row.lastReceiptDate ?? '' },
+    { header: 'วันที่ใบเสร็จรับเงินล่าสุด', valueMapper: row => toIsoDateOnly(row.lastReceiptDate) },
   ],
 }
 

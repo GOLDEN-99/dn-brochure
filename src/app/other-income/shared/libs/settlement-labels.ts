@@ -5,6 +5,19 @@ export const INCOME_TYPE_LABEL: Record<'Bill' | 'FreeItem' | 'Invoice' | 'Credit
   FreeItem: 'สินค้าแถม',
 }
 
+/**
+ * Joins a contract's configured income types into one cell value (วิธีรับรู้ —
+ * how the supplier settles this contract). Falls back to the generic income
+ * type label when a row has no custom `incomeLabelName`, so a configured
+ * income type is never rendered as a blank entry in the list.
+ */
+export const formatIncomeTypes = (
+  incomeTypes: ReadonlyArray<{ incomeType: keyof typeof INCOME_TYPE_LABEL; incomeLabelName: string | null }> | null | undefined
+): string =>
+  (incomeTypes ?? [])
+    .map(t => t.incomeLabelName ?? INCOME_TYPE_LABEL[t.incomeType] ?? t.incomeType)
+    .join(', ')
+
 export const CONTRACT_TYPE_LABEL: Record<'ORDER' | 'BRANCH' | 'PROMO', string> = {
   ORDER: 'DC Rebate',
   BRANCH: 'Light Box',
