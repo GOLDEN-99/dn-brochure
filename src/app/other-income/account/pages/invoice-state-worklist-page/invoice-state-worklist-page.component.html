@@ -71,7 +71,7 @@
         <th class="text-end">ยอดจับคู่แล้ว</th>
         <th>สถานะ</th>
         <th>เลขที่ใบเสร็จ</th>
-        <th>รับล่าสุด</th>
+        <th>วันที่ใบเสร็จรับเงินล่าสุด</th>
         <th></th>
       </tr>
     </thead>
@@ -90,11 +90,19 @@
               [class.text-bg-warning]="row.invoiceState === 'UNMATCHED'"
               [class.text-bg-info]="isPartiallyReceived(row)"
               [class.text-bg-success]="row.invoiceState === 'MATCHED'"
-              >{{ isPartiallyReceived(row) ? "PARTIAL" : row.invoiceState }}</span
+              >{{
+                isPartiallyReceived(row) ? "PARTIAL" : row.invoiceState
+              }}</span
             >
           </td>
           <td>{{ row.receiptNumbs ?? "-" }}</td>
-          <td>{{ row.lastReceiptDate ? (row.lastReceiptDate | date: "dd/MM/yyyy") : "-" }}</td>
+          <td>
+            {{
+              row.lastReceiptDate
+                ? (row.lastReceiptDate | date: "dd/MM/yyyy")
+                : "-"
+            }}
+          </td>
           <td>
             <a
               [routerLink]="[

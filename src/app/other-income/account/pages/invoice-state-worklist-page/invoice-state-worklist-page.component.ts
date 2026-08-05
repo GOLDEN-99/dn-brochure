@@ -30,7 +30,7 @@ const invoiceStateExportConfig: TAoaConfig<TInvoiceStateRow> = {
     { header: 'ยอดจับคู่แล้ว', valueMapper: row => row.matchedAmount },
     { header: 'สถานะ', valueMapper: row => row.invoiceState },
     { header: 'เลขที่ใบเสร็จ', valueMapper: row => row.receiptNumbs ?? '' },
-    { header: 'รับล่าสุด', valueMapper: row => row.lastReceiptDate ?? '' },
+    { header: 'วันที่ใบเสร็จรับเงินล่าสุด', valueMapper: row => row.lastReceiptDate ?? '' },
   ],
 }
 
