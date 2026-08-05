@@ -19,13 +19,14 @@ const invoiceFilterSchema = z.object({
 })
 
 const invoiceStateExportConfig: TAoaConfig<TInvoiceStateRow> = {
-  sheetName: 'Invoice States',
+  sheetName: 'ใบแจ้งหนี้',
   config: [
     { header: 'รหัสซัพ', valueMapper: row => row.compCode },
     { header: 'ชื่อซัพ', valueMapper: row => row.compName },
     { header: 'ประเภทสัญญา', valueMapper: row => CONTRACT_TYPE_LABEL[row.contractType] },
     { header: 'ประเภทกิจกรรม', valueMapper: row => row.contractLabelName },
     { header: 'เลขที่ใบแจ้งหนี้', valueMapper: row => row.invoiceNumb },
+    { header: 'วันที่ใบแจ้งหนี้', valueMapper: row => row.invoiceDate ?? '' },
     { header: 'ยอดใบแจ้งหนี้', valueMapper: row => row.invoiceAmount },
     { header: 'ยอดจับคู่แล้ว', valueMapper: row => row.matchedAmount },
     { header: 'สถานะ', valueMapper: row => row.invoiceState },

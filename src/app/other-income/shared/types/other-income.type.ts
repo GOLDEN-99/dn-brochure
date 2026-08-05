@@ -344,6 +344,7 @@ export type TInvoiceStateRow = {
   contractLabelName: string
   incomeLabelName: string | null
   invoiceNumb: string
+  invoiceDate: string | null
   invoiceAmount: number
   matchedAmount: number
   invoiceState: 'UNMATCHED' | 'MATCHED'
