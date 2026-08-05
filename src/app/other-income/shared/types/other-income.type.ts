@@ -383,7 +383,9 @@ export type TFreeItemStateRow = {
   contractLabelName: string
   incomeLabelName: string | null
   orderNumb: string
+  orderDate: string | null
   receNumb: string
+  receDate: string | null
   goodCode: string
   subtotalAmount: number
   checkState: TCheckState
