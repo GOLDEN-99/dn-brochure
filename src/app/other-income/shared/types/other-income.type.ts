@@ -368,6 +368,8 @@ export type TBillDiscountStateRow = {
   orderDate: string | null
   receNumb: string
   receDate: string | null
+  contractStartDate: string | null
+  contractEndDate: string | null
   subtotalAmount: number
   checkState: TCheckState
   checkedAt: string | null
@@ -388,6 +390,8 @@ export type TFreeItemStateRow = {
   orderDate: string | null
   receNumb: string
   receDate: string | null
+  contractStartDate: string | null
+  contractEndDate: string | null
   goodCode: string
   subtotalAmount: number
   checkState: TCheckState

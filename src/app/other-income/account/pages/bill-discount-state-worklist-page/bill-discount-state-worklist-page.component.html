@@ -67,6 +67,8 @@
         <th>รหัสซัพพลายเออร์</th>
         <th>ชื่อซัพพลายเออร์</th>
         <th>ประเภทกิจกรรม</th>
+        <th>กิจกรรมเริ่ม</th>
+        <th>กิจกรรมจบ</th>
         <th>เลขที่ PO</th>
         <th>วันที่ PO</th>
         <th>เลขที่ RC</th>
@@ -86,6 +88,20 @@
           <td>{{ row.compCode }}</td>
           <td>{{ row.compName }}</td>
           <td>{{ row.contractLabelName }}</td>
+          <td>
+            {{
+              row.contractStartDate
+                ? (row.contractStartDate | date: "dd/MM/yyyy")
+                : "-"
+            }}
+          </td>
+          <td>
+            {{
+              row.contractEndDate
+                ? (row.contractEndDate | date: "dd/MM/yyyy")
+                : "-"
+            }}
+          </td>
           <td>{{ row.orderNumb }}</td>
           <td>{{ row.orderDate ? (row.orderDate | date: "dd/MM/yyyy") : "-" }}</td>
           <td>{{ row.receNumb }}</td>
@@ -133,7 +149,7 @@
         </tr>
       } @empty {
         <tr>
-          <td colspan="12" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
+          <td colspan="14" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
         </tr>
       }
     </tbody>

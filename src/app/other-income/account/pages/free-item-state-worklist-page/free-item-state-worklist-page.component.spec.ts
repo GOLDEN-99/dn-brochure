@@ -30,6 +30,8 @@ describe('FreeItemStateWorklistPageComponent', () => {
     orderDate: '2026-01-20T00:00:00',
     receNumb: 'RC066927',
     receDate: '2026-01-22T00:00:00',
+    contractStartDate: '2026-01-01',
+    contractEndDate: '2026-01-31',
     goodCode: '2873',
     subtotalAmount: 8710,
     checkState: 'UNCHECKED',
@@ -159,10 +161,46 @@ describe('FreeItemStateWorklistPageComponent', () => {
 
       expect(names.indexOf('วันที่ PO')).toBe(names.indexOf('เลขที่ PO') + 1);
       expect(names.indexOf('วันที่รับเข้า')).toBe(names.indexOf('เลขที่ RC') + 1);
-      expect(valueOf('วันที่ PO', rows[0])).toBe('2026-01-20T00:00:00');
-      expect(valueOf('วันที่รับเข้า', rows[0])).toBe('2026-01-22T00:00:00');
+      expect(valueOf('วันที่ PO', rows[0])).toBe('2026-01-20');
+      expect(valueOf('วันที่รับเข้า', rows[0])).toBe('2026-01-22');
       expect(valueOf('วันที่ PO', row({ orderDate: null }))).toBe('');
       expect(valueOf('วันที่รับเข้า', row({ receDate: null }))).toBe('');
+    });
+  });
+
+  describe('contract period columns', () => {
+    it('renders the contract period as กิจกรรมเริ่ม / กิจกรรมจบ', () => {
+      expect(cellUnder('กิจกรรมเริ่ม')).toBe('01/01/2026');
+      expect(cellUnder('กิจกรรมจบ')).toBe('31/01/2026');
+    });
+
+    it('renders a dash when either contract date is null', () => {
+      api.getFreeItemStates.and.returnValue(
+        of([row({ contractStartDate: null, contractEndDate: null })])
+      );
+      component.refresh();
+      fixture.detectChanges();
+
+      expect(cellUnder('กิจกรรมเริ่ม')).toBe('-');
+      expect(cellUnder('กิจกรรมจบ')).toBe('-');
+    });
+
+    it('exports the contract period as a plain ISO date', () => {
+      const rows = [row()];
+      component.items.set(rows);
+      xlsx.convertJsonToWorkbook.and.returnValue(() => of({} as XLSXType.WorkBook));
+      xlsx.exportWorkbook.and.returnValue(() => of(undefined));
+
+      component.exportExcel();
+
+      const { config } = xlsx.convertJsonToWorkbook.calls.mostRecent().args[0];
+      const names = config.map(c => c.header);
+      const valueOf = (header: string, r: TFreeItemStateRow) =>
+        config[names.indexOf(header)].valueMapper(r);
+
+      expect(valueOf('กิจกรรมเริ่ม', rows[0])).toBe('2026-01-01');
+      expect(valueOf('กิจกรรมจบ', rows[0])).toBe('2026-01-31');
+      expect(valueOf('กิจกรรมเริ่ม', row({ contractStartDate: null }))).toBe('');
     });
   });
 
