@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { OtherIncomeAccountApiService } from '../../services/other-income-account-api.service';
 import { TBillDiscountStateRow } from '../../../shared/types/other-income.type';
 import { CONTRACT_TYPE_PATH, CONTRACT_TYPE_LABEL, COMP_TYPE_LABEL } from '../../../shared/libs/settlement-labels';
+import { toIsoDateOnly } from '../../../shared/libs/date-time';
 import { XLSXReportService, TAoaConfig } from '../../../../service/xlsx-report/xlsx-report.service';
 
 const CHECKED_BY = 'account_user'
@@ -23,16 +24,20 @@ const billDiscountFilterSchema = z.object({
 const billDiscountExportConfig: TAoaConfig<TBillDiscountStateRow> = {
   sheetName: 'Bill Discount States',
   config: [
-    { header: 'Comp', valueMapper: row => row.compType },
+    { header: 'บริษัท', valueMapper: row => row.compType },
     { header: 'รหัสซัพ', valueMapper: row => row.compCode },
     { header: 'ชื่อซัพ', valueMapper: row => row.compName },
     { header: 'ประเภทสัญญา', valueMapper: row => CONTRACT_TYPE_LABEL[row.contractType] },
     { header: 'ประเภทกิจกรรม', valueMapper: row => row.contractLabelName },
-    { header: 'เลขที่ออเดอร์', valueMapper: row => row.orderNumb },
-    { header: 'เลขที่ใบเสร็จ', valueMapper: row => row.receNumb },
+    { header: 'กิจกรรมเริ่ม', valueMapper: row => toIsoDateOnly(row.contractStartDate) },
+    { header: 'กิจกรรมจบ', valueMapper: row => toIsoDateOnly(row.contractEndDate) },
+    { header: 'เลขที่ PO', valueMapper: row => row.orderNumb },
+    { header: 'วันที่ PO', valueMapper: row => toIsoDateOnly(row.orderDate) },
+    { header: 'เลขที่ RC', valueMapper: row => row.receNumb },
+    { header: 'วันที่รับเข้า', valueMapper: row => toIsoDateOnly(row.receDate) },
     { header: 'ยอด', valueMapper: row => row.subtotalAmount },
     { header: 'สถานะตรวจสอบ', valueMapper: row => row.checkState },
-    { header: 'ตรวจสอบเมื่อ', valueMapper: row => row.checkedAt ?? '' },
+    { header: 'ตรวจสอบเมื่อ', valueMapper: row => toIsoDateOnly(row.checkedAt) },
     { header: 'ตรวจสอบโดย', valueMapper: row => row.checkedBy ?? '' },
   ],
 }

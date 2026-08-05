@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DecimalPipe, SlicePipe } from '@angular/common';
+import { DatePipe, DecimalPipe, SlicePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { EMPTY, switchMap } from 'rxjs';
@@ -9,10 +9,10 @@ import { catchError, finalize } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { OtherIncomeAccountApiService } from '../../services/other-income-account-api.service';
 import { TAccrualPromoReportRow } from '../../../shared/types/other-income.type';
-import { COMP_TYPE_LABEL } from '../../../shared/libs/settlement-labels';
+import { COMP_TYPE_LABEL, formatIncomeTypes } from '../../../shared/libs/settlement-labels';
 import { XLSXReportService, TAoaConfig } from '../../../../service/xlsx-report/xlsx-report.service';
 import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
-import { isoToNgbDate, ngbDateToIso, startOfYearRange } from '../../../shared/libs/date-time';
+import { isoToNgbDate, ngbDateToIso, startOfYearRange, toIsoDateOnly } from '../../../shared/libs/date-time';
 
 type TPromoReportFlatRow = {
   contractId: number
@@ -21,6 +21,9 @@ type TPromoReportFlatRow = {
   compType: 'DN' | 'HU'
   contractLabelId: number
   contractLabelName: string
+  startDate: string | null
+  endDate: string | null
+  incomeTypes: string
   month: string
   estimateIncome: number
 }
@@ -33,6 +36,9 @@ function flatten(rows: TAccrualPromoReportRow[]): TPromoReportFlatRow[] {
     compType: row.compType,
     contractLabelId: row.contractLabelId,
     contractLabelName: row.contractLabelName,
+    startDate: row.startDate,
+    endDate: row.endDate,
+    incomeTypes: formatIncomeTypes(row.incomeTypes),
     month: m.month,
     estimateIncome: m.estimateIncome,
   })))
@@ -45,6 +51,9 @@ const exportConfig: TAoaConfig<TPromoReportFlatRow> = {
     { header: 'รหัสซัพพลายเออร์', valueMapper: row => row.compCode },
     { header: 'ชื่อซัพพลายเออร์', valueMapper: row => row.compName },
     { header: 'สัญญา', valueMapper: row => row.contractLabelName },
+    { header: 'กิจกรรมเริ่ม', valueMapper: row => toIsoDateOnly(row.startDate) },
+    { header: 'กิจกรรมจบ', valueMapper: row => toIsoDateOnly(row.endDate) },
+    { header: 'วิธีรับรู้', valueMapper: row => row.incomeTypes },
     { header: 'เดือน', valueMapper: row => row.month?.slice(0, 7) ?? '' },
     { header: 'ประมาณการรายได้', valueMapper: row => row.estimateIncome },
   ],
@@ -52,7 +61,7 @@ const exportConfig: TAoaConfig<TPromoReportFlatRow> = {
 
 @Component({
   selector: 'app-accrual-promo-report-page',
-  imports: [DecimalPipe, SlicePipe, FormsModule, DatePickerComponent],
+  imports: [DatePipe, DecimalPipe, SlicePipe, FormsModule, DatePickerComponent],
   templateUrl: './accrual-promo-report-page.component.html',
   styleUrl: './accrual-promo-report-page.component.scss',
 })

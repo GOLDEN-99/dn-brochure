@@ -392,12 +392,17 @@ Narrow query for the invoice→receipt matching sub-workflow — separate from `
     "contractLabelName": "Annual Rebate",
     "incomeLabelName": "Rebate",
     "invoiceNumb": "INV-002",
+    "invoiceDate": "2026-02-11",
     "invoiceAmount": 1500.0,
     "matchedAmount": 0.0,
-    "invoiceState": "UNMATCHED"
+    "invoiceState": "UNMATCHED",
+    "receiptNumbs": null,
+    "lastReceiptDate": null
   }
 ]
 ```
+
+`invoiceDate` is the date on the supplier's invoice document (`null` if not recorded), shown in the worklist as `วันที่ใบแจ้งหนี้` — distinct from `lastReceiptDate`, which is the date of the most recent matched receipt.
 
 `incomeLabelName` comes from the contract's `Invoice`-type entry in `other_income_contract_income_types` (via `income_label_id` → `other_income_income_labels.name`) — it's `null` if the contract has no income label configured for the `Invoice` income type.
 
