@@ -634,6 +634,8 @@ export type TAccrualReportRowBase = {
   compType: 'DN' | 'HU'
   contractLabelId: number
   contractLabelName: string
+  startDate: string | null
+  endDate: string | null
   incomeTypes: TContractIncomeType[]
 }
 
