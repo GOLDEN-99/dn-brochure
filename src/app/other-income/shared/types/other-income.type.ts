@@ -365,7 +365,9 @@ export type TBillDiscountStateRow = {
   contractLabelName: string
   incomeLabelName: string | null
   orderNumb: string
+  orderDate: string | null
   receNumb: string
+  receDate: string | null
   subtotalAmount: number
   checkState: TCheckState
   checkedAt: string | null

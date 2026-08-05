@@ -23,13 +23,15 @@ const billDiscountFilterSchema = z.object({
 const billDiscountExportConfig: TAoaConfig<TBillDiscountStateRow> = {
   sheetName: 'Bill Discount States',
   config: [
-    { header: 'Comp', valueMapper: row => row.compType },
+    { header: 'บริษัท', valueMapper: row => row.compType },
     { header: 'รหัสซัพ', valueMapper: row => row.compCode },
     { header: 'ชื่อซัพ', valueMapper: row => row.compName },
     { header: 'ประเภทสัญญา', valueMapper: row => CONTRACT_TYPE_LABEL[row.contractType] },
     { header: 'ประเภทกิจกรรม', valueMapper: row => row.contractLabelName },
-    { header: 'เลขที่ออเดอร์', valueMapper: row => row.orderNumb },
-    { header: 'เลขที่ใบเสร็จ', valueMapper: row => row.receNumb },
+    { header: 'เลขที่ PO', valueMapper: row => row.orderNumb },
+    { header: 'วันที่ PO', valueMapper: row => row.orderDate ?? '' },
+    { header: 'เลขที่ RC', valueMapper: row => row.receNumb },
+    { header: 'วันที่รับเข้า', valueMapper: row => row.receDate ?? '' },
     { header: 'ยอด', valueMapper: row => row.subtotalAmount },
     { header: 'สถานะตรวจสอบ', valueMapper: row => row.checkState },
     { header: 'ตรวจสอบเมื่อ', valueMapper: row => row.checkedAt ?? '' },
