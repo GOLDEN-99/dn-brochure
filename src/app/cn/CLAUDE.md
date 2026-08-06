@@ -2,6 +2,13 @@
 
 Credit Note (CN) request feature. Allows sales reps to initiate a return/cancellation for a wholesale order.
 
+## Docs
+
+- `docs/remark-category-filter.md` — remark-group filter, **blocked** on a new
+  `GetCNRemark` spec. Read before touching the remark mappers or
+  `format-request.ts`; it also explains why `mapRemarkToResult` and
+  `mapRemarkToShowCN` are separate axes.
+
 ## Folder Structure
 
 ```
@@ -29,10 +36,10 @@ src/app/cn/
     │   └── cn-upload-image.service.ts  Image blob upload
     ├── libs/
     │   ├── parse-cn-param.ts    Zod schema for route params
-    │   ├── remark-result.ts     Map remark.id → result type ('all' | 'notAccept' | 'notChange')
+    │   ├── remark-result.ts     Map remark.id → result type ('all' | 'notAccept' | 'notChange' | 'mustReject')
     │   ├── remark-cn.ts         Map remark.id → showCN boolean
-    │   ├── formatRequest.ts     Map form stepOne → API request shape
-    │   └── goodItem-goodState.ts  TGoodItem (with lots) → TGoodItemState (aggregated)
+    │   ├── format-request.ts    Map form stepOne → API request shape
+    │   └── good-item.lib.ts     TGoodItem (with lots) → TGoodItemState (aggregated)
     └── types/
         └── cn.type.ts           All domain types
 ```
@@ -66,7 +73,7 @@ src/app/cn/
   metadata: { isWRR, bankAcName, bankCode, bankNumb, code, name,
               wholeCode, wholeDate, wholeName, wholeNumb, saleCode }  // readonly
   stepOne:  { remarkOpt, resultAll, resultNotAccept, resultNotChange,
-              cnType, remark, cnCount, cusStat }
+              resultMustReject, cnType, remark, cnCount, cusStat }
   returnList: Array<{ good: TGoodItemState, amount: number, check: boolean }>
   image: string[]
 }

@@ -1,24 +1,26 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { apply, applyEach, applyWhen, disabled, form, min, minLength, readonly, required, schema, validate } from '@angular/forms/signals';
-import { CnLoadError, TReadonlyForm, TStepOne, TGoodFormItem, TCreateCancelForm } from '../types/cn.type';
+import { CnLoadError, TReadonlyForm, TStepOne, TGoodFormItem, TCreateCancelForm, TRemarkResult, TExtendedRemarkResult } from '../types/cn.type';
 import { mapRemarkToResult } from '../libs/remark-result';
 import { mapRemarkToShowCN } from '../libs/remark-cn';
 
 
 type RemarkCategory = {
-  id: number,
+  id: string,
   label: string,
 }
 
 const REMARK_CATEGORIES: RemarkCategory[] = [
-  { id: 1, label: 'เกิดจากคลัง' },
-  { id: 2, label: 'เกิดจากสินค้า' },
-  { id: 3, label: 'สินค้าชำรุด' },
-  { id: 4, label: 'เกิดจากลูกค้า' },
-  { id: 5, label: 'เกิดจากเทเล' },
-  { id: 6, label: 'เกิดจากเซล' },
-  { id: 7, label: 'โอนเงินล่วงหน้า' },
+  { id: '1', label: 'เกิดจากคลัง' },
+  { id: '2', label: 'เกิดจากสินค้า' },
+  { id: '3', label: 'สินค้าชำรุด' },
+  { id: '4', label: 'เกิดจากลูกค้า' },
+  { id: '5', label: 'เกิดจากเทเล' },
+  { id: '6', label: 'เกิดจากเซล' },
+  { id: '7', label: 'โอนเงินล่วงหน้า' },
 ];
+
+const filterRemark = (cate: RemarkCategory) => (remarks: TExtendedRemarkResult[]) => remarks.filter(({ groupName }) => groupName === cate.label)
 @Injectable({
   providedIn: null,
 })

@@ -100,6 +100,11 @@ export type TRemarkResult = {
     result: string
 }
 
+export type TExtendedRemarkResult = TRemarkResult & {
+    //TODO: confirm api shape
+    groupName: string
+}
+
 export interface TCreateReq {
     // identity / billing
     isWRR: string
