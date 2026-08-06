@@ -97,6 +97,12 @@
     [formField]="createForm.stepOne.resultNotChange"
   />
 }
+@if (rt === ref.mustReject) {
+  <cn-result-select
+    [resultType]="ref.mustReject"
+    [formField]="createForm.stepOne.resultMustReject"
+  />
+}
 <!---->
 @if (showCN()) {
   <cn-type-radio

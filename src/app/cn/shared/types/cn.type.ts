@@ -4,14 +4,14 @@ import { TCNRouteParam } from "../libs/parse-cn-param"
 export type CnLoadErrorReason = 'order-not-found' | 'whole-item-not-found' | 'api-error' | 'unknown'
 
 export class CnLoadError extends Error {
-  constructor(
-    public readonly reason: CnLoadErrorReason,
-    message: string,
-    public readonly request: TCNRouteParam,
-  ) {
-    super(message)
-    this.name = 'CnLoadError'
-  }
+    constructor(
+        public readonly reason: CnLoadErrorReason,
+        message: string,
+        public readonly request: TCNRouteParam,
+    ) {
+        super(message)
+        this.name = 'CnLoadError'
+    }
 }
 
 export type TBank = {
@@ -144,6 +144,7 @@ export type TStepOne = {
     resultNotChange: TMaybe<TRemarkResult>
     resultAll: TMaybe<TRemarkResult>
     resultNotAccept: TMaybe<TRemarkResult>
+    resultMustReject: TMaybe<TRemarkResult>
     cnType: TMaybe<TCnType>
     remark: string
     cnCount: number

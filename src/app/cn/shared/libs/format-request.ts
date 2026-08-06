@@ -1,12 +1,19 @@
-import { TStepOne } from "../types/cn.type";
-import { mapRemarkToResult } from "./remark-result";
+import { TMaybe } from "../../../shared/types/index.type";
+import { TRemarkResult, TStepOne } from "../types/cn.type";
+import { mapRemarkToResult, TResultType } from "./remark-result";
 
 export const mapFormToApiRequest = (form: TStepOne) => {
-    const { remark, remarkOpt, resultAll, resultNotAccept, resultNotChange, cusStat } = form;
+    const { remark, remarkOpt, resultAll, resultNotAccept, resultNotChange, resultMustReject, cusStat } = form;
     if (remarkOpt === null) return null
     const { id: motiveId, remark: motive } = remarkOpt;
-    const remarkKey = mapRemarkToResult(remarkOpt)
-    const probOption = remarkKey === 'all' ? resultAll?.id ?? '-1' : remarkKey === 'notAccept' ? resultNotAccept?.id ?? '-1' : remarkKey === 'notChange' ? resultNotChange?.id ?? '-1' : '-1'
+    const resultByType: Record<TResultType, TMaybe<TRemarkResult>> = {
+        none: null,
+        all: resultAll,
+        notAccept: resultNotAccept,
+        notChange: resultNotChange,
+        mustReject: resultMustReject,
+    }
+    const probOption = resultByType[mapRemarkToResult(remarkOpt)]?.id ?? '-1'
     return {
         remark, cusStat,
         motiveId, motive, probOption

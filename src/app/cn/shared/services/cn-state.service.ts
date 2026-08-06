@@ -44,6 +44,7 @@ export class CnStateService {
       resultNotChange: null,
       resultAll: null,
       resultNotAccept: null,
+      resultMustReject: null,
       cnType: null,
       remark: '',
       cnCount: 0,
@@ -81,6 +82,10 @@ export class CnStateService {
     required(schema.resultNotChange, {
       message: 'กรุณาเลือกเพิ่มเติม',
       when: ({ valueOf }) => mapRemarkToResult(valueOf(schema.remarkOpt)) === 'notChange'
+    })
+    required(schema.resultMustReject, {
+      message: 'กรุณาเลือกเพิ่มเติม',
+      when: ({ valueOf }) => mapRemarkToResult(valueOf(schema.remarkOpt)) === 'mustReject'
     })
     required(schema.cnType, {
       message: 'กรุณาเลือกประเภทการ CN',
