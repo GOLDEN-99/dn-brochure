@@ -4,6 +4,21 @@ import { CnLoadError, TReadonlyForm, TStepOne, TGoodFormItem, TCreateCancelForm 
 import { mapRemarkToResult } from '../libs/remark-result';
 import { mapRemarkToShowCN } from '../libs/remark-cn';
 
+
+type RemarkCategory = {
+  id: number,
+  label: string,
+}
+
+const REMARK_CATEGORIES: RemarkCategory[] = [
+  { id: 1, label: 'เกิดจากคลัง' },
+  { id: 2, label: 'เกิดจากสินค้า' },
+  { id: 3, label: 'สินค้าชำรุด' },
+  { id: 4, label: 'เกิดจากลูกค้า' },
+  { id: 5, label: 'เกิดจากเทเล' },
+  { id: 6, label: 'เกิดจากเซล' },
+  { id: 7, label: 'โอนเงินล่วงหน้า' },
+];
 @Injectable({
   providedIn: null,
 })
@@ -103,15 +118,15 @@ export class CnStateService {
   requestCNForm = form<TCreateCancelForm>(this.formState, (schema) => {
     apply(schema.metadata, this.metaDataSchema)
     apply(schema.stepOne, this.stepOneSchema)
-    validate(schema.stepOne.cusStat, ({value, valueOf}) => {
+    validate(schema.stepOne.cusStat, ({ value, valueOf }) => {
       const stat = value()
       const bankAccount = valueOf(schema.metadata.bankNumb)
-      if(bankAccount !== '') return null
-      if(stat === '0') return null
+      if (bankAccount !== '') return null
+      if (stat === '0') return null
       return {
         kind: 'invalid stat',
         message: 'ไม่สามารถโอนเงินได้เพราะไม่พบบัญชีโอนคืน'
-      } 
+      }
     })
     applyEach(schema.returnList, this.goodItemSchema)
     validate(schema.returnList, ({ value, valueOf }) => {
