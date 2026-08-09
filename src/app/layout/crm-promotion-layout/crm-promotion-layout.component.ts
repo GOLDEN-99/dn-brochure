@@ -2,7 +2,9 @@ import { Component, DestroyRef, ElementRef, inject, signal, viewChild } from '@a
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
-import { CREATE_ROUTE_PATH, } from '../../routes/crm-promotion.route';
+// import from the leaf path module, NOT crm-promotion.route — that would be a cycle
+// (route → this component → route) and breaks the Karma test bundle at load time
+import { CREATE_ROUTE_PATH } from '../../routes/crm-promotion.path';
 
 
 @Component({
