@@ -71,15 +71,17 @@ describe('OrderContractSpecsPageComponent', () => {
     expect(fixture.nativeElement.querySelector('.card')).toBeNull();
   });
 
-  it('renders empty-state rows when steps, products, and income types are empty', () => {
+  // Income types moved to OrderContractLayoutComponent in 85694e4, so this page has two
+  // empty states left (steps and products), not three.
+  it('renders empty-state rows when steps and products are empty', () => {
     setContract(makeContract());
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent;
-    expect((text.match(/ไม่มีข้อมูล/g) ?? []).length).toBe(3);
+    expect((text.match(/ไม่มีข้อมูล/g) ?? []).length).toBe(2);
   });
 
-  it('renders steps, products, and income types when data is present', () => {
+  it('renders steps and products when data is present', () => {
     setContract(makeContract({
       steps: [{ id: 1, min: 0, max: 1000, rate: 5 }],
       products: [{ goodCode: 'G1', goodName: 'Good 1', barCode: '1234567890' }],
@@ -100,6 +102,6 @@ describe('OrderContractSpecsPageComponent', () => {
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('1234567890');
     expect(text).toContain('Good 1');
-    expect(text).toContain('Auto Income');
+    expect(text).not.toContain('Auto Income'); // income types render in the layout, not here
   });
 });
