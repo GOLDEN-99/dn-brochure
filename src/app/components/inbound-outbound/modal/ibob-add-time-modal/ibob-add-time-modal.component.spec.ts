@@ -14,6 +14,7 @@ describe('IbobAddTimeModalComponent', () => {
 
     fixture = TestBed.createComponent(IbobAddTimeModalComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('last', { hour: 9, minute: 0, second: 0 });
     fixture.detectChanges();
   });
 

@@ -13,7 +13,7 @@ describe('SupplierInhouseComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SupplierInhouseComponent],
-      providers: [SupplierApiService, provideHttpClient(), provideHttpClientTesting(), provideRouter([])]
+      providers: [{ provide: SupplierApiService, useFactory: () => new SupplierApiService('DN') }, provideHttpClient(), provideHttpClientTesting(), provideRouter([])]
     })
     .compileComponents();
 

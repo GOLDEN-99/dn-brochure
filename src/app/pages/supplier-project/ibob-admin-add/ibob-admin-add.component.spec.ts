@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { IbobAdminAddComponent } from './ibob-admin-add.component';
 
@@ -8,7 +9,8 @@ describe('IbobAdminAddComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IbobAdminAddComponent]
+      imports: [IbobAdminAddComponent],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 

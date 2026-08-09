@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { GeneralPageComponent } from './general-page.component';
 
@@ -8,7 +9,8 @@ describe('GeneralPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GeneralPageComponent]
+      imports: [GeneralPageComponent],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 

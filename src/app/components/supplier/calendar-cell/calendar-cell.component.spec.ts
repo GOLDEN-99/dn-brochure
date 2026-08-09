@@ -14,6 +14,8 @@ describe('CalendarCellComponent', () => {
 
     fixture = TestBed.createComponent(CalendarCellComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('date', { day: 1, month: 1, year: 2026 });
+    fixture.componentRef.setInput('month', 1);
     fixture.detectChanges();
   });
 

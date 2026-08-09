@@ -14,6 +14,7 @@ describe('DiscountSelectComponent', () => {
 
     fixture = TestBed.createComponent(DiscountSelectComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('discountType', 'percent');
     fixture.detectChanges();
   });
 

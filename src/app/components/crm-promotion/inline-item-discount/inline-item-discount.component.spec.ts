@@ -14,6 +14,8 @@ describe('InlineItemDiscountComponent', () => {
 
     fixture = TestBed.createComponent(InlineItemDiscountComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('benefitType', 'bath');
+    fixture.componentRef.setInput('inlinePool', []);
     fixture.detectChanges();
   });
 

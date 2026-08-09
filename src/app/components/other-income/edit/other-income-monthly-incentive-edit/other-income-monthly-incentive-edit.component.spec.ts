@@ -14,6 +14,9 @@ describe('OtherIncomeMonthlyIncentiveEditComponent', () => {
 
     fixture = TestBed.createComponent(OtherIncomeMonthlyIncentiveEditComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('incomeList', []);
+    fixture.componentRef.setInput('eventType', 1);
+    fixture.componentRef.setInput('id', 1);
     fixture.detectChanges();
   });
 

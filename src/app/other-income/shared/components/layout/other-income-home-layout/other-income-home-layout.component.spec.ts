@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { OtherIncomeHomeLayoutComponent } from './other-income-home-layout.component';
 
@@ -8,7 +9,8 @@ describe('OtherIncomeHomeLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OtherIncomeHomeLayoutComponent]
+      imports: [OtherIncomeHomeLayoutComponent],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 

@@ -14,6 +14,7 @@ describe('OtherIncomeProductEditComponent', () => {
 
     fixture = TestBed.createComponent(OtherIncomeProductEditComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('productList', []);
     fixture.detectChanges();
   });
 

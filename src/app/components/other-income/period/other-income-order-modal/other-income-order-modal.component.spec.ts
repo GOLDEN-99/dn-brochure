@@ -14,6 +14,10 @@ describe('OtherIncomeOrderModalComponent', () => {
 
     fixture = TestBed.createComponent(OtherIncomeOrderModalComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('compType', 'DN');
+    fixture.componentRef.setInput('compCode', 'C001');
+    fixture.componentRef.setInput('periodId', 1);
+    fixture.componentRef.setInput('periodAmount', 0);
     fixture.detectChanges();
   });
 

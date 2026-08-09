@@ -14,6 +14,9 @@ describe('BenefitInputComponent', () => {
 
     fixture = TestBed.createComponent(BenefitInputComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('promotionType', 'inline');
+    fixture.componentRef.setInput('benefitType', 'bath');
+    fixture.componentRef.setInput('thresholdType', 'amount');
     fixture.detectChanges();
   });
 

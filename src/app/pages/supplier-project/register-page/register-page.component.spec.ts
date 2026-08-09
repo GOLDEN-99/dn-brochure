@@ -3,6 +3,8 @@ import { provideRouter } from '@angular/router';
 import { SupplierApiService } from '../../../service/supplier/supplier-api.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute } from '@angular/router';
+import { supplierRouteMock } from '../../../testing/supplier-route.mock';
 
 import { RegisterPageComponent } from './register-page.component';
 
@@ -13,7 +15,7 @@ describe('RegisterPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RegisterPageComponent],
-      providers: [SupplierApiService, provideHttpClient(), provideHttpClientTesting(), provideRouter([])]
+      providers: [{ provide: SupplierApiService, useFactory: () => new SupplierApiService('DN') }, provideHttpClient(), provideHttpClientTesting(), provideRouter([]), { provide: ActivatedRoute, useValue: supplierRouteMock() }]
     })
     .compileComponents();
 

@@ -14,6 +14,8 @@ describe('InlineMemberComponent', () => {
 
     fixture = TestBed.createComponent(InlineMemberComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('limitTier', false);
+    fixture.componentRef.setInput('members', []);
     fixture.detectChanges();
   });
 

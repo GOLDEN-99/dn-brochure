@@ -14,6 +14,7 @@ describe('OtherIncomeBaseformComponent', () => {
 
     fixture = TestBed.createComponent(OtherIncomeBaseformComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('eventType', 1);
     fixture.detectChanges();
   });
 
