@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { InOutQueryComponent } from './in-out-query.component';
 
@@ -8,7 +9,8 @@ describe('InOutQueryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InOutQueryComponent]
+      imports: [InOutQueryComponent],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 

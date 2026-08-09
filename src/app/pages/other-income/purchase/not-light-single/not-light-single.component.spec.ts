@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { NotLightSingleComponent } from './not-light-single.component';
 
@@ -8,7 +9,8 @@ describe('NotLightSingleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NotLightSingleComponent]
+      imports: [NotLightSingleComponent],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 

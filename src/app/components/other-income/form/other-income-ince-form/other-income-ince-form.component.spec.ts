@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { OtherIncomeInceFormComponent } from './other-income-ince-form.component';
 
@@ -8,7 +9,8 @@ describe('OtherIncomeInceFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OtherIncomeInceFormComponent]
+      imports: [OtherIncomeInceFormComponent],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 

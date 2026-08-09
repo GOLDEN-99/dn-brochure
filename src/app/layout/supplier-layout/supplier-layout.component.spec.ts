@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { SupplierLayoutComponent } from './supplier-layout.component';
 
@@ -8,7 +9,8 @@ describe('SupplierLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SupplierLayoutComponent]
+      imports: [SupplierLayoutComponent],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 

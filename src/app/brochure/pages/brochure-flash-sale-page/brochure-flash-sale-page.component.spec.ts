@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { BrochureFlashSalePageComponent } from './brochure-flash-sale-page.component';
 
@@ -8,7 +9,8 @@ describe('BrochureFlashSalePageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BrochureFlashSalePageComponent]
+      imports: [BrochureFlashSalePageComponent],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 
