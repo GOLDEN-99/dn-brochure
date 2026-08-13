@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { PurchaseIncomeFormComponent } from './purchase-income-form.component';
 
@@ -8,7 +9,8 @@ describe('PurchaseIncomeFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PurchaseIncomeFormComponent]
+      imports: [PurchaseIncomeFormComponent],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 

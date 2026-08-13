@@ -55,14 +55,11 @@ describe('PromoContractSpecsPageComponent', () => {
     expect(fixture.nativeElement.querySelector('.card')).toBeNull();
   });
 
-  it('renders an empty-state row when income types is empty', () => {
-    setContract(makeContract());
-    fixture.detectChanges();
-
-    expect(fixture.nativeElement.textContent).toContain('ไม่มีข้อมูล');
-  });
-
-  it('renders a row per income type when data is present', () => {
+  // The income-types table this page used to render moved to PromoContractLayoutComponent
+  // in 85694e4 ("change purchasing layout to contain incomTypes at layout not spec tab").
+  // The promo contract has no promo-specific terms of its own, so this tab is intentionally
+  // blank; the assertions that used to live here belong to the layout's spec.
+  it('renders no promo-specific terms even when a contract is loaded', () => {
     setContract(makeContract({
       incomeTypes: [
         {
@@ -78,8 +75,7 @@ describe('PromoContractSpecsPageComponent', () => {
     }));
     fixture.detectChanges();
 
-    const rows = fixture.nativeElement.querySelectorAll('table tbody tr');
-    expect(rows.length).toBe(1);
-    expect(fixture.nativeElement.textContent).toContain('Auto Income');
+    expect(fixture.nativeElement.querySelector('table')).toBeNull();
+    expect((fixture.nativeElement.textContent as string).trim()).toBe('');
   });
 });

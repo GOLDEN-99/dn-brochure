@@ -84,16 +84,18 @@ describe('BranchContractSpecsPageComponent', () => {
     expect(fixture.nativeElement.querySelector('.card')).toBeNull();
   });
 
-  it('renders empty-state rows when branches and income types are empty', () => {
+  // Income types moved to BranchContractLayoutComponent in 85694e4, so this page renders
+  // the branches table only — one empty-state row, not two.
+  it('renders an empty-state row when branches are empty', () => {
     setContract(makeContract());
     fixture.detectChanges();
 
     const emptyRows: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('td.text-center.text-muted'));
-    expect(emptyRows.length).toBe(2);
+    expect(emptyRows.length).toBe(1);
     expect(emptyRows.some(row => row.textContent?.includes('ไม่มีข้อมูล'))).toBeTrue();
   });
 
-  it('renders a row per branch and income type when data is present', () => {
+  it('renders a row per branch when data is present', () => {
     setContract(makeContract({
       branches: [
         { id: 1, branchCode: 'B1', branchName: 'Branch 1', openDate: '2026-01-01', closeDate: null, createdAt: '2026-01-01' },
@@ -114,7 +116,7 @@ describe('BranchContractSpecsPageComponent', () => {
     fixture.detectChanges();
 
     const branchRows = fixture.nativeElement.querySelectorAll('table tbody tr');
-    expect(branchRows.length).toBeGreaterThanOrEqual(3); // 1 income type row + 2 branch rows
+    expect(branchRows.length).toBe(2); // 2 branch rows; income types render in the layout
     expect(fixture.nativeElement.textContent).toContain('B1');
     expect(fixture.nativeElement.textContent).toContain('B2');
     expect(fixture.nativeElement.textContent).toContain('เปิดอยู่'); // open branch badge

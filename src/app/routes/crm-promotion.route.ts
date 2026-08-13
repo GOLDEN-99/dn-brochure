@@ -6,14 +6,10 @@ import { ProductGroupConfigService } from "../service/crm-promotion/product-grou
 import { provideCreatePromotionConfig } from "../factory/crm-promotion/create-promotion";
 import { CrmPromotionLayoutComponent } from "../layout/crm-promotion-layout/crm-promotion-layout.component";
 import { CrmPromotionService } from "../service/crm-promotion/crm-promotion.service";
+import { CREATE_ROUTE_PATH } from "./crm-promotion.path";
 
-export const CREATE_ROUTE_PATH = [
-    { path: "create-inline", name: 'ลดรายสินค้า', icon: 'bi bi-list-ul me-2' },
-    { path: "create-bill", name: 'ส่วนลดท้ายบิล', icon: 'bi bi-receipt me-2' },
-    { path: "create-group", name: 'ส่วนลดตามกลุ่มสินค้า', icon: 'bi bi-tags me-2' }
-]
-
-
+// re-exported so existing importers of this module keep working
+export { CREATE_ROUTE_PATH };
 
 const CREATE_ROUTE = CREATE_ROUTE_PATH.map<Route>(({ path }) => ({
     path: path,

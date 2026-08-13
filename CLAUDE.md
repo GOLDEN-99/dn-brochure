@@ -61,6 +61,9 @@ Other Income v2 API reference docs live at repo root `docs/API_REFERENCE.md`, `d
 - Test behavior, not implementation; mock services/HTTP calls; test signal reactivity/computed values.
 - Common mocks (see `note.md` for full snippets): `jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl'])`; `ActivatedRoute` provided as a plain object with `params`/`queryParams`/`data` as `of(...)` and a `snapshot`; API services as `jasmine.createSpyObj('ApiService', ['get', 'post', 'put', 'delete'])`.
 - Much of the newer Other Income correction-flow code (CN/lag/manual correction) currently ships with no test coverage — check before assuming a `.spec.ts` exists for a file you're changing.
+- **Read `docs/testing-notes.md` before writing specs here.** It documents the traps that cost the most time — provider ordering (`provideRouter([])` overrides a later-listed `ActivatedRoute` mock… and an earlier-listed one silently loses), route-scoped services that must be provided exactly as their route provides them (including `useFactory`), signal-forms `FieldTree`/`FieldState` construction, and the supplier pages' positional dependency on route depth (`src/app/testing/supplier-route.mock.ts`). It also records the design issues the suite exposed.
+- Headless/CI run: `CHROME_BIN=$(node -e "Promise.resolve(require('puppeteer').executablePath()).then(p=>console.log(p))") npm run test:headless`.
+- Don't commit an unedited `ng generate` spec. 81% of spec files here contain only the generated `should create`, which reports coverage while asserting nothing — a missing spec is more honest than an empty one.
 
 ### Lazy-loaded routes
 

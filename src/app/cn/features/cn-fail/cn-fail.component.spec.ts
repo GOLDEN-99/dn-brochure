@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CnStateService } from '../../shared/services/cn-state.service';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { CnFailComponent } from './cn-fail.component';
 
@@ -8,7 +11,8 @@ describe('CnFailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CnFailComponent]
+      imports: [CnFailComponent],
+      providers: [CnStateService, provideHttpClient(), provideHttpClientTesting()]
     })
     .compileComponents();
 

@@ -20,10 +20,12 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('dn-prochure');
   });
 
-  it('should render title', () => {
+  it('renders the app shell: toast, router outlet and loading overlay', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, dn-prochure');
+    expect(compiled.querySelector('app-toast')).toBeTruthy();
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
+    expect(compiled.querySelector('app-loading')).toBeTruthy();
   });
 });

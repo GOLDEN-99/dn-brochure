@@ -14,6 +14,7 @@ describe('DayCheckbooxComponent', () => {
 
     fixture = TestBed.createComponent(DayCheckbooxComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('activeDay', [false, false, false, false, false, false, false]);
     fixture.detectChanges();
   });
 

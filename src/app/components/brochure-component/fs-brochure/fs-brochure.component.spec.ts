@@ -14,6 +14,8 @@ describe('FsBrochureComponent', () => {
 
     fixture = TestBed.createComponent(FsBrochureComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('head', { wholeName: 'W', fromDate: '2026-01-01', toDate: '2026-12-31' });
+    fixture.componentRef.setInput('items', []);
     fixture.detectChanges();
   });
 

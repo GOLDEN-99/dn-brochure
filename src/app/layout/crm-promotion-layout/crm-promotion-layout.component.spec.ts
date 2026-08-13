@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { CrmPromotionLayoutComponent } from './crm-promotion-layout.component';
 
@@ -8,7 +9,8 @@ describe('CrmPromotionLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CrmPromotionLayoutComponent]
+      imports: [CrmPromotionLayoutComponent],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 
