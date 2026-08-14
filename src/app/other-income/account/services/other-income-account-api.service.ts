@@ -15,6 +15,8 @@ import {
   TCheckStateParams,
   TSettlementReportRow,
   TSettlementReportParams,
+  TContributingProductRow,
+  TContributingProductParams,
 } from '../../shared/types/other-income.type';
 
 /**
@@ -76,6 +78,10 @@ export class OtherIncomeAccountApiService {
 
   getSettlementReport(params: TSettlementReportParams): Observable<TSettlementReportRow[]> {
     return this.api.get(`${this.url}/v2/report/settlement`, { params: compact(params) })
+  }
+
+  getContributingProducts(params: TContributingProductParams): Observable<TContributingProductRow[]> {
+    return this.api.get(`${this.url}/v2/report/contributing-products`, { params: compact(params) })
   }
 
   getBillDiscountStates(params?: TCheckStateParams): Observable<TBillDiscountStateRow[]> {

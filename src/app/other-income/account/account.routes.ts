@@ -62,6 +62,12 @@ export const ACCOUNT_ROUTES: Route = {
                 .catch(handleLazyLoadError('account accrual-promo-report'))
         },
         {
+            path: 'report/contributing-products',
+            loadComponent: () => import('../account/pages/contributing-products-report-page/contributing-products-report-page.component')
+                .then(c => c.ContributingProductsReportPageComponent)
+                .catch(handleLazyLoadError('account contributing-products-report'))
+        },
+        {
             path: 'order/:id',
             component: AccountOrderContractLayoutComponent,
             providers: [OrderContractContextService],

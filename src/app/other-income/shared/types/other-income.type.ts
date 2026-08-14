@@ -659,6 +659,50 @@ export type TAccrualReportParams = {
   compType?: 'DN' | 'HU'
 }
 
+// ---------- Contributing products report (GET /v2/report/contributing-products) ----------
+
+/**
+ * One row per contract + product that had at least one contributing receive
+ * line inside the period. A product on two contracts (e.g. a DC event and a
+ * Rebate event) yields two rows, one per event.
+ *
+ * `receivedAmount` is the stored `subtotal` snapshot — a **gross** figure that
+ * deliberately does not re-derive the accrual's discount/VAT-adjusted base, so
+ * it does not tie out to `netOrderAmount` in the accrual reports. Use it to see
+ * which products contributed and their relative weight, not to reconcile
+ * accrued income.
+ */
+export type TContributingProductRow = {
+  contractId: number
+  compCode: string
+  compName: TMaybe<string>
+  compType: 'DN' | 'HU'
+  contractLabelId: number
+  eventName: string
+  contractStartDate: string | null
+  contractEndDate: string | null
+  goodCode: string
+  barCode: TMaybe<string>
+  goodName: string
+  receivedAmount: number
+  lineCount: number
+}
+
+export type TContributingProductParams = {
+  periodFrom: string
+  periodTo: string
+  compType: 'DN' | 'HU'
+  contractLabelId?: number
+  /** Exact match. */
+  compCode?: string
+  /** Substring match. */
+  compName?: string
+  /** Exact match. */
+  barCode?: string
+  /** Substring match. */
+  goodName?: string
+}
+
 // ---------- Settlement report (GET /v2/report/settlement) ----------
 
 export type TSettlementContractResponse = Omit<TOrderContractDetail, 'products'>
