@@ -15,10 +15,10 @@
     <tbody>
       @for (inv of invoiceList(); track inv.id) {
         <tr>
-          <td>{{ inv.invNumb }}</td>
-          <td>{{ inv.invAmount | number: "1.2-2" }}</td>
-          <td>{{ inv.invRemark }}</td>
-          <td>{{ inv.invDate | date }}</td>
+          <td>{{ inv.invoiceNumb }}</td>
+          <td>{{ inv.invoiceAmount | number: "1.2-2" }}</td>
+          <td>{{ inv.invoiceRemark }}</td>
+          <td>{{ inv.invoiceDate | date }}</td>
           <td>
             <button
               class="btn btn-squre btn-danger"

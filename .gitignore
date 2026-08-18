@@ -43,7 +43,5 @@ Thumbs.db
 
 #AI Assistants
 .claude
-# local env / secrets
+
 .env
-.env.*
-!.env.example

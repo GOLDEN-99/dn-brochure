@@ -1,0 +1,147 @@
+<!-- Backdrop (mobile/tablet only) -->
+@if (sidebarOpen()) {
+  <div class="sidebar-backdrop d-xl-none" (click)="toggleSidebar()"></div>
+}
+
+<div class="layout-wrapper">
+  <!-- Sidebar -->
+  <nav class="sidebar" [class.sidebar--open]="sidebarOpen()">
+    <div class="sidebar__header">
+      <span class="sidebar__title">รายได้อื่นๆ</span>
+      <button
+        class="sidebar__close btn btn-link d-xl-none"
+        (click)="toggleSidebar()"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <ul class="sidebar__nav nav flex-column">
+      <!--Reconsil-->
+      <li class="nav-item">
+        <span class="sidebar__section-label">ตรวจสอบ</span>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./"
+          [routerLinkActiveOptions]="{
+            paths: 'exact',
+            queryParams: 'ignored',
+            fragment: 'ignored',
+            matrixParams: 'ignored',
+          }"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          รายการชำระ (Settlements)
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./invoice-states"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          ใบแจ้งหนี้ค้างจับคู่ (Invoice States)
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./bill-discount-states"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          ตรวจสอบ CN กับบิล
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./free-item-states"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          ตรวจสอบสินค้าแถม
+        </a>
+      </li>
+
+      <!--รายงาน-->
+      <li class="nav-item">
+        <span class="sidebar__section-label">รายงาน</span>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./report/settlement"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          รายงานปรับปรุงประมาณการ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./report/contributing-products"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          รายการสินค้าเข้าร่วม DC/Rebate
+        </a>
+      </li>
+
+      <!--ประมาณการ-->
+      <li class="nav-item">
+        <span class="sidebar__section-label">ประมาณการ</span>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./report/order"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          DC REBATE
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./report/branch"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          Light Box
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="./report/promo"
+          [routerLinkActive]="'active'"
+          (click)="closeSidebarOnMobile()"
+        >
+          อื่นๆ
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main content -->
+  <div class="layout-main" #layoutMain>
+    <!-- Topbar (hamburger visible on < xl) -->
+    <header class="topbar d-xl-none">
+      <button class="topbar__hamburger btn btn-link" (click)="toggleSidebar()">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+      <span class="topbar__title">รายได้อื่นๆ</span>
+    </header>
+
+    <main class="layout-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

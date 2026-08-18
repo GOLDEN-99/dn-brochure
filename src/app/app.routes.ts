@@ -4,14 +4,18 @@ import { NotfoundComponent } from './pages/notfound/notfound.component';
 //already review
 import { BROCHURE_ROUTES } from './brochure/routes';
 import { CN_ROUTES } from './cn/routes/cn.route';
-// wait for review
 import { SUPPLIER_ROUTES } from './routes/supplier.route';
 import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
-import { OTHER_INCOME_ROUTES } from './routes/other-income.route';
-import { OTHER_INCOME_ROUTES as v2 } from './other-income/routes/other-income.route'
+import { OTHER_INCOME_ROUTES as OTHER_INCOME_ROUTES_V1 } from './routes/other-income.route';
+import { OTHER_INCOME_ROUTES as OTHER_INCOME_ROUTES_V2 } from './other-income/routes/other-income.route'
 import { STOCK_ITEM_ROUTES } from './routes/stock-item.route';
 import { QUOTA_ITEM_ROUTES } from './routes/quota-item.route';
 import { CRM_PROMOTION_ROUTE } from './routes/crm-promotion.route';
+
+// Single toggle for which Other Income implementation is mounted — both
+// versions register routes under the same 'other-income' path, so exactly
+// one must be active at a time.
+// const OTHER_INCOME_ROUTES = OTHER_INCOME_ROUTES_V2;
 
 export const routes: Routes = [
     // Brochure & Marketing
@@ -26,9 +30,8 @@ export const routes: Routes = [
     ...HU_INBOUND_ROUTE,
 
     // Other Income
-    ...OTHER_INCOME_ROUTES,
-    // other income v2
-    ...v2,
+    ...OTHER_INCOME_ROUTES_V1, // legacy, mounted at 'other-income'
+    ...OTHER_INCOME_ROUTES_V2, // rewrite, mounted at 'v2/other-income'
 
     // Stock Item
     ...STOCK_ITEM_ROUTES,

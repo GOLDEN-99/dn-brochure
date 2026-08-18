@@ -1,0 +1,78 @@
+@if (ctx.contract(); as contract) {
+  <!-- Spec card -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">เงื่อนไขการคำนวณ</div>
+    <div class="card-body">
+      <div class="row row-cols-2 row-cols-md-4 g-2 mb-3">
+        <div>
+          <small class="text-muted d-block">รูปแบบ</small
+          >{{ contract.spec.calcType }}
+        </div>
+        <div>
+          <small class="text-muted d-block">เพดานยอดซื้อ(บาท)</small>
+          {{ contract.spec.capAmount ?? "ไม่กำหนด" }}
+        </div>
+        <div>
+          <small class="text-muted d-block">เงื่อนไขการหักส่วนลด และภาษี</small>
+          <span class="d-flex flex-wrap gap-1">
+            @if (contract.spec.excludeVat) {
+              <span class="badge bg-secondary">VAT</span>
+            }
+            @if (contract.spec.excludeDc) {
+              <span class="badge bg-secondary">DC</span>
+            }
+            @if (contract.spec.excludeRebate) {
+              <span class="badge bg-secondary">Rebate</span>
+            }
+            @if (contract.spec.excludeInce) {
+              <span class="badge bg-secondary">Incentive</span>
+            }
+            @if (contract.spec.excludeComp) {
+              <span class="badge bg-secondary">Comp</span>
+            }
+          </span>
+        </div>
+      </div>
+      <table class="table table-sm table-bordered" style="font-size: 12px">
+        <thead>
+          <tr>
+            <th>ตั้งแต่(บาท)</th>
+            <th>จ่าย(%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (step of contract.steps; track step.id) {
+            <tr>
+              <td>{{ step.min }}</td>
+              <td>{{ step.rate }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="3" class="text-center text-muted py-2">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Product filters -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">
+      สินค้าที่ใช้คำนวณ <span>({{ contract.products.length }} ชิ้น)</span>
+    </div>
+    <div class="card-body">
+      @if (contract.products.length) {
+        <app-paginated-list [items]="contract.products" [pageSize]="10">
+          <ng-template #row let-product>
+            <span>{{ product.barCode }} - {{ product.goodName ?? "-" }}</span>
+          </ng-template>
+        </app-paginated-list>
+      } @else {
+        <span class="text-muted">ไม่มีข้อมูล</span>
+      }
+    </div>
+  </div>
+}

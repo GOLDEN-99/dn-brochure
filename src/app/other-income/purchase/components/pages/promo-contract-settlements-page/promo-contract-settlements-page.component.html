@@ -1,0 +1,61 @@
+@if (ctx.contract(); as contract) {
+  <!-- Create settlement -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">สร้าง Settlement</div>
+    <div class="card-body">
+      <other-income-create-settlement-form
+        [contractId]="contract.id"
+        [contractType]="'PROMO'"
+        [openEntries]="openIncomeEntries()"
+        [submitting]="submittingSettlement()"
+        (submitSettlement)="onSubmitSettlement($event)"
+      ></other-income-create-settlement-form>
+    </div>
+  </div>
+
+  <!-- Settlements -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">รายการเคลียร์ยอด (Settlements)</div>
+    <div class="card-body p-0">
+      <table
+        class="table table-sm table-striped table-bordered mb-0"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>งวด</th>
+            <th>เริ่ม</th>
+            <th>จบ</th>
+            <th>System Income</th>
+            <th>สร้างเมื่อ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (settlement of ctx.settlements(); track settlement.id) {
+            <tr>
+              <td>{{ settlement.periodName }}</td>
+              <td>{{ settlement.startDate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ settlement.endDate | date: "dd/MM/yyyy" }}</td>
+              <td>{{ settlement.systemIncome }}</td>
+              <td>{{ settlement.createdAt | date: "dd/MM/yyyy HH:mm" }}</td>
+              <td>
+                <a
+                  [routerLink]="['./', settlement.id]"
+                  class="btn btn-sm btn-outline-primary"
+                  >ดูรายละเอียด</a
+                >
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center text-muted py-3">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

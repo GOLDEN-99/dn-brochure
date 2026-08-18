@@ -24,7 +24,7 @@ export const matchingSchema = schema<TMatchingState>((schema) => {
         const inv = valueOf(schema.invoice)
         const rece = valueOf(schema.receipt)
         if (typeof inv !== 'string' && typeof rece !== 'string') {
-            const max = Math.min(inv.invAmount ?? 0, rece.receAmount ?? 0)
+            const max = Math.min(inv.invoiceAmount ?? 0, rece.receAmount ?? 0)
             if (parsed > max) return { kind: 'invalid-amount', message: `ยอดจับคู่ต้องน้อยกว่า ${max} บาท` }
         }
         return null

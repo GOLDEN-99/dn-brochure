@@ -4,7 +4,7 @@
   } @else {
     <!---->
     @let e = currentResult(); @let comp = e.company;@let incomes = e.incomeList;
-    @let periods = e.periodList;@let h = e.head;
+    @let h = e.head;@let periods = e.periodList;
     <app-other-income-head-edit
       [headIncomeList]="e.headIncomeList"
       [head]="e.head"
@@ -69,7 +69,7 @@
     }
     <!---->
     @for (period of periods; track period.id) {
-      <other-income-period-display
+      <app-other-income-period-display
         [possibleIncome]="e.headIncomeList"
         [period]="period"
         [canEdit]="isPurchase"

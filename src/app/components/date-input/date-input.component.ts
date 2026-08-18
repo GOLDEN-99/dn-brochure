@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
@@ -19,7 +19,7 @@ let id = 0;
         #cal="ngbDatepicker"
         tabindex="-1"
         [ngModel]="date()"
-        (ngModelChange)="onClick($event)"
+        (ngModelChange)="onChange($event)"
         style="border: none"
       />
     </div>
@@ -51,12 +51,17 @@ let id = 0;
   </div>
 </div>
   `,
-  styles: ''
+  styles: `
+    .dp-hidden {
+
+    }
+  `
 })
 export class DateInputComponent {
   private readonly calendar = inject(NgbCalendar)
   id = id++
-  date = input<NgbDateStruct>(this.calendar.getToday())
+  date = model<NgbDateStruct>(this.calendar.getToday())
+
   label = input.required<string>()
   disableClick = input(false)
   required = input(false)
@@ -65,8 +70,7 @@ export class DateInputComponent {
     return `${date.day}/${date.month}/${date.year}`
   }
   displayDate = computed(() => this.thaiDate(this.date()))
-  dateChange = output<NgbDate>()
-  onClick(date: NgbDate) {
-    this.dateChange.emit(date)
+  onChange(date: NgbDate) {
+    this.date.set(date)
   }
 }

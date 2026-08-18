@@ -10,21 +10,11 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class OiNotLightListService {
-  constructor() {
-    effect(() => {
-      console.log(this.refresh())
-      console.log('raw list')
-      console.log(this.rawList().slice(0, 10))
-      console.log('render list')
-      console.table(this.notLightList().slice(0, 10))
-    })
-  }
+
   private readonly api = inject(ApiService)
   private readonly url = environment.oi
 
   private getAll({ compType, query }: { compType: string, query: {} }) {
-    console.log('api call')
-    console.log(query)
     return this.api.get<ManyContactResponse[]>(`${this.url}/other-income/contact/not-light/${compType}`, { params: query })
       .pipe(catchError(() => of([])))
   }

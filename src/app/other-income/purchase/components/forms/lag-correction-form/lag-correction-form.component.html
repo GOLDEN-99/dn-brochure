@@ -1,0 +1,85 @@
+<div class="row row-cols-1 row-cols-md-4 g-2 align-items-end mb-2">
+  <div class="col">
+    <label
+      [htmlFor]="lagCorrectionForm.month().name()"
+      class="form-label small text-muted mb-1"
+      >เดือน
+      @if (lagCorrectionForm.month().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <app-signal-month-picker
+      [id]="lagCorrectionForm.month().name()"
+      [formField]="lagCorrectionForm.month"
+    />
+  </div>
+
+  <div class="col">
+    <label for="lagOrderNumb" class="form-label small text-muted mb-1"
+      >เลขที่ order</label
+    >
+    <input
+      id="lagOrderNumb"
+      type="text"
+      class="form-control form-control-sm"
+      [ngbTypeahead]="search"
+      (selectItem)="onAddLine($event)"
+      [resultFormatter]="formatOrder"
+      [inputFormatter]="formatOrder"
+    />
+  </div>
+</div>
+
+<app-form-alert-text [formState]="lagCorrectionForm.lagItems()" />
+
+@if (lagCorrectionForm.lagItems().controlValue().length > 0) {
+  <table class="table table-sm table-bordered mb-2" style="font-size: 12px">
+    <thead>
+      <tr>
+        <th>เลขที่ order</th>
+        <th>ยอดสั่งซื้อรวม (บาท)</th>
+        <th>ยอดเงิน (บาท)</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of lagCorrectionForm.lagItems; track $index) {
+        @let lineItem = item().value().order;
+        <tr>
+          <td>{{ lineItem?.orderNumb }}</td>
+          <td>{{ lineItem?.allTotal ?? "-" }}</td>
+          <td>
+            <label [htmlFor]="item.amount().name()" class="visually-hidden"
+              >ยอดเงิน (บาท)</label
+            >
+            <input
+              [id]="item.amount().name()"
+              type="number"
+              class="form-control form-control-sm"
+              [formField]="item.amount"
+            />
+            <app-form-alert-text [formState]="item.amount()" />
+          </td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-squre btn-danger btn-sm"
+              (click)="onRemoveLine(lineItem?.orderNumb)"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
+<button
+  type="button"
+  class="btn btn-sm btn-primary"
+  [disabled]="!canSubmit()"
+  (click)="onSubmit()"
+>
+  บันทึก Lag Correction
+</button>

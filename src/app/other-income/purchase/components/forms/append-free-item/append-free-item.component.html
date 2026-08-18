@@ -1,1 +1,139 @@
-<p>append-free-item works!</p>
+<div class="row g-3">
+  <div class="col-6">
+    <label for="freeItemRema" class="form-label small text-muted mb-1"
+      >ประเภทของแถม</label
+    >
+    <select
+      id="freeItemRema"
+      class="form-select form-select-sm"
+      [(ngModel)]="itemRema"
+    >
+      @for (opt of itemRemaOptions; track opt.value) {
+        <option [value]="opt.value">{{ opt.label }}</option>
+      }
+    </select>
+  </div>
+  <div class="col-6">
+    <label for="freeItemOrder" class="form-label small text-muted mb-1"
+      >เลขที่คำสั่งซื้อ</label
+    >
+    <input
+      id="freeItemOrder"
+      type="text"
+      class="form-control form-control-sm"
+      placeholder="พิมพ์เลขที่คำสั่งซื้อ..."
+      [(ngModel)]="order"
+    />
+  </div>
+  <div class="col-6">
+    <app-date-input label="วันที่ PO (เริ่ม)" [(date)]="orderStart" />
+  </div>
+  <div class="col-6">
+    <app-date-input label="วันที่ PO (ถึง)" [(date)]="orderEnd" />
+  </div>
+
+  <button
+    type="button"
+    class="btn btn-sm btn-outline-primary mt-0 mb-3"
+    [disabled]="searching()"
+    (click)="onSearch()"
+  >
+    @if (searching()) {
+      กำลังค้นหา...
+    } @else {
+      ค้นหา
+    }
+  </button>
+</div>
+
+@if (results().length > 0) {
+  <table class="table table-sm table-bordered mb-2" style="font-size: 12px">
+    <thead>
+      <tr>
+        <th></th>
+        <th>เลขที่คำสั่งซื้อ</th>
+        <th>เลขที่ใบเสร็จ</th>
+        <th>รหัสสินค้า</th>
+        <th>เลขที่บิลซัพ</th>
+        <th>วันที่บิล</th>
+        <th>มูลค่า</th>
+        <th>หมายเหตุ</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (
+        row of results();
+        track row.orderNumb + row.receNumb + row.goodCode
+      ) {
+        <tr>
+          <td>
+            <input
+              type="checkbox"
+              [checked]="isPicked(row)"
+              (change)="toggleRow(row, $any($event.target).checked)"
+            />
+          </td>
+          <td>{{ row.orderNumb }}</td>
+          <td>{{ row.receNumb }}</td>
+          <td>{{ row.goodCode }} - {{ row.goodName }}</td>
+          <td>{{ row.billNumb }}</td>
+          <td>{{ row.billDate | date: "dd/MM/yyyy" }}</td>
+          <td>{{ row.incentiveAmount | number: "1.2-2" }}</td>
+          <td>{{ row.remark }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
+@if (pending().length > 0) {
+  <div class="small text-muted mb-1">รายการที่เลือก</div>
+  <table class="table table-sm table-bordered mb-2" style="font-size: 12px">
+    <thead>
+      <tr>
+        <th>เลขที่คำสั่งซื้อ</th>
+        <th>เลขที่ใบเสร็จ</th>
+        <th>รหัสสินค้า</th>
+        <th>เลขที่บิลซัพ</th>
+        <th>วันที่บิล</th>
+        <th>มูลค่า</th>
+        <th>หมายเหตุ</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (
+        row of pending();
+        track row.orderNumb + row.receNumb + row.goodCode
+      ) {
+        <tr>
+          <td>{{ row.orderNumb }}</td>
+          <td>{{ row.receNumb }}</td>
+          <td>{{ row.goodCode }} - {{ row.goodName }}</td>
+          <td>{{ row.billNumb }}</td>
+          <td>{{ row.billDate | date: "dd/MM/yyyy" }}</td>
+          <td>{{ row.incentiveAmount | number: "1.2-2" }}</td>
+          <td>{{ row.remark }}</td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              (click)="removePending(row)"
+            >
+              ลบ
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
+<button
+  type="button"
+  class="btn btn-sm btn-primary"
+  [disabled]="!canSubmit()"
+  (click)="onSubmit()"
+>
+  เพิ่มของแถม ({{ pending().length }})
+</button>

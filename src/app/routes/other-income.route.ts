@@ -116,12 +116,6 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                         useValue: { isPurchase: true }
                     }
                 ],
-                children: [
-                    {
-                        path: "",
-                        loadComponent: () => lazyLoadWithRetry(() => import('../other-income/purchase/components/features/other-income-create-pair/other-income-create-pair.component')).then(r => r.OtherIncomeCreatePairComponent).catch(handleLazyLoadError('other-income/not-light/create-pair'))
-                    },
-                ]
             },
             {
                 path: 'purchase/light/:headId',
@@ -194,7 +188,7 @@ export const OTHER_INCOME_ROUTES: Route[] = [
                     },
                     {
                         path: 'invoices',
-                        loadComponent: () => lazyLoadWithRetry(() => import("../other-income/account/pages/account-invoice-page/account-invoice-page.component"))
+                        loadComponent: () => lazyLoadWithRetry(() => import("../pages/other-income/account/account-invoice-page/account-invoice-page.component"))
                             .then(r => r.AccountInvoicePageComponent)
                             .catch(handleLazyLoadError('other-income/account/invoices'))
                     }

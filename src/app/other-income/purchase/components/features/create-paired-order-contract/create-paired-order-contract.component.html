@@ -1,0 +1,71 @@
+<div class="card mb-3">
+  <div class="card-header">ข้อมูลทั่วไป</div>
+  <div class="card-body">
+    <other-income-create-pair-head [headForm]="createForm.head" />
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">เลือกบริษัท DN / HU</div>
+  <div class="card-body">
+    <other-income-create-pair-supplier-picker [formField]="createForm.comps" />
+  </div>
+</div>
+<div class="card mb-3">
+  <div class="card-header">เลือกสินค้า</div>
+  <div class="card-body">
+    <other-income-create-pair-product-picker
+      [dnCompCode]="formData().comps.dnComp.compCode"
+      [huCompCode]="formData().comps.huComp.compCode"
+      [(value)]="createForm.products().controlValue"
+    />
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">เงื่อนไข</div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col">
+        <other-income-product-condition-form
+          [excludeFlagsForm]="createForm.excludeFlags"
+        />
+      </div>
+      <div class="col">
+        <other-income-step-form [stepForm]="createForm.calcSpec" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">รายละเอียดการจ่าย</div>
+  <div class="card-body">
+    <div class="row row-cols-2 g-2">
+      <div class="col">
+        <other-income-income-select
+          [form]="createForm.head.bill"
+          [incomeType]="'Bill'"
+        />
+      </div>
+      <div class="col">
+        <other-income-income-select
+          [form]="createForm.head.freeItem"
+          [incomeType]="'FreeItem'"
+        />
+      </div>
+      <div class="col">
+        <other-income-income-select
+          [form]="createForm.head.invoice"
+          [incomeType]="'Invoice'"
+        />
+      </div>
+      <div class="col">
+        <other-income-income-select
+          [form]="createForm.head.creditNote"
+          [incomeType]="'CreditNote'"
+        />
+      </div>
+    </div>
+  </div>
+</div>

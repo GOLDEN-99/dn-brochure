@@ -60,7 +60,7 @@ export class PartialCancelOrderComponent {
     const goodList = mapCheckedReturnListToGoodReq(returnList)
     this.loading.startLoad()
     this.cnClient.submit({
-      bankcode: bankCode, ...meta,
+      bankcode: bankCode || '0', ...meta,
       ...temp,
       totalprice,
       goodList,

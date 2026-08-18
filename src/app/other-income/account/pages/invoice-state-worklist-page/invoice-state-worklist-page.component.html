@@ -1,0 +1,133 @@
+<h1 class="text-center">ใบแจ้งหนี้ค้างจับคู่ (Invoice States)</h1>
+
+<div class="d-flex gap-2 mb-3">
+  <select
+    class="form-select"
+    style="max-width: 200px"
+    [ngModel]="filters().invoiceState"
+    (ngModelChange)="setInvoiceState($event)"
+  >
+    <option [ngValue]="null">ทุกสถานะ</option>
+    <option value="UNMATCHED">UNMATCHED</option>
+    <option value="MATCHED">MATCHED</option>
+  </select>
+  <select
+    class="form-select"
+    style="max-width: 160px"
+    [ngModel]="filters().contractType"
+    (ngModelChange)="setContractType($event)"
+  >
+    <option [ngValue]="null">ทุกสัญญา</option>
+    <option value="ORDER">{{ contractTypeLabel.ORDER }}</option>
+    <option value="BRANCH">{{ contractTypeLabel.BRANCH }}</option>
+    <option value="PROMO">{{ contractTypeLabel.PROMO }}</option>
+  </select>
+  <select
+    class="form-select"
+    style="max-width: 120px"
+    [ngModel]="filters().compType"
+    (ngModelChange)="setCompType($event)"
+  >
+    <option value="DN">{{ compTypeLabel.DN }}</option>
+    <option value="HU">{{ compTypeLabel.HU }}</option>
+  </select>
+  <button class="btn btn-outline-secondary" (click)="refresh()">
+    <i class="bi bi-arrow-clockwise"></i>
+  </button>
+  <button
+    class="btn btn-outline-success ms-auto"
+    [disabled]="loading() || items().length === 0"
+    (click)="exportExcel()"
+  >
+    <i class="bi bi-file-earmark-excel"></i>
+    Export Excel
+  </button>
+</div>
+
+@if (loading()) {
+  <div class="text-center py-4">
+    <div
+      class="spinner-border spinner-border-sm text-secondary"
+      role="status"
+    ></div>
+    <span class="ms-2 text-muted">กำลังโหลด...</span>
+  </div>
+} @else if (error()) {
+  <div class="alert alert-danger d-flex align-items-center gap-2">
+    {{ error() }}
+    <button class="btn btn-sm btn-outline-danger ms-auto" (click)="refresh()">
+      ลองใหม่
+    </button>
+  </div>
+} @else {
+  <table class="table table-striped table-bordered" style="font-size: 12px">
+    <thead>
+      <tr>
+        <th>รหัสซัพ</th>
+        <th>ชื่อซัพ</th>
+        <th>ประเภทกิจกรรม</th>
+        <th>เลขที่ใบแจ้งหนี้</th>
+        <th>วันที่ใบแจ้งหนี้</th>
+        <th class="text-end">ยอดใบแจ้งหนี้</th>
+        <th class="text-end">ยอดจับคู่แล้ว</th>
+        <th>สถานะ</th>
+        <th>เลขที่ใบเสร็จ</th>
+        <th>วันที่ใบเสร็จรับเงินล่าสุด</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of items(); track row.invoiceId) {
+        <tr>
+          <td>{{ row.compCode }}</td>
+          <td>{{ row.compName }}</td>
+          <td>{{ row.contractLabelName }}</td>
+          <td>{{ row.invoiceNumb }}</td>
+          <td>
+            {{ row.invoiceDate ? (row.invoiceDate | date: "dd/MM/yyyy") : "-" }}
+          </td>
+          <td class="text-end">{{ row.invoiceAmount | number: "1.2-2" }}</td>
+          <td class="text-end">{{ row.matchedAmount | number: "1.2-2" }}</td>
+          <td>
+            <span
+              class="badge"
+              [class.text-bg-warning]="row.invoiceState === 'UNMATCHED'"
+              [class.text-bg-info]="isPartiallyReceived(row)"
+              [class.text-bg-success]="row.invoiceState === 'MATCHED'"
+              >{{
+                isPartiallyReceived(row) ? "PARTIAL" : row.invoiceState
+              }}</span
+            >
+          </td>
+          <td>{{ row.receiptNumbs ?? "-" }}</td>
+          <td>
+            {{
+              row.lastReceiptDate
+                ? (row.lastReceiptDate | date: "dd/MM/yyyy")
+                : "-"
+            }}
+          </td>
+          <td>
+            <a
+              [routerLink]="[
+                '../',
+                contractTypePath[row.contractType],
+                row.contractId,
+                'settlements',
+                row.settlementId,
+              ]"
+              [queryParams]="{ incomeType: 'Invoice' }"
+              class="btn btn-sm btn-outline-primary"
+            >
+              รายละเอียด
+            </a>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="11" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

@@ -1,0 +1,43 @@
+@if (ctx.contract(); as contract) {
+  <!-- Income entries -->
+  <div class="card mb-3">
+    <div class="card-header fw-bold">รายการตั้งประมาณการรายได้</div>
+    <div class="card-body p-0">
+      <table
+        class="table table-sm table-striped table-bordered mb-0"
+        style="font-size: 12px"
+      >
+        <thead>
+          <tr>
+            <th>เดือน</th>
+            <th>จำนวนรายได้</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (entry of ctx.incomeEntries(); track entry.id) {
+            <tr>
+              <td>{{ entry.month | date: "MM/yyyy" }}</td>
+              <td>{{ entry.amount }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.bg-warning]="!entry.settlementId"
+                  [class.bg-success]="entry.settlementId"
+                >
+                  {{ entry.settlementId ? "picked" : "open" }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="3" class="text-center text-muted py-3">
+                ไม่มีข้อมูล
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

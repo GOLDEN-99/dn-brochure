@@ -1,7 +1,7 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { SelectComponent } from '../../../../shared/components/select/select.component';
-import { TOtherIncomeEvent } from '../../types/other-income.type'
+import { TContractLabel, TContractLabelType } from '../../types/other-income.type'
 import { OptionComponent } from '../../../../shared/components/select/option.component';
 import { OtherIncomeEventService } from '../../services/other-income-event.service';
 
@@ -14,7 +14,7 @@ import { OtherIncomeEventService } from '../../services/other-income-event.servi
 export class OtherIncomeEventSelectComponent {
   private readonly otherIncomeEvent = inject(OtherIncomeEventService);
   eventList = this.otherIncomeEvent.event;
-  eventType = input<number | null>(null);
+  eventType = input<TContractLabelType | null>(null);
   renderEvent = computed(() => this.eventList().filter((event) => this.eventType() === event.eventType || !this.eventType()));
-  form = input.required<FieldTree<TOtherIncomeEvent | null, string>>();
+  form = input.required<FieldTree<TContractLabel | null, string>>();
 }

@@ -4,6 +4,7 @@
   } @else {
     @let e = currentResult();@let branches = e.branchList;
     @let periods = e.periodList;
+
     <app-other-income-head-edit
       [headIncomeList]="e.headIncomeList"
       [head]="e.head"
@@ -23,7 +24,7 @@
       (refetch)="onRefetch()"
     />
     @for (period of periods; track period.id) {
-      <other-income-period-display
+      <app-other-income-period-display
         [possibleIncome]="e.headIncomeList"
         [period]="period"
         [canEdit]="isPurchase"

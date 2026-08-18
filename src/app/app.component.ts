@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { ToastComponent } from "./components/toast/toast.component";
 import { LoadingComponent } from "./components/loading/loading.component";
 
@@ -11,4 +11,7 @@ import { LoadingComponent } from "./components/loading/loading.component";
 })
 export class AppComponent {
   title = 'dn-prochure';
+
+  private readonly router = inject(Router);
+
 }

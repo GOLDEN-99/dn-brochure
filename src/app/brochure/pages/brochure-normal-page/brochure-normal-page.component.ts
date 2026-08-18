@@ -78,7 +78,6 @@ export class BrochureNormalPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.result$.subscribe({
       next: (res) => {
-        console.log('next')
         this.result.set(res)
         this.loading.set(false)
       },

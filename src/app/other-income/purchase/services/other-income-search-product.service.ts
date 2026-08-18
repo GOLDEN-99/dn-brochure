@@ -3,7 +3,8 @@ import { ApiService } from '../../../shared/services/api.service';
 import { environment } from '../../../../environments/environment';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, debounceTime, distinctUntilChanged, filter, of, switchMap } from 'rxjs';
-import { COMP_TYPE, TOtherIncomeCompType } from '../../shared/types/other-income.type';
+import { CompType } from '../../shared/libs/other-income-schema';
+
 
 @Injectable()
 export class OtherIncomeSearchProductService {
@@ -27,7 +28,7 @@ export class OtherIncomeSearchProductService {
   searchProduct({ compCode, compType }: TSearchProduct) {
     return this.api
       .get<TSearchProductResult[]>(
-        `${this.url}/${COMP_TYPE[compType]}`,
+        `${this.url}/${compType}`,
         { params: { compCode } }
       ).pipe(catchError(err => of([] as TSearchProductResult[])))
   }
@@ -51,6 +52,6 @@ export type TSearchProductResult = {
 }
 
 type TSearchProduct = {
-  compType: TOtherIncomeCompType
+  compType: CompType
   compCode: string
 }

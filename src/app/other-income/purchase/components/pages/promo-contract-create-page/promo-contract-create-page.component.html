@@ -1,0 +1,104 @@
+<div class="card mb-3">
+  <div class="card-header">ข้อมูลทั่วไป</div>
+  <div class="card-body">
+    <other-income-create-single-head [headForm]="createContractForm.head" [eventType]="'PROMO'" />
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">ข้อมูลซัพ</div>
+  <div class="card-body">
+    @let compType = createContractForm.comp.compType().value();
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <span class="fw-semibold">เลือกบริษัท</span>
+      <fieldset class="btn-group">
+        <input
+          class="btn-check"
+          type="radio"
+          id="comp-dn"
+          value="DN"
+          [formField]="createContractForm.comp.compType"
+        />
+        <label
+          class="btn"
+          [class.btn-dn]="compType === 'DN'"
+          [class.btn-hu-outline]="compType === 'HU'"
+          for="comp-dn"
+          >DN</label
+        >
+        <input
+          class="btn-check"
+          type="radio"
+          id="comp-hu"
+          value="HU"
+          [formField]="createContractForm.comp.compType"
+        />
+        <label
+          class="btn"
+          [class.btn-hu]="compType === 'HU'"
+          [class.btn-dn-outline]="compType === 'DN'"
+          for="comp-hu"
+          >HU</label
+        >
+      </fieldset>
+    </div>
+    <!---->
+    @if (compType === "DN") {
+      <other-income-create-single-comp-without-product
+        compType="DN"
+        [formField]="createContractForm.comp.dnComp"
+      />
+    }
+    <!---->
+    @if (compType === "HU") {
+      <other-income-create-single-comp-without-product
+        compType="HU"
+        [formField]="createContractForm.comp.huComp"
+      />
+    }
+    <!---->
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">รายละเอียดการจ่าย</div>
+  <div class="card-body">
+    <div class="row row-cols-2 g-2">
+      <div class="col">
+        <other-income-income-select
+          [form]="createContractForm.head.bill"
+          [incomeType]="'Bill'"
+        />
+      </div>
+      <div class="col">
+        <other-income-income-select
+          [form]="createContractForm.head.freeItem"
+          [incomeType]="'FreeItem'"
+        />
+      </div>
+      <div class="col">
+        <other-income-income-select
+          [form]="createContractForm.head.invoice"
+          [incomeType]="'Invoice'"
+        />
+      </div>
+      <div class="col">
+        <other-income-income-select
+          [form]="createContractForm.head.creditNote"
+          [incomeType]="'CreditNote'"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-center mb-4">
+  <button
+    class="btn btn-success"
+    [disabled]="cannotSubmit()"
+    (click)="onSubmit()"
+  >
+    <i class="bi bi-floppy"></i>
+    <span> บันทึก </span>
+  </button>
+</div>

@@ -1,0 +1,60 @@
+<div class="modal-header">
+  <h4 class="modal-title">เพิ่มใบเสร็จ</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="closeModal.emit()"
+  ></button>
+</div>
+<div class="modal-body">
+  <div class="mb-3">
+    <label for="receipt-date-input" class="form-label">วันที่ใบเสร็จ</label>
+    <app-signal-datepicker
+      [formField]="createForm.receDate"
+      id="receipt-date-input"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="receipt-numb-input">เลขที่ใบเสร็จ</label>
+    <input
+      type="text"
+      [formField]="createForm.receNumb"
+      id="receipt-numb-input"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="total-inv">ยอดใบแจ้งหนี้ทั้งหมด</label>
+    <input readonly [ngModel]="totalInvoice()" name="total-inv" />
+  </div>
+  <div class="app-form-field">
+    <label for="remain-inv">ยอดใบแจ้งหนี้คงเหลือ</label>
+    <input type="number" [formField]="createForm.remainingInvoice" />
+  </div>
+  <div class="app-form-field">
+    <label for="receipt-amount-input">ยอดใบเสร็จ</label>
+    <input
+      type="text"
+      [formField]="createForm.receAmount"
+      id="receipt-amount-input"
+      inputmode="numeric"
+    />
+  </div>
+  <div class="app-form-field">
+    <label for="receipt-remark-text">หมายเหตุ</label>
+    <textarea
+      type="text"
+      [formField]="createForm.receRemark"
+      id="receipt-remark-text"
+    ></textarea>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    class="btn btn-primary w-100"
+    [disabled]="cannotSubmit()"
+    (click)="onSubmit()"
+  >
+    บันทึก
+  </button>
+</div>

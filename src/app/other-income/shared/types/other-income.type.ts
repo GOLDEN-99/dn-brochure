@@ -1,74 +1,773 @@
 import { NgbDateStruct } from "@ng-bootstrap/ng-bootstrap"
-
-export type TOtherIncomeEvent = {
-  id: number
-  eventName: string
-  eventType: number
-}
+import { TMaybe } from "../../../shared/types/index.type"
 
 export type TDateRangeFormState = {
-  startDate: NgbDateStruct,
+  startDate: NgbDateStruct
   endDate: NgbDateStruct
 }
 
+// ---------- Master data ----------
 
-export type TOtherIncomeIncome = {
+export type TEmployee = {
+  emplCode: string
+  emplName: string
+}
+
+export type TOtherIncomeCompanyRes = {
+  compCode: string
+  compName: string
+  compName2: string
+  compGroupCode: string
+  compType: 'DN' | 'HU'
+}
+
+export type TSupplierPair = {
+  id: number
+  displayName: string
+  dnCompCode: string
+  huCompCode: string
+}
+
+// ---------- Lookup labels ----------
+
+export type TContractLabelType = 'ORDER' | 'BRANCH' | 'PROMO'
+
+export type TContractLabel = {
+  id: number
+  eventName: string
+  eventType: TContractLabelType
+}
+
+export type TIncomeLabelType = 'Bill' | 'FreeItem' | 'Invoice' | 'CreditNote'
+
+export type TIncomeLabel = {
   id: number
   incomeName: string
-  incomeType: number
+  incomeType: TIncomeLabelType
 }
 
-export type TOtherIncomeCreateInvoice = {
-  invNumb: string
-  invDate: string
-  invAmount: number
-  invRemark: string
+// ---------- Calc type ----------
+
+export const CALC_TYPE = {
+  flat: 'Flat',
+  step: 'Step',
+  cumulative: 'Cumulative',
+} as const
+
+export type TCalcType = (typeof CALC_TYPE)[keyof typeof CALC_TYPE]
+
+export const CALC_TYPE_LABEL: Record<TCalcType, string> = {
+  Flat: 'บาทแรก',
+  Cumulative: 'step บาทแรก',
+  Step: 'ขั้นบันได',
 }
 
-export type TOtherIncomeInvoice = TOtherIncomeCreateInvoice & { id: number, checkDate: string | null, matchedAmount: number, remainingAmount: number }
+// ---------- Shared contract base ----------
 
-export type TOtherIncomeMatching = { invoiceId: number, receiptId: number, matchedAmount: number }
+export type TContractBase = {
+  id: number
+  compCode: string
+  compName: TMaybe<string>
+  compType: 'DN' | 'HU'
+  contractLabelId: number
+  contractLabelName: string
+  settlementPeriod: number
+  startDate: string
+  endDate: string
+  createdAt: string
+}
 
-export type TOtherIncomeMatchOnCreate = Pick<TOtherIncomeMatching, 'invoiceId' | 'matchedAmount'>
+// ---------- Track A — Order contracts ----------
 
-export type TOtherIncomeCreateReceipt = {
+export type TOrderContractCurrentBracket = {
+  id: number
+  min: number
+  max: TMaybe<number>
+  rate: number
+}
+
+export type TOrderContractListItem = TContractBase & {
+  supplierPairId: TMaybe<number>
+  cumulativeOrderAmount: number
+  calcType: TCalcType
+  currentBracket: TMaybe<TOrderContractCurrentBracket>
+}
+
+export type TOrderContractSpec = {
+  id: number
+  calcType: TCalcType
+  capAmount: TMaybe<number>
+  excludeVat: boolean
+  excludeDc: boolean
+  excludeRebate: boolean
+  excludeInce: boolean
+  excludeComp: boolean
+}
+
+export type TOrderContractStep = {
+  id: number
+  min: number
+  max: TMaybe<number>
+  rate: number
+}
+
+export type TOrderContractProduct = {
+  goodCode: string
+  goodName: TMaybe<string>
+  barCode: TMaybe<string>
+}
+
+export type TContractIncomeType = {
+  id: number
+  contractId: number
+  contractType: 'ORDER' | 'BRANCH' | 'PROMO'
+  incomeType: 'Bill' | 'FreeItem' | 'Invoice' | 'CreditNote'
+  incomeLabelId: TMaybe<number>
+  incomeLabelName: TMaybe<string>
+  createdAt: string
+}
+
+export type TOrderContractDetail = TOrderContractListItem & {
+  spec: TOrderContractSpec
+  steps: TOrderContractStep[]
+  products: TOrderContractProduct[]
+  incomeTypes: TContractIncomeType[]
+}
+
+// ---------- Track B — Branch contracts ----------
+
+export type TBranchContractSpec = {
+  id: number
+  maxBranches: number
+  ratePerBranch: number
+}
+
+export type TBranchEntry = {
+  id: number
+  branchCode: string
+  branchName: TMaybe<string>
+  openDate: string
+  closeDate: TMaybe<string>
+  createdAt: string
+}
+
+export type TBranchContractListItem = TContractBase
+
+export type TBranchContractDetail = TContractBase & {
+  spec: TBranchContractSpec
+  branches: TBranchEntry[]
+  incomeTypes: TContractIncomeType[]
+}
+
+// ---------- Track C — Promo contracts ----------
+
+export type TPromoContractListItem = TContractBase & {
+  entriesAmountTotal: number
+  settlementsSupplierIncomeTotal: number
+}
+
+export type TPromoContractDetail = TContractBase & {
+  incomeTypes: TContractIncomeType[]
+}
+
+// ---------- Shared — income entries ----------
+
+export type TIncomeEntryType = 'AUTO' | 'CN_CORRECTION' | 'LAG_CORRECTION' | 'MANUAL_CORRECTION'
+
+export type TIncomeEntry = {
+  id: number
+  contractId: number
+  contractType: 'ORDER' | 'BRANCH' | 'PROMO'
+  entryType: TIncomeEntryType
+  month: string
+  orderAmount: TMaybe<number>
+  amount: number
+  note: TMaybe<string>
+  settlementId: TMaybe<number>
+  createdAt: string
+}
+
+// ---------- Track A — income entry corrections ----------
+
+export type TCnCorrectionItem = { goodCode: string; amount: number }
+export type TLagCorrectionItem = { orderNumb: string; amount: number }
+
+export type TLagCorrectionRes = {
+  monthEntry: TIncomeEntry
+  nextMonthEntry: TIncomeEntry
+}
+
+export type TPostCnCorrectionReq = {
+  contractId: number
+  month: string
+  items: TCnCorrectionItem[]
+  note?: string
+}
+
+export type TPostLagCorrectionReq = {
+  contractId: number
+  month: string
+  items: TLagCorrectionItem[]
+}
+
+type TPostOrderCorrection = {
+  contractId: number
+  contractType: 'ORDER'
+  month: string
+  orderAmount: number
+  note?: string
+}
+
+type TPostBranchCorrection = {
+  contractId: number
+  contractType: 'BRANCH'
+  month: string
+  amount: number
+  note?: string
+}
+
+type TPostPromoCorrection = {
+  contractId: number
+  contractType: 'PROMO'
+  month: string
+  amount: number
+  note?: string
+}
+
+export type TPostManualCorrectionReq = TPostOrderCorrection | TPostBranchCorrection | TPostPromoCorrection
+
+// ---------- Shared — settlement detail rows ----------
+
+export type TBillDiscountRow = {
+  id: number
+  orderNumb: string
   receNumb: string
-  receDate: string
-  receAmount: number
-  receRemark: string
-  invoiceMatches: TOtherIncomeMatchOnCreate[]
+  subtotalAmount: number
+  remark: string
 }
 
-export type TOtherIncomeReceipt = Omit<TOtherIncomeCreateReceipt, 'invoiceMatches'> & { id: number, checkDate: string | null, matchedAmount: number, remainingAmount: number }
+export type TFreeItemRow = {
+  id: number
+  orderNumb: string
+  receNumb: string
+  goodCode: string
+  subtotalAmount: number
+  remark: string
+}
 
-export type TOtherIncomeCreateCreditNote = {
+export type TOtherIncomeInvoice = {
+  id: number
+  invoiceNumb: string
+  invoiceAmount: number
+  invoiceDate: string
+  invoiceRemark: string
+}
+
+export type TOtherIncomeReceipt = {
+  id: number
+  receNumb: string
+  receAmount: number
+  receDate: string
+  receRemark: string
+}
+
+export type TOtherIncomeCreditNote = {
+  id: number
   creditNumb: string
-  creditDate: string
   creditAmount: number
+  creditDate: string
   creditRemark: string
 }
 
-export type TOtherIncomeCreditNote = TOtherIncomeCreateCreditNote & { id: number, checkDate: string | null }
-
-export type TOtherIncomeCompany = {
-  compCode: string;
-  compName: string;
-  compType: string;
-  compName2: string;
-  compGroupCode: string;
+export type TOtherIncomeMatching = {
+  id: number
+  invoiceId: number
+  receiptId: number
+  matchedAmount: number
 }
 
-export const STEP_TYPE = {
-  flat: 1,
-  step: 2,
-  cumulative: 3
-} as const
+// ---------- Shared — settlements ----------
 
-export type TOtherIncomeStepType = keyof typeof STEP_TYPE
-
-export const COMP_TYPE = {
-  dn: 'DN',
-  hu: 'HU',
+export type TSettlementListItem = {
+  id: number
+  contractId: number
+  contractType: 'ORDER' | 'BRANCH' | 'PROMO'
+  periodName: string
+  startDate: string
+  endDate: string
+  systemOrderAmount: TMaybe<number>
+  cnOrderAmount: TMaybe<number>
+  systemIncome: number
+  supplierOrderAmount: TMaybe<number>
+  supplierIncome: number
+  cumulativeOrderAtClose: TMaybe<number>
+  remark: TMaybe<string>
+  createdAt: string
 }
 
-export type TOtherIncomeCompType = keyof typeof COMP_TYPE
+export type TSettlementDetail = TSettlementListItem & {
+  billDiscounts: TBillDiscountRow[]
+  freeItems: TFreeItemRow[]
+  invoices: TOtherIncomeInvoice[]
+  receipts: TOtherIncomeReceipt[]
+  creditNotes: TOtherIncomeCreditNote[]
+  matches: TOtherIncomeMatching[]
+}
+
+export type TSettlementOverviewItem = {
+  id: number
+  contractId: number
+  contractType: 'ORDER' | 'BRANCH' | 'PROMO'
+  periodName: string
+  startDate: string
+  endDate: string
+  supplierIncome: number
+  appendedTotal: number
+  remaining: number
+  balanceState: 'OUTSTANDING' | 'SETTLED'
+  reviewState: 'UNREVIEWED' | 'REVIEWED'
+  compType: 'DN' | 'HU'
+  compCode: string
+  compName: string
+  incomeType: 'Bill' | 'FreeItem' | 'Invoice' | 'CreditNote'
+  incomeLabelName: string | null
+}
+
+export type TInvoiceStateRow = {
+  invoiceId: number
+  settlementId: number
+  contractId: number
+  contractType: 'ORDER' | 'BRANCH' | 'PROMO'
+  compCode: string
+  compType: string
+  compName: string
+  contractLabelName: string
+  incomeLabelName: string | null
+  invoiceNumb: string
+  invoiceDate: string | null
+  invoiceAmount: number
+  matchedAmount: number
+  invoiceState: 'UNMATCHED' | 'MATCHED'
+  receiptNumbs: string | null
+  lastReceiptDate: string | null
+}
+
+export type TCheckState = 'CHECKED' | 'UNCHECKED'
+
+export type TBillDiscountStateRow = {
+  billDiscountId: number
+  settlementId: number
+  contractId: number
+  contractType: 'ORDER' | 'BRANCH' | 'PROMO'
+  compCode: string
+  compType: 'DN' | 'HU'
+  compName: string
+  contractLabelName: string
+  incomeLabelName: string | null
+  orderNumb: string
+  orderDate: string | null
+  receNumb: string
+  receDate: string | null
+  contractStartDate: string | null
+  contractEndDate: string | null
+  subtotalAmount: number
+  checkState: TCheckState
+  checkedAt: string | null
+  checkedBy: string | null
+}
+
+export type TFreeItemStateRow = {
+  freeItemId: number
+  settlementId: number
+  contractId: number
+  contractType: 'ORDER' | 'BRANCH' | 'PROMO'
+  compCode: string
+  compType: 'DN' | 'HU'
+  compName: string
+  contractLabelName: string
+  incomeLabelName: string | null
+  orderNumb: string
+  orderDate: string | null
+  receNumb: string
+  receDate: string | null
+  contractStartDate: string | null
+  contractEndDate: string | null
+  goodCode: string
+  subtotalAmount: number
+  checkState: TCheckState
+  checkedAt: string | null
+  checkedBy: string | null
+}
+
+export type TCheckStateParams = {
+  checkState?: TCheckState
+  contractType?: 'ORDER' | 'BRANCH' | 'PROMO'
+  contractId?: number
+  compType?: 'DN' | 'HU'
+}
+
+// ---------- Report ----------
+
+export type TAccrualStateRow = {
+  contractId: number
+  contractType: 'ORDER' | 'BRANCH' | 'PROMO'
+  month: string
+  netOrderAmount: TMaybe<number>
+  estimateIncome: TMaybe<number>
+}
+
+// ---------- Request bodies ----------
+
+export type TContractStep = { min: number; max: TMaybe<number>; rate: number }
+
+export type TIncomeTypeEntry = {
+  incomeType: 'Bill' | 'FreeItem' | 'Invoice' | 'CreditNote'
+  incomeLabelId?: number | null
+}
+
+export type TCreateOrderContractSpec = {
+  calcType: TCalcType
+  capAmount: TMaybe<number>
+  excludeVat: boolean
+  excludeDc: boolean
+  excludeRebate: boolean
+  excludeInce: boolean
+  excludeComp: boolean
+}
+
+export type TCreateOrderContractReq = {
+  compCode: string
+  compType: 'DN' | 'HU'
+  contractLabelId: number
+  settlementPeriod: number
+  startDate: string
+  endDate: string
+  supplierPairId?: TMaybe<number>
+  spec: TCreateOrderContractSpec
+  steps: TContractStep[]
+  productGoodCodes: string[]
+  incomeTypes: TIncomeTypeEntry[]
+}
+
+export type TCreatePairedOrderContractReq = Omit<TCreateOrderContractReq, 'compCode' | 'compType'> & {
+  supplierPairId: number
+  dnCompCode: string
+  huCompCode: string
+}
+
+export type TUpdateOrderContractHeaderReq = {
+  contractLabelId: number
+  settlementPeriod: number
+  startDate: string
+  endDate: string
+  supplierPairId?: TMaybe<number>
+}
+
+export type TUpdateOrderContractSpecReq = {
+  calcType: TCalcType
+  capAmount: TMaybe<number>
+  excludeVat: boolean
+  excludeDc: boolean
+  excludeRebate: boolean
+  excludeInce: boolean
+  excludeComp: boolean
+  steps: TContractStep[]
+}
+
+export type TCreateBranchContractReq = {
+  compCode: string
+  compType: 'DN' | 'HU'
+  contractLabelId: number
+  settlementPeriod: number
+  startDate: string
+  endDate: string
+  maxBranches: number
+  ratePerBranch: number
+  incomeTypes: TIncomeTypeEntry[]
+}
+
+export type TUpdateBranchContractSpecReq = { maxBranches: number; ratePerBranch: number }
+
+export type TCreatePromoContractReq = {
+  compCode: string
+  compType: 'DN' | 'HU'
+  contractLabelId: number
+  settlementPeriod: number
+  startDate: string
+  endDate: string
+  incomeTypes: TIncomeTypeEntry[]
+}
+
+export type TUpdatePromoContractReq = {
+  contractLabelId: number
+  settlementPeriod: number
+  startDate: string
+  endDate: string
+}
+
+export type TAddBranchReq = { branchCode: string; openDate: string }
+export type TCloseBranchReq = { closeDate: string }
+
+export type TBranchSearchResult = { branchCode: string; branchName: string }
+
+export type TPostPromoAccrualReq = { month: string; amount: number }
+
+export type TPostBillDiscountReq = { orderNumb: string; receNumb: string; subtotalAmount: number; remark: string }
+export type TPostFreeItemReq = { orderNumb: string; receNumb: string; goodCode: string; subtotalAmount: number; remark: string }
+
+export type TDiscType = 'Dc' | 'Rebate' | 'Ince' | 'Compensate' | 'Cash' | 'All'
+export type TItemRema = 'Dc' | 'Rebate' | 'Ince' | 'Compensation' | 'Promotion' | 'Charge' | 'Others' | 'All'
+
+export type TDateRange = { start: string | null; end: string | null }
+
+export type TBillDiscountSearchParams = {
+  compType: 'DN' | 'HU'
+  compCode: string
+  discType: TDiscType
+  order: string | null
+  orderDateRange: TDateRange
+}
+
+export type TFreeItemSearchParams = {
+  compType: 'DN' | 'HU'
+  compCode: string
+  itemRema: TItemRema
+  order: string | null
+  orderDateRange: TDateRange
+}
+
+/** One row per (orderNumb, receNumb) — see GET /v2/master/bill-discounts in master-api.md. */
+export type TBillDiscountOrderLine = {
+  orderNumb: string
+  receNumb: string
+  billNumb: string
+  billDate: string
+  receDate: string
+  incentiveAmount: number
+  remark: string
+}
+
+/** One row per (orderNumb, receNumb, goodCode) — see GET /v2/master/free-products in master-api.md. */
+export type TFreeItemOrderLine = {
+  orderNumb: string
+  receNumb: string
+  billNumb: string
+  billDate: string
+  receDate: string
+  goodCode: string
+  goodName: string
+  barCode: string
+  incentiveAmount: number
+  remark: string
+}
+export type TPostInvoiceReq = { invoiceNumb: string; invoiceAmount: number; invoiceDate: string; invoiceRemark: string }
+export type TPostReceiptReq = { receNumb: string; receAmount: number; receDate: string; receRemark: string }
+export type TPostMatchReq = { invoiceId: number; receiptId: number; matchedAmount: number }
+export type TPostReceiptWithMatchesReq = {
+  receipt: TPostReceiptReq;
+  invoiceMatches: Array<Pick<TPostMatchReq, 'invoiceId' | 'matchedAmount'>>
+}
+
+export type TPostCreditNoteReq = { creditNumb: string; creditAmount: number; creditDate: string; creditRemark: string }
+
+export type TPostSettlementReq = {
+  contractId: number
+  contractType: 'ORDER' | 'BRANCH' | 'PROMO'
+  periodName: string
+  startDate: string
+  endDate: string
+  supplierOrderAmount?: number
+  incomeEntryIds: number[]
+  supplierOrders?: { orderNumb: string; orderAmount: number; note?: string }[]
+  billDiscounts?: TPostBillDiscountReq[]
+  freeItems?: TPostFreeItemReq[]
+  invoices?: TPostInvoiceReq[]
+  receipts?: TPostReceiptReq[]
+  invoiceReceiptMatches?: TPostMatchReq[]
+  creditNotes?: TPostCreditNoteReq[]
+  remark?: string
+}
+
+export type TPairedIncomeEntries = {
+  id: number
+  dnContractId: number
+  huContractId: number
+  supplierPairId: number
+  dnEntries: TIncomeEntry[]
+  huEntries: TIncomeEntry[]
+}
+
+export type TPostPairedSettlementReq = {
+  dnContractId: number
+  huContractId: number
+  periodName: string
+  startDate: string
+  endDate: string
+  dnSupplierOrderAmount?: number
+  huSupplierOrderAmount?: number
+  dnIncomeEntryIds: number[]
+  huIncomeEntryIds: number[]
+  remark?: string
+}
+
+export type TPostPairedSettlementRes = {
+  dnSettlement: TSettlementListItem
+  huSettlement: TSettlementListItem
+}
+
+export type TAccrualStateParams = {
+  contractType: 'order' | 'branch' | 'promo'
+  contractId?: number
+  monthFrom?: string
+  monthTo?: string
+}
+
+// ---------- Accrual reports (GET /v2/report/accrual/{order,branch,promo}) ----------
+
+export type TAccrualReportMonthBase = { month: string; estimateIncome: number }
+export type TAccrualReportOrderMonth = TAccrualReportMonthBase & { netOrderAmount: number }
+
+export type TAccrualReportRowBase = {
+  contractId: number
+  compCode: string
+  compName: TMaybe<string>
+  compType: 'DN' | 'HU'
+  contractLabelId: number
+  contractLabelName: string
+  startDate: string | null
+  endDate: string | null
+  incomeTypes: TContractIncomeType[]
+}
+
+export type TAccrualOrderReportRow = TAccrualReportRowBase & {
+  calcType: TCalcType
+  steps: TOrderContractStep[]
+  months: TAccrualReportOrderMonth[]
+}
+
+export type TAccrualBranchReportRow = TAccrualReportRowBase & {
+  months: TAccrualReportMonthBase[]
+}
+
+export type TAccrualPromoReportRow = TAccrualReportRowBase & {
+  months: TAccrualReportMonthBase[]
+}
+
+export type TAccrualReportParams = {
+  monthFrom?: string
+  monthTo?: string
+  compType?: 'DN' | 'HU'
+}
+
+// ---------- Contributing products report (GET /v2/report/contributing-products) ----------
+
+/**
+ * One row per contract + product that had at least one contributing receive
+ * line inside the period. A product on two contracts (e.g. a DC event and a
+ * Rebate event) yields two rows, one per event.
+ *
+ * `receivedAmount` is the stored `subtotal` snapshot — a **gross** figure that
+ * deliberately does not re-derive the accrual's discount/VAT-adjusted base, so
+ * it does not tie out to `netOrderAmount` in the accrual reports. Use it to see
+ * which products contributed and their relative weight, not to reconcile
+ * accrued income.
+ */
+export type TContributingProductRow = {
+  contractId: number
+  compCode: string
+  compName: TMaybe<string>
+  compType: 'DN' | 'HU'
+  contractLabelId: number
+  eventName: string
+  contractStartDate: string | null
+  contractEndDate: string | null
+  goodCode: string
+  barCode: TMaybe<string>
+  goodName: string
+  receivedAmount: number
+  lineCount: number
+}
+
+export type TContributingProductParams = {
+  periodFrom: string
+  periodTo: string
+  compType: 'DN' | 'HU'
+  contractLabelId?: number
+  /** Exact match. */
+  compCode?: string
+  /** Substring match. */
+  compName?: string
+  /** Exact match. */
+  barCode?: string
+  /** Substring match. */
+  goodName?: string
+}
+
+// ---------- Settlement report (GET /v2/report/settlement) ----------
+
+export type TSettlementContractResponse = Omit<TOrderContractDetail, 'products'>
+
+export type TSettlementReportRow = {
+  contract: TSettlementContractResponse
+  pair: TMaybe<TSupplierPair>
+  settlementId: number
+  periodName: string
+  startDate: string
+  endDate: string
+  systemOrderAmount: TMaybe<number>
+  systemIncome: number
+  supplierOrderAmount: TMaybe<number>
+  supplierIncome: number
+  billDiscountTotal: number
+  freeItemTotal: number
+  invoiceTotal: number
+  creditNoteTotal: number
+}
+
+export type TSettlementReportParams = {
+  startDate: string
+  endDate: string
+  compType?: 'DN' | 'HU'
+}
+
+// ---------- Order confirmation report (GET /v2/report/order-confirmation/{contractId}) ----------
+
+export type TOrderConfirmationReportLine = {
+  orderNumb: string
+  receNumb: string
+  receDate: string
+  billNumb: string
+  billDate: string
+  goodCode: string
+  barCode: TMaybe<string>
+  goodName: TMaybe<string>
+  subtotal: number
+}
+
+export type TOrderConfirmationReportPair = {
+  id: number
+  dnContractId: number
+  huContractId: number
+}
+
+export type TOrderConfirmationReport = {
+  contract: TOrderContractDetail
+  pair: TMaybe<TOrderConfirmationReportPair>
+  rangeFrom: string
+  rangeTo: string
+  sumSystemOrderAmount: number
+  lines: TOrderConfirmationReportLine[]
+}
+
+export type TGetOrderConfirmationReportParams = {
+  receDateFrom?: string
+  receDateTo?: string
+}
+
+// ---------- Legacy types kept for accounting module compatibility ----------
+
+/** @deprecated use TContractLabel */
+export type TOtherIncomeEvent = TContractLabel
+
+/** @deprecated use TIncomeLabel */
+export type TOtherIncomeIncome = TIncomeLabel

@@ -8,14 +8,14 @@ import { OTHER_INCOME_PAGE_TOKEN } from '../../../../lib';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OiLightListService } from '../../../../service/other-income/oi-light-list.service';
-import { PeriodDisplayComponent } from "../../../../other-income/shared/components/period-display/period-display.component";
+import { OtherIncomePeriodDisplayComponent } from '../../../../components/other-income/period/other-income-period-display/other-income-period-display.component';
 @Component({
   selector: 'app-light-single',
   imports: [
     OtherIncomeHeadEditComponent, OtherIncomeLightEditComponent,
     OtherIncomeBranchComponent,
     RouterLink,
-    PeriodDisplayComponent
+    OtherIncomePeriodDisplayComponent
   ],
   templateUrl: './light-single.component.html'
 })

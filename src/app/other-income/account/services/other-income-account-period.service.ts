@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { ApiService } from '../../../shared/services/api.service';
-import { TOtherIncomeCreateCreditNote, TOtherIncomeCreateInvoice, TOtherIncomeCreateReceipt, TOtherIncomeMatching } from '../../shared/types/other-income.type';
+import { TOtherIncomeMatching, TPostCreditNoteReq, TPostInvoiceReq, TPostMatchReq, TPostReceiptReq } from '../../shared/types/other-income.type';
 
 @Injectable({
   providedIn: 'root',
@@ -11,15 +11,16 @@ export class OtherIncomeAccountPeriodService {
   private readonly url = environment.oi
   private readonly api = inject(ApiService)
 
-  insertInv(periodId: number, req: TOtherIncomeCreateInvoice) {
+  insertInv(periodId: number, req: TPostInvoiceReq) {
     return this.api.post<any>(`${this.url}/period/${periodId}/invoice`, req)
   }
 
-  insertRece(periodId: number, req: TOtherIncomeCreateReceipt) {
+  insertRece(periodId: number, req: any) {
+    throw new Error('fix type here')
     return this.api.post<any>(`${this.url}/period/${periodId}/receipt`, req)
   }
 
-  insertCredit(periodId: number, req: TOtherIncomeCreateCreditNote) {
+  insertCredit(periodId: number, req: TPostCreditNoteReq) {
     return this.api.post<any>(`${this.url}/period/${periodId}/credit`, req)
   }
 
@@ -39,7 +40,7 @@ export class OtherIncomeAccountPeriodService {
     return this.api.delete(`${this.url}/period/${periodId}`)
   }
 
-  matchInvoiceToReceipt(periodId: number, req: TOtherIncomeMatching) {
+  matchInvoiceToReceipt(periodId: number, req: TPostMatchReq) {
     return this.api.post<unknown>(`${this.url}/period/${periodId}/match`, req)
   }
 }

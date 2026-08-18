@@ -6,7 +6,7 @@
     [formField]="createForm.cap.isCap"
   />
   <label [htmlFor]="createForm.cap.isCap().name()" class="form-check-label"
-    >ไม่กำหนดเพดานยอดซื้อ</label
+    >กำหนดเพดานยอดซื้อ</label
   >
 </div>
 <div class="mb-3">
@@ -24,38 +24,38 @@
 </div>
 <div class="mb-2">
   <span class="form-label">ประเภทการคำนวณ</span>
-  @if (createForm.stepType().required()) {
+  @if (createForm.calcType().required()) {
     <span class="text-danger">*</span>
   }
 </div>
 <div class="d-flex gap-3 mb-3">
   <div class="form-check">
-    <app-radio [radioValue]="1" [formField]="createForm.stepType" />
+    <app-radio [radioValue]="'Flat'" [formField]="createForm.calcType" />
     <label
-      [htmlFor]="createForm.stepType().name() + '-1'"
+      [htmlFor]="createForm.calcType().name() + '-Flat'"
       class="form-check-label"
       >บาทแรก</label
     >
   </div>
   <div class="form-check">
-    <app-radio [radioValue]="2" [formField]="createForm.stepType" />
+    <app-radio [radioValue]="'Step'" [formField]="createForm.calcType" />
     <label
-      [htmlFor]="createForm.stepType().name() + '-2'"
+      [htmlFor]="createForm.calcType().name() + '-Step'"
       class="form-check-label"
       >step</label
     >
   </div>
   <div class="form-check">
-    <app-radio [radioValue]="3" [formField]="createForm.stepType" />
+    <app-radio [radioValue]="'Cumulative'" [formField]="createForm.calcType" />
     <label
-      [htmlFor]="createForm.stepType().name() + '-3'"
+      [htmlFor]="createForm.calcType().name() + '-Cumulative'"
       class="form-check-label"
       >step บาทแรก</label
     >
   </div>
 </div>
 @if (showManyStep()) {
-  @for (stepForm of createForm.steps; track stepForm().name()) {
+  @for (stepForm of createForm.bracketSteps; track stepForm().name()) {
     <div class="row mb-3">
       <div class="col">
         <label [htmlFor]="stepForm.min().name()" class="form-label"
@@ -84,7 +84,7 @@
     </div>
   }
   <div class="col-12">
-    <app-form-alert-text [formState]="createForm.steps()" />
+    <app-form-alert-text [formState]="createForm.bracketSteps()" />
   </div>
   <div class="row">
     <div class="col"></div>
@@ -101,15 +101,15 @@
 } @else {
   <div class="row mb-3">
     <div class="col">
-      <label [htmlFor]="createForm.step.rate().name()" class="form-label"
+      <label [htmlFor]="createForm.singleStep.rate().name()" class="form-label"
         >คิดรายได้(%)<span class="text-danger">*</span></label
       >
       <input
         type="number"
-        [formField]="createForm.step.rate"
+        [formField]="createForm.singleStep.rate"
         class="form-control"
       />
-      <app-form-alert-text [formState]="createForm.step.rate()" />
+      <app-form-alert-text [formState]="createForm.singleStep.rate()" />
     </div>
   </div>
 }

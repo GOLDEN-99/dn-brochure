@@ -1,0 +1,153 @@
+<h1 class="text-center">ตรวจสอบสินค้าแถม</h1>
+
+<div class="d-flex gap-2 mb-3">
+  <select
+    class="form-select"
+    style="max-width: 160px"
+    [ngModel]="filters().checkState"
+    (ngModelChange)="setCheckState($event)"
+  >
+    <option [ngValue]="null">ทุกสถานะ</option>
+    <option value="UNCHECKED">UNCHECKED</option>
+    <option value="CHECKED">CHECKED</option>
+  </select>
+  <select
+    class="form-select"
+    style="max-width: 160px"
+    [ngModel]="filters().contractType"
+    (ngModelChange)="setContractType($event)"
+  >
+    <option [ngValue]="null">ทุกสัญญา</option>
+    <option value="ORDER">{{ contractTypeLabel.ORDER }}</option>
+    <option value="BRANCH">{{ contractTypeLabel.BRANCH }}</option>
+    <option value="PROMO">{{ contractTypeLabel.PROMO }}</option>
+  </select>
+  <select
+    class="form-select"
+    style="max-width: 120px"
+    [ngModel]="filters().compType"
+    (ngModelChange)="setCompType($event)"
+  >
+    <option value="DN">{{ compTypeLabel.DN }}</option>
+    <option value="HU">{{ compTypeLabel.HU }}</option>
+  </select>
+  <button class="btn btn-outline-secondary" (click)="refresh()">
+    <i class="bi bi-arrow-clockwise"></i>
+  </button>
+  <button
+    class="btn btn-outline-success ms-auto"
+    [disabled]="loading() || items().length === 0"
+    (click)="exportExcel()"
+  >
+    <i class="bi bi-file-earmark-excel"></i>
+    Export Excel
+  </button>
+</div>
+
+@if (loading()) {
+  <div class="text-center py-4">
+    <div
+      class="spinner-border spinner-border-sm text-secondary"
+      role="status"
+    ></div>
+    <span class="ms-2 text-muted">กำลังโหลด...</span>
+  </div>
+} @else if (error()) {
+  <div class="alert alert-danger d-flex align-items-center gap-2">
+    {{ error() }}
+    <button class="btn btn-sm btn-outline-danger ms-auto" (click)="refresh()">
+      ลองใหม่
+    </button>
+  </div>
+} @else {
+  <table class="table table-striped table-bordered" style="font-size: 12px">
+    <thead>
+      <tr>
+        <th>บริษัท</th>
+        <th>รหัสซัพ</th>
+        <th>ชื่อซัพ</th>
+        <th>ประเภทกิจกรรม</th>
+        <th>กิจกรรมเริ่ม</th>
+        <th>กิจกรรมจบ</th>
+        <th>เลขที่ PO</th>
+        <th>วันที่ PO</th>
+        <th>เลขที่ RC</th>
+        <th>วันที่รับเข้า</th>
+        <th>รหัสสินค้า</th>
+        <th class="text-end">ยอด</th>
+        <th>สถานะตรวจสอบ</th>
+        <th>ตรวจสอบเมื่อ</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of items(); track row.freeItemId) {
+        <tr>
+          <td><span class="badge text-bg-light">{{ row.compType }}</span></td>
+          <td>{{ row.compCode }}</td>
+          <td>{{ row.compName }}</td>
+          <td>{{ row.contractLabelName }}</td>
+          <td>
+            {{
+              row.contractStartDate
+                ? (row.contractStartDate | date: "dd/MM/yyyy")
+                : "-"
+            }}
+          </td>
+          <td>
+            {{
+              row.contractEndDate
+                ? (row.contractEndDate | date: "dd/MM/yyyy")
+                : "-"
+            }}
+          </td>
+          <td>{{ row.orderNumb }}</td>
+          <td>{{ row.orderDate ? (row.orderDate | date: "dd/MM/yyyy") : "-" }}</td>
+          <td>{{ row.receNumb }}</td>
+          <td>{{ row.receDate ? (row.receDate | date: "dd/MM/yyyy") : "-" }}</td>
+          <td>{{ row.goodCode }}</td>
+          <td class="text-end">{{ row.subtotalAmount | number: "1.2-2" }}</td>
+          <td>
+            <span
+              class="badge"
+              [class.text-bg-warning]="row.checkState === 'UNCHECKED'"
+              [class.text-bg-success]="row.checkState === 'CHECKED'"
+              >{{ row.checkState }}</span
+            >
+          </td>
+          <td>{{ row.checkedAt ? (row.checkedAt | date: "dd/MM/yyyy HH:mm") : "-" }}</td>
+          <td class="d-flex gap-1">
+            <a
+              [routerLink]="[
+                '../',
+                contractTypePath[row.contractType],
+                row.contractId,
+                'settlements',
+                row.settlementId,
+              ]"
+              class="btn btn-sm btn-outline-primary"
+            >
+              รายละเอียด
+            </a>
+            @if (row.checkState === 'UNCHECKED') {
+              <button
+                class="btn btn-sm btn-outline-success"
+                [disabled]="checkingId() === row.freeItemId"
+                (click)="check(row)"
+              >
+                ตรวจสอบแล้ว
+              </button>
+            }
+            <button class="btn btn-sm btn-outline-danger" (click)="remove(row)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="15" class="text-center text-muted py-3">ไม่พบข้อมูล</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

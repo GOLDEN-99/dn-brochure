@@ -37,7 +37,7 @@ import { FormsModule } from '@angular/forms';
           #cal="ngbDatepicker"
           tabindex="-1"
           [ngModel]="value()"
-          (ngModelChange)="onClick($event)"
+          (dateSelect)="onClick($event)"
           style="border: none"
         />
       </div>

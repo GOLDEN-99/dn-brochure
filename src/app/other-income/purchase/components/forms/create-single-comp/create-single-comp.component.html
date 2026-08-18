@@ -1,0 +1,107 @@
+@let comp = value().comp;
+@if (comp.compCode !== "") {
+  <div class="row mb-3">
+    <div class="col-4">
+      <span class="text-muted small">รหัสซัพ</span>
+      <div>{{ comp.compCode }}</div>
+    </div>
+    <div class="col">
+      <span class="text-muted small">ชื่อซัพ</span>
+      <div>{{ comp.compName }}</div>
+    </div>
+    <div class="col-auto">
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary"
+        (click)="clearComp()"
+      >
+        เปลี่ยน
+      </button>
+    </div>
+  </div>
+  <!--product below-->
+  <div class="row g-2">
+    <!-- available -->
+    <div class="col-6 d-flex flex-column gap-1">
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="small fw-semibold text-muted">สินค้าที่เลือกได้</span>
+        <span class="badge bg-secondary">{{ validProduct().length }}</span>
+      </div>
+      <div
+        class="border rounded overflow-auto"
+        style="min-height: 160px; max-height: 280px"
+      >
+        @for (product of validProduct(); track product.goodCode) {
+          <button
+            type="button"
+            class="d-flex align-items-center px-2 py-1 border-bottom w-100 text-start bg-transparent border-0 list-item-available"
+            (click)="addProduct(product)"
+          >
+            <span class="flex-grow-1 small">{{ product.goodName }}</span>
+            <span class="text-primary small ms-2">+</span>
+          </button>
+        } @empty {
+          <div class="text-muted small text-center py-3">ไม่มีสินค้า</div>
+        }
+      </div>
+      <button
+        class="btn btn-sm btn-outline-primary w-100"
+        (click)="addAllItem()"
+      >
+        เพิ่มทั้งหมด
+      </button>
+    </div>
+
+    <!-- selected -->
+    <div class="col-6 d-flex flex-column gap-1">
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="small fw-semibold text-muted">สินค้าที่เลือกแล้ว</span>
+        <span class="badge bg-primary">{{ value().products.length }}</span>
+      </div>
+      <div
+        class="border rounded overflow-auto"
+        style="min-height: 160px; max-height: 280px"
+      >
+        @for (product of value().products; track product.goodCode) {
+          <button
+            type="button"
+            class="d-flex align-items-center px-2 py-1 border-bottom w-100 text-start bg-transparent border-0 list-item-selected"
+            (click)="removeProduct(product.goodCode)"
+          >
+            <span class="flex-grow-1 small">{{ product.goodName }}</span>
+            <span class="text-danger small ms-2">×</span>
+          </button>
+        } @empty {
+          <div class="text-muted small text-center py-3">ยังไม่มีสินค้า</div>
+        }
+      </div>
+      <button
+        class="btn btn-sm btn-outline-danger w-100"
+        (click)="clearAllItem()"
+      >
+        ลบทั้งหมด
+      </button>
+    </div>
+  </div>
+} @else {
+  <div class="mb-3 position-relative">
+    <label class="form-label" for="search-comp-name">ค้นหาชื่อบริษัท</label>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="พิมพ์ชื่อบริษัท..."
+      id="search-comp-name"
+      [ngbTypeahead]="handleTypeCompName"
+      [resultFormatter]="formatComp"
+      (selectItem)="handleSelectComp($event)"
+    />
+  </div>
+}
+
+@if (errors().length > 0) {
+  <div class="text-danger small">
+    @for (e of errors(); track e.kind) {
+      <div>{{ e.message }}</div>
+    }
+  </div>
+}

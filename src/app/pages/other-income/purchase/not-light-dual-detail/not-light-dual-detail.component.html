@@ -64,7 +64,7 @@
         />
       }
       @for (period of s.periodList; track period.id) {
-        <other-income-period-display
+        <app-other-income-period-display
           [period]="period"
           [possibleIncome]="s.headIncomeList"
           [canEdit]="isPurchase"

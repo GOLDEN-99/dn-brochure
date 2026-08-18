@@ -1,0 +1,76 @@
+<div class="row row-cols-1 row-cols-md-4 g-3 mb-3">
+  <div class="col">
+    <label
+      [htmlFor]="appendCreditNoteForm.creditNumb().name()"
+      class="form-label small text-muted mb-1"
+      >เลขที่ใบลดหนี้
+      @if (appendCreditNoteForm.creditNumb().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <input
+      [id]="appendCreditNoteForm.creditNumb().name()"
+      type="text"
+      class="form-control form-control-sm"
+      [formField]="appendCreditNoteForm.creditNumb"
+    />
+    <div style="min-height: 1.25rem" class="mt-1">
+      <app-form-alert-text [formState]="appendCreditNoteForm.creditNumb()" />
+    </div>
+  </div>
+
+  <div class="col">
+    <label [htmlFor]="appendCreditNoteForm.creditDate().name()" class="form-label small text-muted mb-1"
+      >วันที่ใบลดหนี้</label
+    >
+    <app-signal-datepicker
+      [id]="appendCreditNoteForm.creditDate().name()"
+      [formField]="appendCreditNoteForm.creditDate"
+    />
+    <div style="min-height: 1.25rem" class="mt-1"></div>
+  </div>
+
+  <div class="col">
+    <label
+      [htmlFor]="appendCreditNoteForm.creditAmount().name()"
+      class="form-label small text-muted mb-1"
+      >ยอด
+      @if (appendCreditNoteForm.creditAmount().required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <input
+      [id]="appendCreditNoteForm.creditAmount().name()"
+      type="number"
+      class="form-control form-control-sm"
+      [formField]="appendCreditNoteForm.creditAmount"
+    />
+    <div style="min-height: 1.25rem" class="mt-1">
+      <app-form-alert-text [formState]="appendCreditNoteForm.creditAmount()" />
+    </div>
+  </div>
+
+  <div class="col">
+    <label
+      [htmlFor]="appendCreditNoteForm.creditRemark().name()"
+      class="form-label small text-muted mb-1"
+      >หมายเหตุ</label
+    >
+    <input
+      [id]="appendCreditNoteForm.creditRemark().name()"
+      type="text"
+      class="form-control form-control-sm"
+      [formField]="appendCreditNoteForm.creditRemark"
+    />
+    <div style="min-height: 1.25rem" class="mt-1"></div>
+  </div>
+</div>
+
+<button
+  type="button"
+  class="btn btn-sm btn-primary"
+  [disabled]="!canSubmit()"
+  (click)="onSubmit()"
+>
+  เพิ่มใบลดหนี้
+</button>
