@@ -2,16 +2,27 @@
 <div class="row">
   <div class="col-lg-3">
     <div class="app-form-field">
-      <label [htmlFor]="master.promotionName().name()">ชื่อโปรโมชั่น </label>
+      <label [htmlFor]="master.promotionName().name()">
+        ชื่อโปรโมชั่น
+        @if (master.promotionName().required()) {
+          <span class="text-danger">*</span>
+        }
+      </label>
 
       <input type="text" id="pro-name" [formField]="master.promotionName" />
+      <app-form-alert-text [formState]="master.promotionName()" />
     </div>
   </div>
   <div class="col-lg-3">
     <div class="app-form-field">
       <label [htmlFor]="master.source().name()">โปรโมชั่นของ</label>
 
-      <select class="form-select" id="source" [formField]="master.source">
+      <select
+        class="form-select"
+        id="source"
+        [formField]="master.source"
+        (change)="onSourceChange($any($event.target).value)"
+      >
         @for (sourceOption of promotionSourceOptions; track $index) {
           <option [value]="sourceOption">
             {{ sourceOption | promotionSource }}
@@ -38,7 +49,7 @@
   </div>
   <div class="col-lg-3">
     <div class="app-form-field">
-      <label for="order">ลำดับการคำนวน</label>
+      <label for="order">ลำดับการคำนวณ</label>
       <select
         id="order"
         class="form-select"
@@ -83,6 +94,7 @@
     </div>
   </div>
   <app-form-alert-text [formState]="dateRangeForm()" />
+  <app-form-alert-text [formState]="master()" />
 </div>
 <!-- description -->
 <div class="app-form-field">

@@ -75,17 +75,6 @@ export class PromotionFormComponent {
     }));
   }
 
-  handleChangeSource(source: string) {
-    this.formModel.update((s) => ({
-      ...s,
-      promotionMaster: {
-        ...s.promotionMaster,
-        source,
-        ...(source === 'HU' ? { promotionOrder: '0' } : {}),
-      },
-    }));
-  }
-
   // ── Member ────────────────────────────────────────────────
 
   onLimitTierChange(isMemberSpecific: boolean) {
@@ -164,7 +153,7 @@ export class PromotionFormComponent {
       ...s,
       promotionFilter: [
         ...s.promotionFilter,
-        { productList: [], filterType: 'SUBTOTAL', filterValue: 0 },
+        { productList: [], filterType: 'SUBTOTAL', filterValue: 1 },
       ],
     }));
   }
@@ -236,6 +225,7 @@ export class PromotionFormComponent {
       promotionName,
       promotionDesc,
       promotionType,
+      source,
       promotionOrder,
       promotionPriority,
       dateRange: { startDate, endDate },
@@ -249,11 +239,18 @@ export class PromotionFormComponent {
     const { isBranchSpecific, branches } = promotionBranch;
     const { action, thresholdType, isRepeat, tiers, rewardPool } =
       promotionBenefit;
+    // HU promotions always compute last; the order select is disabled for HU so its
+    // value can be stale from a previous source selection.
+    const effectiveOrder = source === 'HU' ? 0 : Number(promotionOrder);
+    // rewardPool only belongs to the reward actions; anything left over from a
+    // previous selection must not be persisted on a plain discount promotion.
+    const keepRewardPool = action === 'PWP' || action === 'GIFT';
     return {
       promotionName: promotionName.trim(),
       promotionDesc: promotionDesc.trim(),
       promotionType,
-      promotionOrder: Number(promotionOrder),
+      source,
+      promotionOrder: effectiveOrder,
       promotionPriority: Number(promotionPriority),
       startDate: this.ngbDateToIso(startDate),
       endDate: this.ngbDateToIso(endDate),
@@ -272,7 +269,9 @@ export class PromotionFormComponent {
       action,
       thresholdType,
       isRepeat,
-      rewardPool: rewardPool.map(({ goodName, sku, ...res }) => ({ ...res })),
+      rewardPool: keepRewardPool
+        ? rewardPool.map(({ goodName, sku, ...res }) => ({ ...res }))
+        : [],
       tiers,
     };
   }

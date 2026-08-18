@@ -48,7 +48,7 @@ export class PromotionFilterComponent {
     return term$.pipe(
       map((t) =>
         this.promotionProductGroup().filter((p) =>
-          p.name.toLocaleLowerCase().includes(t),
+          p.name.toLocaleLowerCase().includes(t.toLocaleLowerCase()),
         ),
       ),
     );
@@ -58,10 +58,17 @@ export class PromotionFilterComponent {
   }
 
   readonly form = input.required<FieldTree<TPromotionFilterState>>();
+  // products already picked in the other filter groups; offering them here would
+  // only get rejected afterwards by the cross-group duplicate rule
+  readonly otherGroupProducts = input<TPromotionProductBase[]>([]);
 
   readonly currentProductList = computed(() =>
     this.form().productList().value(),
   );
+  readonly pickerExclusionPool = computed(() => [
+    ...this.currentProductList(),
+    ...this.otherGroupProducts(),
+  ]);
   readonly currentProduct = computed(
     () => new Set(this.currentProductList().map((p) => p.goodCode)),
   );

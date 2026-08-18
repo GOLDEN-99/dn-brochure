@@ -256,6 +256,7 @@ export type TCreatePromotionRequest = {
     promotionName: string
     promotionDesc: string
     promotionType: string
+    source: string
     promotionOrder: number
     promotionPriority: number
     startDate: string

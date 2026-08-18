@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { FieldTree } from '@angular/forms/signals';
 import { TPromotionFilterState } from '../../../../types/crm-promotion.type';
 import { PromotionFilterComponent } from '../../promotion-filter/promotion-filter.component';
@@ -17,8 +17,19 @@ export class PromotionProductFilterComponent {
   showItem = signal(this.config.filterOption.showItem);
   form = input.required<FieldTree<TCreatePromotionForm>>();
 
-  onAddSkuProductSubtotal() {}
-  onAddSkuProductCount() {}
+  private readonly filterProductLists = computed(() =>
+    this.form()
+      .promotionFilter()
+      .value()
+      .map(({ productList }) => productList),
+  );
+
+  otherGroupProducts(index: number) {
+    return this.filterProductLists().flatMap((list, i) =>
+      i === index ? [] : list,
+    );
+  }
+
   onDeleteFilter(index: number) {
     this.form()
       .promotionFilter()

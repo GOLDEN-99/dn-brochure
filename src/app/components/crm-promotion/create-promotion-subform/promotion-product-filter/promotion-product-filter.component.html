@@ -6,7 +6,10 @@
       @if ($index > 0) {
         <hr />
       }
-      <app-promotion-filter [form]="filter" />
+      <app-promotion-filter
+        [form]="filter"
+        [otherGroupProducts]="otherGroupProducts($index)"
+      />
       @if (!showItem()) {
         <div class="d-flex justify-content-end">
           <button

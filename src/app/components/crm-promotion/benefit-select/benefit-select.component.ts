@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { TPromotionBenefit, TPromotionProductBase, TPromotionTier } from '../../../types/crm-promotion.type';
+import { TPromotionBenefit, TPromotionTier } from '../../../types/crm-promotion.type';
 import { FormsModule } from '@angular/forms';
 import { CRM_PAGE_CONFIG } from '../../../service/crm-promotion/crm-token';
 import { PromotionPwpComponent } from "../promotion-pwp/promotion-pwp.component";
@@ -36,27 +36,23 @@ export class BenefitSelectComponent {
     this.form().tiers().controlValue.update(prev => prev.filter((_, i) => i !== index))
   }
 
-  onAddProduct(product: TPromotionProductBase[]) {
-    const action = this.form().action().value()
-    this.form().rewardPool().controlValue.update(prev => [...prev, ...product.flatMap(p => {
-      if (action === "PWP") return [{ ...p, itemBenefitType: 'PRICE', itemBenefitValue: 0 }]
-      if (action === "GIFT") return [{ ...p, itemBenefitType: 'BATHDISC', itemBenefitValue: 0 }]
-      return []
-    })])
-  }
+  // Called from the template on top of [formField], which owns the isRepeat value.
   onIsRepeatChange(isRepeat: boolean) {
-    if (isRepeat) {
-      this.form().tiers().controlValue.update(prev => [prev[0]])
-    }
-    this.form().isRepeat().controlValue.set(isRepeat)
+    if (!isRepeat) return
+    // a repeating benefit carries exactly one tier
+    this.form().tiers().controlValue.update(prev => prev.slice(0, 1))
   }
 
-  onActionChange(action: string) {
+  // Called from the template on top of [formField], which owns the action value.
+  onActionChange() {
+    const initial = this.config.initialData.promotionBenefit
+    // The reward pool is typed per reward action, so it can never carry over:
+    // a PWP item kept across a switch becomes a mistyped gift, and a pool left
+    // on a discount action is persisted as orphan data.
     this.form().rewardPool().controlValue.set([])
-    this.form().thresholdType().controlValue.set(this.config.initialData.promotionBenefit.thresholdType)
-    this.form().rewardPool().controlValue.set(this.config.initialData.promotionBenefit.rewardPool)
-    this.form().tiers().controlValue.set(this.config.initialData.promotionBenefit.tiers)
-    this.form().action().controlValue.set(action)
+    this.form().thresholdType().controlValue.set(initial.thresholdType)
+    // copy: the page config is a shared singleton, never hand out its array
+    this.form().tiers().controlValue.set(initial.tiers.map(tier => ({ ...tier })))
   }
 
 

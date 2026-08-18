@@ -73,12 +73,15 @@ export const promotionMasterSchema = schema<TPromotionMaster>((_path) => {
   });
 
   //validate date invalid order
-  validate(_path.promotionOrder, (ctx) => {
-    if (
-      ctx.valueOf(_path.source) === 'HU' &&
-      ctx.valueOf(_path.promotionOrder) !== '0'
-    )
-      return { kind: 'invalid order', message: '' };
+  // Checked on the master node, not on promotionOrder: that field is disabled for
+  // HU and disabled fields are excluded from validation.
+  validate(_path, ({ value }) => {
+    const { source, promotionOrder } = value();
+    if (source === 'HU' && promotionOrder !== '0')
+      return {
+        kind: 'invalid order',
+        message: 'โปรโมชั่นของ Health Up ต้องเป็นลำดับสุดท้ายเท่านั้น',
+      };
     return null;
   });
 });
@@ -94,20 +97,35 @@ export const initialDatetime: TPromotionDatetime = {
   },
 };
 
+// ngb-timepicker emits whatever is typed (including minute 60) and null for a
+// cleared box, so the range has to be checked here or a shifted time is saved.
+const isValidTime = (t: { hour: number; minute: number }) =>
+  Number.isInteger(t?.hour) &&
+  Number.isInteger(t?.minute) &&
+  t.hour >= 0 &&
+  t.hour <= 23 &&
+  t.minute >= 0 &&
+  t.minute <= 59;
+
 const timespanSchema = schema<TTimeSpan>((_path) => {
   validate(_path, ({ value }) => {
     const { startTime, endTime } = value();
+    if (!isValidTime(startTime) || !isValidTime(endTime))
+      return {
+        kind: 'time out of range',
+        message: 'เวลาต้องอยู่ในช่วง 00:00 - 23:59',
+      };
     const toMin = (t: { hour: number; minute: number }) =>
       t.hour * 60 + t.minute;
     const startMin = toMin(startTime);
     const endMin = toMin(endTime);
-    if (endMin === 0) {
-      if (startMin !== 0) return null
+    // The API rejects endTime 00:00 unconditionally; blocking it here keeps the
+    // user from hitting a generic server error with no field-level hint.
+    if (endMin === 0)
       return {
         kind: 'time span error',
-        message: 'เวลาเริ่มและเวลาสิ้นสุดต้องไม่เป็น 00:00 พร้อมกัน',
+        message: 'เวลาสิ้นสุดต้องไม่เป็น 00:00 (สูงสุด 23:59)',
       };
-    }
     if (startMin < endMin) return null
     return {
       kind: 'time span error',
@@ -161,7 +179,7 @@ export const promotionBranchSchema = schema<TPromotionBranch>((_path) => {
 });
 // tier
 export const promotionTierSchema = schema<TPromotionTier>((path) => {
-  min(path.rewardValue, 0, { message: 'จำนวนขั้นต่ำต้องมากกว่าหรือเท่ากับ 0' });
+  min(path.rewardValue, 0, { message: 'จำนวนส่วนลดต้องมากกว่าหรือเท่ากับ 0' });
   required(path.rewardValue, { message: 'ต้องระบุจำนวนส่วนลด' });
   min(path.thresholdValue, 0, { message: 'จำนวนขั้นต่ำต้องมากกว่าหรือเท่ากับ 0' });
   required(path.thresholdValue, { message: 'ต้องระบุจำนวนขั้นต่ำ' });
@@ -314,7 +332,7 @@ export const createPromotionSchema = schema<TCreatePromotionForm>((_path) => {
       if (filterType !== filterTypeRef)
         return {
           kind: 'invalid filter type',
-          message: 'เงื่อนไขสินค้าต้องเหมืนกันทั้งกลุ่ม',
+          message: 'เงื่อนไขสินค้าต้องเหมือนกันทั้งกลุ่ม',
         };
       //check cross group duplicate product
       for (const product of productList) {

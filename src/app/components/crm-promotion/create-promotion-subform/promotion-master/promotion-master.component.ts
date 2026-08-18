@@ -14,4 +14,11 @@ import { PromotionSourcePipe } from '../../../../lib/crm-promotion/promotion-sou
 export class PromotionMasterComponent {
   form = input.required<FieldTree<TPromotionMaster>>()
   promotionSourceOptions = ['HU', 'SUPPLIER', 'BOTH'] as const
+
+  // Health Up promotions always compute last. The order select is disabled for HU,
+  // so without this reset it keeps whatever was picked under another source.
+  onSourceChange(source: string) {
+    if (source !== 'HU') return
+    this.form().promotionOrder().controlValue.set('0')
+  }
 }

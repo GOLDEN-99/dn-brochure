@@ -1,7 +1,12 @@
 <div class="row mb-3">
   <div class="form-field col-md-4">
     <label class="form-label" [htmlFor]="form().action().name()">สิทธิ</label>
-    <select id="benefit-type" class="form-select" [formField]="form().action">
+    <select
+      id="benefit-type"
+      class="form-select"
+      [formField]="form().action"
+      (change)="onActionChange()"
+    >
       @for (opt of rewardOption(); track $index) {
         <option [value]="opt.action">{{ opt.label }}</option>
       }
@@ -27,6 +32,7 @@
       type="checkbox"
       id="is-repeat"
       [formField]="form().isRepeat"
+      (change)="onIsRepeatChange($any($event.target).checked)"
     />
     <label [htmlFor]="form().isRepeat().name()" class="form-check-label"
       >ใช้ซ้ำ/ทุกๆ</label

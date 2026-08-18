@@ -66,7 +66,7 @@ export class ProductPickerComponent {
       distinctUntilChanged(),
       debounceTime(300),
       map(t => this.promotionProductGroup().filter(p =>
-        p.name.toLocaleLowerCase().includes(t))
+        p.name.toLocaleLowerCase().includes(t.toLocaleLowerCase()))
       )
     )
   formatPromotionProductGroup({ name }: TConfigGroup) {

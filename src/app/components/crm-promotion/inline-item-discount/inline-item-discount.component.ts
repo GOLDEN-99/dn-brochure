@@ -23,7 +23,7 @@ export class InlineItemDiscountComponent {
   promotionProductGroup = this.productService.allPromotionProductGroup
 
   searchPromotionProductGroup(term$: Observable<string>) {
-    return term$.pipe(map(t => this.promotionProductGroup().filter(p => p.name.toLocaleLowerCase().includes(t))))
+    return term$.pipe(map(t => this.promotionProductGroup().filter(p => p.name.toLocaleLowerCase().includes(t.toLocaleLowerCase()))))
   }
   formatPromotionProductGroup({ name }: TConfigGroup) {
     return name

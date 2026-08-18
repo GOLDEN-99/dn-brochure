@@ -16,4 +16,8 @@ export class PromotionGiftComponent {
   onAddProduct(products: TPromotionProductBase[]) {
     this.rewardForm().rewardPool().controlValue.update(prev => [...prev, ...products.map(product => ({ ...product, itemBenefitType: 'PRICE', itemBenefitValue: 0 }))])
   }
+
+  onRemoveProduct(goodCode: string) {
+    this.rewardForm().rewardPool().controlValue.update(prev => prev.filter(p => p.goodCode !== goodCode))
+  }
 }

@@ -1,7 +1,7 @@
 @let filterForm = form();
 
 <app-product-picker
-  [exclusionPool]="currentProductList()"
+  [exclusionPool]="pickerExclusionPool()"
   (productAdd)="onUpdateProductList($event)"
 />
 <div class="row mb-3">
@@ -20,6 +20,7 @@
           class="form-control form-control-sm"
           [formField]="filterForm.filterValue"
         />
+        <app-form-alert-text [formState]="filterForm.filterValue()" />
       </div>
     </div>
   }
