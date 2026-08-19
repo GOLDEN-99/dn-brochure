@@ -1,4 +1,4 @@
-@let remarkOpt = remarkList();
+@let remarkOpt = remarkOption();
 <div class="app-form-field">
   <label for="remark"
     >สาเหตุ
@@ -16,7 +16,7 @@
     (blur)="onBlur()"
   >
     <option [ngValue]="null" disabled>กรุณาเลือกสาเหตุ</option>
-    @for (opt of remarkOpt; track $index) {
+    @for (opt of remarkOpt; track opt.id) {
       <option [ngValue]="opt">
         {{ opt.remark }}
       </option>

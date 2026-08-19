@@ -2,6 +2,14 @@
 
 Credit Note (CN) request feature. Allows sales reps to initiate a return/cancellation for a wholesale order.
 
+## Docs
+
+- `docs/remark-category-filter.md` — remark-group filter. Read before touching
+  the remark mappers or `format-request.ts`. Records that `GetCNRemark` keys
+  the group by **id** (`remarkGroup`, `'1'`–`'7'`) not by Thai label, that prod
+  has not shipped the field yet so the filter must degrade, and why
+  `mapRemarkToResult` and `mapRemarkToShowCN` are separate axes.
+
 ## Folder Structure
 
 ```
@@ -21,7 +29,8 @@ src/app/cn/
     │   ├── cn-product-picker/   Barcode search to add extra products
     │   ├── good-item/           Product card with return-amount input
     │   ├── image-uploader/      Upload receipt images
-    │   ├── remark-select/       Return reason dropdown
+    │   ├── remark-category-select/  Reason-category filter dropdown
+    │   ├── remark-select/       Return reason dropdown (filtered by category)
     │   └── result-select/       Result-type dropdown (shown conditionally on remark)
     ├── services/
     │   ├── cn-state.service.ts  All form state + validation schemas (signal-based)
@@ -29,10 +38,11 @@ src/app/cn/
     │   └── cn-upload-image.service.ts  Image blob upload
     ├── libs/
     │   ├── parse-cn-param.ts    Zod schema for route params
-    │   ├── remark-result.ts     Map remark.id → result type ('all' | 'notAccept' | 'notChange')
+    │   ├── remark-result.ts     Map remark.id → result type ('all' | 'notAccept' | 'notChange' | 'mustReject')
     │   ├── remark-cn.ts         Map remark.id → showCN boolean
-    │   ├── formatRequest.ts     Map form stepOne → API request shape
-    │   └── goodItem-goodState.ts  TGoodItem (with lots) → TGoodItemState (aggregated)
+    │   ├── remark-group.ts      REMARK_CATEGORIES + filter remark list by remarkGroup
+    │   ├── format-request.ts    Map form stepOne → API request shape
+    │   └── good-item.lib.ts     TGoodItem (with lots) → TGoodItemState (aggregated)
     └── types/
         └── cn.type.ts           All domain types
 ```
@@ -65,14 +75,21 @@ src/app/cn/
 {
   metadata: { isWRR, bankAcName, bankCode, bankNumb, code, name,
               wholeCode, wholeDate, wholeName, wholeNumb, saleCode }  // readonly
-  stepOne:  { remarkOpt, resultAll, resultNotAccept, resultNotChange,
-              cnType, remark, cnCount, cusStat }
+  stepOne:  { remarkCategory, remarkOpt, resultAll, resultNotAccept,
+              resultNotChange, resultMustReject, cnType, remark, cnCount,
+              cusStat }
   returnList: Array<{ good: TGoodItemState, amount: number, check: boolean }>
   image: string[]
 }
 ```
 
 `cnCount` = sum of all `useItem` values — stored for display only, not used in validation.
+
+`remarkCategory` is the reason-category **filter**, not submitted data. It sits
+in the form so it survives back-navigation (step 1 is destroyed on navigate
+away; `CnStateService` is provided on the parent layout route and is not) and
+so `required()` can backstop it. `mapFormToApiRequest` destructures field by
+field, so it never reaches the request — see `docs/remark-category-filter.md`.
 
 ## Submission
 

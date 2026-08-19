@@ -4,14 +4,14 @@ import { TCNRouteParam } from "../libs/parse-cn-param"
 export type CnLoadErrorReason = 'order-not-found' | 'whole-item-not-found' | 'api-error' | 'unknown'
 
 export class CnLoadError extends Error {
-  constructor(
-    public readonly reason: CnLoadErrorReason,
-    message: string,
-    public readonly request: TCNRouteParam,
-  ) {
-    super(message)
-    this.name = 'CnLoadError'
-  }
+    constructor(
+        public readonly reason: CnLoadErrorReason,
+        message: string,
+        public readonly request: TCNRouteParam,
+    ) {
+        super(message)
+        this.name = 'CnLoadError'
+    }
 }
 
 export type TBank = {
@@ -49,6 +49,15 @@ export type TWholeItem = {
 export type TRemark = {
     id: string //1
     remark: string
+    // GET /GetCNRemark group key, '1'-'7' — see libs/remark-group.ts.
+    // Optional: prod has not shipped the field yet, so it can be absent.
+    remarkGroup?: string
+}
+
+// id ตรงกับ TRemark.remarkGroup — รายการอยู่ใน libs/remark-group.ts
+export type TRemarkCategory = {
+    id: string
+    label: string
 }
 
 export type TLotItem = {
@@ -140,10 +149,13 @@ export type TReadonlyForm = {
 }
 
 export type TStepOne = {
+    // ตัวกรองสาเหตุ — ไม่ได้ส่งไป api แต่เก็บในฟอร์มเพื่อไม่ให้หายตอนย้อนกลับมาหน้าแรก
+    remarkCategory: TMaybe<TRemarkCategory>
     remarkOpt: TMaybe<TRemark>
     resultNotChange: TMaybe<TRemarkResult>
     resultAll: TMaybe<TRemarkResult>
     resultNotAccept: TMaybe<TRemarkResult>
+    resultMustReject: TMaybe<TRemarkResult>
     cnType: TMaybe<TCnType>
     remark: string
     cnCount: number
