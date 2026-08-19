@@ -28,34 +28,81 @@ across groups `'1'`–`'7'`).
 `api.drugnetcenter.com/ReturnRequest/GetCNRemark` **does not** — it still
 returns bare `{ id, remark }`.
 
-So `remarkGroup` is typed **optional** on `TRemark`, and the filter degrades
-instead of breaking:
+So `remarkGroup` is typed **optional** on `TRemark`, and three separate places
+degrade instead of breaking. All three are keyed off `hasRemarkGroup()`, and
+all three matter — the category defaults to `'1'` and has no "show everything"
+option, so a missed guard means an empty dropdown, not a cosmetic glitch:
 
-- `hasRemarkGroup(remarks)` is false when no option carries a group → the
-  category select does not render at all and the remark dropdown shows the full
-  flat list, i.e. exactly today's production behaviour.
-- The category select gains an explicit **ทั้งหมด** (`null`) option, so the
-  unfiltered list is always reachable.
+- `RemarkCategorySelectComponent.show()` — the category select does not render
+  at all when nothing carries a group.
+- `filterRemarkByGroup` — returns the list unfiltered rather than matching
+  `remarkGroup === '1'` against 61 `undefined`s and yielding `[]`.
+- `isInGroup` — treats a remark with no group as in-group, so the
+  clear-on-category-change effect does not wipe the user's reason on every
+  mount.
 
 Once prod ships `remarkGroup` the filter appears on its own with no code
 change. When prod has shipped it and dev/prod agree, `remarkGroup` can be made
-required on `TRemark` and `hasRemarkGroup` dropped.
+required on `TRemark`, and `hasRemarkGroup` and all three guards dropped.
+
+## Default and validation
+
+The category defaults to `REMARK_CATEGORIES[0]` (`'1'` เกิดจากคลัง) and the
+dropdown has **no null option** — it is never empty in normal use. A
+`required()` validator on `stepOne.remarkCategory` backstops that in case
+something clears the field programmatically; `cn-state.service.spec.ts` pins
+that it passes on an object value, since a `required()` that rejected objects
+would disable ถัดไป permanently.
+
+Changing category clears a reason that no longer belongs to it, so a stale
+out-of-group reason cannot be submitted.
+
+## The category lives in form state, not the component
+
+`CreateCancelRequestComponent` is a plain (non-lazy) child of the layout route,
+so navigating to step 2 destroys it and going back constructs a fresh one. A
+component-local `signal()` for the category is therefore lost on every back
+navigation — which is exactly what happened in the first cut of this feature.
+
+`remarkCategory` lives in `CnStateService.formState.stepOne`. `CnStateService`
+is provided on the **parent** layout route, so it outlives step 1 and the
+selection survives, the same way `remarkOpt` already did. `CnLayoutComponent`
+spreads `...stepOne` when the order data lands, so it survives that too.
+
+It is form state purely for lifetime and validation — it is **not** submitted,
+see the constraint below.
+
+`CnApiService.getRemark()` is `shareReplay`-cached because two components now
+read the list (the category select needs it for `hasRemarkGroup`), and because
+it was previously refetched on every step-1 mount.
 
 ## Hard constraint — the submit payload did not change
 
 `TCreateReq` and `mapFormToApiRequest` (`shared/libs/format-request.ts`) are
-untouched. `mapFormToApiRequest` destructures only `id`/`remark` off
-`remarkOpt`, so `remarkGroup` cannot reach the create body. The category
-selection lives in `RemarkSelectComponent` local state and is never written to
-the form.
+untouched. `mapFormToApiRequest` destructures `stepOne` field by field and
+returns an explicit object literal, so neither `remarkGroup` nor the new
+`stepOne.remarkCategory` can reach the create body — `remarkCategory` is in the
+form for lifetime and validation only.
+
+That explicit destructure is the thing keeping the payload frozen. If anyone
+ever changes `mapFormToApiRequest` to spread `...form`, the category object
+starts being submitted.
 
 ## Where it lives
 
-- `shared/libs/remark-group.ts` — `REMARK_CATEGORIES`, `filterRemarkByGroup`,
-  `hasRemarkGroup`, `isInGroup`. Pure, tested, no Angular.
-- `shared/components/remark-select/` — the two selects. Changing category
-  clears a remark that no longer belongs to it (`isInGroup`), so a stale
-  out-of-group reason cannot be submitted.
+- `shared/libs/remark-group.ts` — `REMARK_CATEGORIES`,
+  `DEFAULT_REMARK_CATEGORY`, `filterRemarkByGroup`, `hasRemarkGroup`,
+  `isInGroup`. Pure, tested, no Angular.
+- `shared/components/remark-category-select/` — the หมวดสาเหตุ select, bound to
+  `stepOne.remarkCategory`.
+- `shared/components/remark-select/` — the สาเหตุ select. Takes the chosen
+  category as an `input()` and filters on it.
+
+Two components rather than one because `[formField]` maps a `FormValueControl`
+to a single field, and these are two fields. `TRemarkCategory` is declared in
+`types/cn.type.ts` rather than in `remark-group.ts` so that the lib imports the
+types file and never the reverse — this repo already has one import cycle that
+aborts the test suite, and adding a second is not worth the tidier location.
 
 The scaffolding previously sat in `cn-state.service.ts` as unused
 `REMARK_CATEGORIES` / `filterRemark` / `TExtendedRemarkResult`. All three are

@@ -1,5 +1,6 @@
 import { Component, computed, inject, } from '@angular/core';
 import { RemarkSelectComponent } from "../../shared/components/remark-select/remark-select.component";
+import { RemarkCategorySelectComponent } from "../../shared/components/remark-category-select/remark-category-select.component";
 import { FormField } from "@angular/forms/signals";
 import { CnStateService } from '../../shared/services/cn-state.service';
 import { RESULT_TYPE } from '../../shared/libs/remark-result';
@@ -13,7 +14,7 @@ import { LoadingService } from '../../../service/loading/loading.service';
 
 @Component({
   selector: 'app-create-cancel-request',
-  imports: [RemarkSelectComponent, ResultSelectComponent, CnTypeRadioComponent, FormField, RouterLink, FormsModule],
+  imports: [RemarkSelectComponent, RemarkCategorySelectComponent, ResultSelectComponent, CnTypeRadioComponent, FormField, RouterLink, FormsModule],
   templateUrl: './create-cancel-request.component.html',
   styleUrl: './create-cancel-request.component.scss',
 })

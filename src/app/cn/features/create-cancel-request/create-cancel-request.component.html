@@ -76,7 +76,11 @@
 }
 <!--core form-->
 
-<app-remark-select [formField]="createForm.stepOne.remarkOpt" />
+<cn-remark-category-select [formField]="createForm.stepOne.remarkCategory" />
+<app-remark-select
+  [formField]="createForm.stepOne.remarkOpt"
+  [category]="createForm.stepOne.remarkCategory().value()"
+/>
 <!---->
 @let rt = resultType();
 @if (rt === ref.all) {

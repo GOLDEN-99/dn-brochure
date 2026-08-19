@@ -29,7 +29,8 @@ src/app/cn/
     │   ├── cn-product-picker/   Barcode search to add extra products
     │   ├── good-item/           Product card with return-amount input
     │   ├── image-uploader/      Upload receipt images
-    │   ├── remark-select/       Category filter + return reason dropdown
+    │   ├── remark-category-select/  Reason-category filter dropdown
+    │   ├── remark-select/       Return reason dropdown (filtered by category)
     │   └── result-select/       Result-type dropdown (shown conditionally on remark)
     ├── services/
     │   ├── cn-state.service.ts  All form state + validation schemas (signal-based)
@@ -74,14 +75,21 @@ src/app/cn/
 {
   metadata: { isWRR, bankAcName, bankCode, bankNumb, code, name,
               wholeCode, wholeDate, wholeName, wholeNumb, saleCode }  // readonly
-  stepOne:  { remarkOpt, resultAll, resultNotAccept, resultNotChange,
-              resultMustReject, cnType, remark, cnCount, cusStat }
+  stepOne:  { remarkCategory, remarkOpt, resultAll, resultNotAccept,
+              resultNotChange, resultMustReject, cnType, remark, cnCount,
+              cusStat }
   returnList: Array<{ good: TGoodItemState, amount: number, check: boolean }>
   image: string[]
 }
 ```
 
 `cnCount` = sum of all `useItem` values — stored for display only, not used in validation.
+
+`remarkCategory` is the reason-category **filter**, not submitted data. It sits
+in the form so it survives back-navigation (step 1 is destroyed on navigate
+away; `CnStateService` is provided on the parent layout route and is not) and
+so `required()` can backstop it. `mapFormToApiRequest` destructures field by
+field, so it never reaches the request — see `docs/remark-category-filter.md`.
 
 ## Submission
 

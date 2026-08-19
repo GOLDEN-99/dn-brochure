@@ -3,6 +3,7 @@ import { apply, applyEach, applyWhen, disabled, form, min, minLength, readonly, 
 import { CnLoadError, TReadonlyForm, TStepOne, TGoodFormItem, TCreateCancelForm } from '../types/cn.type';
 import { mapRemarkToResult } from '../libs/remark-result';
 import { mapRemarkToShowCN } from '../libs/remark-cn';
+import { DEFAULT_REMARK_CATEGORY } from '../libs/remark-group';
 
 @Injectable({
   providedIn: null,
@@ -25,6 +26,7 @@ export class CnStateService {
       saleCode: ''
     },
     stepOne: {
+      remarkCategory: DEFAULT_REMARK_CATEGORY,
       remarkOpt: null,
       resultNotChange: null,
       resultAll: null,
@@ -55,6 +57,8 @@ export class CnStateService {
 
   stepOneSchema = schema<TStepOne>((schema) => {
     required(schema.cusStat)
+    // dropdown ไม่มีตัวเลือกว่าง และตั้งค่าเริ่มต้นไว้แล้ว — กันไว้เผื่อโดน reset
+    required(schema.remarkCategory, { message: 'กรุณาเลือกหมวดสาเหตุ' })
     required(schema.remarkOpt, { message: 'กรุณาเลือกสาเหตุ' })
     required(schema.resultAll, {
       message: 'กรุณาเลือกเพิ่มเติม',

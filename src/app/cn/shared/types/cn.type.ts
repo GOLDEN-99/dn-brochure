@@ -54,6 +54,12 @@ export type TRemark = {
     remarkGroup?: string
 }
 
+// id ตรงกับ TRemark.remarkGroup — รายการอยู่ใน libs/remark-group.ts
+export type TRemarkCategory = {
+    id: string
+    label: string
+}
+
 export type TLotItem = {
     goodCode: string //"13628",
     lotNumber: TMaybe<string>  //null,
@@ -143,6 +149,8 @@ export type TReadonlyForm = {
 }
 
 export type TStepOne = {
+    // ตัวกรองสาเหตุ — ไม่ได้ส่งไป api แต่เก็บในฟอร์มเพื่อไม่ให้หายตอนย้อนกลับมาหน้าแรก
+    remarkCategory: TMaybe<TRemarkCategory>
     remarkOpt: TMaybe<TRemark>
     resultNotChange: TMaybe<TRemarkResult>
     resultAll: TMaybe<TRemarkResult>
