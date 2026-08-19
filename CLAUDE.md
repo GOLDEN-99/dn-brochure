@@ -43,7 +43,14 @@ Nested `CLAUDE.md` files exist for individual modules and should be read when wo
 - **Validation**: zod schemas (e.g. `other-income/shared/libs/other-income-schema.ts`), plus signal-forms schema validators for complex forms.
 - List pages with filtering/pagination should use the `ContractListController` pattern (`other-income/shared/libs/contract-list-controller.ts`) rather than ad hoc local signals — see that folder's `CLAUDE.md` for why and how.
 
-### API endpoints (`src/environments/environment.ts`)
+### API endpoints
+
+Two files, swapped by the `development` build configuration's `fileReplacements`
+in `angular.json`. `npm start` / `npm run watch` build `development` and get
+`environment.development.ts`; `npm run build` is `production` (the default
+configuration) and gets `environment.ts`.
+
+**`environment.ts` — production build, `api.*`:**
 
 | Key | Base URL | Domain |
 | --- | --- | --- |
@@ -52,6 +59,15 @@ Nested `CLAUDE.md` files exist for individual modules and should be read when wo
 | `cnPath` | `api.drugnetcenter.com/ReturnRequest` | CN / return requests |
 | `ibob` | `api.drugnetcenter.com/IbOb` | IB/OB transfers |
 | `oi` | `api.otherincome.healthupgroup.com` | Other Income |
+
+**`environment.development.ts` — local dev, `dev.*`:** the three
+`drugnetcenter.com` hosts point at `dev.drugnetcenter.com` instead. `imagePath`
+(`file.*`, a static host) and `oi` are unchanged — neither has a `dev.` variant
+(`dev.otherincome.healthupgroup.com` does not resolve).
+
+The two hosts are **not always in sync** — dev gets new fields first. Anything
+built against a field only dev returns has to degrade on prod rather than
+break; `cn/docs/remark-category-filter.md` is a worked example (`remarkGroup`).
 
 Other Income v2 API reference docs live at repo root `docs/API_REFERENCE.md`, `docs/EXAMPLES.md`, `docs/CHANGELOG.md` (marked stale relative to `src/app/other-income/docs/` — prefer the in-module docs for anything settlement-related).
 
