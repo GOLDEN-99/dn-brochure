@@ -1,82 +1,92 @@
-# Remark Category Filter — Blocked on API Spec
+# Remark Category Filter
 
-Status: **blocked**, opened 2026-08-06. A `RemarkCategory` select that filters
-the remark dropdown down to one group. Scaffolding is committed but **not
-wired into any component** — it is inert until the API spec below lands.
+Status: **implemented** 2026-08-19 (opened 2026-08-06, was blocked on the
+`GetCNRemark` spec). A category select above the remark dropdown filters the
+reason list down to one group.
 
-Do not build against the assumed field name. Two independent things need
-confirmation, and one of them fails silently if guessed wrong.
+## What the API answered
 
-## Hard constraint — the submit payload does not change
+`GET /GetCNRemark` now returns `{ id, remark, remarkGroup }`. Both open
+questions resolved — and both guesses in the original scaffold were wrong:
 
-`TCreateReq` and `mapFormToApiRequest` (`shared/libs/format-request.ts`) keep
-their current shape. The create request at the end of the flow still sends
-`probOption` exactly as it does today.
+| Question | Assumed | Actual |
+| --- | --- | --- |
+| Field name | `groupName` | **`remarkGroup`** |
+| Join key | `REMARK_CATEGORIES[].label` (Thai string) | **`REMARK_CATEGORIES[].id`** (`'1'`–`'7'`) |
 
-Whatever the new spec adds is **display/filter metadata only**. It must not
-reach the submit body. Confine the change to the fetch/filter path
-(`CnApiService.getRemark` → `RemarkSelectComponent`).
+The label join was the silent-failure case flagged when this was opened: it
+would have returned an empty array and blanked the dropdown with no error.
+`remark-group.spec.ts` pins the id join and asserts the label join yields `[]`,
+so a regression back to the label fails a test instead of blanking the UI.
 
-## What needs confirming from backend
+The seven groups the API returns match `REMARK_CATEGORIES` exactly (61 options
+across groups `'1'`–`'7'`).
 
-`GET /GetCNRemark` (`environment.cnPath`) currently returns `TRemark`
-(`{ id, remark }`).
+## Prod has not shipped the field yet
 
-### 1. The field name
+`dev.drugnetcenter.com/ReturnRequest/GetCNRemark` returns `remarkGroup`;
+`api.drugnetcenter.com/ReturnRequest/GetCNRemark` **does not** — it still
+returns bare `{ id, remark }`.
 
-Assumed: each option gains `groupName: string`. Modelled as
-`TExtendedRemarkResult` in `shared/types/cn.type.ts`, carrying a
-`//TODO: confirm api shape` marker.
+So `remarkGroup` is typed **optional** on `TRemark`, and the filter degrades
+instead of breaking:
 
-### 2. The join key — the one that fails silently
+- `hasRemarkGroup(remarks)` is false when no option carries a group → the
+  category select does not render at all and the remark dropdown shows the full
+  flat list, i.e. exactly today's production behaviour.
+- The category select gains an explicit **ทั้งหมด** (`null`) option, so the
+  unfiltered list is always reachable.
 
-`filterRemark` in `shared/services/cn-state.service.ts` joins on the **Thai
-label string**:
+Once prod ships `remarkGroup` the filter appears on its own with no code
+change. When prod has shipped it and dev/prod agree, `remarkGroup` can be made
+required on `TRemark` and `hasRemarkGroup` dropped.
 
-```ts
-remarks.filter(({ groupName }) => groupName === cate.label)
-```
+## Hard constraint — the submit payload did not change
 
-But `REMARK_CATEGORIES` also carries `id: '1'`–`'7'`, so the API may key the
-group by id instead. If it does, the filter returns an empty array rather
-than throwing — the dropdown just goes blank with no error anywhere. Ask for
-the field name and the join key in the same round-trip.
+`TCreateReq` and `mapFormToApiRequest` (`shared/libs/format-request.ts`) are
+untouched. `mapFormToApiRequest` destructures only `id`/`remark` off
+`remarkOpt`, so `remarkGroup` cannot reach the create body. The category
+selection lives in `RemarkSelectComponent` local state and is never written to
+the form.
 
-The seven categories the UI expects:
+## Where it lives
 
-| id | label |
-| --- | --- |
-| 1 | เกิดจากคลัง |
-| 2 | เกิดจากสินค้า |
-| 3 | สินค้าชำรุด |
-| 4 | เกิดจากลูกค้า |
-| 5 | เกิดจากเทเล |
-| 6 | เกิดจากเซล |
-| 7 | โอนเงินล่วงหน้า |
+- `shared/libs/remark-group.ts` — `REMARK_CATEGORIES`, `filterRemarkByGroup`,
+  `hasRemarkGroup`, `isInGroup`. Pure, tested, no Angular.
+- `shared/components/remark-select/` — the two selects. Changing category
+  clears a remark that no longer belongs to it (`isInGroup`), so a stale
+  out-of-group reason cannot be submitted.
 
-## Separately open — needs the business user, not the API
+The scaffolding previously sat in `cn-state.service.ts` as unused
+`REMARK_CATEGORIES` / `filterRemark` / `TExtendedRemarkResult`. All three are
+gone — `TExtendedRemarkResult` extended `TRemarkResult` (`{ id, result }`, the
+*result* dropdown type), but the group comes from `GetCNRemark`, whose shape is
+`TRemark`. The field now sits on `TRemark`.
 
-Whether the new remark group (`'37'`, `'47'`, `'48'`) should join the
-exclusion list in `shared/libs/remark-cn.ts`. Tracked as a TODO in that file.
+## Still open — needs the business user, not the API
 
-This is a **different axis** from the result mapping, and the two are easy to
-conflate:
+Whether remarks `'37'`, `'47'`, `'48'` should join the exclusion list in
+`shared/libs/remark-cn.ts`. The API gave us their labels but not the decision:
+
+| id | group | label |
+| --- | --- | --- |
+| 37 | 2 | สินค้าชำรุดจากขนส่ง (ลูกค้ายกเลิกทั้งบิล) |
+| 47 | 4 | ลูกค้าไม่รับ (สินค้าชำรุด) |
+| 48 | 4 | ลูกค้าไม่รับ (สินค้าไม่เป็นแพ็ค) |
+
+All three describe goods that physically come back, which by the existing rule
+argues for **leaving them out** of the exclusion list — its current members
+(`'19'`, `'30'`, `'31'`) are payment/installment data problems with no product
+to return. Left unchanged pending confirmation; the TODO stays in
+`remark-cn.ts`.
+
+The two axes are still easy to conflate:
 
 - `mapRemarkToResult` (`remark-result.ts`) — which options the **result
   dropdown renders**. `mustReject` means "render only ลูกค้าไม่รับ". It says
   nothing about whether the order can be CN'd.
 - `mapRemarkToShowCN` (`remark-cn.ts`) — whether the **CN flow applies at
-  all**. Its exclusions (`'0'`, `'19'`, `'30'`, `'31'`) are payment/installment
-  data problems (`'19'` = invalid installment, `'30'`/`'31'` = invalid bank
-  payment) where there is no product to return.
+  all**.
 
 A customer rejecting goods does not by itself mean the CN flow should be
-skipped. Decide the two axes separately, and answer this one from the
-remark's real label — which lives behind `GET /GetCNRemark`, not in the repo.
-
-## When the spec arrives
-
-1. Confirm the field name **and** the join key before writing code.
-2. Update `TExtendedRemarkResult` and `filterRemark` together; drop both TODOs.
-3. Wire the category select into `RemarkSelectComponent`.
-4. Leave `format-request.ts` alone.
+skipped. Decide the two axes separately.

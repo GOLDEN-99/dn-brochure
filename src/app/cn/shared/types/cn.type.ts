@@ -49,6 +49,9 @@ export type TWholeItem = {
 export type TRemark = {
     id: string //1
     remark: string
+    // GET /GetCNRemark group key, '1'-'7' — see libs/remark-group.ts.
+    // Optional: prod has not shipped the field yet, so it can be absent.
+    remarkGroup?: string
 }
 
 export type TLotItem = {
@@ -98,11 +101,6 @@ export type TGoodItemReq = {
 export type TRemarkResult = {
     id: string,
     result: string
-}
-
-export type TExtendedRemarkResult = TRemarkResult & {
-    //TODO: confirm api shape
-    groupName: string
 }
 
 export interface TCreateReq {

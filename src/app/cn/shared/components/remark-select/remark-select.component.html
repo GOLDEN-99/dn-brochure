@@ -1,4 +1,23 @@
-@let remarkOpt = remarkList();
+@let remarkOpt = remarkOption();
+@if (showCategory()) {
+  <div class="app-form-field">
+    <label for="remark-category">หมวดสาเหตุ</label>
+    <select
+      name="remark-category"
+      id="remark-category"
+      class="form-select"
+      [(ngModel)]="category"
+      [compareWith]="compareCategoryFn"
+    >
+      <option [ngValue]="null">ทั้งหมด</option>
+      @for (cate of categoryOption; track cate.id) {
+        <option [ngValue]="cate">
+          {{ cate.label }}
+        </option>
+      }
+    </select>
+  </div>
+}
 <div class="app-form-field">
   <label for="remark"
     >สาเหตุ
@@ -16,7 +35,7 @@
     (blur)="onBlur()"
   >
     <option [ngValue]="null" disabled>กรุณาเลือกสาเหตุ</option>
-    @for (opt of remarkOpt; track $index) {
+    @for (opt of remarkOpt; track opt.id) {
       <option [ngValue]="opt">
         {{ opt.remark }}
       </option>

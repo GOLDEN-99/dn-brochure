@@ -4,10 +4,11 @@ Credit Note (CN) request feature. Allows sales reps to initiate a return/cancell
 
 ## Docs
 
-- `docs/remark-category-filter.md` — remark-group filter, **blocked** on a new
-  `GetCNRemark` spec. Read before touching the remark mappers or
-  `format-request.ts`; it also explains why `mapRemarkToResult` and
-  `mapRemarkToShowCN` are separate axes.
+- `docs/remark-category-filter.md` — remark-group filter. Read before touching
+  the remark mappers or `format-request.ts`. Records that `GetCNRemark` keys
+  the group by **id** (`remarkGroup`, `'1'`–`'7'`) not by Thai label, that prod
+  has not shipped the field yet so the filter must degrade, and why
+  `mapRemarkToResult` and `mapRemarkToShowCN` are separate axes.
 
 ## Folder Structure
 
@@ -28,7 +29,7 @@ src/app/cn/
     │   ├── cn-product-picker/   Barcode search to add extra products
     │   ├── good-item/           Product card with return-amount input
     │   ├── image-uploader/      Upload receipt images
-    │   ├── remark-select/       Return reason dropdown
+    │   ├── remark-select/       Category filter + return reason dropdown
     │   └── result-select/       Result-type dropdown (shown conditionally on remark)
     ├── services/
     │   ├── cn-state.service.ts  All form state + validation schemas (signal-based)
@@ -38,6 +39,7 @@ src/app/cn/
     │   ├── parse-cn-param.ts    Zod schema for route params
     │   ├── remark-result.ts     Map remark.id → result type ('all' | 'notAccept' | 'notChange' | 'mustReject')
     │   ├── remark-cn.ts         Map remark.id → showCN boolean
+    │   ├── remark-group.ts      REMARK_CATEGORIES + filter remark list by remarkGroup
     │   ├── format-request.ts    Map form stepOne → API request shape
     │   └── good-item.lib.ts     TGoodItem (with lots) → TGoodItemState (aggregated)
     └── types/
