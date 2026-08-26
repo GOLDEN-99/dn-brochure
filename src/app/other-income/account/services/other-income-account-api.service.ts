@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { ApiService } from '../../../shared/services/api.service';
 import { environment } from '../../../../environments/environment';
+import { normalizeSettlementDetailMoney } from '../../shared/libs/settlement-money';
 import {
   TSettlementOverviewItem,
   TInvoiceStateRow,
@@ -60,8 +61,10 @@ export class OtherIncomeAccountApiService {
     return this.api.get(`${this.url}/v2/settlements/invoice-states`, { params: compact(params ?? {}) })
   }
 
+  /** Money fields are quantized to satang here so ceilings match what the UI renders. */
   getSettlementDetail(id: number): Observable<TSettlementDetail> {
-    return this.api.get(`${this.url}/v2/settlements/${id}`)
+    return this.api.get<TSettlementDetail>(`${this.url}/v2/settlements/${id}`)
+      .pipe(map(normalizeSettlementDetailMoney))
   }
 
   getAccrualOrderReport(params?: TAccrualReportParams): Observable<TAccrualOrderReportRow[]> {

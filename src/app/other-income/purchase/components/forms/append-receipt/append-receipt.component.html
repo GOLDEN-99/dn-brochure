@@ -97,7 +97,7 @@
         type="text"
         class="form-control form-control-sm"
         readonly
-        [ngModel]="pendingInvoice.remainingAmount"
+        [ngModel]="pendingInvoice.remainingAmount | number: '1.2-2'"
       />
       <div style="min-height: 1.25rem" class="mt-1"></div>
     </div>

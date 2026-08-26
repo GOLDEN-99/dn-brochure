@@ -7,6 +7,7 @@ import { OtherIncomePurchaseApiService } from '../../../services/other-income-pu
 import { ToastService } from '../../../../../service/toast/toast.service';
 import { FOR_CONTRACT_DATA_TOKEN } from '../../../../tokens/service-token';
 import { BALANCE_STATE_LABEL } from '../../../../shared/libs/settlement-labels';
+import { floorSatang } from '../../../../shared/libs/money';
 import { SettlementSummaryCardComponent } from './components/settlement-summary-card/settlement-summary-card.component';
 import { SettlementBillTabComponent } from './components/settlement-bill-tab/settlement-bill-tab.component';
 import { SettlementFreeItemTabComponent } from './components/settlement-free-item-tab/settlement-free-item-tab.component';
@@ -70,7 +71,9 @@ export class SettlementDetailPageComponent implements OnInit {
       settlement.creditNotes.reduce((sum, row) => sum + row.creditAmount, 0) +
       settlement.billDiscounts.reduce((sum, row) => sum + row.subtotalAmount, 0) +
       settlement.freeItems.reduce((sum, row) => sum + row.subtotalAmount, 0)
-    const remaining = settlement.supplierIncome - appendedTotal
+    // Floored: subtracting two satang-quantized floats still yields noise (0.3 - 0.1),
+    // and `remaining` is the ceiling the invoice form validates against.
+    const remaining = floorSatang(settlement.supplierIncome - appendedTotal)
     const state: 'OUTSTANDING' | 'SETTLED' = remaining > 1 ? 'OUTSTANDING' : 'SETTLED'
     return { remaining, state, label: BALANCE_STATE_LABEL[state] }
   })

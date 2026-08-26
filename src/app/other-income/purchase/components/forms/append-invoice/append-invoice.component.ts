@@ -6,6 +6,7 @@ import { form, FormField } from '@angular/forms/signals';
 import { SignalDatepickerComponent } from '../../../../../components/crm-promotion/signal-datepicker.component';
 import { FormAlertTextComponent } from '../../../../../components/crm-promotion/form-alert-text.component';
 import { ngbDateToIso } from '../../../../shared/libs/date-time';
+import { floorSatang, roundSatang } from '../../../../shared/libs/money';
 
 @Component({
   selector: 'other-income-append-invoice',
@@ -28,12 +29,21 @@ export class AppendInvoiceComponent {
     invoiceRemark: '',
   }
 
+  /**
+   * Both the ceiling and the prefill are floored to satang: the prefill is what the user
+   * sees and submits unchanged in the common "bill the whole remainder" case, so it must
+   * never land above the `max` it is validated against. `Math.round` here used to open the
+   * form already invalid for any remainder with a fractional part above .5.
+   */
   private readonly appendInvoiceState = linkedSignal<number, AppendInvoiceForm>({
     source: this.openSettlement,
-    computation: (openSettleAmount, previous) => ({
-      ...(previous?.value ?? this.defaultInvoiceState),
-      openSettleAmount, invoiceAmount: Math.round(openSettleAmount)
-    }),
+    computation: (rawOpenSettleAmount, previous) => {
+      const openSettleAmount = floorSatang(rawOpenSettleAmount)
+      return {
+        ...(previous?.value ?? this.defaultInvoiceState),
+        openSettleAmount, invoiceAmount: openSettleAmount,
+      }
+    },
   })
   appendInvoiceForm = form(this.appendInvoiceState, appendInvoiceSchema)
 
@@ -47,7 +57,7 @@ export class AppendInvoiceComponent {
     this.submitInvoice.emit({
       invoiceNumb,
       invoiceDate: ngbDateToIso(invoiceDate),
-      invoiceAmount,
+      invoiceAmount: roundSatang(invoiceAmount),
       invoiceRemark,
     })
   }
