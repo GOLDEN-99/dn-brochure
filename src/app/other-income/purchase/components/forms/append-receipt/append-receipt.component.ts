@@ -3,9 +3,11 @@ import { NgbCalendar, NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-boot
 import { form, FormField } from '@angular/forms/signals';
 import { distinctUntilChanged, map, Observable } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 import { SignalDatepickerComponent } from '../../../../../components/crm-promotion/signal-datepicker.component';
 import { FormAlertTextComponent } from '../../../../../components/crm-promotion/form-alert-text.component';
 import { ngbDateToIso } from '../../../../shared/libs/date-time';
+import { floorSatang, roundSatang } from '../../../../shared/libs/money';
 import { TOtherIncomeInvoice, TOtherIncomeMatching, TPostMatchReq, TPostReceiptReq } from '../../../../shared/types/other-income.type';
 import { TInvoiceWithRemaining, TPendingMatch } from './createReceiptForm.type';
 import { AppendReceiptForm, appendReceiptSchema, pendingMatchSchema } from './append-receipt';
@@ -21,7 +23,7 @@ export type AppendReceiptSubmit = {
 
 @Component({
   selector: 'other-income-append-receipt',
-  imports: [FormField, SignalDatepickerComponent, FormAlertTextComponent, NgbTypeahead, FormsModule],
+  imports: [FormField, SignalDatepickerComponent, FormAlertTextComponent, NgbTypeahead, FormsModule, DecimalPipe],
   templateUrl: './append-receipt.component.html',
   styles: '',
 })
@@ -31,7 +33,7 @@ export class AppendReceiptComponent {
   matches = input.required<TOtherIncomeMatching[]>()
 
   openInvoiceAmount = computed(() =>
-    this.invoicesWithRemaining().reduce((acc, cur) => acc + cur.remainingAmount, 0)
+    floorSatang(this.invoicesWithRemaining().reduce((acc, cur) => acc + cur.remainingAmount, 0))
   )
 
   private readonly calendar = inject(NgbCalendar)
@@ -45,7 +47,8 @@ export class AppendReceiptComponent {
 
   invoicesWithRemaining = computed<TInvoiceWithRemaining[]>(() => {
     const matched = this.matchedByInvoiceId()
-    return this.invoices().map(inv => ({ ...inv, remainingAmount: inv.invoiceAmount - (matched.get(inv.id) ?? 0) }))
+    // Floored: this is the ceiling the match-amount validator and its message both use.
+    return this.invoices().map(inv => ({ ...inv, remainingAmount: floorSatang(inv.invoiceAmount - (matched.get(inv.id) ?? 0)) }))
   })
 
   /** Invoices not yet staged into `matches` — once added, an invoice drops out of the typeahead. */
@@ -54,11 +57,16 @@ export class AppendReceiptComponent {
     return this.invoicesWithRemaining().filter(inv => !addedIds.has(inv.id))
   })
 
+  /**
+   * `openInvoiceAmount` is already floored to satang, and the prefill mirrors it exactly:
+   * the default "receipt covers every open invoice" case must satisfy its own `max`.
+   * `Math.round` here used to open the form already invalid.
+   */
   appendReceiptState = linkedSignal<number, AppendReceiptForm>({
     source: this.openInvoiceAmount,
     computation: (openInvoiceAmount, previous) => ({
       ...(previous?.value ?? this.defaultFormValue),
-      openInvoiceAmount, receAmount: Math.round(openInvoiceAmount)
+      openInvoiceAmount, receAmount: openInvoiceAmount
     }),
   })
 
@@ -77,9 +85,9 @@ export class AppendReceiptComponent {
 
   canSubmit = computed(() => this.appendReceiptForm().valid() && !this.submitting())
 
-  matchedTotal = computed(() => this.appendReceiptState().matches.reduce((sum, m) => sum + m.matchAmount, 0))
+  matchedTotal = computed(() => roundSatang(this.appendReceiptState().matches.reduce((sum, m) => sum + m.matchAmount, 0)))
 
-  remainingRceipt = computed(() => this.appendReceiptState().receAmount - this.matchedTotal())
+  remainingRceipt = computed(() => floorSatang(this.appendReceiptState().receAmount - this.matchedTotal()))
 
   formatInvoice = ({ invoiceNumb }: TInvoiceWithRemaining) => invoiceNumb
   searchInvoice = (term$: Observable<string>): Observable<TInvoiceWithRemaining[]> => {
@@ -100,7 +108,7 @@ export class AppendReceiptComponent {
   canConfirmMatch = computed(() => this.pendingMatchForm().valid() && this.pendingMatchState().matchAmount <= this.remainingRceipt())
 
   onSelectInvoice({ item }: NgbTypeaheadSelectItemEvent<TInvoiceWithRemaining>): void {
-    this.pendingMatchState.set({ invoice: item, matchAmount: Math.min(item.remainingAmount, this.remainingRceipt()) })
+    this.pendingMatchState.set({ invoice: item, matchAmount: floorSatang(Math.min(item.remainingAmount, this.remainingRceipt())) })
   }
 
   addMatch(): void {
@@ -128,8 +136,8 @@ export class AppendReceiptComponent {
     if (!this.canSubmit()) return
     const { receNumb, receDate, receAmount, receRemark, matches } = this.appendReceiptState()
     this.submitReceipt.emit({
-      receipt: { receNumb, receDate: ngbDateToIso(receDate), receAmount, receRemark },
-      matches: matches.map(m => ({ invoiceId: m.invoice.id, matchedAmount: m.matchAmount })),
+      receipt: { receNumb, receDate: ngbDateToIso(receDate), receAmount: roundSatang(receAmount), receRemark },
+      matches: matches.map(m => ({ invoiceId: m.invoice.id, matchedAmount: roundSatang(m.matchAmount) })),
     })
   }
 
