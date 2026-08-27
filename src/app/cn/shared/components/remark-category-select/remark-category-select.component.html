@@ -1,0 +1,31 @@
+@if (show()) {
+  <div class="app-form-field">
+    <label for="remark-category"
+      >หมวดสาเหตุ
+      @if (required()) {
+        <span class="text-danger">*</span>
+      }
+    </label>
+    <select
+      id="remark-category"
+      class="form-select"
+      [name]="name()"
+      [(ngModel)]="value"
+      [compareWith]="compareCategoryFn"
+      (blur)="onBlur()"
+    >
+      @for (cate of categoryOption; track cate.id) {
+        <option [ngValue]="cate">
+          {{ cate.label }}
+        </option>
+      }
+    </select>
+    @if (touched()) {
+      <div class="d-flex flex-column">
+        @for (error of errors(); track $index) {
+          <span class="text-danger">{{ error.message }}</span>
+        }
+      </div>
+    }
+  </div>
+}

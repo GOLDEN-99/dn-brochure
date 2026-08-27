@@ -1,4 +1,4 @@
-import { Component, computed, input, InputSignal, InputSignalWithTransform, model } from '@angular/core';
+import { Component, computed, input, model } from '@angular/core';
 import { FormValueControl, ValidationError } from '@angular/forms/signals';
 import { TMaybe } from '../../../../types';
 import { TRemarkResult } from '../../types/cn.type';
@@ -24,6 +24,7 @@ export class ResultSelectComponent implements FormValueControl<TMaybe<TRemarkRes
       case 'notChange': return [{ result: 'ลูกค้าไม่รับ', id: '0' }, { result: 'ลูกค้ารับ', id: '1' }]
       case 'all': return [{ result: 'ลูกค้าไม่รับ', id: '0' }, { result: 'ลูกค้ารับ', id: '1' }, { result: 'ลูกค้ารับเปลี่ยน', id: '2' }]
       case 'notAccept': return [{ result: 'ลูกค้าไม่รับ', id: '0' }, { result: 'ลูกค้ารับเปลี่ยน', id: '2' }]
+      case 'mustReject': return [{ result: 'ลูกค้าไม่รับ', id: '0' }]
     }
   })
 

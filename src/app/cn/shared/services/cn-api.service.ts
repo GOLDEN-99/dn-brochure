@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../../shared/services/api.service';
 import { environment } from '../../../../environments/environment';
 import { CnLoadError, TCreateReq, TGoodItemBase, TGoodItemState, TLotItem, TOrderRes, TRemark, TWholeItem } from '../types/cn.type';
-import { catchError, combineLatest, map, of, throwError } from 'rxjs';
+import { catchError, combineLatest, map, of, shareReplay, throwError } from 'rxjs';
 import { TCNRouteParam } from '../libs/parse-cn-param';
 import { HttpErrorResponse } from '@angular/common/http';
 import { wholeItemResponseSchema } from '../libs/cn-response-schema';
@@ -49,7 +49,13 @@ export class CnApiService {
         catchError((err) => throwError(() => err))
       )
 
-  getRemark = () => this.api.get<TRemark[]>(`${this.url}/GetCNRemark`)
+  // reference data ที่ไม่เปลี่ยนระหว่าง session และมีสอง select ที่ใช้ร่วมกัน
+  // (หมวดสาเหตุ + สาเหตุ) จึง cache ไว้ ไม่ให้ยิงซ้ำทุกครั้งที่กลับมาหน้าแรก
+  private readonly remark$ = this.api
+    .get<TRemark[]>(`${this.url}/GetCNRemark`)
+    .pipe(shareReplay({ bufferSize: 1, refCount: false }))
+
+  getRemark = () => this.remark$
 
 
 

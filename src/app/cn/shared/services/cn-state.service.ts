@@ -3,6 +3,7 @@ import { apply, applyEach, applyWhen, disabled, form, min, minLength, readonly, 
 import { CnLoadError, TReadonlyForm, TStepOne, TGoodFormItem, TCreateCancelForm } from '../types/cn.type';
 import { mapRemarkToResult } from '../libs/remark-result';
 import { mapRemarkToShowCN } from '../libs/remark-cn';
+import { DEFAULT_REMARK_CATEGORY } from '../libs/remark-group';
 
 @Injectable({
   providedIn: null,
@@ -25,10 +26,12 @@ export class CnStateService {
       saleCode: ''
     },
     stepOne: {
+      remarkCategory: DEFAULT_REMARK_CATEGORY,
       remarkOpt: null,
       resultNotChange: null,
       resultAll: null,
       resultNotAccept: null,
+      resultMustReject: null,
       cnType: null,
       remark: '',
       cnCount: 0,
@@ -54,6 +57,8 @@ export class CnStateService {
 
   stepOneSchema = schema<TStepOne>((schema) => {
     required(schema.cusStat)
+    // dropdown ไม่มีตัวเลือกว่าง และตั้งค่าเริ่มต้นไว้แล้ว — กันไว้เผื่อโดน reset
+    required(schema.remarkCategory, { message: 'กรุณาเลือกหมวดสาเหตุ' })
     required(schema.remarkOpt, { message: 'กรุณาเลือกสาเหตุ' })
     required(schema.resultAll, {
       message: 'กรุณาเลือกเพิ่มเติม',
@@ -66,6 +71,10 @@ export class CnStateService {
     required(schema.resultNotChange, {
       message: 'กรุณาเลือกเพิ่มเติม',
       when: ({ valueOf }) => mapRemarkToResult(valueOf(schema.remarkOpt)) === 'notChange'
+    })
+    required(schema.resultMustReject, {
+      message: 'กรุณาเลือกเพิ่มเติม',
+      when: ({ valueOf }) => mapRemarkToResult(valueOf(schema.remarkOpt)) === 'mustReject'
     })
     required(schema.cnType, {
       message: 'กรุณาเลือกประเภทการ CN',
@@ -103,15 +112,15 @@ export class CnStateService {
   requestCNForm = form<TCreateCancelForm>(this.formState, (schema) => {
     apply(schema.metadata, this.metaDataSchema)
     apply(schema.stepOne, this.stepOneSchema)
-    validate(schema.stepOne.cusStat, ({value, valueOf}) => {
+    validate(schema.stepOne.cusStat, ({ value, valueOf }) => {
       const stat = value()
       const bankAccount = valueOf(schema.metadata.bankNumb)
-      if(bankAccount !== '') return null
-      if(stat === '0') return null
+      if (bankAccount !== '') return null
+      if (stat === '0') return null
       return {
         kind: 'invalid stat',
         message: 'ไม่สามารถโอนเงินได้เพราะไม่พบบัญชีโอนคืน'
-      } 
+      }
     })
     applyEach(schema.returnList, this.goodItemSchema)
     validate(schema.returnList, ({ value, valueOf }) => {
