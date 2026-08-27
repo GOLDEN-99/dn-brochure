@@ -7,11 +7,11 @@ import { ToastService } from '../../../service/toast/toast.service';
 import { mapFormToApiRequest } from '../../shared/libs/format-request';
 import { CnApiService } from '../../shared/services/cn-api.service';
 import { LoadingService } from '../../../service/loading/loading.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'cn-upload',
-  imports: [ImageUploaderComponent, FormField, FormsModule],
+  imports: [ImageUploaderComponent, FormField, FormsModule, RouterLink],
   templateUrl: './cn-upload.component.html',
   styleUrl: './cn-upload.component.scss',
 })
