@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { combineLatest, filter, switchMap } from 'rxjs';
 import { DatePipe } from '@angular/common';
@@ -9,6 +9,7 @@ import { PromotionThresholdPipe } from '../../../lib/crm-promotion/promotion-thr
 import { PromotionPriorityPipe } from '../../../lib/crm-promotion/promotion-priority.pipe';
 import { PromotionOrderPipe } from '../../../lib/crm-promotion/promotion-order.pipe';
 import { PromotionSourcePipe } from '../../../lib/crm-promotion/promotion-source.pipe';
+import { isPromotionSourceInferred, resolvePromotionSource } from '../../../lib/crm-promotion/resolve-promotion-source';
 
 @Component({
   selector: 'app-promotion-detail',
@@ -30,6 +31,18 @@ export class PromotionDetailComponent {
     switchMap(([id]) => this.service.getPromotionById(id!))
   )
   detail = toSignal(this.detail$, { initialValue: null })
+
+  // The API never persists `source`, so for anything created since 2026-05-13 the
+  // detail page has nothing to render. Show the same value the edit form will open
+  // with, flagged as inferred so nobody reads it as the stored owner.
+  readonly resolvedSource = computed(() => {
+    const d = this.detail()
+    if (!d) return null
+    return {
+      value: resolvePromotionSource(d.source, d.promotionOrder),
+      inferred: isPromotionSourceInferred(d.source),
+    }
+  })
 
   toggling = signal(false)
 

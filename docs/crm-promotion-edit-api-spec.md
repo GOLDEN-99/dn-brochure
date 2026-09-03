@@ -21,6 +21,7 @@ PUT /crm/promotions/:id
   "promotionName": "string", // required, trimmed
   "promotionDesc": "string", // optional, trimmed
   "promotionType": "BILL | BUNDLE | ITEM",
+  "source": "HU | SUPPLIER | BOTH", // required
   "promotionOrder": 0, // 0–3; must be 0 when source = "HU"
   "promotionPriority": 0, // 0–3
   "startDate": "YYYY-MM-DD",
@@ -64,6 +65,8 @@ PUT /crm/promotions/:id
 
 ## Business rules (same as create)
 
+- `source` is required and must be one of `HU | SUPPLIER | BOTH`
+- `promotionOrder` must be `0` when `source = HU`
 - `endDate >= startDate`
 - When `limitTime = true`: `endTime > startTime`, neither can be `00:00`
 - `activeDay` must have at least one `'1'`

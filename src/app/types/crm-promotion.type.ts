@@ -210,7 +210,8 @@ export type TPromotionListItem = {
     id: number
     promotionName: string
     promotionType: string
-    source: string
+    // null on every promotion stored since 2026-05-13 — the API never writes it
+    source: string | null
     action: string
     thresholdType: string
     isRepeat: boolean
@@ -226,7 +227,8 @@ export type TPromotionDetail = {
     promotionName: string
     promotionDesc: string
     promotionType: string
-    source: string
+    // null on every promotion stored since 2026-05-13 — the API never writes it
+    source: string | null
     action: string
     thresholdType: string
     isRepeat: boolean
