@@ -17,6 +17,10 @@ import {
 } from '../../../types/crm-promotion.type';
 import { CRM_PAGE_CONFIG } from '../../../service/crm-promotion/crm-token';
 import {
+  REGISTER_FEE_ACTION,
+  REGISTER_FEE_GOOD_CODE,
+} from '../../../lib/crm-promotion/promotion-actions';
+import {
   createPromotionSchema,
   TCreatePromotionForm,
 } from '../../../pages/crm-promotion/create/create-bill-discount-promotion/createPromotionSchema';
@@ -242,9 +246,6 @@ export class PromotionFormComponent {
     // HU promotions always compute last; the order select is disabled for HU so its
     // value can be stale from a previous source selection.
     const effectiveOrder = source === 'HU' ? 0 : Number(promotionOrder);
-    // rewardPool only belongs to the reward actions; anything left over from a
-    // previous selection must not be persisted on a plain discount promotion.
-    const keepRewardPool = action === 'PWP' || action === 'GIFT';
     return {
       promotionName: promotionName.trim(),
       promotionDesc: promotionDesc.trim(),
@@ -269,11 +270,31 @@ export class PromotionFormComponent {
       action,
       thresholdType,
       isRepeat,
-      rewardPool: keepRewardPool
-        ? rewardPool.map(({ goodName, sku, ...res }) => ({ ...res }))
-        : [],
+      rewardPool: this.buildRewardPool(action, rewardPool),
       tiers,
     };
+  }
+
+  // The pool belongs to the reward actions only; anything left over from a previous
+  // selection must not be persisted on a plain discount promotion. REGISTERFEE is the
+  // exception that is *derived* rather than authored: its pool is always the one SKU
+  // at 0 baht, so it is built here instead of being carried through the form. That
+  // keeps it clear of the strip-unless-PWP/GIFT rule it sits beside -- the same class
+  // of silent drop that left `source` unwritten for four months.
+  private buildRewardPool(
+    action: string,
+    rewardPool: TPromotionBenefit['rewardPool'],
+  ): TCreatePromotionRequest['rewardPool'] {
+    if (action === REGISTER_FEE_ACTION)
+      return [
+        {
+          goodCode: REGISTER_FEE_GOOD_CODE,
+          itemBenefitType: 'PRICE',
+          itemBenefitValue: 0,
+        },
+      ];
+    if (action !== 'PWP' && action !== 'GIFT') return [];
+    return rewardPool.map(({ goodName, sku, ...res }) => ({ ...res }));
   }
 
   private ngbDateToIso({

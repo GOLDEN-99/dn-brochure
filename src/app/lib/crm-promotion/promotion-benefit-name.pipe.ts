@@ -20,6 +20,10 @@ export class PromotionBenefitNamePipe implements PipeTransform {
       case "ITEMBATHDISC": return "ลดสินค้าเป็นบาท"
       case "ITEMPERCENTDISC": return "ลดสินค้าเป็นเปอร์เซ็นต์"
       case "ITEMPRICE": return "ปรับราคาสินค้า"
+      case "REGISTERFEE": return "ฟรีค่าสมัครสมาชิก"
+      // Doubles as the tier input's label on the แถมในกลุ่ม page, where the reward
+      // value is a count of free units rather than an amount.
+      case "CHEAPEST": return "แถมสินค้าถูกสุด(ชิ้น)"
       default: return "สิทธิประโยชน์ไม่ถูกต้อง"
     }
   }

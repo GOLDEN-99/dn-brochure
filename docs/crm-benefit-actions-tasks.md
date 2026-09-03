@@ -1,6 +1,7 @@
 # Task Breakdown — two new CRM benefit actions
 
-> **Status: not started. Blocked on two answers (see "Before starting").**
+> **Status: done, 2026-09-03.** Both open questions were answered and the work shipped;
+> the checklists below record what was built and where it departs from the plan.
 > Origin: `DrugPOSApp/docs/pages/sale/CRM-BENEFIT-PLAN.md` §3.2 — that doc holds the *why*, the
 > measurements and the POS-side work. This file is only the Angular slice.
 > Related: [Promotion Editor tasks](./crm-promotion-editor-tasks.md), [API Spec](./crm-promotion-edit-api-spec.md)
@@ -22,15 +23,20 @@ anyway: `CrmPromotionService.Validate` never whitelists `action`, and `crm_promo
 
 ---
 
-## Before starting
+## The two answers
 
-1. **The exact action strings are not settled yet.** Placeholders below. ⚠️ Whatever is chosen **must not
-   end in** `PRICE`, `GIFT`, `PWP`, `BATHDISC` or `PERCENTDISC` — the POS engine routes by suffix, and a
-   name ending in one of those is silently handled as that other action.
-2. **Which promotion types may offer the register-fee action** — `BILL` is certain; `BUNDLE`/`ITEM` are
-   open.
+1. **The action strings are `REGISTERFEE` and `CHEAPEST`.** `CHEAPEST`, not `CHEAPESTITEM`, to keep it
+   clear of the `ITEM*` family. Both are asserted against the naming rules in
+   `lib/crm-promotion/promotion-actions.spec.ts` — a regression guard, because a bad name fails silently
+   at the till rather than loudly here.
+   ⚠️ The rule is stricter than this doc first stated. The suffix list (`PRICE`, `GIFT`, `PWP`,
+   `BATHDISC`, `PERCENTDISC`) comes from `CrmPromotionEngine`'s `EndsWith` dispatch, but the API adds a
+   second rule: `CrmPromotionService.Validate` caps every tier's `rewardValue` at 100 for any action
+   **containing** `PERCENT`, anywhere in the name — which would quietly clamp a count-based reward.
+2. **`BILL` offers `REGISTERFEE`, `BUNDLE` offers `CHEAPEST`.** Both appear in their type's reward list
+   (so the edit page can render a stored one), and each also gets a dedicated single-purpose create page.
 
-Confirm both with the POS side before merging, or the strings will have to be migrated in the DB.
+Also corrected: `crm_promotions.action` is `NVARCHAR(50)`, not the `nvarchar(100)` claimed below.
 
 ---
 
@@ -38,9 +44,12 @@ Confirm both with the POS side before merging, or the strings will have to be mi
 
 **Files:** `src/app/service/crm-promotion/crm-token.ts`, `src/app/factory/crm-promotion/create-promotion.ts`
 
-- [ ] Add the cheapest action to `CRM_BUNDLE_REWARD`.
-- [ ] Add the register-fee action to the `create-bill` page's `rewardOption.rewardList` (and to any other
-      promotion type the answer to Q2 includes).
+- [x] Added `CHEAPEST` to `CRM_BUNDLE_REWARD` and `REGISTERFEE` to the new `CRM_BILL_REWARD`.
+- [x] The BILL reward table was duplicated between the create factory and the edit factory; it is now one
+      exported constant, so the two can no longer drift.
+- [x] The action strings themselves live in `lib/crm-promotion/promotion-actions.ts`, not beside the page
+      config — the config already imports the schema's form type, so declaring them there would close an
+      import cycle.
 
 `action` is a plain `string` in `crm-promotion.type.ts` — there is no union type or zod enum to widen.
 
@@ -50,7 +59,8 @@ Confirm both with the POS side before merging, or the strings will have to be mi
 
 **File:** `src/app/lib/crm-promotion/promotion-benefit-name.pipe.ts`
 
-- [ ] One `case` per new action.
+- [x] One `case` per new action: `ฟรีค่าสมัครสมาชิก` and `แถมสินค้าถูกสุด(ชิ้น)`. The second doubles as
+      the tier input's label on the แถมในกลุ่ม page.
 
 ⚠️ The pipe's `default` returns **"สิทธิประโยชน์ไม่ถูกต้อง"**, so an action with no label does not read as
 "unknown" — it reads as *invalid*, on a promotion that is actually fine.
@@ -65,10 +75,13 @@ Confirm both with the POS side before merging, or the strings will have to be mi
 const keepRewardPool = action === 'PWP' || action === 'GIFT';
 ```
 
-- [ ] Include the register-fee action, which carries goods code `11755` in its reward pool.
-
-Without this the pool is stripped on save and the promotion is stored with **no SKU** — no error, nothing
-in the UI, and it only shows up as a promotion that does nothing at the till.
+- [x] **Solved differently, and better: the pool is now derived, not kept.** `buildRewardPool()` in
+      `promotion-form.component.ts` returns the `11755` line for `REGISTERFEE` outright, so the pool
+      cannot be lost no matter what the form holds, and no author can author it wrong. Adding the action
+      to `keepRewardPool` would have left the SKU one forgotten branch away from being stripped again —
+      the same shape of bug this section was warning about.
+- [x] Covered by `promotion-form.component.spec.ts`, which asserts on the emitted payload rather than the
+      form state, because the payload is where the SKU used to disappear.
 
 This has happened once already on this seam: the form still sends `source`, the deployed API's
 `CreatePromotionRequest` has no such member, and every promotion created since 2026-05-13 has a NULL
@@ -80,9 +93,11 @@ This has happened once already on this seam: the form still sends `source`, the 
 
 **File:** `src/app/pages/crm-promotion/create/create-bill-discount-promotion/createPromotionSchema.ts`
 
-- [ ] Extend the `minLength(_path.rewardPool, 1)` rule in `promotionBenefitSchema` (currently
-      `action === 'PWP' || action === 'GIFT'`) to the register-fee action.
-- [ ] The cheapest action needs **no** reward pool — leave it out of that rule.
+- [x] **Not extended to `REGISTERFEE`** — that rule validates the *form's* pool, and the register-fee pool
+      is never in the form (Subtask 3). Requiring it there would fail a page that is behaving correctly.
+- [x] `CHEAPEST` is out of the rule, as planned, and gained one of its own: the reward value must be a
+      whole number ≥ 1. Half an item cannot be free, and a zero-unit reward is a promotion that does
+      nothing at the till.
 
 ---
 
@@ -90,10 +105,10 @@ This has happened once already on this seam: the form still sends `source`, the 
 
 **Files:** `promotion-form` / `promotion-gift` reward-pool section
 
-- [ ] Constrain the register-fee pool to a single product, prefilled with `11755`.
-
-A multi-SKU pool is meaningless here — you cannot register a customer twice, and the POS grants once per
-bill regardless of what the pool holds.
+- [x] Stronger than "constrain": there is **no pool UI at all** for this action, and the single SKU is
+      derived at submit. A multi-SKU pool is meaningless — you cannot register a customer twice, and the
+      POS grants once per bill regardless of what the pool holds — so the field was removed rather than
+      restricted.
 
 ---
 
@@ -101,10 +116,16 @@ bill regardless of what the pool holds.
 
 **Files:** `benefit-select` / `benefit-tier`, `create-promotion.ts`
 
-- [ ] Label the tier reward as a **count** for this action — "จำนวนชิ้นที่ได้ฟรี" — not an amount.
-      Threshold stays "จำนวน SET (ชุด)".
-- [ ] Hide the reward-pool section for it.
-- [ ] *Optional:* flip the `create-group` default from `isRepeat: true` to `false`.
+- [x] Labelled as a count — `แถมสินค้าถูกสุด(ชิ้น)` — via the benefit-name pipe.
+- [x] No reward-pool section (it is not PWP/GIFT, so it was already hidden).
+- [x] **Superseded by two dedicated pages** rather than tier wording alone. `create-register-fee`
+      (ค่าสมาชิก) and `create-cheapest` (แถมในกลุ่ม) pin the action, hide the ladder controls, and leave
+      exactly one number to fill in: the bill minimum, and the free-unit count. Driven by three optional
+      flags on `IRewardOption` (`fixedAction`, `showThresholdInput`, `showRewardInput`), so the general
+      pages needed no change.
+- [x] `create-group`'s default is untouched. The cheapest page pins `thresholdValue: 1` with
+      `isRepeat: true` instead, so a basket of three sets earns the reward three times — the scaling
+      problem this doc warns about below simply does not arise on that page.
 
 **The ladder itself already works — do not build anything for it.** The ใช้ซ้ำ/ทุกๆ checkbox
 (`benefit-select.component.html:34`) toggles `isRepeat`, and unchecking it enables เพิ่มสิทธิประโยชน์ to add
@@ -119,5 +140,13 @@ they add rungs or tick ใช้ซ้ำ.
 
 ## Subtask 7 — Specs
 
-- [ ] Cover the payload built for each new action, especially that the reward pool **survives** save for
-      the register-fee action (Subtask 3).
+- [x] `promotion-form.component.spec.ts` — the payload for both new pages, including the surviving
+      `11755` line and the empty pool for `CHEAPEST`.
+- [x] `create-promotion.spec.ts` — both new page configs, and that each action stays selectable on its
+      type's edit page (otherwise reopening a promotion would silently rewrite its action).
+- [x] `promotion-actions.spec.ts` — the naming rules, as a guard for whoever adds the third action.
+- [x] `promotion-benefit-name.pipe.spec.ts` — both labels, and that neither renders as
+      *"สิทธิประโยชน์ไม่ถูกต้อง"*.
+
+33 specs pass. Note the 5 pre-existing `should create` failures elsewhere under
+`components/crm-promotion/` (scaffold specs that never set required inputs) — they predate this work.
