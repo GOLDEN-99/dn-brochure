@@ -1,4 +1,5 @@
 import { TPromotionDetail } from '../../types/crm-promotion.type';
+import { resolvePromotionSource } from '../../lib/crm-promotion/resolve-promotion-source';
 import { TCreatePromotionForm } from '../../pages/crm-promotion/create/create-bill-discount-promotion/createPromotionSchema';
 
 function isoToNgbDate(iso: string) {
@@ -24,20 +25,13 @@ function activeDaysToFlags(activeDays: string | null | undefined): TActiveDay {
   return Array.from(chars, (c) => c === '1') as TActiveDay;
 }
 
-// Promotions created while `source` was never sent are stored as null. Fall back to
-// the value that keeps the stored promotionOrder legal, so opening an old promotion
-// in the edit form does not silently rewrite its calculation order.
-function resolveSource(d: TPromotionDetail): string {
-  return d.source ?? (d.promotionOrder === 0 ? 'HU' : 'SUPPLIER');
-}
-
 export function promotionDetailToForm(d: TPromotionDetail): TCreatePromotionForm {
   return {
     promotionMaster: {
       promotionName: d.promotionName,
       promotionDesc: d.promotionDesc,
       promotionType: d.promotionType,
-      source: resolveSource(d),
+      source: resolvePromotionSource(d.source, d.promotionOrder),
       dateRange: {
         startDate: isoToNgbDate(d.startdate),
         endDate: isoToNgbDate(d.enddate),
