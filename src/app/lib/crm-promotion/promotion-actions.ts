@@ -18,4 +18,9 @@ export const CHEAPEST_ACTION = 'CHEAPEST';
 
 // ค่าสมัครสมาชิก HUG Club. The only SKU a REGISTERFEE promotion ever carries, which is
 // why its reward pool is derived at submit rather than authored.
+//
+// This is the single hardcode of the SKU, deliberately on this side: every REGISTERFEE
+// promotion ships it to the branches as rewardPool[0].goodCode, so DrugPos should read
+// it from the synced promotion rather than keep its own copy. Two copies would drift
+// the day the code changes, and the till's copy is the one nobody here can grep for.
 export const REGISTER_FEE_GOOD_CODE = '11755';

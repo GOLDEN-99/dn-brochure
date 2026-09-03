@@ -110,6 +110,19 @@ This has happened once already on this seam: the form still sends `source`, the 
       POS grants once per bill regardless of what the pool holds — so the field was removed rather than
       restricted.
 
+**Where `11755` is hardcoded — decided 2026-09-03: here, not in DrugPos.** The value lives once, in
+`lib/crm-promotion/promotion-actions.ts`, and every REGISTERFEE promotion carries it to the branches as
+`rewardPool[0].goodCode`:
+
+```json
+"action": "REGISTERFEE",
+"rewardPool": [{ "goodCode": "11755", "itemBenefitType": "PRICE", "itemBenefitValue": 0 }]
+```
+
+DrugPos had not implemented the action when this shipped, so the POS side is free to take the SKU from
+the synced promotion. It should: a second hardcode at the till would drift the day the code changes, and
+that copy is the one nobody in this repo can grep for.
+
 ---
 
 ## Subtask 6 — Cheapest action: tier wording, no pool
