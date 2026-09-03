@@ -23,6 +23,12 @@ export class BenefitTierComponent {
   readonly thresholdType = input.required<string>()
   readonly action = input.required<string>()
   readonly canDelete = input(false)
+  // Fixed-action pages hide the number they pin: ค่าสมาชิก has no reward value (the
+  // benefit is the free SKU, not an amount) and แถมในกลุ่ม has no threshold (always
+  // one set). Hidden here rather than in the schema -- the value still has to be
+  // present and valid in the payload.
+  readonly showThreshold = input(true)
+  readonly showReward = input(true)
 
   deleteTier = output()
   onDeleteTier() {

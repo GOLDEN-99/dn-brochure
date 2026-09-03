@@ -19,6 +19,12 @@ export class BenefitSelectComponent {
   private readonly config = inject(CRM_PAGE_CONFIG);
   readonly rewardOption = signal(this.config.rewardOption.rewardList)
   readonly thresholdList = signal(this.config.rewardOption.thresholdList)
+  // A fixed-action page owns the action, the threshold type and the repeat mode, so it
+  // renders neither the selects nor the ladder controls -- there is one tier and the
+  // user fills one number in it.
+  readonly fixedAction = signal(this.config.rewardOption.fixedAction ?? false)
+  readonly showThresholdInput = signal(this.config.rewardOption.showThresholdInput ?? true)
+  readonly showRewardInput = signal(this.config.rewardOption.showRewardInput ?? true)
   form = input.required<FieldTree<TPromotionBenefit>>()
 
 

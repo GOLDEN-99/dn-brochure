@@ -1,4 +1,7 @@
-import { CRM_BUNDLE_REWARD, CRM_INLINE_REWARD, ICrmPageConfig } from "../../service/crm-promotion/crm-token"
+import {
+    CRM_BILL_REWARD, CRM_BUNDLE_REWARD, CRM_INLINE_REWARD, ICrmPageConfig
+} from "../../service/crm-promotion/crm-token"
+import { CHEAPEST_ACTION, REGISTER_FEE_ACTION } from "../../lib/crm-promotion/promotion-actions"
 import {
     initialMaster, initialDatetime, initialMember, initialBranch, initialBenefit
 } from "../../pages/crm-promotion/create/create-bill-discount-promotion/createPromotionSchema"
@@ -31,12 +34,7 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
                     showList: false,
                 },
                 rewardOption: {
-                    rewardList: [
-                        { action: "BILLBATHDISC", label: "ลดทั้งบิลเป็นบาท" },
-                        { action: "BILLPERCENTDISC", label: "ลดทั้งบิลเป็นเปอร์เซ็นต์" },
-                        { action: "PWP", label: "สิทธิแลกซื้อ" },
-                        { action: "GIFT", label: "สินค้าแถม" }
-                    ],
+                    rewardList: CRM_BILL_REWARD,
                     thresholdList: [
                         { threshold: "BILLSUBTOTAL", label: "ยอดบิล(บาท)" },
                         { threshold: "BILLCOUNT", label: "จำนวนสินค้า(ชิ้น)" },
@@ -101,6 +99,77 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
                     thresholdList: []
                 }
             }
+        case "create-register-fee":
+            // One SKU (11755) onto the bill at 0 baht so the vendor service promotes the
+            // customer to HUG Club. Nothing about it is per-promotion except the bill
+            // minimum, so the page asks for that and nothing else: the action is pinned,
+            // the reward value is always 0, and the reward pool is derived at submit
+            // (see buildRewardPool in promotion-form.component.ts) rather than authored.
+            return {
+                pageName: 'ค่าสมาชิก',
+                initialData: {
+                    promotionMaster: { ...initialMaster, promotionType: 'BILL' },
+                    promotionDatetime: initialDatetime,
+                    promotionMember: initialMember,
+                    promotionBranch: initialBranch,
+                    promotionFilter: [],
+                    promotionBenefit: {
+                        ...initialBenefit,
+                        action: REGISTER_FEE_ACTION,
+                        thresholdType: 'BILLSUBTOTAL',
+                        isRepeat: false,
+                        tiers: [{ thresholdValue: 0, rewardValue: 0 }],
+                        rewardPool: [],
+                    },
+                },
+                filterOption: {
+                    showFilter: false,
+                    showBundle: false,
+                    showItem: false,
+                    showList: false,
+                },
+                rewardOption: {
+                    rewardList: [{ action: REGISTER_FEE_ACTION, label: "ฟรีค่าสมัครสมาชิก" }],
+                    thresholdList: [{ threshold: "BILLSUBTOTAL", label: "ยอดบิล(บาท)" }],
+                    fixedAction: true,
+                    showRewardInput: false,
+                }
+            }
+        case "create-cheapest":
+            // The N cheapest units of the bundle become free. Threshold is pinned to one
+            // complete set and the promotion repeats, so a basket of three sets gets three
+            // times the reward -- a non-repeating single rung would give N free units for
+            // any basket size, which is almost never what the author means.
+            return {
+                pageName: 'แถมในกลุ่ม',
+                initialData: {
+                    promotionMaster: { ...initialMaster, promotionType: 'BUNDLE' },
+                    promotionDatetime: initialDatetime,
+                    promotionMember: initialMember,
+                    promotionBranch: initialBranch,
+                    promotionFilter: [],
+                    promotionBenefit: {
+                        ...initialBenefit,
+                        action: CHEAPEST_ACTION,
+                        thresholdType: 'BUNDLECOUNT',
+                        isRepeat: true,
+                        tiers: [{ thresholdValue: 1, rewardValue: 1 }],
+                        rewardPool: [],
+                    },
+                },
+                filterOption: {
+                    showFilter: true,
+                    showBundle: true,
+                    showItem: false,
+                    showList: true,
+                },
+                rewardOption: {
+                    rewardList: [{ action: CHEAPEST_ACTION, label: "แถมสินค้าถูกสุด(ชิ้น)" }],
+                    thresholdList: [{ threshold: "BUNDLECOUNT", label: "จำนวน SET (ชุด)" }],
+                    fixedAction: true,
+                    showThresholdInput: false,
+                }
+            }
         default:
             throw new Error("invalid path name")
     }
@@ -114,12 +183,7 @@ export function provideEditPromotionConfig(detail: TPromotionDetail): ICrmPageCo
     }
     const rewardOptions: Record<string, ICrmPageConfig['rewardOption']> = {
         BILL: {
-            rewardList: [
-                { action: "BILLBATHDISC", label: "ลดทั้งบิลเป็นบาท" },
-                { action: "BILLPERCENTDISC", label: "ลดทั้งบิลเป็นเปอร์เซ็นต์" },
-                { action: "PWP", label: "สิทธิแลกซื้อ" },
-                { action: "GIFT", label: "สินค้าแถม" },
-            ],
+            rewardList: CRM_BILL_REWARD,
             thresholdList: [
                 { threshold: "BILLSUBTOTAL", label: "ยอดบิล(บาท)" },
                 { threshold: "BILLCOUNT", label: "จำนวนสินค้า(ชิ้น)" },

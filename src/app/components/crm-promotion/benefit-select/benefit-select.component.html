@@ -1,44 +1,46 @@
-<div class="row mb-3">
-  <div class="form-field col-md-4">
-    <label class="form-label" [htmlFor]="form().action().name()">สิทธิ</label>
-    <select
-      id="benefit-type"
-      class="form-select"
-      [formField]="form().action"
-      (change)="onActionChange()"
-    >
-      @for (opt of rewardOption(); track $index) {
-        <option [value]="opt.action">{{ opt.label }}</option>
-      }
-    </select>
+@if (!fixedAction()) {
+  <div class="row mb-3">
+    <div class="form-field col-md-4">
+      <label class="form-label" [htmlFor]="form().action().name()">สิทธิ</label>
+      <select
+        id="benefit-type"
+        class="form-select"
+        [formField]="form().action"
+        (change)="onActionChange()"
+      >
+        @for (opt of rewardOption(); track $index) {
+          <option [value]="opt.action">{{ opt.label }}</option>
+        }
+      </select>
+    </div>
+    <div class="form-field col-md-4">
+      <label [htmlFor]="form().thresholdType().name()" class="form-label"
+        >เงื่อนไขจาก</label
+      >
+      <select
+        id="benefit-threshold"
+        class="form-select"
+        [formField]="form().thresholdType"
+      >
+        @for (thres of thresholdList(); track thres.threshold) {
+          <option [value]="thres.threshold">{{ thres.label }}</option>
+        }
+      </select>
+    </div>
+    <div class="form-check form-switch col-auto">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        id="is-repeat"
+        [formField]="form().isRepeat"
+        (change)="onIsRepeatChange($any($event.target).checked)"
+      />
+      <label [htmlFor]="form().isRepeat().name()" class="form-check-label"
+        >ใช้ซ้ำ/ทุกๆ</label
+      >
+    </div>
   </div>
-  <div class="form-field col-md-4">
-    <label [htmlFor]="form().thresholdType().name()" class="form-label"
-      >เงื่อนไขจาก</label
-    >
-    <select
-      id="benefit-threshold"
-      class="form-select"
-      [formField]="form().thresholdType"
-    >
-      @for (thres of thresholdList(); track thres.threshold) {
-        <option [value]="thres.threshold">{{ thres.label }}</option>
-      }
-    </select>
-  </div>
-  <div class="form-check form-switch col-auto">
-    <input
-      class="form-check-input"
-      type="checkbox"
-      id="is-repeat"
-      [formField]="form().isRepeat"
-      (change)="onIsRepeatChange($any($event.target).checked)"
-    />
-    <label [htmlFor]="form().isRepeat().name()" class="form-check-label"
-      >ใช้ซ้ำ/ทุกๆ</label
-    >
-  </div>
-</div>
+}
 <hr />
 @let temp = form();
 @for (tier of temp.tiers; track tier().fieldTree().name()) {
@@ -46,21 +48,25 @@
     [action]="temp.action().value()"
     [thresholdType]="temp.thresholdType().value()"
     [form]="tier"
-    [canDelete]="temp.tiers().value().length > 1"
+    [showThreshold]="showThresholdInput()"
+    [showReward]="showRewardInput()"
+    [canDelete]="!fixedAction() && temp.tiers().value().length > 1"
     (deleteTier)="onDeleteTier($index)"
   />
 }
 <app-form-alert-text [formState]="temp.tiers()" />
 <!---->
-<div class="d-flex justify-content-end">
-  <button
-    class="btn btn-success"
-    (click)="addTier()"
-    [disabled]="form().isRepeat().value()"
-  >
-    เพิ่มสิทธิประโยชน์
-  </button>
-</div>
+@if (!fixedAction()) {
+  <div class="d-flex justify-content-end">
+    <button
+      class="btn btn-success"
+      (click)="addTier()"
+      [disabled]="form().isRepeat().value()"
+    >
+      เพิ่มสิทธิประโยชน์
+    </button>
+  </div>
+}
 @if (form().action().value() === "PWP") {
   <hr />
   <app-promotion-pwp [rewardForm]="form()" />

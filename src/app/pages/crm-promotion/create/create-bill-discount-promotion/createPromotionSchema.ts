@@ -24,6 +24,7 @@ import {
   TPromotionTier,
   TTimeSpan,
 } from '../../../../types/crm-promotion.type';
+import { CHEAPEST_ACTION } from '../../../../lib/crm-promotion/promotion-actions';
 
 
 const dateRangeSchema = schema<TPromotionMaster['dateRange']>((_path) => {
@@ -245,6 +246,23 @@ export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
       ({ valueOf }) => valueOf(_path.action).includes("PERCENT"),
       (p) => {
         max(p, 100, { message: 'ต้องไม่เกิน 100 %' })
+      }
+    );
+    // CHEAPEST rewards a count of free units, not an amount: half an item cannot be
+    // free, and a zero-unit reward is a promotion that does nothing at the till.
+    applyWhen(
+      p.rewardValue,
+      ({ valueOf }) => valueOf(_path.action) === CHEAPEST_ACTION,
+      (p) => {
+        min(p, 1, { message: 'ต้องแถมอย่างน้อย 1 ชิ้น' });
+        validate(p, ({ value }) =>
+          Number.isInteger(value())
+            ? null
+            : {
+              kind: 'not an integer',
+              message: 'จำนวนชิ้นที่แถมต้องเป็นจำนวนเต็ม',
+            },
+        );
       }
     );
   });
