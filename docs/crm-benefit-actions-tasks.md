@@ -142,12 +142,14 @@ that copy is the one nobody in this repo can grep for.
 
 **The ladder itself already works — do not build anything for it.** The ใช้ซ้ำ/ทุกๆ checkbox
 (`benefit-select.component.html:34`) toggles `isRepeat`, and unchecking it enables เพิ่มสิทธิประโยชน์ to add
-rungs. The agreed shape is a non-repeat ladder: threshold = how many complete sets, reward = how many of
-the cheapest units become free. "Any 3, cheapest free" = filter `filterValue 3` + one tier `(1 → 1)`.
+rungs.
 
-⚠️ Worth telling whoever authors these: **a non-repeat ladder does not scale with the basket.** A single
-rung "1 set → 1 free" gives a six-unit basket one free unit, not two. If a promotion is meant to repeat,
-they add rungs or tick ใช้ซ้ำ.
+⚠️ **The "non-repeat ladder" this section originally described is superseded** (owner, 2026-09-03), and
+what `create-cheapest` ships is now the agreed shape. `CHEAPEST` is **BOGO/BXGY**: the set is
+`Σ filterValue` units, tier `rewardValue` = how many of the set's **cheapest** units are free, and it
+**repeats per set** (`isRepeat: true`, threshold pinned at one set), so three sets earn three times the
+reward. The free units come from **inside** the set — "set of 2, one free" means the customer leaves with
+2 and pays for the dearer one, never "buy 2, receive a 3rd". DrugPos side: `RULES.md` §1.15.
 
 ---
 
@@ -163,3 +165,29 @@ they add rungs or tick ใช้ซ้ำ.
 
 33 specs pass. Note the 5 pre-existing `should create` failures elsewhere under
 `components/crm-promotion/` (scaffold specs that never set required inputs) — they predate this work.
+
+---
+
+## Follow-up — agreed 2026-09-03, not yet built
+
+Two validation rules that came out of reviewing the shipped work against the POS engine. Both are
+`promotionBenefitSchema` additions in `createPromotionSchema.ts`, beside the `CHEAPEST` integer rule.
+
+- [ ] **`REGISTERFEE` ⇒ `rewardValue` must be 1.** The dedicated page already pins it, but the action is
+      in `CRM_BILL_REWARD`, so the **general** `create-bill` page offers it with a free reward input — an
+      author there can type 0 or 3.
+      - `0` is the shape that made this a blocker: DrugPos drops a promotion whose reward is 0 *before* it
+        reaches the grant, so the promotion is ACTIVE, correct everywhere, and simply never fires.
+      - `3` is meaningless: a bill carries one `custCode`, so it can only register one customer. Measured
+        on `Drug1` — **177,482 bills have carried a register-fee line since 2025-01-01, every one of them
+        exactly one line at quantity 1.**
+      - `1` rather than 0 because it is what the document actually carries, and a stored 0 cannot be told
+        apart from a mis-authored row.
+      - ⚠️ DrugPos will clamp to one grant regardless of the value — this rule is the outer of three
+        layers, not the fix. Do not let it become load-bearing.
+- [ ] **`CHEAPEST` ⇒ `rewardValue < Σ filterValue`.** Nothing stops an author freeing the whole set today.
+      DrugPos clamps to the units the bundle consumed, but the form should refuse it first.
+
+Also worth knowing, no action needed here: `isRepeat` must stay **false** for `REGISTERFEE`. With `true`,
+DrugPos computes `floor(measure / threshold) × rewardValue`, so a ฿1,500 bill against a ฿500 threshold
+asks for three registrations. The dedicated page already ships `false`.
