@@ -8,7 +8,7 @@ const hashDateStruct = ({ year, month, day }: NgbDateStruct) => year * 10000 + m
 export const dateRangeSchema: SchemaFn<TDateRangeFormState> = (schema) => {
     validate(schema, ({ value }) => {
         const { startDate, endDate } = value()
-        return hashDateStruct(endDate) > hashDateStruct(startDate) ? null : { kind: 'invalid-date-range', message: 'วันที่จบต้องมากกว่าวันที่เริ่ม' }
+        return hashDateStruct(endDate) >= hashDateStruct(startDate) ? null : { kind: 'invalid-date-range', message: 'วันที่จบต้องมากกว่าวันที่เริ่ม' }
     })
     required(schema.startDate)
     required(schema.endDate)
