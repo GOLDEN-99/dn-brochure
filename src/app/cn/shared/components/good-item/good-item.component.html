@@ -1,9 +1,11 @@
 @let i = goodInfo();
 <div>
-  <div>รหัสสินค้า: {{ i.goodCode }}</div>
+  <!-- <div>รหัสสินค้า: {{ i.goodCode }}</div> -->
   <div>บาร์โค้ด: {{ i.barCode }}</div>
   <div>ชื่อสินค้า: {{ i.goodName }}</div>
-  <div>หน่วยสินค้า: {{ i.unitDesc }}</div>
+  <div>จำนวน: {{ i.goodAmou }} {{ i.unitDesc }}</div>
+  <div>ราคา: {{ i.subTotal | number: "1.2-2" }} บาท</div>
+  <div>ราคาเฉลี่ย: {{ i.subTotal / i.goodAmou | number: "1.2-2" }} บาท</div>
   <div class="">
     <label class="form-label" [htmlFor]="id()">ระบุจำนวน</label>
     <input
