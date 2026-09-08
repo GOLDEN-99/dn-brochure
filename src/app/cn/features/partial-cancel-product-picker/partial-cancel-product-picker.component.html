@@ -5,6 +5,7 @@
   <thead>
     <tr>
       <th style="width: 10%"></th>
+      <th style="width: 10%">#</th>
       <th style="width: 60%">รหัสและชื่อสินค้า</th>
       <th>ราคา (บาท)</th>
     </tr>
@@ -23,6 +24,7 @@
             />
           </div>
         </td>
+        <td>{{ item.line }}</td>
         <td>{{ "(" + item.barCode + ") " + item.goodName }}</td>
         <td>{{ item.subTotal | number: "1.2-2" }}</td>
       </tr>

@@ -2,12 +2,13 @@ import { Component, input, InputSignal, InputSignalWithTransform, linkedSignal, 
 import { FormsModule } from '@angular/forms';
 import { DisabledReason, FormValueControl, ValidationError, WithOptionalFieldTree } from '@angular/forms/signals';
 import { TGoodItemState } from '../../types/cn.type';
+import { DecimalPipe } from '@angular/common';
 
 let ref = 0
 
 @Component({
   selector: 'cn-good-item',
-  imports: [FormsModule],
+  imports: [FormsModule, DecimalPipe],
   templateUrl: './good-item.component.html',
   styleUrl: './good-item.component.scss',
 })
@@ -22,7 +23,7 @@ export class GoodItemComponent implements FormValueControl<number> {
     const prased = Number.parseInt(event)
     this.value.set(prased)
   }
-  goodInfo = input.required<Pick<TGoodItemState, 'barCode' | 'goodCode' | 'goodName' | 'unitDesc'>>()
+  goodInfo = input.required<Pick<TGoodItemState, 'barCode' | 'goodCode' | 'goodName' | 'unitDesc' | 'subTotal' | 'goodAmou'>>()
   name = input('return-amount')
   id = signal(`return-amount-input-${ref}`)
   errors = input<readonly ValidationError.WithOptionalFieldTree[]>([])

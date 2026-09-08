@@ -79,7 +79,7 @@ export type TGoodItemBase = {
     goodAmou: number // as order amount
 }
 
-export type TGoodWithLot = Omit<TGoodItemBase, 'goodAmou'> & {
+export type TGoodWithLot = Omit<TGoodItemWithLine, 'goodAmou'> & {
     lot: TLotItem[]
 }
 
@@ -87,13 +87,22 @@ export type TGoodItemState = TGoodItemBase & {
     orderAmount: number
 }
 
-
+export type TGoodItemWithLine = TGoodItemBase & {
+    line: number
+}
 
 export type TOrderRes = {
     wholeNumb: string // "25035799",
     orderNumb: string // "WO1825516",
     wholeCode: string // "2981",
     goodList: TGoodItemBase[]
+}
+
+export type TOrderWithLine = {
+    wholeNumb: string // "25035799",
+    orderNumb: string // "WO1825516",
+    wholeCode: string // "2981",
+    goodList: TGoodItemWithLine[]
 }
 
 export type TGoodItemReq = {
@@ -163,7 +172,7 @@ export type TStepOne = {
 }
 
 export type TGoodFormItem = {
-    good: TGoodItemBase
+    good: TGoodItemWithLine
     amount: number
     check: boolean
 }

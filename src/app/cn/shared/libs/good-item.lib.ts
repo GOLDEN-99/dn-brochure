@@ -8,11 +8,12 @@ export const mapGoodItemToState = ({ lot, ...res }: TGoodWithLot) => {
 }
 
 export const mapGoodItemToForm =
-    ({ goodCode, barCode, goodName, unitDesc, unitPrice, unitCode, subTotal, useItem, lot }: TGoodWithLot): TGoodFormItem =>
+    ({ goodCode, barCode, goodName, unitDesc, unitPrice, unitCode, subTotal, useItem, lot, line }: TGoodWithLot): TGoodFormItem =>
     ({
         good: {
             goodCode, barCode, goodName,
             unitDesc, unitPrice, unitCode,
+            line,
             subTotal, useItem, goodAmou: lot.reduce((acc, cur) => acc + cur.goodAmou, 0)
         }, amount: 0, check: false
     })

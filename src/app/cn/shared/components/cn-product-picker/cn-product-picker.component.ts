@@ -28,6 +28,6 @@ export class CnProductPickerComponent implements FormValueControl<Array<TGoodFor
     return this.productList().filter(({ goodCode }) => !ref.has(goodCode))
   })
   addItem(product: TGoodItemState) {
-    this.value.update(prev => [...prev, { good: product, check: true, amount: 0 }])
+    this.value.update(prev => [...prev, { good: { ...product, line: prev.length + 1 }, check: true, amount: 0 }])
   }
 }

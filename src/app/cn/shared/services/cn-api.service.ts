@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../../shared/services/api.service';
 import { environment } from '../../../../environments/environment';
-import { CnLoadError, TCreateReq, TGoodItemBase, TGoodItemState, TLotItem, TOrderRes, TRemark, TWholeItem } from '../types/cn.type';
+import { CnLoadError, TCreateReq, TGoodItemBase, TGoodItemState, TLotItem, TOrderRes, TOrderWithLine, TRemark, TWholeItem } from '../types/cn.type';
 import { catchError, combineLatest, map, of, shareReplay, throwError } from 'rxjs';
 import { TCNRouteParam } from '../libs/parse-cn-param';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -18,6 +18,7 @@ export class CnApiService {
     this.api
       .get<TOrderRes>(`${this.url}/GetOrder`, { params: { WholeNumb: req.wholeNumb } })
       .pipe(
+        map<TOrderRes, TOrderWithLine>(({ goodList, ...res }) => ({ ...res, goodList: [...goodList.sort((a, b) => a.goodName.localeCompare(b.goodName))].map((g, i) => ({ ...g, line: i + 1 })) })),
         catchError(err => throwError(() => {
           if (err instanceof HttpErrorResponse) {
             if (err.status === 418) return new CnLoadError('order-not-found', 'ไม่พบใบสั่งซื้อ หรือถูก CN ไปแล้ว', req)
