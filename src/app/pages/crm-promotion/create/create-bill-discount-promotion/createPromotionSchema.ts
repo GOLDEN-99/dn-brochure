@@ -24,7 +24,13 @@ import {
   TPromotionTier,
   TTimeSpan,
 } from '../../../../types/crm-promotion.type';
-import { CHEAPEST_ACTION } from '../../../../lib/crm-promotion/promotion-actions';
+import {
+  CHEAPEST_ACTION,
+  POOL_PERCENT_TYPE,
+  THRESHOLD_RULES,
+  isPoolOnlyAction,
+  isPriceAction,
+} from '../../../../lib/crm-promotion/promotion-actions';
 
 
 const dateRangeSchema = schema<TPromotionMaster['dateRange']>((_path) => {
@@ -179,20 +185,29 @@ export const promotionBranchSchema = schema<TPromotionBranch>((_path) => {
   validate(_path.branches, branchUniqueValidator);
 });
 // tier
+// Only the rules that need no sibling context live here. The threshold floor and
+// the reward floor both depend on thresholdType / action, which sit on the parent
+// benefit node, so they are declared in promotionBenefitSchema's applyEach block
+// where those paths are in scope.
 export const promotionTierSchema = schema<TPromotionTier>((path) => {
   min(path.rewardValue, 0, { message: 'จำนวนส่วนลดต้องมากกว่าหรือเท่ากับ 0' });
-  required(path.rewardValue, { message: 'ต้องระบุจำนวนส่วนลด' });
-  min(path.thresholdValue, 0, { message: 'จำนวนขั้นต่ำต้องมากกว่าหรือเท่ากับ 0' });
   required(path.thresholdValue, { message: 'ต้องระบุจำนวนขั้นต่ำ' });
 });
 //reward
+// Applied per rewardPool item from promotionBenefitSchema. Previously this existed
+// but was never apply-ed anywhere, and tested itemBenefitType === 'PERCENT' -- a
+// value the picker never sets (it sets PERCENTDISC), so it was doubly inert: a
+// 250% PWP discount validated clean and shipped.
 export const promotionRewardPercentSchema = schema<TProductRewardPool>(
   (path) => {
+    min(path.itemBenefitValue, 0, {
+      message: 'ค่าส่วนลดต้องมากกว่าหรือเท่ากับ 0',
+    });
+    required(path.itemBenefitValue, { message: 'ต้องระบุค่าส่วนลด' });
     applyWhen(
       path,
-      ({ value }) => value().itemBenefitType === 'PERCENT',
+      ({ value }) => value().itemBenefitType === POOL_PERCENT_TYPE,
       (p) => {
-        min(p.itemBenefitValue, 0, { message: 'ค่าส่วนลดต้องมากกว่าหรือเท่ากับ 0' });
         max(p.itemBenefitValue, 100, { message: 'ค่าส่วนลดต้องไม่เกิน 100' });
       },
     );
@@ -241,6 +256,50 @@ export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
   );
   applyEach(_path.tiers, promotionTierSchema);
   applyEach(_path.tiers, (p) => {
+    // ── Threshold floor, keyed on thresholdType ──────────────────────────
+    // A COUNT threshold of 0 is met by an empty basket; combined with isRepeat
+    // that is an unbounded number of rewards. BILLSUBTOTAL 0 is legitimate
+    // ("no minimum"), so this cannot be a blanket min().
+    validate(p.thresholdValue, ({ value, valueOf }) => {
+      const rule = THRESHOLD_RULES[valueOf(_path.thresholdType)];
+      if (!rule) return null;
+      const v = value();
+      if (typeof v !== 'number' || Number.isNaN(v)) return null; // required() reports this
+      if (v < rule.min)
+        return {
+          kind: 'threshold below minimum',
+          message: `จำนวนขั้นต่ำต้องมากกว่าหรือเท่ากับ ${rule.min}${rule.unit ? ' ' + rule.unit : ''}`,
+        };
+      if (rule.integer && !Number.isInteger(v))
+        return {
+          kind: 'threshold not an integer',
+          message: `จำนวนขั้นต่ำต้องเป็นจำนวนเต็ม${rule.unit ? ` (${rule.unit})` : ''}`,
+        };
+      return null;
+    });
+
+    // ── Reward floor, keyed on action ───────────────────────────────────
+    // PWP/GIFT carry their benefit in rewardPool, so the tier's rewardValue is
+    // meaningless and must not be demanded. PRICE actions set an absolute price,
+    // where 0 means free. Everything else deducts an amount, and a 0 deduction is
+    // a promotion that does nothing at the till.
+    applyWhen(
+      p.rewardValue,
+      ({ valueOf }) => !isPoolOnlyAction(valueOf(_path.action)),
+      (rv) => {
+        required(rv, { message: 'ต้องระบุจำนวนส่วนลด' });
+      },
+    );
+    applyWhen(
+      p.rewardValue,
+      ({ valueOf }) => {
+        const action = valueOf(_path.action);
+        return !isPoolOnlyAction(action) && !isPriceAction(action);
+      },
+      (rv) => {
+        min(rv, 1, { message: 'จำนวนส่วนลดต้องมากกว่า 0' });
+      },
+    );
     applyWhen(
       p.rewardValue,
       ({ valueOf }) => valueOf(_path.action).includes("PERCENT"),
@@ -287,7 +346,43 @@ export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
   });
 
 
+  // ── Ladder ordering ─────────────────────────────────────────────────────
+  // Distinctness alone allows (100 -> 50฿), (200 -> 10฿): spend more, get less.
+  // Price actions invert -- a higher threshold should set a *lower* price -- and
+  // pool-only actions have no meaningful reward to order, so both are skipped.
+  validate(_path.tiers, ({ value, valueOf }) => {
+    const action = valueOf(_path.action);
+    if (isPoolOnlyAction(action) || isPriceAction(action)) return null;
+    const tiers = [...value()].sort((a, b) => a.thresholdValue - b.thresholdValue);
+    for (let i = 1; i < tiers.length; i++) {
+      if (tiers[i].rewardValue < tiers[i - 1].rewardValue)
+        return {
+          kind: 'non monotonic tiers',
+          message: 'ขั้นที่สูงกว่าต้องได้ส่วนลดไม่น้อยกว่าขั้นที่ต่ำกว่า',
+        };
+    }
+    return null;
+  });
+
+  // ── Repeating rung sanity ───────────────────────────────────────────────
+  // The compound case: a repeating tier multiplies its reward by how many times
+  // the threshold fits into the basket. A threshold of 0 fits infinitely often.
+  // The per-type floor above already blocks this for COUNT types; this catches it
+  // for BILLSUBTOTAL, where 0 is otherwise legal.
+  validate(_path, ({ value }) => {
+    const { isRepeat, tiers } = value();
+    if (!isRepeat) return null;
+    return tiers.some((t) => t.thresholdValue <= 0)
+      ? {
+          kind: 'zero threshold on repeat',
+          message: 'สิทธิประโยชน์แบบซ้ำ/ทุกๆ ต้องมีจำนวนขั้นต่ำมากกว่า 0',
+        }
+      : null;
+  });
+
   validate(_path.rewardPool, rewardPoolUniqueValidator);
+  // Was defined but never applied -- see promotionRewardPercentSchema.
+  applyEach(_path.rewardPool, promotionRewardPercentSchema);
 
 });
 

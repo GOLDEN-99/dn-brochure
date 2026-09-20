@@ -5,6 +5,7 @@ import { PromotionBenefitNamePipe } from '../../../lib/crm-promotion/promotion-b
 import { PromotionThresholdPipe } from '../../../lib/crm-promotion/promotion-threshold.pipe';
 import { FieldTree, FormField } from "@angular/forms/signals";
 import { FormAlertTextComponent } from "../form-alert-text.component";
+import { isPoolOnlyAction } from '../../../lib/crm-promotion/promotion-actions';
 
 let benefitId = 0
 
@@ -38,5 +39,10 @@ export class BenefitTierComponent {
   isPwp = computed(() => this.action() === 'PWP')
 
   isGift = computed(() => this.action() === 'GIFT')
+
+  // PWP/GIFT carry the whole benefit in rewardPool, so the tier's reward number
+  // means nothing. It used to render anyway, and `required` forced the author to
+  // put a made-up value in it that then shipped in the payload.
+  isPoolOnly = computed(() => isPoolOnlyAction(this.action()))
 
 }

@@ -44,16 +44,24 @@ Docs at repo root: `docs/crm-promotion-edit-api-spec.md` (PUT contract +
 backend-enforced business rules), `docs/crm-promotion-editor-tasks.md`
 (edit-feature task log; its end-to-end checklist is still unchecked).
 
-## Three promotion types, one form
+## Five create pages, three promotion types, one form
 
-All three types share `PromotionFormComponent`. Type differences are pushed
+`promotionType` is not a field the author picks — the **route path** determines
+it. All five create pages share `PromotionFormComponent`; differences are pushed
 into an injected config object rather than branched inside the form.
 
-| Type     | Create route    | Label                | Threshold options            |
-| -------- | --------------- | -------------------- | ---------------------------- |
-| `BILL`   | `create-bill`   | ส่วนลดท้ายบิล        | `BILLSUBTOTAL`, `BILLCOUNT`  |
-| `BUNDLE` | `create-group`  | ส่วนลดตามกลุ่มสินค้า | `BUNDLECOUNT`                |
-| `ITEM`   | `create-inline` | ลดรายสินค้า          | none — always `ITEMEXIST`    |
+| Create route          | Label                | `promotionType` | Threshold options           |
+| --------------------- | -------------------- | --------------- | --------------------------- |
+| `create-bill`         | ส่วนลดท้ายบิล        | `BILL`          | `BILLSUBTOTAL`, `BILLCOUNT` |
+| `create-group`        | ส่วนลดตามกลุ่มสินค้า | `BUNDLE`        | `BUNDLECOUNT`               |
+| `create-inline`       | ลดรายสินค้า          | `ITEM`          | none — always `ITEMEXIST`   |
+| `create-register-fee` | ค่าสมาชิก            | `BILL`          | `BILLSUBTOTAL` (pinned)     |
+| `create-cheapest`     | แถมในกลุ่ม           | `BUNDLE`        | `BUNDLECOUNT` (pinned)      |
+
+The last two are narrowed presets rather than new types: `fixedAction: true`
+hides the action and threshold selects entirely, leaving the author one number.
+So there are **4 distinct (promotionType, thresholdType) pairs** creatable, and
+14 (promotionType, action) combinations.
 
 `CRM_PAGE_CONFIG` (`service/crm-promotion/crm-token.ts`) is the mechanism. It
 carries `pageName`, `initialData`, `filterOption` (four booleans gating which
@@ -103,9 +111,10 @@ structure or location — change one, check the other.
 ## Validation
 
 All in `createPromotionSchema.ts` as signal-forms schemas, Thai messages.
-`docs/crm-promotion-edit-api-spec.md` documents the same rules as
-backend-enforced, so these are duplicated on both sides — keep them in sync.
-The non-obvious ones:
+**The API does not validate the promotion body — this schema is the only guard.**
+`docs/crm-promotion-edit-api-spec.md` splits its rules into the ones the API
+enforces and a "Not yet enforced by the API" section, which is the spec for the
+backend work that should follow. The non-obvious ones:
 
 - `source === 'HU'` forces and disables `promotionOrder = '0'`. Because the
   field is disabled, signal-forms skips validators on it — the rule is checked
@@ -113,7 +122,29 @@ The non-obvious ones:
   independently, so a stale order cannot be submitted.
 - Tiers need distinct `thresholdValue` **and** distinct `rewardValue`;
   `isRepeat = true` means exactly one tier.
+- **Threshold floors are per-`thresholdType`**, not a blanket `min()`:
+  `BILLSUBTOTAL` 0 is the legitimate "no minimum", but `BILLCOUNT`/`BUNDLECOUNT`
+  0 is met by an empty basket — and on a repeating tier, met without bound. Both
+  COUNT types also require an integer. Table is `THRESHOLD_RULES` in
+  `lib/crm-promotion/promotion-actions.ts`. Because the floor depends on a
+  sibling field (`thresholdType` lives on the parent benefit node), the rule is a
+  `validate` inside `promotionBenefitSchema`'s `applyEach(_path.tiers, …)` block,
+  not in `promotionTierSchema`.
+- `isRepeat = true` additionally requires every `thresholdValue > 0` — the
+  compound case, which catches `BILLSUBTOTAL` where 0 is otherwise legal.
+- **Reward floors are per-`action`**: `*BATHDISC`/`*PERCENTDISC` need `> 0` (a 0
+  deduction does nothing at the till); `BUNDLEPRICE`/`ITEMPRICE` allow 0 (an
+  absolute price, so 0 = free); `CHEAPEST` needs an integer `>= 1`; `PWP`/`GIFT`
+  have no meaningful tier reward, so it is neither required nor rendered.
 - Actions containing `"PERCENT"` cap `rewardValue` at 100.
+- Tier ladders must be monotonic once sorted by threshold — distinctness alone
+  allowed "spend more, get less". Skipped for `PRICE` actions (which invert) and
+  `PWP`/`GIFT`.
+- `rewardPool` item values: `>= 0`, and `<= 100` for `itemBenefitType`
+  `PERCENTDISC`. Note the pool's type enum (`PRICE | BATHDISC | PERCENTDISC`) is
+  **not** the promotion-level `action`, so an action-based percent cap misses it.
+  `promotionRewardPercentSchema` previously tested for `'PERCENT'` and was never
+  `apply`-ed at all, so a 250% PWP discount shipped clean.
 - `PWP` / `GIFT` require a non-empty `rewardPool`; for any other action
   `buildRequest()` sends `rewardPool: []`, and changing the action clears the
   pool, so items cannot carry across reward types.
@@ -154,7 +185,21 @@ members.
   commented-out block.
 - `initialBenefit.thresholdType` is `'BILLBATH'`, which is not a value in any
   `thresholdList` — every factory case overrides it, so nothing reads the
-  default, but don't trust it as a reference value.
+  default, but don't trust it as a reference value. Note
+  `BenefitSelectComponent.onActionChange()` resets `thresholdType` from
+  `config.initialData`, i.e. from the *overridden* value — one missed override
+  away from writing `BILLBATH` into a payload.
+- **The API does not validate the promotion body at all.** The signal-forms
+  schema is the only guard; `docs/crm-promotion-edit-api-spec.md` has a
+  "Not yet enforced by the API" section listing what the backend still owes.
+  Threshold floors are per-`thresholdType` (`THRESHOLD_RULES` in
+  `lib/crm-promotion/promotion-actions.ts`) and reward floors per-`action` —
+  neither can be a blanket `min()`, because `BILLSUBTOTAL` 0 means "no minimum"
+  while `BUNDLECOUNT` 0 means an unbounded discount.
+- `FormAlertTextComponent` gates errors on `touched`, because the create pages
+  seed zeros that the schema legitimately rejects. Container/cross-field nodes
+  (tier ladder, filter groups, date range) need `[alwaysShow]="true"` — nothing
+  ever marks them touched, so gating alone would silence them permanently.
 - The create page component is still named
   `CreateBillDiscountPromotionComponent` but serves all three create routes.
 

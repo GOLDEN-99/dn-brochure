@@ -54,7 +54,7 @@
     (deleteTier)="onDeleteTier($index)"
   />
 }
-<app-form-alert-text [formState]="temp.tiers()" />
+<app-form-alert-text [formState]="temp.tiers()" [alwaysShow]="true" />
 <!---->
 @if (!fixedAction()) {
   <div class="d-flex justify-content-end">
@@ -70,10 +70,10 @@
 @if (form().action().value() === "PWP") {
   <hr />
   <app-promotion-pwp [rewardForm]="form()" />
-  <app-form-alert-text [formState]="form().rewardPool()" />
+  <app-form-alert-text [formState]="form().rewardPool()" [alwaysShow]="true" />
 }
 @if (form().action().value() === "GIFT") {
   <hr />
   <app-promotion-gift [rewardForm]="form()" />
-  <app-form-alert-text [formState]="form().rewardPool()" />
+  <app-form-alert-text [formState]="form().rewardPool()" [alwaysShow]="true" />
 }

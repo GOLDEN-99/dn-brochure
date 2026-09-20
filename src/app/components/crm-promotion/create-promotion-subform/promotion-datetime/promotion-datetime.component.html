@@ -1,7 +1,7 @@
 @let formField = form();
 <!--dow-->
 <app-day-checkboox [(activeDay)]="formField.activeDay().controlValue" />
-<app-form-alert-text [formState]="formField.activeDay()" />
+<app-form-alert-text [formState]="formField.activeDay()" [alwaysShow]="true" />
 <hr />
 <!--time span-->
 <app-timespan-picker
@@ -9,4 +9,4 @@
   [(limitTime)]="formField.limitTime().controlValue"
   [(timeSpan)]="formField.timeSpan().controlValue"
 />
-<app-form-alert-text [formState]="formField.timeSpan()" />
+<app-form-alert-text [formState]="formField.timeSpan()" [alwaysShow]="true" />

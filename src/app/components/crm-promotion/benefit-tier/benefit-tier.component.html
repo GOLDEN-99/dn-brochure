@@ -15,7 +15,7 @@
         </div>
       </div>
     }
-    @if (showReward()) {
+    @if (showReward() && !isPoolOnly()) {
       <div>
         <div class="form-field">
           <label [htmlFor]="form().rewardValue().name()" class="form-label">{{
