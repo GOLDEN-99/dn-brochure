@@ -5,6 +5,7 @@ import { PromotionBenefitNamePipe } from '../../../lib/crm-promotion/promotion-b
 import { PromotionThresholdPipe } from '../../../lib/crm-promotion/promotion-threshold.pipe';
 import { FieldTree, FormField } from "@angular/forms/signals";
 import { FormAlertTextComponent } from "../form-alert-text.component";
+import { isPoolOnlyAction } from '../../../lib/crm-promotion/promotion-actions';
 
 let benefitId = 0
 
@@ -38,5 +39,15 @@ export class BenefitTierComponent {
   isPwp = computed(() => this.action() === 'PWP')
 
   isGift = computed(() => this.action() === 'GIFT')
+
+  // PWP/GIFT carry the BENEFIT in rewardPool -- which SKU, at what price. The tier's number is a
+  // different question: how many pieces are given, how many claims are offered. Hiding it (an earlier
+  // attempt to stop `required` forcing a made-up amount) left it at 0 in the payload, and
+  // CrmPromotionEngine reads it as that quantity -- dropping the promotion at `reward <= 0` before any
+  // gift or entitlement is emitted. So it renders, with a count label of its own.
+  isPoolOnly = computed(() => isPoolOnlyAction(this.action()))
+
+  poolCountLabel = computed(() =>
+    this.action() === 'GIFT' ? 'จำนวนของแถม (ชิ้น)' : 'จำนวนสิทธิ์แลกซื้อ (ชิ้น)')
 
 }

@@ -28,7 +28,11 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
                     },
                 },
                 filterOption: {
-                    showFilter: false,
+                    // Optional product pool: with one, the tier threshold measures only those
+                    // goods' subtotal; with none, the whole cart. Both shapes are engine-supported
+                    // and tested -- only the second was ever authorable.
+                    showFilter: true,
+                    showPool: true,
                     showBundle: false,
                     showItem: false,
                     showList: false,
@@ -79,7 +83,7 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
                     promotionDatetime: initialDatetime,
                     promotionMember: initialMember,
                     promotionBranch: initialBranch,
-                    promotionFilter: [{ filterType: 'EXIST', filterValue: 0, productList: [] }],
+                    promotionFilter: [{ filterType: 'EXIST', filterValue: 1, productList: [] }],
                     promotionBenefit: {
                         ...initialBenefit,
                         action: 'ITEMPERCENTDISC',
@@ -177,7 +181,7 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
 
 export function provideEditPromotionConfig(detail: TPromotionDetail): ICrmPageConfig {
     const filterOptions: Record<string, ICrmPageConfig['filterOption']> = {
-        BILL: { showFilter: false, showBundle: false, showItem: false, showList: false },
+        BILL: { showFilter: true, showPool: true, showBundle: false, showItem: false, showList: false },
         BUNDLE: { showFilter: true, showBundle: true, showItem: false, showList: true },
         ITEM: { showFilter: true, showBundle: false, showItem: true, showList: false },
     }

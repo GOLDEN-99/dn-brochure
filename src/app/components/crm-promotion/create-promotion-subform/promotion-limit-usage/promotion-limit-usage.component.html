@@ -17,7 +17,7 @@
     </div>
   }
 </div>
-<app-form-alert-text [formState]="memberFormField.members()" />
+<app-form-alert-text [formState]="memberFormField.members()" [alwaysShow]="true" />
 <hr />
 @let branchFormField = branchForm();
 <app-inline-branch-limit
@@ -41,4 +41,4 @@
     </div>
   }
 </div>
-<app-form-alert-text [formState]="branchFormField.branches()" />
+<app-form-alert-text [formState]="branchFormField.branches()" [alwaysShow]="true" />

@@ -74,6 +74,35 @@ describe('provideCreatePromotionConfig', () => {
     expect(actions(inline)).not.toContain(CHEAPEST_ACTION);
   });
 
+  describe('create-bill (ส่วนลดท้ายบิล)', () => {
+    const config = provideCreatePromotionConfig('create-bill');
+
+    it('offers a product pool so a bill threshold can be scoped to chosen goods', () => {
+      // "Spend 500 baht on these items, get 50 off": CrmPromotionEngine.MeasureBill has always
+      // measured only the named goods when a filter group is present, but no page could produce
+      // a BILL promotion carrying one.
+      expect(config.filterOption.showFilter).toBeTrue();
+      expect(config.filterOption.showPool).toBeTrue();
+    });
+
+    it('is not a bundle page — no by-count group control', () => {
+      expect(config.filterOption.showBundle).toBeFalse();
+    });
+
+    it('starts with no pool, so the threshold still measures the whole cart by default', () => {
+      expect(config.initialData.promotionFilter).toEqual([]);
+    });
+  });
+
+  it('seeds an EXIST filter group at 1, the count the engine actually applies', () => {
+    // The engine coerces 0 to 1 anyway; storing the 1 stops the row depending on that fallback.
+    const inline = provideCreatePromotionConfig('create-inline');
+
+    expect(inline.initialData.promotionFilter).toEqual([
+      { filterType: 'EXIST', filterValue: 1, productList: [] },
+    ]);
+  });
+
   it('rejects an unknown path', () => {
     expect(() => provideCreatePromotionConfig('nope')).toThrow();
   });
@@ -116,5 +145,15 @@ describe('provideEditPromotionConfig', () => {
 
     expect(bill.rewardOption.rewardList.map((r) => r.action)).toContain(REGISTER_FEE_ACTION);
     expect(bundle.rewardOption.rewardList.map((r) => r.action)).toContain(CHEAPEST_ACTION);
+  });
+
+  // The create and edit factories carry duplicate filter tables, so a pool enabled on one and
+  // not the other would store fine and then vanish from the edit screen while still shipping in
+  // the PUT body.
+  it('keeps a BILL promotion editable with its product pool visible', () => {
+    const bill = provideEditPromotionConfig(detail('BILL', 'BILLBATHDISC'));
+
+    expect(bill.filterOption.showFilter).toBeTrue();
+    expect(bill.filterOption.showPool).toBeTrue();
   });
 });

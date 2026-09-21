@@ -18,8 +18,14 @@
     @if (showReward()) {
       <div>
         <div class="form-field">
+          <!--
+            PWP/GIFT get their own label: the pool says WHAT the customer gets, this number says HOW
+            MANY. Hiding it left the payload at 0, and the POS reads that as the quantity and drops the
+            promotion before granting anything. The benefit-name pipe is not reused here because it also
+            names the benefit in the list and detail views, where "จำนวนของแถม" would read wrongly.
+          -->
           <label [htmlFor]="form().rewardValue().name()" class="form-label">{{
-            action() | promotionBenefitName
+            isPoolOnly() ? poolCountLabel() : (action() | promotionBenefitName)
           }}</label>
           <input
             class="form-control"
