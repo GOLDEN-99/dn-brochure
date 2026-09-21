@@ -44,7 +44,7 @@ Docs at repo root: `docs/crm-promotion-edit-api-spec.md` (PUT contract +
 backend-enforced business rules), `docs/crm-promotion-editor-tasks.md`
 (edit-feature task log; its end-to-end checklist is still unchecked).
 
-## Five create pages, three promotion types, one form
+## Six create pages, three promotion types, one form
 
 `promotionType` is not a field the author picks — the **route path** determines
 it. All five create pages share `PromotionFormComponent`; differences are pushed
@@ -57,6 +57,15 @@ into an injected config object rather than branched inside the form.
 | `create-inline`       | ลดรายสินค้า          | `ITEM`          | none — always `ITEMEXIST`   |
 | `create-register-fee` | ค่าสมาชิก            | `BILL`          | `BILLSUBTOTAL` (pinned)     |
 | `create-cheapest`     | แถมในกลุ่ม           | `BUNDLE`        | `BUNDLECOUNT` (pinned)      |
+| `create-spend`        | ส่วนลดตามยอดซื้อกลุ่มสินค้า | `BUNDLE`  | `BUNDLESUBTOTAL` (pinned)   |
+
+`create-spend` is "spend N baht on these goods": the tier ladder holds the **baht**
+(500 → 50, 700 → 80) and the filter is one `EXIST` pool that only names the goods —
+it reuses the BILL page's `showPool` control. Unlike a pool-scoped BILL promotion the
+till splits the discount onto the goods' own lines (DrugPOSApp sale RULES §1.20).
+**`BUNDLE` is therefore two shapes under one `promotionType`**, told apart by
+`thresholdType`; `provideEditPromotionConfig` keys on both, or a spend promotion
+would reopen with the set page's controls and save back as `BUNDLECOUNT` ("500 sets").
 
 The last two are narrowed presets rather than new types: `fixedAction: true`
 hides the action and threshold selects entirely, leaving the author one number.
@@ -167,8 +176,13 @@ backend work that should follow. The non-obvious ones:
   `CrmPromotionEngine` never references it — only `filterValue` and the good
   codes. A `SUBTOTAL` group was therefore authored in baht
   ("เพิ่มเงื่อนไขตามยอด(บาท)") and evaluated as a unit count; that button has been
-  removed. Baht-scoped *bill* thresholds are the `showPool` branch below, which the
-  engine does support.
+  removed. Baht belongs on the **tiers**: `create-spend` (`BUNDLESUBTOTAL`), or a
+  pool-scoped BILL promotion when a whole-bill discount is really meant.
+- **`BUNDLESUBTOTAL` pins its own shape**: exactly one filter group, `EXIST`, and an
+  action from `SPEND_ACTIONS` (no `BUNDLEPRICE`/`CHEAPEST` — they need a set and the
+  engine ignores them here); threshold floor 1 baht. The rule hangs on
+  `promotionFilter`, not the root, because that is the node whose alert renders. The
+  API enforces the same.
 - `limitTime` gates the timespan sub-schema. Hour must be 0-23 and minute
   0-59 (a cleared box reads as null and is rejected), and `endTime` may
   never be `00:00` — matching `docs/crm-promotion-edit-api-spec.md`, which the

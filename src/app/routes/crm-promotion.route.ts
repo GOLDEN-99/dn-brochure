@@ -11,6 +11,7 @@ export const CREATE_ROUTE_PATH = [
     { path: "create-inline", name: 'ลดรายสินค้า', icon: 'bi bi-list-ul me-2' },
     { path: "create-bill", name: 'ส่วนลดท้ายบิล', icon: 'bi bi-receipt me-2' },
     { path: "create-group", name: 'ส่วนลดตามกลุ่มสินค้า', icon: 'bi bi-tags me-2' },
+    { path: "create-spend", name: 'ส่วนลดตามยอดซื้อกลุ่มสินค้า', icon: 'bi bi-cash-stack me-2' },
     { path: "create-register-fee", name: 'ค่าสมาชิก', icon: 'bi bi-person-plus me-2' },
     { path: "create-cheapest", name: 'แถมในกลุ่ม', icon: 'bi bi-gift me-2' }
 ]

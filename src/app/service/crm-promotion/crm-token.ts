@@ -8,6 +8,9 @@ interface IFilterOption {
     showList: boolean
     showBundle: boolean
     showItem: boolean
+    // Also set by the BUNDLESUBTOTAL spend page, for the same reason: its group only names the
+    // goods whose baht the tiers measure.
+    //
     // A BILL promotion's product groups are a POOL, not a bundle: they scope which lines the
     // tier threshold measures (CrmPromotionEngine.MeasureBill sums only the pool's goods when
     // one is named, the whole cart otherwise), and nothing reads their filterValue. So the page
@@ -57,6 +60,15 @@ export const CRM_BUNDLE_REWARD: TBenefitOption[] = [
     { action: "PWP", label: "สิทธิแลกซื้อ" },
     { action: "GIFT", label: "สินค้าแถม" },
     { action: CHEAPEST_ACTION, label: "แถมสินค้าถูกสุด(ชิ้น)" },
+]
+
+// The BUNDLESUBTOTAL ("spend N baht on these goods") page. No BUNDLEPRICE / CHEAPEST: both
+// need a set, and a spend threshold has none -- see SPEND_ACTIONS.
+export const CRM_SPEND_REWARD: TBenefitOption[] = [
+    { action: "BUNDLEBATHDISC", label: "ลดราคากลุ่มสินค้าเป็นบาท" },
+    { action: "BUNDLEPERCENTDISC", label: "ลดราคากลุ่มสินค้าเป็นเปอร์เซ็นต์" },
+    { action: "PWP", label: "สิทธิแลกซื้อ" },
+    { action: "GIFT", label: "สินค้าแถม" },
 ]
 
 export const CRM_INLINE_REWARD: TBenefitOption[] = [

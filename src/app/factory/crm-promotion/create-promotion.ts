@@ -1,12 +1,27 @@
 import {
-    CRM_BILL_REWARD, CRM_BUNDLE_REWARD, CRM_INLINE_REWARD, ICrmPageConfig
+    CRM_BILL_REWARD, CRM_BUNDLE_REWARD, CRM_INLINE_REWARD, CRM_SPEND_REWARD, ICrmPageConfig
 } from "../../service/crm-promotion/crm-token"
-import { CHEAPEST_ACTION, REGISTER_FEE_ACTION } from "../../lib/crm-promotion/promotion-actions"
+import { CHEAPEST_ACTION, REGISTER_FEE_ACTION, SPEND_THRESHOLD } from "../../lib/crm-promotion/promotion-actions"
 import {
     initialMaster, initialDatetime, initialMember, initialBranch, initialBenefit
 } from "../../pages/crm-promotion/create/create-bill-discount-promotion/createPromotionSchema"
 import { TPromotionDetail } from "../../types/crm-promotion.type"
 import { promotionDetailToForm } from "./promotion-detail-to-form"
+
+const SPEND_PAGE_NAME = 'ส่วนลดตามยอดซื้อกลุ่มสินค้า'
+
+const SPEND_FILTER_OPTION: ICrmPageConfig['filterOption'] = {
+    showFilter: true,
+    showPool: true,
+    showBundle: false,
+    showItem: false,
+    showList: false,
+}
+
+const SPEND_REWARD_OPTION: ICrmPageConfig['rewardOption'] = {
+    rewardList: CRM_SPEND_REWARD,
+    thresholdList: [{ threshold: SPEND_THRESHOLD, label: "ยอดซื้อสินค้าในกลุ่ม(บาท)" }],
+}
 
 export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
     switch (path) {
@@ -174,6 +189,31 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
                     showThresholdInput: false,
                 }
             }
+        case "create-spend":
+            // "Spend N baht on these goods": the tier ladder is read against the pool's baht
+            // (500 -> 50, 700 -> 80), not a set count. The group is an EXIST pool that only
+            // names the goods, so the page reuses the BILL page's pool control; the threshold
+            // type is pinned because BUNDLECOUNT would turn the same ladder into "500 sets".
+            // Unlike a pool-scoped BILL promotion the discount lands on the goods' own lines.
+            return {
+                pageName: SPEND_PAGE_NAME,
+                initialData: {
+                    promotionMaster: { ...initialMaster, promotionType: 'BUNDLE' },
+                    promotionDatetime: initialDatetime,
+                    promotionMember: initialMember,
+                    promotionBranch: initialBranch,
+                    promotionFilter: [],
+                    promotionBenefit: {
+                        ...initialBenefit,
+                        action: 'BUNDLEBATHDISC',
+                        thresholdType: SPEND_THRESHOLD,
+                        isRepeat: false,
+                        tiers: [{ thresholdValue: 0, rewardValue: 0 }],
+                    },
+                },
+                filterOption: SPEND_FILTER_OPTION,
+                rewardOption: SPEND_REWARD_OPTION,
+            }
         default:
             throw new Error("invalid path name")
     }
@@ -202,10 +242,19 @@ export function provideEditPromotionConfig(detail: TPromotionDetail): ICrmPageCo
             thresholdList: [],
         },
     }
+    // BUNDLE is two shapes sharing one promotionType, told apart by thresholdType: a set
+    // bundle (by-count groups, BUNDLECOUNT) and a spend threshold (EXIST pool, BUNDLESUBTOTAL).
+    // Keying on promotionType alone would open a spend promotion with the set page's controls
+    // and let it be saved back as BUNDLECOUNT.
+    const isSpend = detail.promotionType === 'BUNDLE' && detail.thresholdType === SPEND_THRESHOLD
     return {
         pageName: "แก้ไขโปรโมชั่น",
         initialData: promotionDetailToForm(detail),
-        filterOption: filterOptions[detail.promotionType] ?? filterOptions['BILL'],
-        rewardOption: rewardOptions[detail.promotionType] ?? rewardOptions['BILL'],
+        filterOption: isSpend
+            ? SPEND_FILTER_OPTION
+            : filterOptions[detail.promotionType] ?? filterOptions['BILL'],
+        rewardOption: isSpend
+            ? SPEND_REWARD_OPTION
+            : rewardOptions[detail.promotionType] ?? rewardOptions['BILL'],
     }
 }

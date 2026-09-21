@@ -42,7 +42,7 @@ PUT /crm/promotions/:id
     },
   ],
   "action": "BILLBATHDISC | BILLPERCENTDISC | BUNDLEBATHDISC | BUNDLEPERCENTDISC | ITEMPERCENTDISC | ITEMBATHDISC | PWP | GIFT",
-  "thresholdType": "BILLSUBTOTAL | BILLCOUNT | BUNDLECOUNT | ITEMEXIST",
+  "thresholdType": "BILLSUBTOTAL | BILLCOUNT | BUNDLECOUNT | BUNDLESUBTOTAL | ITEMEXIST",
   "isRepeat": false,
   "tiers": [{ "thresholdValue": 0, "rewardValue": 0 }],
   "rewardPool": [
@@ -77,6 +77,10 @@ PUT /crm/promotions/:id
 - When `promotionType != BILL`: `filterList` must have at least 1 group
 - All `filterType` values within `filterList` must be identical
 - No product (`goodCode`) may appear in more than one filter group
+- When `thresholdType = BUNDLESUBTOTAL` ("spend N baht on these goods"): `promotionType` must be
+  `BUNDLE`; `action` one of `BUNDLEBATHDISC | BUNDLEPERCENTDISC | PWP | GIFT`; `filterList` exactly
+  one group with `filterType = EXIST`; every tier `thresholdValue > 0` (baht). The baht lives on
+  the tiers, never in `filterValue` — the till reads that as a unit count.
 
 ## Not yet enforced by the API
 
@@ -100,6 +104,7 @@ unbounded discount. This was a live authoring bug: `BUNDLECOUNT` accepted `0`.
 | `BILLSUBTOTAL`  | baht | `0` (means "no minimum") | no |
 | `BILLCOUNT`     | pieces | `1` | yes |
 | `BUNDLECOUNT`   | sets | `1` | yes |
+| `BUNDLESUBTOTAL` | baht of the group's goods | `1` (API enforces `> 0`) | no |
 | `ITEMEXIST`     | —    | `0` (not authored) | yes |
 
 Additionally: when `isRepeat = true`, every tier needs `thresholdValue > 0`.

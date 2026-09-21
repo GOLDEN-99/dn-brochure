@@ -12,6 +12,8 @@ export class PromotionThresholdPipe implements PipeTransform {
         return 'จำนวนสินค้าในบิล(ชิ้น)';
       case 'BUNDLECOUNT':
         return 'จำนวน SET(ชุด)';
+      case 'BUNDLESUBTOTAL':
+        return 'ยอดซื้อสินค้าในกลุ่ม(บาท)';
       case 'COUNT':
         return 'จำนวนสินค้าในกลุ่ม(ชิ้น)';
       case 'SUBTOTAL':
