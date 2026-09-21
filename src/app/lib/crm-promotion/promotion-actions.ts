@@ -42,9 +42,27 @@ export const THRESHOLD_RULES: Record<
   BILLCOUNT: { min: 1, integer: true, unit: 'ชิ้น' },
   // complete sets of the filter group
   BUNDLECOUNT: { min: 1, integer: true, unit: 'ชุด' },
+  // baht spent on the filter group's goods. Unlike BILLSUBTOTAL there is no
+  // "no minimum" reading -- a spend promotion with nothing to reach is an ITEM
+  // discount, and belongs on that page.
+  BUNDLESUBTOTAL: { min: 1, integer: false, unit: 'บาท' },
   // presence-only: the threshold is not authored and stays 0
   ITEMEXIST: { min: 0, integer: true, unit: '' },
 };
+
+// "Spend N baht on these goods": a BUNDLE whose tiers are read against the pool's
+// baht rather than a set count (DrugPOSApp sale RULES §1.20). The filter group is a
+// plain EXIST pool that only NAMES the goods -- the baht lives on the tiers, never in
+// filterValue, which the engine always reads as a unit count.
+export const SPEND_THRESHOLD = 'BUNDLESUBTOTAL';
+
+// The actions a spend threshold can carry. BUNDLEPRICE and CHEAPEST are statements
+// about a SET ("the set costs X", "the cheapest unit of the set is free"); a spend
+// threshold has no set, and the engine deliberately does nothing with them.
+export const SPEND_ACTIONS = ['BUNDLEBATHDISC', 'BUNDLEPERCENTDISC', 'PWP', 'GIFT'] as const;
+
+export const isSpendAction = (action: string): boolean =>
+  (SPEND_ACTIONS as readonly string[]).includes(action);
 
 // Actions whose whole benefit lives in rewardPool, so the tier's rewardValue
 // carries no meaning -- it must not be required of the author, and must not be

@@ -94,6 +94,29 @@ describe('provideCreatePromotionConfig', () => {
     });
   });
 
+  describe('create-spend (ส่วนลดตามยอดซื้อกลุ่มสินค้า)', () => {
+    const config = provideCreatePromotionConfig('create-spend');
+
+    it('is a BUNDLE whose ladder is read in baht, not sets', () => {
+      expect(config.initialData.promotionMaster.promotionType).toBe('BUNDLE');
+      expect(config.initialData.promotionBenefit.thresholdType).toBe('BUNDLESUBTOTAL');
+      // a ladder (500 -> 50, 700 -> 80) by default, not "every N"
+      expect(config.initialData.promotionBenefit.isRepeat).toBeFalse();
+      // pinned: BUNDLECOUNT here would turn the same ladder into "500 sets"
+      expect(config.rewardOption.thresholdList.map((t) => t.threshold)).toEqual(['BUNDLESUBTOTAL']);
+    });
+
+    it('names its goods with a pool, never a by-count group', () => {
+      expect(config.filterOption.showPool).toBeTrue();
+      expect(config.filterOption.showBundle).toBeFalse();
+    });
+
+    it('does not offer the actions that need a set', () => {
+      const actions = config.rewardOption.rewardList.map((r) => r.action);
+      expect(actions).toEqual(['BUNDLEBATHDISC', 'BUNDLEPERCENTDISC', 'PWP', 'GIFT']);
+    });
+  });
+
   it('seeds an EXIST filter group at 1, the count the engine actually applies', () => {
     // The engine coerces 0 to 1 anyway; storing the 1 stops the row depending on that fallback.
     const inline = provideCreatePromotionConfig('create-inline');
@@ -150,6 +173,24 @@ describe('provideEditPromotionConfig', () => {
   // The create and edit factories carry duplicate filter tables, so a pool enabled on one and
   // not the other would store fine and then vanish from the edit screen while still shipping in
   // the PUT body.
+  // BUNDLE is two shapes under one promotionType. Opened with the set page's controls, a spend
+  // promotion would offer BUNDLECOUNT only and be saved back as "500 sets".
+  it('opens a spend promotion with the spend page controls, and a set bundle with its own', () => {
+    const spend = provideEditPromotionConfig({
+      ...detail('BUNDLE', 'BUNDLEBATHDISC'),
+      thresholdType: 'BUNDLESUBTOTAL',
+    });
+    const set = provideEditPromotionConfig({
+      ...detail('BUNDLE', 'BUNDLEBATHDISC'),
+      thresholdType: 'BUNDLECOUNT',
+    });
+
+    expect(spend.filterOption.showPool).toBeTrue();
+    expect(spend.rewardOption.thresholdList.map((t) => t.threshold)).toEqual(['BUNDLESUBTOTAL']);
+    expect(set.filterOption.showBundle).toBeTrue();
+    expect(set.rewardOption.thresholdList.map((t) => t.threshold)).toEqual(['BUNDLECOUNT']);
+  });
+
   it('keeps a BILL promotion editable with its product pool visible', () => {
     const bill = provideEditPromotionConfig(detail('BILL', 'BILLBATHDISC'));
 

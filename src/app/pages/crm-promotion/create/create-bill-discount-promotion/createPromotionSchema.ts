@@ -27,9 +27,11 @@ import {
 import {
   CHEAPEST_ACTION,
   POOL_PERCENT_TYPE,
+  SPEND_THRESHOLD,
   THRESHOLD_RULES,
   isPoolOnlyAction,
   isPriceAction,
+  isSpendAction,
 } from '../../../../lib/crm-promotion/promotion-actions';
 
 
@@ -473,6 +475,39 @@ export const createPromotionSchema = schema<TCreatePromotionForm>((_path) => {
         ref.add(product.goodCode);
       }
     }
+    return null;
+  });
+
+  // ── Spend threshold (BUNDLESUBTOTAL) ────────────────────────────────────
+  // The tiers measure the BAHT of the goods the filter names, so the filter must be
+  // exactly what the engine will read it as: one EXIST pool. Each rule below closes a
+  // shape that saves cleanly and misbehaves at the till:
+  //  - a COUNT group is still a unit requirement, so it would gate the promotion on
+  //    "N pieces" on top of the baht -- and baht typed into it is how five promotions
+  //    came to require 500 PIECES and never fire;
+  //  - a second group is a second REQUIREMENT (every group must be present), not
+  //    "these goods count too", which is what adding one looks like on this page;
+  //  - BUNDLEPRICE / CHEAPEST need a set, and the engine does nothing with them here.
+  // Cross-section, but hung on promotionFilter rather than the root: that is the node
+  // the filter card's alert renders, and a root error is shown nowhere.
+  validate(_path.promotionFilter, ({ value, valueOf }) => {
+    const promotionFilter = value();
+    if (valueOf(_path.promotionBenefit.thresholdType) !== SPEND_THRESHOLD) return null;
+    if (!isSpendAction(valueOf(_path.promotionBenefit.action)))
+      return {
+        kind: 'invalid spend action',
+        message: 'เงื่อนไขตามยอดซื้อใช้ได้กับส่วนลดบาท/เปอร์เซ็นต์ สิทธิแลกซื้อ และสินค้าแถมเท่านั้น',
+      };
+    if (promotionFilter.length > 1)
+      return {
+        kind: 'spend needs one pool',
+        message: 'เงื่อนไขตามยอดซื้อมีกลุ่มสินค้าได้กลุ่มเดียว ให้รวมสินค้าที่นับยอดไว้ในกลุ่มเดียวกัน',
+      };
+    if (promotionFilter.some((f) => f.filterType !== 'EXIST'))
+      return {
+        kind: 'spend pool must be EXIST',
+        message: 'กลุ่มสินค้าของเงื่อนไขตามยอดซื้อต้องไม่มีจำนวนชิ้นขั้นต่ำ',
+      };
     return null;
   });
   apply(_path.promotionBenefit, promotionBenefitSchema);

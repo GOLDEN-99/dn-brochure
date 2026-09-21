@@ -45,6 +45,7 @@ function validityOf(
         f.promotionBenefit.tiers[0].thresholdValue().errors(),
       ),
       rewardErrors: kinds(f.promotionBenefit.tiers[0].rewardValue().errors()),
+      filterErrors: kinds(f.promotionFilter().errors()),
     };
   });
 }
@@ -403,5 +404,79 @@ describe('createPromotionSchema — ladder ordering', () => {
       ],
     });
     expect(r.tierErrors).toContain('duplicate reward value');
+  });
+});
+
+// "Spend N baht on these goods" -- BUNDLE + BUNDLESUBTOTAL. The tiers hold the baht; the
+// filter is one EXIST pool that only names the goods (DrugPOSApp sale RULES 1.20).
+describe('createPromotionSchema — spend threshold (BUNDLESUBTOTAL)', () => {
+  const pool = (filterType = 'EXIST', goodCode = 'A1'): TPromotionFilterState => ({
+    filterType,
+    filterValue: 1,
+    productList: [{ goodCode, goodName: 'ยา', sku: '1' }],
+  });
+  const ladder: Partial<TPromotionBenefit> = {
+    action: 'BUNDLEBATHDISC',
+    thresholdType: 'BUNDLESUBTOTAL',
+    isRepeat: false,
+    tiers: [
+      { thresholdValue: 500, rewardValue: 50 },
+      { thresholdValue: 700, rewardValue: 80 },
+    ],
+  };
+
+  it('accepts a baht ladder over one EXIST pool', () => {
+    const r = validityOf(ladder, { promotionType: 'BUNDLE', filter: [pool()] });
+    expect(r.benefitValid).toBeTrue();
+    expect(r.filterErrors).toEqual([]);
+  });
+
+  it('accepts fractional baht, and rejects a 0 threshold — nothing to reach', () => {
+    const at = (thresholdValue: number) =>
+      validityOf(
+        { ...ladder, tiers: [{ thresholdValue, rewardValue: 50 }] },
+        { promotionType: 'BUNDLE', filter: [pool()] },
+      );
+    expect(at(499.5).benefitValid).toBeTrue();
+    expect(at(0).thresholdErrors).toContain('threshold below minimum');
+  });
+
+  // The engine reads a COUNT group as a unit requirement whatever the threshold type, so
+  // this shape would demand N pieces on top of the baht.
+  it('rejects a by-count group', () => {
+    const r = validityOf(ladder, { promotionType: 'BUNDLE', filter: [pool('COUNT')] });
+    expect(r.filterErrors).toContain('spend pool must be EXIST');
+  });
+
+  // Every group is a REQUIREMENT at the till, not "these goods count too".
+  it('rejects a second pool', () => {
+    const r = validityOf(ladder, {
+      promotionType: 'BUNDLE',
+      filter: [pool('EXIST', 'A1'), pool('EXIST', 'B1')],
+    });
+    expect(r.filterErrors).toContain('spend needs one pool');
+  });
+
+  it('rejects the set-only actions, which the engine ignores under this threshold', () => {
+    for (const action of ['BUNDLEPRICE', CHEAPEST_ACTION]) {
+      const r = validityOf(
+        { ...ladder, action, tiers: [{ thresholdValue: 500, rewardValue: 1 }] },
+        { promotionType: 'BUNDLE', filter: [pool()] },
+      );
+      expect(r.filterErrors).toContain('invalid spend action');
+    }
+  });
+
+  it('leaves a set bundle (BUNDLECOUNT) alone', () => {
+    const r = validityOf(
+      {
+        action: 'BUNDLEPRICE',
+        thresholdType: 'BUNDLECOUNT',
+        isRepeat: true,
+        tiers: [{ thresholdValue: 1, rewardValue: 99 }],
+      },
+      asBundle,
+    );
+    expect(r.filterErrors).toEqual([]);
   });
 });
