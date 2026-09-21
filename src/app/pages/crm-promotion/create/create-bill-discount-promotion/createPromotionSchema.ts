@@ -216,7 +216,8 @@ export const promotionRewardPercentSchema = schema<TProductRewardPool>(
 // ── Benefit ─────────────────────────────────────────────
 export const initialBenefit: TPromotionBenefit = {
   action: 'BILLBATHDISC',
-  thresholdType: 'BILLBATH',
+  // Every page config overwrites this; 'BILLBATH' was a token no layer knows.
+  thresholdType: 'BILLSUBTOTAL',
   isRepeat: false,
   tiers: [],
   rewardPool: [],
@@ -279,25 +280,35 @@ export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
     });
 
     // ── Reward floor, keyed on action ───────────────────────────────────
-    // PWP/GIFT carry their benefit in rewardPool, so the tier's rewardValue is
-    // meaningless and must not be demanded. PRICE actions set an absolute price,
-    // where 0 means free. Everything else deducts an amount, and a 0 deduction is
-    // a promotion that does nothing at the till.
+    // PRICE actions set an absolute price, where 0 means free. Everything else --
+    // including PWP/GIFT -- needs a value above 0 or the promotion does nothing at
+    // the till.
+    //
+    // PWP/GIFT are NOT exempt, which an earlier version of this file had them be.
+    // Their rewardPool carries the benefit (which SKU, at what price); the tier
+    // carries the QUANTITY, and CrmPromotionEngine reads it as exactly that:
+    // `if (reward <= 0) continue` drops the promotion before CollectReward emits a
+    // single gift or entitlement. Exempting them here shipped 0 and killed every
+    // GIFT and PWP authored since.
+    required(p.rewardValue, { message: 'ต้องระบุจำนวน' });
     applyWhen(
       p.rewardValue,
-      ({ valueOf }) => !isPoolOnlyAction(valueOf(_path.action)),
+      ({ valueOf }) => !isPriceAction(valueOf(_path.action)),
       (rv) => {
-        required(rv, { message: 'ต้องระบุจำนวนส่วนลด' });
+        min(rv, 1, { message: 'จำนวนต้องมากกว่า 0' });
       },
     );
+    // A pool-only reward counts pieces/claims, so halves are meaningless -- the
+    // engine floors them, turning 1.5 silently into 1.
     applyWhen(
       p.rewardValue,
-      ({ valueOf }) => {
-        const action = valueOf(_path.action);
-        return !isPoolOnlyAction(action) && !isPriceAction(action);
-      },
+      ({ valueOf }) => isPoolOnlyAction(valueOf(_path.action)),
       (rv) => {
-        min(rv, 1, { message: 'จำนวนส่วนลดต้องมากกว่า 0' });
+        validate(rv, ({ value }) =>
+          Number.isInteger(value())
+            ? null
+            : { kind: 'not an integer', message: 'จำนวนต้องเป็นจำนวนเต็ม' },
+        );
       },
     );
     applyWhen(
@@ -348,11 +359,15 @@ export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
 
   // ── Ladder ordering ─────────────────────────────────────────────────────
   // Distinctness alone allows (100 -> 50฿), (200 -> 10฿): spend more, get less.
-  // Price actions invert -- a higher threshold should set a *lower* price -- and
-  // pool-only actions have no meaningful reward to order, so both are skipped.
+  // Price actions invert -- a higher threshold should set a *lower* price -- so
+  // they are skipped.
+  //
+  // Pool-only actions are NOT skipped any more. Their reward is a count of pieces
+  // or claims, so "spend more, get fewer" is the same authoring error it is for an
+  // amount; the old exemption came from treating the value as meaningless.
   validate(_path.tiers, ({ value, valueOf }) => {
     const action = valueOf(_path.action);
-    if (isPoolOnlyAction(action) || isPriceAction(action)) return null;
+    if (isPriceAction(action)) return null;
     const tiers = [...value()].sort((a, b) => a.thresholdValue - b.thresholdValue);
     for (let i = 1; i < tiers.length; i++) {
       if (tiers[i].rewardValue < tiers[i - 1].rewardValue)
@@ -390,23 +405,24 @@ export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
 export const initialFilterItem: TPromotionFilterState = {
   productList: [],
   filterType: 'COUNT',
-  filterValue: 0,
+  filterValue: 1,
 };
 export const promotionFilterItemSchema = schema<TPromotionFilterState>(
   (_path) => {
     minLength(_path.productList, 1, {
       message: 'ต้องมีสินค้าอย่างน้อย 1 รายการ',
     });
-    validate(_path.filterValue, ({ value, valueOf }) => {
-      const filterType = valueOf(_path.filterType);
-      if (filterType === 'EXIST')
-        return value() === 0
-          ? null
-          : { kind: 'invalid filter value', message: 'ขั้นต่ำต้อง = 0' };
-      return value() >= 1
+    // An EXIST group requires ONE unit, and now says so. The engine has always read
+    // it that way -- `required = FilterValue > 0 ? FilterValue : 1` in both
+    // CompleteBundles and BundleConsumption -- so a stored 0 only worked because a
+    // fallback rescued it, and was ambiguous between "EXIST, deliberately" and
+    // "nobody filled this in". The API coerces a posted 0 up to 1 rather than
+    // rejecting it, so an older client is unaffected.
+    validate(_path.filterValue, ({ value }) =>
+      value() >= 1
         ? null
-        : { kind: 'invalid filter value', message: 'ขั้นต่ำต้อง >= 1' };
-    });
+        : { kind: 'invalid filter value', message: 'ขั้นต่ำต้อง >= 1' },
+    );
   },
 );
 

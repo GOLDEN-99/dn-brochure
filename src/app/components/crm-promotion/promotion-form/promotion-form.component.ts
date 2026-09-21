@@ -55,6 +55,9 @@ export class PromotionFormComponent {
   showItem = signal(this.config.filterOption.showItem);
   showFilterList = signal(this.config.filterOption.showList);
   showBundle = signal(this.config.filterOption.showBundle);
+  // BILL pages offer a product pool (one "add group" button, no count box) instead of the
+  // bundle pages' by-count control -- see IFilterOption.showPool.
+  showPool = signal(this.config.filterOption.showPool ?? false);
 
   submitting = input(false);
 
@@ -142,22 +145,14 @@ export class PromotionFormComponent {
 
   // ── Filter ────────────────────────────────────────────────
 
+  // filterValue 1, not 0: the engine coerces it either way
+  // (`required = FilterValue > 0 ? FilterValue : 1`), and 1 is what the row actually means.
   onAddSkuProductExist() {
     this.formModel.update((s) => ({
       ...s,
       promotionFilter: [
         ...s.promotionFilter,
-        { productList: [], filterType: 'EXIST', filterValue: 0 },
-      ],
-    }));
-  }
-
-  onAddSkuProductSubtotal() {
-    this.formModel.update((s) => ({
-      ...s,
-      promotionFilter: [
-        ...s.promotionFilter,
-        { productList: [], filterType: 'SUBTOTAL', filterValue: 1 },
+        { productList: [], filterType: 'EXIST', filterValue: 1 },
       ],
     }));
   }

@@ -31,18 +31,31 @@
         <div class="d-flex justify-content-between">
           <h2 class="card-title">เงื่อนไขตามสินค้า</h2>
           <div class="d-flex justify-content-end gap-1">
-            @if (!showItem()) {
+            @if (showPool()) {
+              <!--
+                BILL: the group only says WHICH goods the tier threshold measures, so there is no
+                count box -- the baht minimum is the tier's own thresholdValue.
+              -->
+              <button
+                class="btn btn-outline-primary"
+                (click)="onAddSkuProductExist()"
+              >
+                เพิ่มกลุ่มสินค้าที่นับยอด
+              </button>
+            } @else if (!showItem()) {
+              <!--
+                BUNDLE only. The by-baht button that used to sit beside this one wrote
+                filterType 'SUBTOTAL', which CrmPromotionEngine does not read: it counts UNITS
+                via `required = FilterValue > 0 ? FilterValue : 1` whatever the type says, so
+                "500 baht of A" was evaluated as "500 pieces of A" and never fired. Baht-scoped
+                bundles need real engine work; baht-scoped BILL promotions are the showPool
+                branch above, which the engine already supports.
+              -->
               <button
                 class="btn btn-outline-primary"
                 (click)="onAddSkuProductCount()"
               >
                 เพิ่มเงื่อนไขตามจำนวน(ชิ้น)
-              </button>
-              <button
-                class="btn btn-outline-success"
-                (click)="onAddSkuProductSubtotal()"
-              >
-                เพิ่มเงื่อนไขตามยอด(บาท)
               </button>
             }
           </div>

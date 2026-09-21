@@ -8,6 +8,14 @@ interface IFilterOption {
     showList: boolean
     showBundle: boolean
     showItem: boolean
+    // A BILL promotion's product groups are a POOL, not a bundle: they scope which lines the
+    // tier threshold measures (CrmPromotionEngine.MeasureBill sums only the pool's goods when
+    // one is named, the whole cart otherwise), and nothing reads their filterValue. So the page
+    // offers one "add group" button with no count box, rather than the bundle pages' by-count
+    // control. This is what makes "spend 500 baht on these items, get 50 off" authorable --
+    // the engine has supported it all along, but no page could produce a BILL promotion with a
+    // filter group.
+    showPool?: boolean
 }
 
 interface IRewardOption {

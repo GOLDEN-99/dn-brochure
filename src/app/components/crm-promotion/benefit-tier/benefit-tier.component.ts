@@ -40,9 +40,14 @@ export class BenefitTierComponent {
 
   isGift = computed(() => this.action() === 'GIFT')
 
-  // PWP/GIFT carry the whole benefit in rewardPool, so the tier's reward number
-  // means nothing. It used to render anyway, and `required` forced the author to
-  // put a made-up value in it that then shipped in the payload.
+  // PWP/GIFT carry the BENEFIT in rewardPool -- which SKU, at what price. The tier's number is a
+  // different question: how many pieces are given, how many claims are offered. Hiding it (an earlier
+  // attempt to stop `required` forcing a made-up amount) left it at 0 in the payload, and
+  // CrmPromotionEngine reads it as that quantity -- dropping the promotion at `reward <= 0` before any
+  // gift or entitlement is emitted. So it renders, with a count label of its own.
   isPoolOnly = computed(() => isPoolOnlyAction(this.action()))
+
+  poolCountLabel = computed(() =>
+    this.action() === 'GIFT' ? 'จำนวนของแถม (ชิ้น)' : 'จำนวนสิทธิ์แลกซื้อ (ชิ้น)')
 
 }
