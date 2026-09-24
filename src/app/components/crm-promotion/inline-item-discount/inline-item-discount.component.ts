@@ -2,7 +2,7 @@ import { Component, computed, inject, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { TConfigGroup, TInlinePool, TProductDetail } from '../../../types/crm-promotion.type';
-import { debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, map, Observable } from 'rxjs';
 import { ProductConfigService } from '../../../service/crm-promotion/product-config.service';
 import { form, FormField } from '@angular/forms/signals';
 import { initialData, productDiscountSchema } from './productScheme';
@@ -30,15 +30,14 @@ export class InlineItemDiscountComponent {
   }
   onSelectpromoitionproductGroup({ item: { id } }: NgbTypeaheadSelectItemEvent<TConfigGroup>) {
     this.loadingService.startLoad()
-    return this.productService.getAllProductGroup(id).subscribe({
+    return this.productService.getAllProductGroup(id).pipe(finalize(() => this.loadingService.endLoad())).subscribe({
       next: (v) => {
         const incomeing = Object.fromEntries(Object.entries(v).map(([k, { goodCode, goodName, sku }]) => ([k, { goodCode, goodName, sku, discount: 0 }])))
         this.productModel.update(prev => ({ ...incomeing, ...prev }))
       },
       error: (e) => {
         this.toastService.danger('ไม่สามารถดึงค่า set สินค้าได้')
-      },
-      complete: () => { this.loadingService.endLoad() }
+      }
     })
   }
 

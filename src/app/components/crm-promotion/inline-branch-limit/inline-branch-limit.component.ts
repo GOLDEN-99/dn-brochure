@@ -1,5 +1,5 @@
 import { Component, computed, inject, model } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { finalize, map, Observable } from 'rxjs';
 import { BranchConfigService } from '../../../service/crm-promotion/branch-config.service';
 import { TBranch, TBranchDetail, TConfigGroup } from '../../../types/crm-promotion.type';
 import { NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
@@ -57,7 +57,7 @@ export class InlineBranchLimitComponent {
 
   onSelcetPromotionBranchGroup = ({ item: { id } }: NgbTypeaheadSelectItemEvent<TConfigGroup>) => {
     this.loadingService.startLoad()
-    this.branchService.getByGroupId(id).subscribe({
+    this.branchService.getByGroupId(id).pipe(finalize(() => this.loadingService.endLoad())).subscribe({
       next: (res) => {
         // do update
         const ref = this.branchRef()
@@ -75,9 +75,6 @@ export class InlineBranchLimitComponent {
       },
       error: (e) => {
         this.toastService.danger('ไม่สามารถเพิ่มสาขาจากกลุ่มได้')
-      },
-      complete: () => {
-        this.loadingService.endLoad()
       }
     })
   }
