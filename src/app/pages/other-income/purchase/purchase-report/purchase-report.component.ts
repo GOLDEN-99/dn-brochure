@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { finalize } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { SupplierReportService } from '../../../../service/other-income/supplier-report.service';
@@ -127,64 +128,57 @@ export class PurchaseReportComponent {
   private readonly accReport = inject(OiAccountReportService)
   exportInvoice(compType: number) {
     this.loading.startLoad()
-    this.accReport.exportInvoiceReport(compType, 'invoice').subscribe({
+    this.accReport.exportInvoiceReport(compType, 'invoice').pipe(finalize(() => this.loading.endLoad())).subscribe({
       next: async res => await this.toXlsx(this._invName, this._invSheet, res),
-      error: (err) => this.toast.danger(err?.message),
-      complete: () => this.loading.endLoad()
+      error: (err) => this.toast.danger(err?.message)
     })
   }
 
   exportCredit(compType: number) {
     this.loading.startLoad()
-    this.accReport.exportInvoiceReport(compType, 'credit').subscribe({
+    this.accReport.exportInvoiceReport(compType, 'credit').pipe(finalize(() => this.loading.endLoad())).subscribe({
       next: async res => await this.toXlsx(this._creditName, this._creditSheet, res),
-      error: (err) => this.toast.danger(err?.message),
-      complete: () => this.loading.endLoad()
+      error: (err) => this.toast.danger(err?.message)
     })
   }
 
   exportRece(compType: number) {
     this.loading.startLoad()
-    this.accReport.exportReceiptReport(compType).subscribe({
+    this.accReport.exportReceiptReport(compType).pipe(finalize(() => this.loading.endLoad())).subscribe({
       next: async res => await this.toXlsx(this._receName, this._receSheet, res),
-      error: (err) => this.toast.danger(err?.message),
-      complete: () => this.loading.endLoad()
+      error: (err) => this.toast.danger(err?.message)
     })
   }
   exportLight(compType: number) {
     this.loading.startLoad()
-    this.accReport.exportLightReport(compType, this.date()).subscribe({
+    this.accReport.exportLightReport(compType, this.date()).pipe(finalize(() => this.loading.endLoad())).subscribe({
       next: async res => await this.toXlsx(this._lightName, this._lightSheet, res),
-      error: (err) => this.toast.danger(err?.message),
-      complete: () => this.loading.endLoad()
+      error: (err) => this.toast.danger(err?.message)
     })
   }
   exportAnnualIncomeReport(compType: number) {
     this.loading.startLoad()
     const d = this.date()
-    this.accReport.exportAnnualIncomeReport(compType, d).subscribe({
+    this.accReport.exportAnnualIncomeReport(compType, d).pipe(finalize(() => this.loading.endLoad())).subscribe({
       next: async res => await this.toXlsx(`รายได้อื่นๆประจำปี${d.year}.xlsx`, `${d.year}`, res),
-      error: (err) => this.toast.danger(err?.message),
-      complete: () => this.loading.endLoad()
+      error: (err) => this.toast.danger(err?.message)
     })
   }
   exportMonthBuy(compType: number) {
     this.loading.startLoad()
     const d = this.date()
-    this.accReport.exportMonthbuyReport(compType, d).subscribe({
+    this.accReport.exportMonthbuyReport(compType, d).pipe(finalize(() => this.loading.endLoad())).subscribe({
       next: async res => await this.toXlsx(`รายการซื้อเดือน-${d.month}-${d.year}.xlsx`, `${d.month}-${d.year}`, res),
-      error: (err) => this.toast.danger(err?.message),
-      complete: () => this.loading.endLoad()
+      error: (err) => this.toast.danger(err?.message)
     })
   }
 
   exportMonthInce(compType: number) {
     this.loading.startLoad()
     const d = this.date()
-    this.accReport.exportInceReport(compType, d).subscribe({
+    this.accReport.exportInceReport(compType, d).pipe(finalize(() => this.loading.endLoad())).subscribe({
       next: async res => await this.toXlsx(`รายการรายได้อื่นๆอื่นๆ-${d.month}-${d.year}.xlsx`, `${d.month}-${d.year}`, res),
-      error: (err) => this.toast.danger(err?.message),
-      complete: () => this.loading.endLoad()
+      error: (err) => this.toast.danger(err?.message)
     })
   }
 
@@ -192,40 +186,36 @@ export class PurchaseReportComponent {
     this.loading.startLoad()
     const start = this.date()
     const end = this.endDate()
-    this.accReport.exportBillReport(compType, start, end).subscribe({
+    this.accReport.exportBillReport(compType, start, end).pipe(finalize(() => this.loading.endLoad())).subscribe({
       next: async res => await this.toXlsx(`รายการส่วนลดท้ายบิล_${start.month}-${start.year}_${end.month}-${end.year}.xlsx`, `${start.month}-${start.year} ถึง ${end.month}-${end.year}`, res),
-      error: (err) => this.toast.danger(err?.message),
-      complete: () => this.loading.endLoad()
+      error: (err) => this.toast.danger(err?.message)
     })
   }
   exportRangeProduct(compType: number) {
     this.loading.startLoad()
     const start = this.date()
     const end = this.endDate()
-    this.accReport.exportProductReport(compType, start, end).subscribe({
+    this.accReport.exportProductReport(compType, start, end).pipe(finalize(() => this.loading.endLoad())).subscribe({
       next: async res => await this.toXlsx(`รายการสินค้า_${start.month}-${start.year}_${end.month}-${end.year}.xlsx`, `${start.month}-${start.year} ถึง ${end.month}-${end.year}`, res),
-      error: (err) => this.toast.danger(err?.message),
-      complete: () => this.loading.endLoad()
+      error: (err) => this.toast.danger(err?.message)
     })
   }
   exportRangeInvRece(compType: number) {
     this.loading.startLoad()
     const start = this.date()
     const end = this.endDate()
-    this.accReport.exportInvReceReport(compType, start, end).subscribe({
+    this.accReport.exportInvReceReport(compType, start, end).pipe(finalize(() => this.loading.endLoad())).subscribe({
       next: async res => await this.toXlsx(`รายการใบแจ้งหนี้_${start.month}-${start.year}_${end.month}-${end.year}.xlsx`, `${start.month}-${start.year} ถึง ${end.month}-${end.year}`, res),
-      error: (err) => this.toast.danger(err?.message),
-      complete: () => this.loading.endLoad()
+      error: (err) => this.toast.danger(err?.message)
     })
   }
   exportRangeCredit(compType: number) {
     this.loading.startLoad()
     const start = this.date()
     const end = this.endDate()
-    this.accReport.exportCreditReport(compType, start, end).subscribe({
+    this.accReport.exportCreditReport(compType, start, end).pipe(finalize(() => this.loading.endLoad())).subscribe({
       next: async res => await this.toXlsx(`รายการใบลดหนี้_${start.month}-${start.year}_${end.month}-${end.year}.xlsx`, `${start.month}-${start.year} ถึง ${end.month}-${end.year}`, res),
-      error: (err) => this.toast.danger(err?.message),
-      complete: () => this.loading.endLoad()
+      error: (err) => this.toast.danger(err?.message)
     })
   }
 

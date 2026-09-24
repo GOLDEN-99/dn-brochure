@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, Subject, throwError } from 'rxjs';
 
-import { OtherIncomeReportComponent } from './other-income-report.component';
-import { OiAccountReportService } from '../../../service/other-income/oi-account-report.service';
-import { SupplierReportService } from '../../../service/other-income/supplier-report.service';
-import { LoadingService } from '../../../service/loading/loading.service';
-import { ToastService } from '../../../service/toast/toast.service';
+import { PurchaseReportComponent } from './purchase-report.component';
+import { OiAccountReportService } from '../../../../service/other-income/oi-account-report.service';
+import { SupplierReportService } from '../../../../service/other-income/supplier-report.service';
+import { LoadingService } from '../../../../service/loading/loading.service';
+import { ToastService } from '../../../../service/toast/toast.service';
 
 // [component method, OiAccountReportService method it calls]
-const EXPORTS: Array<[keyof OtherIncomeReportComponent, string]> = [
+const EXPORTS: Array<[keyof PurchaseReportComponent, string]> = [
   ['exportInvoice', 'exportInvoiceReport'],
   ['exportCredit', 'exportInvoiceReport'],
   ['exportRece', 'exportReceiptReport'],
@@ -22,9 +22,9 @@ const EXPORTS: Array<[keyof OtherIncomeReportComponent, string]> = [
   ['exportRangeCredit', 'exportCreditReport'],
 ];
 
-describe('OtherIncomeReportComponent', () => {
-  let component: OtherIncomeReportComponent;
-  let fixture: ComponentFixture<OtherIncomeReportComponent>;
+describe('PurchaseReportComponent', () => {
+  let component: PurchaseReportComponent;
+  let fixture: ComponentFixture<PurchaseReportComponent>;
   let accReport: jasmine.SpyObj<any>;
   let loading: jasmine.SpyObj<LoadingService>;
   let toast: jasmine.SpyObj<ToastService>;
@@ -35,7 +35,7 @@ describe('OtherIncomeReportComponent', () => {
     toast = jasmine.createSpyObj('ToastService', ['success', 'danger']);
 
     await TestBed.configureTestingModule({
-      imports: [OtherIncomeReportComponent],
+      imports: [PurchaseReportComponent],
       providers: [
         { provide: OiAccountReportService, useValue: accReport },
         { provide: SupplierReportService, useValue: { displayYear: [] } },
@@ -45,10 +45,10 @@ describe('OtherIncomeReportComponent', () => {
     })
       // the export methods are what's under test; the template's child report
       // components would drag in their own services
-      .overrideComponent(OtherIncomeReportComponent, { set: { template: '', imports: [] } })
+      .overrideComponent(PurchaseReportComponent, { set: { template: '', imports: [] } })
       .compileComponents();
 
-    fixture = TestBed.createComponent(OtherIncomeReportComponent);
+    fixture = TestBed.createComponent(PurchaseReportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

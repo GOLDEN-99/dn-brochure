@@ -28,10 +28,16 @@ export class OtherIncomeOrderReportComponent {
   disable = computed(() => !this.compType())
   private readonly getOrderReport = ({ compType, year }: { compType: string, year: string }) =>
     this.api.get<TSummaryObject[]>(`${this.url}/${compType}/with-po`, { params: { year } })
+  // catchError sits on the inner request: on the outer stream one failure would
+  // complete raw$ and every later fetch would be ignored. endLoad runs on the
+  // response or the error fallback, not in finalize — switchMap cancels the
+  // first request when fetchDN/fetchHU push year then compType, and that cancel
+  // must not clear loading while the second request is still in flight.
   private readonly raw$: Observable<TSummaryObject[]> = this.param$.pipe(
-    switchMap(this.getOrderReport),
-    tap(() => this.load.endLoad()),
-    catchError(err => of([])),
+    switchMap(params => this.getOrderReport(params).pipe(
+      catchError(() => of([])),
+      tap(() => this.load.endLoad()),
+    )),
   )
   private readonly raw = toSignal(this.raw$, { initialValue: [] })
   cannotExport = computed(() => this.raw().length === 0)
