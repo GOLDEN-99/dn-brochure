@@ -2,6 +2,7 @@ import { Component, inject, input, model, output } from '@angular/core';
 import { CnUploadImageService } from '../../services/cn-upload-image.service';
 import { LoadingService } from '../../../../service/loading/loading.service';
 import { FormValueControl } from '@angular/forms/signals';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'cn-image-uploader',
@@ -13,6 +14,8 @@ import { FormValueControl } from '@angular/forms/signals';
 export class ImageUploaderComponent implements FormValueControl<Array<string>> {
   private readonly loadingServ = inject(LoadingService)
   private readonly uploadServ = inject(CnUploadImageService)
+
+
   disabled = input(false)
   cannotUpload = input(false)
 
@@ -30,16 +33,17 @@ export class ImageUploaderComponent implements FormValueControl<Array<string>> {
       return
     }
     this.loadingServ.startLoad()
-    this.uploadServ.uploadFileV2({ wholeNumb, img }).subscribe({
-      next: ({ link }) => {
-        this.value.update(prev => [...prev, link])
-        this.success.emit('อัพโหลดสำเร็จ')
-      },
-      error: (err) => {
-        this.fail.emit('มีปัญหาอัพโหลด')
-      },
-      complete: () => this.loadingServ.endLoad()
-    })
+    this.uploadServ.uploadFileV2({ wholeNumb, img })
+      .pipe(finalize(() => this.loadingServ.endLoad()))
+      .subscribe({
+        next: ({ link }) => {
+          this.value.update(prev => [...prev, link])
+          this.success.emit('อัพโหลดสำเร็จ')
+        },
+        error: () => {
+          this.fail.emit('มีปัญหาอัพโหลด')
+        }
+      })
   }
 
 
@@ -52,6 +56,8 @@ export class ImageUploaderComponent implements FormValueControl<Array<string>> {
     if (input.files && input.files.length > 0) {
       this.handleFile(input.files[0]);
     }
+    // reset so re-selecting the same file (e.g. retry after a failed upload) fires (change) again
+    input.value = '';
   }
 
   private handleFile(file: File) {
