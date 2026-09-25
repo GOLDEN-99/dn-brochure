@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { SettlementContextService } from '../../../../../services/settlement-context.service';
 import { ToastService } from '../../../../../../../service/toast/toast.service';
@@ -9,6 +9,7 @@ import { TPostInvoiceReq, TPostReceiptWithMatchesReq } from '../../../../../../s
 @Component({
   selector: 'app-settlement-invoice-receipt-tab',
   imports: [DatePipe, AppendInvoiceComponent, AppendReceiptComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './settlement-invoice-receipt-tab.component.html',
 })
 export class SettlementInvoiceReceiptTabComponent {

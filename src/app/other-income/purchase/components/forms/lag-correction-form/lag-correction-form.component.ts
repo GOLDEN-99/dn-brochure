@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TPostLagCorrectionReq } from '../../../../shared/types/other-income.type';
 import { LagCorrectionForm, lagCorrectionSchema } from './lag-correction-form';
 import { NgbCalendar, NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
@@ -13,6 +13,7 @@ import { FormAlertTextComponent } from '../../../../../components/crm-promotion/
   imports: [NgbTypeahead, FormField, SignalMonthPickerComponent, FormAlertTextComponent],
   templateUrl: './lag-correction-form.component.html',
   styles: '',
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [OtherIncomeSearchOrderService],
 })
 export class LagCorrectionFormComponent {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { Component, computed, inject, input, OnDestroy, OnInit, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
 import { FormsModule } from '@angular/forms';
 import { ModalLayoutComponent } from "../../../components/modal/modal-layout/modal-layout.component";
@@ -16,6 +16,7 @@ import { SupplierApiService } from '../../../service/supplier/supplier-api.servi
   selector: 'app-step-three-page',
   imports: [FormsModule, ModalLayoutComponent, SearchSupplierComponent],
   templateUrl: './step-three-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './step-three-page.component.scss'
 })
 export class StepThreePageComponent extends BaseSupplierForm implements OnInit, OnDestroy {

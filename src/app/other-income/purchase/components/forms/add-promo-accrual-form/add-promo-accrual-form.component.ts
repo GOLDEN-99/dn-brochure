@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TPostPromoAccrualReq } from '../../../../shared/types/other-income.type';
 import { AddPromoAccrualForm, addPromoAccrualSchema } from './add-promo-accrual-form';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
@@ -10,6 +10,7 @@ import { FormAlertTextComponent } from '../../../../../components/crm-promotion/
   selector: 'other-income-add-promo-accrual-form',
   imports: [FormField, SignalMonthPickerComponent, FormAlertTextComponent],
   templateUrl: './add-promo-accrual-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class AddPromoAccrualFormComponent {

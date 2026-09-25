@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { TCreatePromotionRequest } from '../../../../types/crm-promotion.type';
@@ -10,6 +10,7 @@ import { PromotionFormComponent } from '../../../../components/crm-promotion/pro
 @Component({
   selector: 'app-create-bill-discount-promotion',
   imports: [PromotionFormComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-promotion-form
       submitLabel="สร้างโปรโมชั่น"

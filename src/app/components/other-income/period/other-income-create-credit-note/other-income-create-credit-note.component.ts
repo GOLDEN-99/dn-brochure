@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { PeriodService } from '../../../../service/other-income/period.service';
 import { form, FormField, readonly, required, schema, validate } from '@angular/forms/signals';
@@ -40,6 +40,7 @@ const createCreditNoteSchema = schema<TCreateCreditNoteForm>((schema) => {
   selector: 'app-other-income-create-credit-note',
   imports: [SignalDatepickerComponent, FormField, FormsModule],
   templateUrl: './other-income-create-credit-note.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class OtherIncomeCreateCreditNoteComponent {

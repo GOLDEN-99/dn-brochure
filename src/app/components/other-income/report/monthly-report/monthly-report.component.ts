@@ -1,10 +1,11 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { NewReportService } from '../../../../service/other-income/new-report-service/new-report.service';
 
 @Component({
   selector: 'app-monthly-report',
   imports: [],
   templateUrl: './monthly-report.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class MonthlyReportComponent {

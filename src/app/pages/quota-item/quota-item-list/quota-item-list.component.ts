@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, combineLatest, debounce, debounceTime, distinctUntilChanged, map, tap } from 'rxjs';
@@ -8,6 +8,7 @@ import { BehaviorSubject, combineLatest, debounce, debounceTime, distinctUntilCh
   selector: 'app-quota-item-list',
   imports: [FormsModule],
   templateUrl: './quota-item-list.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './quota-item-list.component.scss'
 })
 export class QuotaItemListComponent {

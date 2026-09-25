@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { PeriodService } from '../../../../service/other-income/period.service';
 import { TInviceItemDto, TReceiptItemDto } from '../../../../service/other-income/base-oi';
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -13,6 +13,7 @@ import { defaultMatching, matchingSchema } from './matchingForm/matching';
   selector: 'app-other-income-invoice-receipt',
   imports: [DecimalPipe, DatePipe, NgbTypeahead, FormField, FormsModule],
   templateUrl: './other-income-invoice-receipt.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-invoice-receipt.component.scss',
 })
 export class OtherIncomeInvoiceReceiptComponent {

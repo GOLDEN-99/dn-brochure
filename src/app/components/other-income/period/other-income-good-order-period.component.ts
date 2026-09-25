@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { TFreeItemDto } from '../../../service/other-income/base-oi';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
@@ -30,6 +30,7 @@ import { BasePeriodComponent } from './base-period.component';
           </tbody>
         </table>
       </div>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``
 })
 export class OtherIncomeGoodOrderPeriodComponent extends BasePeriodComponent {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { NgbCalendar, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
@@ -33,6 +33,7 @@ import { OtherIncomePeriodDisplayComponent } from "../../../../components/other-
     OtherIncomePeriodDisplayComponent
   ],
   templateUrl: './not-light-dual-detail.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './not-light-dual-detail.component.scss'
 })
 export class NotLightDualDetailComponent {

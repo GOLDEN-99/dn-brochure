@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { createPromoContractSchema, mapPromoContractFormToCreateReq, TCreatePromoContractForm } from '../../forms/create-schema';
 import { form, FormField } from '@angular/forms/signals';
 import { CreateSingleHeadComponent } from "../../forms/create-single-head/create-single-head.component";
@@ -30,6 +30,7 @@ const initialFormData: TCreatePromoContractForm = {
   selector: 'app-promo-contract-create-page',
   imports: [CreateSingleHeadComponent, OtherIncomeIncomeSelectComponent, FormField, CreateSingleCompWithoutProductComponent],
   templateUrl: './promo-contract-create-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './promo-contract-create-page.component.scss',
 })
 export class PromoContractCreatePageComponent {

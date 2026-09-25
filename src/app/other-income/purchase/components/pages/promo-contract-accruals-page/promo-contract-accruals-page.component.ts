@@ -1,4 +1,4 @@
-import { Component, inject, input, signal, viewChild } from '@angular/core';
+import { Component, inject, input, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { PromoContractContextService } from '../../../services/promo-contract-context.service';
 import { ToastService } from '../../../../../service/toast/toast.service';
@@ -9,6 +9,7 @@ import { TPostPromoAccrualReq } from '../../../../shared/types/other-income.type
   selector: 'app-promo-contract-accruals-page',
   imports: [DatePipe, AddPromoAccrualFormComponent],
   templateUrl: './promo-contract-accruals-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './promo-contract-accruals-page.component.scss',
 })
 export class PromoContractAccrualsPageComponent {

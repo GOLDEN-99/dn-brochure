@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnInit, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CalendarCellComponent } from '../calendar-cell/calendar-cell.component';
 import { NgbDate, NgbDateParserFormatter, NgbDatepickerModule, NgbDateStruct, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { WeekCalendarService } from '../../../../service/ibob/week-calendar.service';
@@ -10,6 +10,7 @@ import { DailyCalendarService } from '../../../../service/ibob/daily-calendar.se
   selector: 'app-calendar-weekly',
   imports: [CalendarCellComponent, NgbDatepickerModule, FormsModule],
   templateUrl: './calendar-weekly.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './calendar-weekly.component.scss'
 })
 export class CalendarWeeklyComponent {

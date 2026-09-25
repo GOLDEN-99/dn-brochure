@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs';
@@ -14,6 +14,7 @@ import { toXlxs } from '../../../lib/utli';
   selector: 'app-stock-item-report',
   imports: [FormsModule, NgTemplateOutlet, DatePipe],
   templateUrl: './stock-item-report.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './stock-item-report.component.scss'
 })
 export class StockItemReportComponent {

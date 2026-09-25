@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Angular 21 (standalone components, signals-based) frontend for internal Drug Net Center tooling: product brochure/marketing, CN (credit note / return) requests, supplier stock transfers (IB/OB), quota items, CRM promotions, and Other Income (supplier-funded income tracking). Node 22.22.0.
+Angular 22 (standalone components, signals-based) frontend for internal Drug Net Center tooling: product brochure/marketing, CN (credit note / return) requests, supplier stock transfers (IB/OB), quota items, CRM promotions, and Other Income (supplier-funded income tracking). Node ^22.22.3 or ^24.15.0 (Angular 22 minimum).
 
 ## Commands
 

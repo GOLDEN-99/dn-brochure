@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { CnStateService } from '../../services/cn-state.service';
 import { distinctUntilChanged, map, Subject, switchMap, takeUntil, tap } from 'rxjs';
@@ -10,6 +10,7 @@ import { CnLoadError } from '../../types/cn.type';
   selector: 'app-cn-layout',
   imports: [RouterOutlet],
   templateUrl: './cn-layout.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     .form-wrapper {
       margin: auto;

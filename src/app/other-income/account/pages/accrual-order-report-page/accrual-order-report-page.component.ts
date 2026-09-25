@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe, DecimalPipe, SlicePipe } from '@angular/common';
@@ -78,6 +78,7 @@ const exportConfig: TAoaConfig<TOrderReportFlatRow> = {
   selector: 'app-accrual-order-report-page',
   imports: [DatePipe, DecimalPipe, SlicePipe, FormsModule, DatePickerComponent],
   templateUrl: './accrual-order-report-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './accrual-order-report-page.component.scss',
 })
 export class AccrualOrderReportPageComponent {

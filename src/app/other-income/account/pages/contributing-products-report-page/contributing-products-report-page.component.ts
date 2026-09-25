@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -34,6 +34,7 @@ const exportConfig: TAoaConfig<TContributingProductRow> = {
   selector: 'app-contributing-products-report-page',
   imports: [DatePipe, DecimalPipe, FormsModule, DatePickerComponent],
   templateUrl: './contributing-products-report-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './contributing-products-report-page.component.scss',
 })
 export class ContributingProductsReportPageComponent {

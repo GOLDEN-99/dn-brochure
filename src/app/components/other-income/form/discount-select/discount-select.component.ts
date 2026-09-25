@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, computed, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -18,6 +18,7 @@ import { FormsModule } from '@angular/forms';
     }
   </select>
 </div>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class DiscountSelectComponent {

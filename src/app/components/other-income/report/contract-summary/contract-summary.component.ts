@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { NewReportService } from '../../../../service/other-income/new-report-service/new-report.service';
 import { TCompType } from '../../../../types';
 
@@ -6,6 +6,7 @@ import { TCompType } from '../../../../types';
   selector: 'app-contract-summary',
   imports: [],
   templateUrl: './contract-summary.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './contract-summary.component.scss'
 })
 export class ContractSummaryComponent {

@@ -1,10 +1,11 @@
-import { Component, computed, input, model } from '@angular/core';
+import { Component, computed, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-timepicker',
   imports: [FormsModule],
   templateUrl: './timepicker.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './timepicker.component.scss',
 })
 export class TimepickerComponent {

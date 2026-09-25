@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { DateInputComponent } from "../../../components/date-input/date-input.component";
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -14,6 +14,7 @@ import { getOrElse } from '../../../lib/utli';
   selector: 'app-in-out-query',
   imports: [FormsModule, DateInputComponent, RouterLink, DatePipe],
   templateUrl: './in-out-query.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './in-out-query.component.scss',
 })
 export class InOutQueryComponent implements OnInit, OnDestroy {

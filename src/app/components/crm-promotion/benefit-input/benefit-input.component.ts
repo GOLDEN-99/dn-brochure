@@ -1,10 +1,11 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, computed, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-benefit-input',
   imports: [FormsModule],
   templateUrl: './benefit-input.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './benefit-input.component.scss'
 })
 export class BenefitInputComponent {

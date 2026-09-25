@@ -1,4 +1,4 @@
-import { Component, inject, model, output, signal } from '@angular/core';
+import { Component, inject, model, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { SupllierSelectComponent } from "../supllier-select/supllier-select.component";
 import { FormsModule } from '@angular/forms';
 import { IbobCompService } from '../../../service/supplier/ibob-comp.service';
@@ -8,6 +8,7 @@ import { TOIComp } from '../../../service/other-income/company.service';
   selector: 'app-search-supplier',
   imports: [SupllierSelectComponent, FormsModule],
   templateUrl: './search-supplier.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class SearchSupplierComponent {
