@@ -1,15 +1,15 @@
 import { Component, computed, inject, model, ChangeDetectionStrategy } from '@angular/core';
-import { finalize, map, Observable } from 'rxjs';
+import { finalize } from 'rxjs';
 import { BranchConfigService } from '../../../service/crm-promotion/branch-config.service';
 import { TBranch, TBranchDetail, TConfigGroup } from '../../../types/crm-promotion.type';
-import { NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { LoadingService } from '../../../service/loading/loading.service';
 import { ToastService } from '../../../service/toast/toast.service';
+import { SearchPickerComponent } from '../search-picker/search-picker.component';
 
 @Component({
   selector: 'app-inline-branch-limit',
-  imports: [NgbTypeahead, FormsModule],
+  imports: [FormsModule, SearchPickerComponent],
   templateUrl: './inline-branch-limit.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './inline-branch-limit.component.scss',
@@ -23,40 +23,20 @@ export class InlineBranchLimitComponent {
   allowSelectBranch = computed(() => !this.branchLimit())
   private readonly branchService = inject(BranchConfigService)
   private readonly branchList = this.branchService.allBranches
-  private readonly promotionBranchGroup = this.branchService.allBranchGroup
+  readonly promotionBranchGroup = this.branchService.allBranchGroup
   readonly renderBranch = computed(() => {
     const currentRef = this.branchRef()
     return this.branchList().filter(b => !currentRef.has(b.branchCode))
   })
-  searchBranch = (text$: Observable<string>) =>
-    text$.pipe(
-      map(
-        t =>
-          this.renderBranch()
-            .filter(
-              b => b.branchName.toLocaleLowerCase()
-                .includes(t.toLowerCase())
-            ).slice(0, 10)
-      )
-    )
-  onSelectBranch = ({ item: { branchCode, branchName } }: NgbTypeaheadSelectItemEvent<TBranchDetail>) => {
+  readonly branchName = (b: TBranchDetail) => b.branchName
+  readonly groupName = (g: TConfigGroup) => g.name
+
+  onSelectBranch = ({ branchCode, branchName }: TBranchDetail) => {
     //update data
     this.currentBranch.update(prev => [...prev, { branchCode, branchName }])
   }
 
-  searchPromotionBranchGroup = (text$: Observable<string>) =>
-    text$.pipe(
-      map(
-        t =>
-          this.promotionBranchGroup()
-            .filter(
-              b => b.name.toLocaleLowerCase()
-                .includes(t.toLowerCase())
-            )
-      )
-    )
-
-  onSelcetPromotionBranchGroup = ({ item: { id } }: NgbTypeaheadSelectItemEvent<TConfigGroup>) => {
+  onSelcetPromotionBranchGroup = ({ id }: TConfigGroup) => {
     this.loadingService.startLoad()
     this.branchService.getByGroupId(id).pipe(finalize(() => this.loadingService.endLoad())).subscribe({
       next: (res) => {
