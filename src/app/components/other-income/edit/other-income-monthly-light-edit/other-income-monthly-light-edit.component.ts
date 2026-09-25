@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { TIncomeItem } from '../../../../service/other-income/base-oi';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MonthlyService } from '../../../../service/other-income/monthly.service';
@@ -10,6 +10,7 @@ import { YearSelectComponent } from "../../../date-input/year-select.component";
   selector: 'app-other-income-monthly-light-edit',
   imports: [DecimalPipe, MonthSelectComponent, YearSelectComponent],
   templateUrl: './other-income-monthly-light-edit.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-monthly-light-edit.component.scss'
 })
 export class OtherIncomeMonthlyLightEditComponent {

@@ -1,4 +1,4 @@
-import { Component, inject, input, Signal, signal } from '@angular/core';
+import { Component, inject, input, Signal, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
 import { FormsModule } from '@angular/forms';
@@ -9,6 +9,7 @@ import { SupplierApiService } from '../../../service/supplier/supplier-api.servi
   selector: 'app-condition-page',
   imports: [NgbNavModule, FormsModule],
   templateUrl: './condition-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './condition-page.component.scss'
 })
 export class ConditionPageComponent extends BaseSupplierForm {

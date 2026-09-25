@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { DatePipe, Location } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -76,6 +76,7 @@ const orderConfirmationConfig: TAoaConfig<TOrderConfirmationReportLine> = {
   selector: 'app-order-contract-layout',
   imports: [RouterLink, RouterLinkActive, RouterOutlet, DatePipe, DatePickerComponent],
   templateUrl: './order-contract-layout.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class OrderContractLayoutComponent {

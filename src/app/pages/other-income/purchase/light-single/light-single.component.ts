@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { OiLightService } from '../../../../service/other-income/oi-light.service';
 import { OtherIncomeHeadEditComponent } from "../../../../components/other-income/edit/other-income-head-edit/other-income-head-edit.component";
 import { OtherIncomeLightEditComponent } from '../../../../components/other-income/edit/other-income-light-edit.component';
@@ -17,6 +17,7 @@ import { OtherIncomePeriodDisplayComponent } from '../../../../components/other-
     RouterLink,
     OtherIncomePeriodDisplayComponent
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './light-single.component.html'
 })
 export class LightSingleComponent {

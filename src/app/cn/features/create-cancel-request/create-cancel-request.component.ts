@@ -1,4 +1,4 @@
-import { Component, computed, inject, } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RemarkSelectComponent } from "../../shared/components/remark-select/remark-select.component";
 import { RemarkCategorySelectComponent } from "../../shared/components/remark-category-select/remark-category-select.component";
 import { FormField } from "@angular/forms/signals";
@@ -16,6 +16,7 @@ import { LoadingService } from '../../../service/loading/loading.service';
   selector: 'app-create-cancel-request',
   imports: [RemarkSelectComponent, RemarkCategorySelectComponent, ResultSelectComponent, CnTypeRadioComponent, FormField, RouterLink, FormsModule],
   templateUrl: './create-cancel-request.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './create-cancel-request.component.scss',
 })
 export class CreateCancelRequestComponent {

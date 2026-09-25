@@ -1,4 +1,4 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import { Component, computed, inject, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CompanyService } from '../../../service/other-income/company.service';
 import { TCompType } from '../../../types';
@@ -7,6 +7,7 @@ import { TCompType } from '../../../types';
   selector: 'app-other-search-supplier-modal',
   imports: [FormsModule],
   templateUrl: './other-search-supplier-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-search-supplier-modal.component.scss'
 })
 export class OtherSearchSupplierModalComponent {

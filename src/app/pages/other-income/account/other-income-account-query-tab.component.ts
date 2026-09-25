@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EventSelectComponent } from '../../../components/other-income/form/event-select/event-select.component';
 import { TAccountQueryReqState } from '../../../service/other-income/period-not-light.service';
@@ -6,6 +6,7 @@ import { TAccountQueryReqState } from '../../../service/other-income/period-not-
 @Component({
   selector: 'app-other-income-account-query-tab',
   imports: [FormsModule, EventSelectComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
   @let cur = param();
   <div class="row">

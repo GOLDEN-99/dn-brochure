@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, inject, input, OnInit, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 
@@ -20,6 +20,7 @@ import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
     </select>
   </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class YearSelectComponent implements OnInit {

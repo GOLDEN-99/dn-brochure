@@ -1,4 +1,4 @@
-import { Component, inject, input, signal, viewChild } from '@angular/core';
+import { Component, inject, input, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { SettlementContextService } from '../../../../../services/settlement-context.service';
 import { ToastService } from '../../../../../../../service/toast/toast.service';
@@ -8,6 +8,7 @@ import { TPostCreditNoteReq } from '../../../../../../shared/types/other-income.
 @Component({
   selector: 'app-settlement-credit-note-tab',
   imports: [DatePipe, AppendCreditNoteComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './settlement-credit-note-tab.component.html',
 })
 export class SettlementCreditNoteTabComponent {

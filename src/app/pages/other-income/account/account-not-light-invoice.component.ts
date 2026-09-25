@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CUSTOM_FIELD_SEARCH_TOKEN, OTHER_INCOME_NL_SEARCH } from '../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OtherIncomeAccountQueryTabComponent } from "./other-income-account-query-tab.component";
@@ -53,6 +53,7 @@ import { PeriodStatus } from '../../../types/other-income';
       </table>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class AccountNotLightInvoiceComponent {

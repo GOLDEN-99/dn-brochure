@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { PromoContractContextService } from '../../../services/promo-contract-context.service';
@@ -10,6 +10,7 @@ import { TPostSettlementReq } from '../../../../shared/types/other-income.type';
   selector: 'app-promo-contract-settlements-page',
   imports: [RouterLink, DatePipe, CreateSettlementFormComponent],
   templateUrl: './promo-contract-settlements-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './promo-contract-settlements-page.component.scss',
 })
 export class PromoContractSettlementsPageComponent {

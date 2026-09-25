@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, model } from '@angular/core';
+import { Component, computed, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormValueControl, ValidationError } from '@angular/forms/signals';
 import { FormsModule } from '@angular/forms';
 import { TMaybe } from '../../../../types';
@@ -11,6 +11,7 @@ import { TRemarkCategory } from '../../types/cn.type';
   selector: 'cn-remark-category-select',
   imports: [FormsModule],
   templateUrl: './remark-category-select.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class RemarkCategorySelectComponent implements FormValueControl<TMaybe<TRemarkCategory>> {

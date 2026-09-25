@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { combineLatest, filter, switchMap } from 'rxjs';
 import { DatePipe } from '@angular/common';
@@ -14,6 +14,7 @@ import { isPromotionSourceInferred, resolvePromotionSource } from '../../../lib/
 @Component({
   selector: 'app-promotion-detail',
   imports: [DatePipe, RouterLink, PromotionPriorityPipe, PromotionSourcePipe, PromotionOrderPipe, PromotionBenefitNamePipe, PromotionThresholdPipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './promotion-detail.component.html',
 })
 export class PromotionDetailComponent {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FlashSaleService } from '../../../service/brochure/flash-sale/flash-sale.service';
 import { FsBrochureComponent } from '../../../components/brochure-component/fs-brochure/fs-brochure.component';
 import { ToastService } from '../../../service/toast/toast.service';
@@ -8,6 +8,7 @@ import { LoadingService } from '../../../service/loading/loading.service';
   selector: 'app-flash-sale',
   imports: [FsBrochureComponent],
   templateUrl: './flash-sale.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './flash-sale.component.scss'
 })
 export class FlashSaleComponent {

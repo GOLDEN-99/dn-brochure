@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CUSTOM_FIELD_SEARCH_TOKEN } from './ibob-query-tab-token';
 
@@ -6,6 +6,7 @@ import { CUSTOM_FIELD_SEARCH_TOKEN } from './ibob-query-tab-token';
   selector: 'app-ibob-query-tab',
   imports: [FormsModule],
   templateUrl: './ibob-query-tab.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``
 })
 export class IbobQueryTabComponent {

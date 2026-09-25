@@ -13,7 +13,7 @@
         [name]="'gate' + id"
         [attr.id]="door.doorId + '-radio-' + id"
         [value]="door.doorId"
-        [ngModel]="activeDoor()?.doorId"
+        [ngModel]="$safeNavigationMigration(activeDoor()?.doorId)"
         (ngModelChange)="onChangeGate(door)"
         [disabled]="readOnly()"
       />

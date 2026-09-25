@@ -1,4 +1,4 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { TPromotionTier } from '../../../types/crm-promotion.type';
 import { FormsModule } from '@angular/forms';
 import { PromotionBenefitNamePipe } from '../../../lib/crm-promotion/promotion-benefit-name.pipe';
@@ -13,6 +13,7 @@ let benefitId = 0
   selector: 'app-benefit-tier',
   imports: [FormsModule, PromotionBenefitNamePipe, PromotionThresholdPipe, FormField, FormAlertTextComponent],
   templateUrl: './benefit-tier.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class BenefitTierComponent {

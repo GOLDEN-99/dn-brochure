@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { SupplierFromService } from '../../../service/supplier/supplier-from.service';
 import { FormsModule } from '@angular/forms';
 import { StepThreePageComponent } from "../step-three-page/step-three-page.component";
@@ -14,6 +14,7 @@ import { Subject, takeUntil, tap } from 'rxjs';
   selector: 'app-register-page',
   imports: [FormsModule, StepThreePageComponent, GeneralPageComponent, AuthPageComponent, RouterLink, ConditionPageComponent],
   templateUrl: './register-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './register-page.component.scss'
 })
 export class RegisterPageComponent implements OnInit, OnDestroy {

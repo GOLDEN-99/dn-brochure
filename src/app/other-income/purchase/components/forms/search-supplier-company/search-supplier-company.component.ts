@@ -1,4 +1,4 @@
-import { Component, model, signal } from '@angular/core';
+import { Component, model, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormValueControl } from '@angular/forms/signals';
 import { TOtherIncomeComp } from '../create-schema';
 import { TMaybe } from '../../../../../shared/types/index.type';
@@ -10,6 +10,7 @@ import { Observable, of } from 'rxjs';
   selector: 'app-search-supplier-company',
   imports: [NgbTypeahead],
   templateUrl: './search-supplier-company.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './search-supplier-company.component.scss',
 })
 export class SearchSupplierCompanyComponent implements FormValueControl<TMaybe<TOtherIncomeComp>> {

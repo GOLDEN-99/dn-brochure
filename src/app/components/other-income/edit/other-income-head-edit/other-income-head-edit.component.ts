@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, input, output, signal, viewChild } from '@angular/core';
+import { Component, inject, input, output, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { TCompType } from '../../../../types';
 import { NgbCalendar, NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OiBaseformService, TApiBaseformInsert } from '../../../../service/other-income/oi-baseform.service';
@@ -13,6 +13,7 @@ import { TIncome } from '../../../../service/other-income/income.service';
   selector: 'app-other-income-head-edit',
   imports: [DatePipe, EventSelectComponent, FormsModule, DateInputComponent, SearchCompSubformComponent],
   templateUrl: './other-income-head-edit.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-head-edit.component.scss'
 })
 export class OtherIncomeHeadEditComponent {
