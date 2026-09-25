@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NgbCalendar, NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { form, FormField } from '@angular/forms/signals';
 import { distinctUntilChanged, map, Observable } from 'rxjs';
@@ -25,6 +25,7 @@ export type AppendReceiptSubmit = {
   selector: 'other-income-append-receipt',
   imports: [FormField, SignalDatepickerComponent, FormAlertTextComponent, NgbTypeahead, FormsModule, DecimalPipe],
   templateUrl: './append-receipt.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class AppendReceiptComponent {

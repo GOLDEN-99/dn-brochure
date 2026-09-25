@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { filter, map, retry, Subject, switchMap, tap } from 'rxjs';
 import { flashSaleParamsSchema, TFlashParams } from '../../utils/param-schema';
@@ -14,6 +14,7 @@ import { ToastService } from '../../../service/toast/toast.service';
   imports: [BrochureFlashSaleComponent],
   providers: [ExportPdfService],
   templateUrl: './brochure-flash-sale-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './brochure-flash-sale-page.component.scss',
 })
 export class BrochureFlashSalePageComponent implements OnInit, OnDestroy {

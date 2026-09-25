@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { TOIProduct } from '../../../../types';
@@ -9,6 +9,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   selector: 'app-other-income-ince-form',
   imports: [SearchProductSubformComponent],
   templateUrl: './other-income-ince-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-ince-form.component.scss'
 })
 export class OtherIncomeInceFormComponent {

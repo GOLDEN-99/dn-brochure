@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ModalLayoutComponent } from "../../../components/modal/modal-layout/modal-layout.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -15,6 +15,7 @@ import { BaseSupplierForm } from '../../../lib';
   selector: 'app-supplier-product-page',
   imports: [FormsModule, ModalLayoutComponent, RouterLink],
   templateUrl: './supplier-product-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './supplier-product-page.component.scss'
 })
 export class SupplierProductPageComponent extends BaseSupplierForm {

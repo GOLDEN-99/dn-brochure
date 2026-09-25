@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, model, signal } from '@angular/core';
+import { Component, computed, inject, input, model, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormValueControl, } from '@angular/forms/signals';
 import { TOtherIncomeComp } from '../create-schema';
 import { CompType } from '../../../../shared/libs/other-income-schema';
@@ -14,6 +14,7 @@ const DEFAULT_COMP: TOtherIncomeComp = { compCode: '', compName: '', compName2: 
   selector: 'other-income-create-single-comp-without-product',
   imports: [NgbTypeahead],
   templateUrl: './create-single-comp-without-product.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './create-single-comp-without-product.component.scss',
 })
 export class CreateSingleCompWithoutProductComponent implements FormValueControl<TOtherIncomeComp> {

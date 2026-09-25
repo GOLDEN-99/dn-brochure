@@ -5,6 +5,7 @@ import {
   input,
   output,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { form } from '@angular/forms/signals';
@@ -42,6 +43,7 @@ import { PromotionProductFilterComponent } from '../create-promotion-subform/pro
     PromotionLimitUsageComponent,
     PromotionProductFilterComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './promotion-form.component.html',
 })
 export class PromotionFormComponent {

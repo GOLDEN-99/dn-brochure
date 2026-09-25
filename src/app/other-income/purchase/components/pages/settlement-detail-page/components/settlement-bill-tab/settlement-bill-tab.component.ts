@@ -1,4 +1,4 @@
-import { Component, inject, input, signal, viewChild } from '@angular/core';
+import { Component, inject, input, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SettlementContextService } from '../../../../../services/settlement-context.service';
 import { ToastService } from '../../../../../../../service/toast/toast.service';
@@ -10,6 +10,7 @@ type SearchBillDiscounts = (filters: TBillDiscountSearchFilters) => Observable<T
 @Component({
   selector: 'app-settlement-bill-tab',
   imports: [AppendBillDiscountComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './settlement-bill-tab.component.html',
 })
 export class SettlementBillTabComponent {

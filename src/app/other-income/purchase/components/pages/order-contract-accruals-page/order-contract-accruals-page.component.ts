@@ -1,4 +1,4 @@
-import { Component, inject, input, signal, viewChild } from '@angular/core';
+import { Component, inject, input, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { OrderContractContextService } from '../../../services/order-contract-context.service';
 import { ToastService } from '../../../../../service/toast/toast.service';
@@ -11,6 +11,7 @@ import { TPostCnCorrectionReq, TPostLagCorrectionReq, TPostManualCorrectionReq }
   selector: 'app-order-contract-accruals-page',
   imports: [DatePipe, CnCorrectionFormComponent, LagCorrectionFormComponent, ManualCorrectionFormComponent],
   templateUrl: './order-contract-accruals-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './order-contract-accruals-page.component.scss',
 })
 export class OrderContractAccrualsPageComponent {

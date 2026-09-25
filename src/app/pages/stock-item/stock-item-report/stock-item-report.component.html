@@ -95,7 +95,7 @@
       <label for="new-actual">จำนวนตุนจริง (ชิ้น)</label>
       <input
         type="number"
-        [ngModel]="selectStock()?.actualStock"
+        [ngModel]="$safeNavigationMigration(selectStock()?.actualStock)"
         (ngModelChange)="changeActualStock($event)"
       />
     </div>

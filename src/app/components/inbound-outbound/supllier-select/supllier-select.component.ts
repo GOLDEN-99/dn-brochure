@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, model, output, signal } from '@angular/core';
+import { Component, computed, inject, input, model, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IbobCompService, TCompGroup } from '../../../service/supplier/ibob-comp.service';
 
@@ -6,6 +6,7 @@ import { IbobCompService, TCompGroup } from '../../../service/supplier/ibob-comp
   selector: 'app-supllier-select',
   imports: [FormsModule],
   templateUrl: './supllier-select.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class SupllierSelectComponent {

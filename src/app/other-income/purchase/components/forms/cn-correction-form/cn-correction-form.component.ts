@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TOrderContractProduct, TPostCnCorrectionReq } from '../../../../shared/types/other-income.type';
 import { CnCorrectionForm, cnCorrectionSchema } from './cn-correction-form';
 import { NgbCalendar, NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
@@ -12,6 +12,7 @@ import { FormAlertTextComponent } from '../../../../../components/crm-promotion/
   selector: 'other-income-cn-correction-form',
   imports: [NgbTypeahead, FormField, SignalMonthPickerComponent, FormAlertTextComponent],
   templateUrl: './cn-correction-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class CnCorrectionFormComponent {

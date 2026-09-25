@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, TemplateRef } from '@angular/core';
+import { Component, computed, inject, signal, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 import { genCalendar, TDate } from '../../../lib';
 import { CalendarCellComponent } from "../calendar-cell/calendar-cell.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -7,6 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-calendar-monthly',
   imports: [CalendarCellComponent],
   templateUrl: './calendar-monthly.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './calendar-monthly.component.scss'
 })
 export class CalendarMonthlyComponent {

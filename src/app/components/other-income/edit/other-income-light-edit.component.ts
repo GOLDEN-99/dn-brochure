@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-other-income-light-edit',
@@ -37,6 +37,7 @@ import { Component, computed, input } from '@angular/core';
   </div>
 </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class OtherIncomeLightEditComponent {

@@ -9,6 +9,7 @@ import {
   ModelSignal,
   OutputRef,
   viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {
   DisabledReason,
@@ -33,6 +34,7 @@ import { FormsModule } from '@angular/forms';
       [required]="required()"
     />
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class SignalMonthPickerComponent implements FormValueControl<NgbDateStruct> {
@@ -53,17 +55,9 @@ export class SignalMonthPickerComponent implements FormValueControl<NgbDateStruc
   hidden?: InputSignal<boolean> | InputSignalWithTransform<boolean, unknown> | undefined;
   invalid?: InputSignal<boolean> | InputSignalWithTransform<boolean, unknown> | undefined;
   pending?: InputSignal<boolean> | InputSignalWithTransform<boolean, unknown> | undefined;
-  touched?:
-    | InputSignal<boolean>
-    | ModelSignal<boolean>
-    | OutputRef<boolean>
-    | InputSignalWithTransform<boolean, unknown>
-    | undefined;
   dirty?: InputSignal<boolean> | InputSignalWithTransform<boolean, unknown> | undefined;
   name?: InputSignal<string> | InputSignalWithTransform<string, unknown> | undefined;
   required = input(false);
-  min?: InputSignal<number | undefined> | InputSignalWithTransform<number | undefined, unknown> | undefined;
-  max?: InputSignal<number | undefined> | InputSignalWithTransform<number | undefined, unknown> | undefined;
   focus(options?: FocusOptions): void {
     this.inputEl()?.nativeElement.focus(options);
   }

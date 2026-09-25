@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProchureComponent } from '../../../components/brochure-component/prochure/prochure.component';
 import { PromotionPipe } from '../../../pipe/promotion/promotion-pipe.pipe';
@@ -12,6 +12,7 @@ import { ToastService } from '../../../service/toast/toast.service';
   selector: 'app-base-brochure',
   imports: [ProchureComponent, PromotionPipe, NavigateBtnComponent],
   templateUrl: './base-brochure.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './base-brochure.component.scss',
 })
 export class BaseBrochureComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { StockItemApiService } from '../../../service/stock-item/stock-item-api.service';
 import { TMaybe, TStockSetup } from '../../../types';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +8,7 @@ import { ToastService } from '../../../service/toast/toast.service';
   selector: 'app-stock-item-home',
   imports: [FormsModule],
   templateUrl: './stock-item-home.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './stock-item-home.component.scss'
 })
 export class StockItemHomeComponent {

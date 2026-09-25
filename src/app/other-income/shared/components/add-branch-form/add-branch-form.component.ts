@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TAddBranchReq, TBranchSearchResult } from '../../types/other-income.type';
 import { AddBranchForm, addBranchSchema } from './add-branch-form';
 import { NgbCalendar, NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
@@ -12,6 +12,7 @@ import { debounceTime, Observable, switchMap } from 'rxjs';
   selector: 'other-income-add-branch-form',
   imports: [FormField, SignalDatepickerComponent, FormAlertTextComponent, NgbTypeahead],
   templateUrl: './add-branch-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class AddBranchFormComponent {
