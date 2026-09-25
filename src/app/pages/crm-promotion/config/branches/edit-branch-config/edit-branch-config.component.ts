@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal, viewChild, TemplateRef } from '@angular/core';
+import { Component, computed, inject, input, signal, viewChild, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, catchError, combineLatest, EMPTY, filter, map, switchMap } from 'rxjs';
@@ -12,6 +12,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-edit-branch-config',
   imports: [FormsModule, RouterLink],
   templateUrl: './edit-branch-config.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class EditBranchConfigComponent {

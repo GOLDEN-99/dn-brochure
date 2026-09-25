@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { DateInputComponent } from "../../../components/date-input/date-input.component";
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
@@ -7,6 +7,7 @@ import { DatePipe } from '@angular/common';
   selector: 'app-quota-item-whole-list',
   imports: [DateInputComponent, DatePipe],
   templateUrl: './quota-item-whole-list.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './quota-item-whole-list.component.scss'
 })
 export class QuotaItemWholeListComponent {

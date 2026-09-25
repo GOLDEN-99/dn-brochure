@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { PromoContractContextService } from '../../../purchase/services/promo-contract-context.service';
@@ -7,6 +7,7 @@ import { PromoContractContextService } from '../../../purchase/services/promo-co
   selector: 'app-promo-settlements-page',
   imports: [RouterLink, DatePipe],
   templateUrl: './promo-settlements-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './promo-settlements-page.component.scss',
 })
 export class PromoSettlementsPageComponent {

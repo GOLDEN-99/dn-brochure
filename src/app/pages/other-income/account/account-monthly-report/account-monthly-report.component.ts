@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { MonthlyReportComponent } from "../../../../components/other-income/report/monthly-report/monthly-report.component";
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { ContractSummaryComponent } from "../../../../components/other-income/re
   selector: 'app-account-monthly-report',
   imports: [MonthlyReportComponent, FormsModule, ContractSummaryComponent],
   templateUrl: './account-monthly-report.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './account-monthly-report.component.scss'
 })
 export class AccountMonthlyReportComponent {

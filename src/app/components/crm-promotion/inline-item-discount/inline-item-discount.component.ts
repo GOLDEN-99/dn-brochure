@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, signal } from '@angular/core';
+import { Component, computed, inject, model, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { TConfigGroup, TInlinePool, TProductDetail } from '../../../types/crm-promotion.type';
@@ -13,6 +13,7 @@ import { ToastService } from '../../../service/toast/toast.service';
   selector: 'app-inline-item-discount',
   imports: [FormsModule, NgbTypeahead, FormField],
   templateUrl: './inline-item-discount.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './inline-item-discount.component.scss',
 })
 export class InlineItemDiscountComponent {

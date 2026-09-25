@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { DiscountSelectComponent } from "../../form/discount-select/discount-select.component";
 import { OrderService, TOiGood, TOiOrder } from '../../../../service/other-income/order.service';
@@ -13,6 +13,7 @@ import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-other-income-good-order-modal',
   imports: [DiscountSelectComponent, FormsModule, DecimalPipe, DatePipe, DateInputComponent],
   templateUrl: './other-income-good-order-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-good-order-modal.component.scss'
 })
 export class OtherIncomeGoodOrderModalComponent {

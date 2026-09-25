@@ -1,4 +1,4 @@
-import { Component, computed, inject, model } from '@angular/core';
+import { Component, computed, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { finalize, map, Observable } from 'rxjs';
 import { BranchConfigService } from '../../../service/crm-promotion/branch-config.service';
 import { TBranch, TBranchDetail, TConfigGroup } from '../../../types/crm-promotion.type';
@@ -11,6 +11,7 @@ import { ToastService } from '../../../service/toast/toast.service';
   selector: 'app-inline-branch-limit',
   imports: [NgbTypeahead, FormsModule],
   templateUrl: './inline-branch-limit.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './inline-branch-limit.component.scss',
 })
 export class InlineBranchLimitComponent {

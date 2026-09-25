@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { OiNotLightPairService, TPairItem } from '../../../../service/other-income/oi-not-light-pair.service';
@@ -8,6 +8,7 @@ import { ToastService } from '../../../../service/toast/toast.service';
   selector: 'app-not-light-single-dual',
   imports: [FormsModule, RouterLink],
   templateUrl: './not-light-single-dual.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './not-light-single-dual.component.scss'
 })
 export class NotLightSingleDualComponent {

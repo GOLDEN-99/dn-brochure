@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../../service/toast/toast.service';
@@ -14,6 +14,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
     { provide: LOGINABLE_TOKEN, useExisting: IbobAddService }
   ],
   templateUrl: './supplier-login.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './supplier-login.component.scss'
 })
 export class SupplierLoginComponent {

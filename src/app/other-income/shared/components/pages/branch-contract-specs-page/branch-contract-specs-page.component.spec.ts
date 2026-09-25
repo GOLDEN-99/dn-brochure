@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
@@ -10,6 +10,7 @@ import { TAddBranchReq, TBranchContractDetail } from '../../../types/other-incom
 
 @Component({
   selector: 'other-income-add-branch-form',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: '',
 })
 class StubAddBranchFormComponent {

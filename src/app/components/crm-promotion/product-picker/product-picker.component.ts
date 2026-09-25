@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { ProductConfigService } from '../../../service/crm-promotion/product-config.service';
 import { LoadingService } from '../../../service/loading/loading.service';
 import { ToastService } from '../../../service/toast/toast.service';
@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-product-picker',
   imports: [NgbTypeahead, FormsModule],
   templateUrl: './product-picker.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './product-picker.component.scss',
 })
 export class ProductPickerComponent {

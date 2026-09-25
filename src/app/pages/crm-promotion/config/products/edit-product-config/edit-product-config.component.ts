@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal, } from '@angular/core';
+import { Component, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, EMPTY, filter, map, switchMap, tap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -11,6 +11,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
   selector: 'app-edit-product-config',
   imports: [RouterLink, ProductNamePipe],
   templateUrl: './edit-product-config.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class EditProductConfigComponent {

@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { DatePipe, Location } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -8,6 +8,7 @@ import { BranchContractContextService } from '../../../../purchase/services/bran
   selector: 'app-account-branch-contract-layout',
   imports: [RouterLink, RouterLinkActive, RouterOutlet, DatePipe],
   templateUrl: './account-branch-contract-layout.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './account-branch-contract-layout.component.scss',
 })
 export class AccountBranchContractLayoutComponent {

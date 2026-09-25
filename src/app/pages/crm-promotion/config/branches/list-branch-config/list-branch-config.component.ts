@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ToastService } from '../../../../../service/toast/toast.service';
 import { BranchConfigService } from '../../../../../service/crm-promotion/branch-config.service';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +8,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-list-branch-config',
   imports: [FormsModule, RouterLink],
   templateUrl: './list-branch-config.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class ListBranchConfigComponent {

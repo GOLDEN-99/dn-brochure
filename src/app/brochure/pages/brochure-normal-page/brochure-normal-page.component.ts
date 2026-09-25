@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { BROCHURE_PAGE_TOKEN } from '../../token/brochure-token';
 import { BrochureApiService } from '../../services/brochure-api.service';
 import { ExportPdfService } from '../../../shared/services/export-pdf.service';
@@ -17,6 +17,7 @@ import { BrochurePageComponent } from "../../features/brochure-page/brochure-pag
   imports: [BrochurePromotionPipe, BrochurePageComponent],
   providers: [ExportPdfService],
   templateUrl: './brochure-normal-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: '../base-brochure.scss',
 })
 export class BrochureNormalPageComponent implements OnInit, OnDestroy {

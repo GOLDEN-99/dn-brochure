@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { DatePipe, Location } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -9,6 +9,7 @@ import { ToastService } from '../../../../../service/toast/toast.service';
   selector: 'app-promo-contract-layout',
   imports: [RouterLink, RouterLinkActive, RouterOutlet, DatePipe],
   templateUrl: './promo-contract-layout.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class PromoContractLayoutComponent {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IBOBRESERVE_TOKEN } from '../../../service/ibob/ibobToken';
@@ -20,6 +20,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
     { provide: IBOBRESERVE_TOKEN, useExisting: IbobAddService }
   ],
   templateUrl: './supplier-reserve-add.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './supplier-reserve-add.component.scss'
 })
 export class SupplierReserveAddComponent {

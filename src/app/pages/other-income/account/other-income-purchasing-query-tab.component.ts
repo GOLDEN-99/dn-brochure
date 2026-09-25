@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { EventService, TEvent } from '../../../service/other-income/event.servic
 @Component({
   selector: 'app-other-income-purchasing-query-tab',
   imports: [FormsModule, NgbTypeahead],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
   <div class="row">
     <div class="mb-3 col-md">

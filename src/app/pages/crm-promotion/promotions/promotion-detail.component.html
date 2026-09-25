@@ -50,7 +50,7 @@
           <div class="col-lg-4">
             <div class="text-muted small">โปรโมชันของ</div>
             <div>
-              {{ resolvedSource()?.value | promotionSource }}
+              {{ $safeNavigationMigration(resolvedSource()?.value) | promotionSource }}
               @if (resolvedSource()?.inferred) {
                 <span class="text-muted small">(อนุมานจากลำดับการคำนวน)</span>
               }

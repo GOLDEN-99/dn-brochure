@@ -1,9 +1,10 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-benefit-list',
   imports: [],
   templateUrl: './benefit-list.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './benefit-list.component.scss'
 })
 export class BenefitListComponent {

@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CnApiService } from '../../shared/services/cn-api.service';
 import { CnStateService } from '../../shared/services/cn-state.service';
 import { ImageUploaderComponent } from "../../shared/components/image-uploader/image-uploader.component";
@@ -15,6 +15,7 @@ import { DecimalPipe } from '@angular/common';
   selector: 'app-whole-cancel-order',
   imports: [ImageUploaderComponent, FormField, DecimalPipe, RouterLink],
   templateUrl: './whole-cancel-order.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './whole-cancel-order.component.scss',
 })
 export class WholeCancelOrderComponent {

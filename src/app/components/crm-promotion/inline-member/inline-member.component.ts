@@ -1,4 +1,4 @@
-import { Component, computed, inject, model } from '@angular/core';
+import { Component, computed, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { NgbTypeahead, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
@@ -9,6 +9,7 @@ import { MemberConfigService } from '../../../service/crm-promotion/member-confi
   selector: 'app-inline-member',
   imports: [NgbTypeahead, FormsModule],
   templateUrl: './inline-member.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './inline-member.component.scss',
 })
 export class InlineMemberComponent {
