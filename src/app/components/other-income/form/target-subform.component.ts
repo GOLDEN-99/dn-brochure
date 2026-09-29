@@ -1,4 +1,4 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -101,6 +101,7 @@ import { FormsModule } from '@angular/forms';
     </div>
   </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
   .step-item {
   list-style: none;

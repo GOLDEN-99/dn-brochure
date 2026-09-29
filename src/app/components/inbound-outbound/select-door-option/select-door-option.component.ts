@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, model, output } from '@angular/core';
+import { Component, effect, inject, input, model, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DoorService } from '../../../service/ibob/door.service';
 import { TMaybe } from '../../../types';
@@ -11,6 +11,7 @@ let runningId = 0
   selector: 'app-select-door-option',
   imports: [FormsModule],
   templateUrl: './select-door-option.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './select-door-option.component.scss'
 })
 export class SelectDoorOptionComponent {

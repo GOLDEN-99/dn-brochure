@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DoorMutationService } from '../../../service/ibob/door-mutation.service';
 import { RouterLink } from '@angular/router';
@@ -14,6 +14,7 @@ import { TDuration, TFormKey } from '../../../service/ibob/baseDoorForm';
   selector: 'app-in-out-edit',
   imports: [ReactiveFormsModule, FormsModule, RouterLink, TimeslotRowComponent, IbobAddTimeModalComponent],
   templateUrl: './in-out-edit.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class InOutEditComponent implements OnInit, OnDestroy {

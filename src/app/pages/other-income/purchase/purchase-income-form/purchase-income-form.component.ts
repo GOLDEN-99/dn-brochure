@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
@@ -24,6 +24,7 @@ import { OiNotLightListService } from '../../../../service/other-income/oi-not-l
     >
   </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
       .layout {
       margin: auto;

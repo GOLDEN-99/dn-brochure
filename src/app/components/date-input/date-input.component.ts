@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, model } from '@angular/core';
+import { Component, computed, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar, NgbDate, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
@@ -51,6 +51,7 @@ let id = 0;
   </div>
 </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     .dp-hidden {
 

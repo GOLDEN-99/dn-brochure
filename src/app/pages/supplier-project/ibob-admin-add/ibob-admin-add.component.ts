@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { SelectDoorOptionComponent } from "../../../components/inbound-outbound/select-door-option/select-door-option.component";
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../service/api/api.service';
@@ -20,6 +20,7 @@ import { ToastService } from '../../../service/toast/toast.service';
   selector: 'app-ibob-admin-add',
   imports: [SelectDoorOptionComponent, FormsModule, NgbDatepicker, RouterLink],
   templateUrl: './ibob-admin-add.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './ibob-admin-add.component.scss'
 })
 export class IbobAdminAddComponent {

@@ -1,4 +1,4 @@
-import { Component, input, OnDestroy, OnInit } from '@angular/core';
+import { Component, input, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -10,6 +10,7 @@ import { TDNComp, THUComp } from '../../../types/ibob-supplier.type';
   selector: 'app-general-page',
   imports: [FormsModule],
   templateUrl: './general-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './general-page.component.scss'
 })
 export class GeneralPageComponent extends BaseSupplierForm {

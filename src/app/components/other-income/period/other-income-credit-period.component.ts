@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TCreditNoteDto } from '../../../service/other-income/base-oi';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { BasePeriodComponent } from './base-period.component';
@@ -36,6 +36,7 @@ import { PeriodService } from '../../../service/other-income/period.service';
         </table>
       </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class OtherIncomeCreditPeriodComponent extends BasePeriodComponent {

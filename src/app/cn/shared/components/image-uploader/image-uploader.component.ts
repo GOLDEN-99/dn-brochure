@@ -1,4 +1,4 @@
-import { Component, inject, input, model, output } from '@angular/core';
+import { Component, inject, input, model, output, ChangeDetectionStrategy } from '@angular/core';
 import { CnUploadImageService } from '../../services/cn-upload-image.service';
 import { LoadingService } from '../../../../service/loading/loading.service';
 import { FormValueControl } from '@angular/forms/signals';
@@ -9,6 +9,7 @@ import { finalize } from 'rxjs';
   imports: [],
   templateUrl: './image-uploader.component.html',
   styleUrl: './image-uploader.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [CnUploadImageService]
 })
 export class ImageUploaderComponent implements FormValueControl<Array<string>> {

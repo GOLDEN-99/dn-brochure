@@ -1,4 +1,4 @@
-import { Component, inject, input, signal, viewChild } from '@angular/core';
+import { Component, inject, input, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SettlementContextService } from '../../../../../services/settlement-context.service';
 import { ToastService } from '../../../../../../../service/toast/toast.service';
@@ -10,6 +10,7 @@ type SearchFreeItems = (filters: TFreeItemSearchFilters) => Observable<TFreeItem
 @Component({
   selector: 'app-settlement-free-item-tab',
   imports: [AppendFreeItemComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './settlement-free-item-tab.component.html',
 })
 export class SettlementFreeItemTabComponent {

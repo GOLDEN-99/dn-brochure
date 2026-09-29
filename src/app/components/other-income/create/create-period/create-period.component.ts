@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, output, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { TIncomeItem } from '../../../../service/other-income/base-oi';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -9,6 +9,7 @@ import { DecimalPipe } from '@angular/common';
   selector: 'app-create-period',
   imports: [FormsModule, DecimalPipe],
   templateUrl: './create-period.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './create-period.component.scss'
 })
 export class CreatePeriodComponent {

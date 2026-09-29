@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { TFlashSaleHead, TFlashSaleItem } from '../../types/brochure.type';
 import { FlashSaleCardComponent } from "../../../components/brochure-card/flash-sale-card/flash-sale-card.component";
 
@@ -6,6 +6,7 @@ import { FlashSaleCardComponent } from "../../../components/brochure-card/flash-
   selector: 'brochure-flash-sale',
   imports: [FlashSaleCardComponent],
   templateUrl: './brochure-flash-sale.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './brochure-flash-sale.component.scss',
 })
 export class BrochureFlashSaleComponent {

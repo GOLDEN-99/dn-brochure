@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { WarehouseService } from '../../service/ibob/warehouse.service';
 
@@ -24,6 +24,7 @@ import { WarehouseService } from '../../service/ibob/warehouse.service';
     </section>
     <div style="text-align: center; margin: 0; opacity: 0.2">version 1.0</div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     .form-wrapper {
       margin: auto;

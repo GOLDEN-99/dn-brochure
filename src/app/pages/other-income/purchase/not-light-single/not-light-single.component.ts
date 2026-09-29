@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { OiNotLightService } from '../../../../service/other-income/oi-not-light.service';
 import { NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OtherIncomeHeadEditComponent } from "../../../../components/other-income/edit/other-income-head-edit/other-income-head-edit.component";
@@ -29,6 +29,7 @@ import { OtherIncomePeriodDisplayComponent } from "../../../../components/other-
     OtherIncomePeriodDisplayComponent
   ],
   templateUrl: './not-light-single.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './not-light-single.component.scss'
 })
 export class NotLightSingleComponent {

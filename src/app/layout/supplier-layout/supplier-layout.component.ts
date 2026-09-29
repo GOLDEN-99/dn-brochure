@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { combineLatest, map, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { IbobCompService } from '../../service/supplier/ibob-comp.service';
@@ -7,6 +7,7 @@ import { IbobCompService } from '../../service/supplier/ibob-comp.service';
   selector: 'app-supplier-layout',
   imports: [RouterOutlet],
   templateUrl: './supplier-layout.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './supplier-layout.component.scss'
 })
 export class SupplierLayoutComponent implements OnInit, OnDestroy {

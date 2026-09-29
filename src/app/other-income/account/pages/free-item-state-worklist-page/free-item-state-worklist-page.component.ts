@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -47,6 +47,7 @@ const freeItemExportConfig: TAoaConfig<TFreeItemStateRow> = {
   selector: 'app-free-item-state-worklist-page',
   imports: [RouterLink, DatePipe, DecimalPipe, FormsModule],
   templateUrl: './free-item-state-worklist-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './free-item-state-worklist-page.component.scss',
 })
 export class FreeItemStateWorklistPageComponent {

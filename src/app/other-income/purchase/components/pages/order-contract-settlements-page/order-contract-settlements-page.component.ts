@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { OrderContractContextService } from '../../../services/order-contract-context.service';
@@ -11,6 +11,7 @@ import { TPostPairedSettlementReq, TPostSettlementReq } from '../../../../shared
   selector: 'app-order-contract-settlements-page',
   imports: [RouterLink, DatePipe, CreateSettlementFormComponent, CreatePairedSettlementFormComponent],
   templateUrl: './order-contract-settlements-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './order-contract-settlements-page.component.scss',
 })
 export class OrderContractSettlementsPageComponent {

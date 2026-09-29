@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -6,6 +6,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-other-income-modal',
   imports: [FormsModule],
   templateUrl: './other-income-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-modal.component.scss'
 })
 export class OtherIncomeModalComponent {

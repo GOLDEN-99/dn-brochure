@@ -64,7 +64,7 @@
             <button
               type="button"
               class="btn btn-squre btn-danger btn-sm"
-              (click)="onRemoveLine(lineItem?.orderNumb)"
+              (click)="onRemoveLine($safeNavigationMigration(lineItem?.orderNumb))"
             >
               <i class="bi bi-trash"></i>
             </button>

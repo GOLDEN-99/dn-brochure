@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, linkedSignal, output } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, ChangeDetectionStrategy } from '@angular/core';
 import { TPostManualCorrectionReq } from '../../../../shared/types/other-income.type';
 import { ManualCorrectionForm, manualCorrectionSchema } from './manual-correction-form';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
@@ -9,6 +9,7 @@ import { SignalMonthPickerComponent } from '../../../../../components/crm-promot
   selector: 'other-income-manual-correction-form',
   imports: [FormField, SignalMonthPickerComponent],
   templateUrl: './manual-correction-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class ManualCorrectionFormComponent {

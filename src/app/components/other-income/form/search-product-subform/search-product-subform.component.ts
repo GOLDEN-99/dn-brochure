@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, output, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OiProductService } from '../../../../service/other-income/oi-product.service';
 import { TOIProduct } from '../../../../types';
@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-search-product-subform',
   imports: [FormsModule],
   templateUrl: './search-product-subform.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './search-product-subform.component.scss'
 })
 export class SearchProductSubformComponent {

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { PromotionFormComponent } from './promotion-form.component';
 import { CRM_PAGE_CONFIG } from '../../../service/crm-promotion/crm-token';
@@ -17,7 +17,7 @@ function requestFor(path: string): TCreatePromotionRequest {
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
     providers: [
-      provideHttpClient(),
+      provideHttpClient(withXhr()),
       provideHttpClientTesting(),
       { provide: CRM_PAGE_CONFIG, useValue: provideCreatePromotionConfig(path) },
     ],

@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, input, model, viewChild } from '@angular/core';
+import { Component, computed, ElementRef, input, model, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FormValueControl, ValidationError } from '@angular/forms/signals';
 
@@ -8,6 +8,7 @@ let ref = 0;
   selector: 'app-radio',
   imports: [FormsModule],
   templateUrl: './radio.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class RadioComponent<T> implements FormValueControl<T> {

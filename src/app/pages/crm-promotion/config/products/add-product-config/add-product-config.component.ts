@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbTypeaheadModule, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -14,6 +14,7 @@ import { TProductCate, TProductGroup, TProductType } from '../../../../../types/
   selector: 'app-add-product-config',
   imports: [FormsModule, NgbTypeaheadModule, RouterLink],
   templateUrl: './add-product-config.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class AddProductConfigComponent {

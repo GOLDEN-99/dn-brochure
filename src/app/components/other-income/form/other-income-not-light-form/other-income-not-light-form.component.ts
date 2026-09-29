@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TargetSubformComponent } from "../target-subform.component";
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../../service/api/api.service';
@@ -10,6 +10,7 @@ import { OiNotLightListService } from '../../../../service/other-income/oi-not-l
   selector: 'app-other-income-not-light-form',
   imports: [TargetSubformComponent, FormsModule],
   templateUrl: './other-income-not-light-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-not-light-form.component.scss'
 })
 export class OtherIncomeNotLightFormComponent {

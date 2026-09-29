@@ -245,36 +245,50 @@ describe('createPromotionSchema — pool-only actions', () => {
     },
   ];
 
-  // The benefit is the pool; the tier's reward number carries no meaning, so it
-  // must not be demanded of the author nor block submit at 0.
-  it('does not require a tier reward for GIFT', () => {
-    const r = validityOf({
-      action: 'GIFT',
-      thresholdType: 'BILLSUBTOTAL',
-      isRepeat: false,
-      tiers: [{ thresholdValue: 500, rewardValue: 0 }],
-      rewardPool: pool,
+  // The pool carries which SKU and at what price; the tier's reward is the
+  // quantity. DrugPos drops the promotion at `reward <= 0`, so 0 must not submit.
+  for (const action of ['GIFT', 'PWP']) {
+    it(`rejects a tier reward of 0 for ${action}`, () => {
+      const r = validityOf({
+        action,
+        thresholdType: 'BILLSUBTOTAL',
+        isRepeat: false,
+        tiers: [{ thresholdValue: 500, rewardValue: 0 }],
+        rewardPool: pool,
+      });
+      expect(r.benefitValid).toBeFalse();
+      expect(r.rewardErrors).toContain('min');
     });
-    expect(r.benefitValid).toBeTrue();
-  });
 
-  it('does not require a tier reward for PWP', () => {
-    const r = validityOf({
-      action: 'PWP',
-      thresholdType: 'BILLSUBTOTAL',
-      isRepeat: false,
-      tiers: [{ thresholdValue: 500, rewardValue: 0 }],
-      rewardPool: pool,
+    it(`accepts a whole-number tier reward for ${action}`, () => {
+      const r = validityOf({
+        action,
+        thresholdType: 'BILLSUBTOTAL',
+        isRepeat: false,
+        tiers: [{ thresholdValue: 500, rewardValue: 1 }],
+        rewardPool: pool,
+      });
+      expect(r.benefitValid).toBeTrue();
     });
-    expect(r.benefitValid).toBeTrue();
-  });
+
+    it(`rejects a fractional tier reward for ${action}`, () => {
+      const r = validityOf({
+        action,
+        thresholdType: 'BILLSUBTOTAL',
+        isRepeat: false,
+        tiers: [{ thresholdValue: 500, rewardValue: 1.5 }],
+        rewardPool: pool,
+      });
+      expect(r.rewardErrors).toContain('not an integer');
+    });
+  }
 
   it('still requires a non-empty pool for PWP', () => {
     const r = validityOf({
       action: 'PWP',
       thresholdType: 'BILLSUBTOTAL',
       isRepeat: false,
-      tiers: [{ thresholdValue: 500, rewardValue: 0 }],
+      tiers: [{ thresholdValue: 500, rewardValue: 1 }],
       rewardPool: [],
     });
     expect(r.benefitValid).toBeFalse();
@@ -286,7 +300,7 @@ describe('createPromotionSchema — reward pool item values', () => {
     action: 'PWP',
     thresholdType: 'BILLSUBTOTAL',
     isRepeat: false,
-    tiers: [{ thresholdValue: 500, rewardValue: 0 }],
+    tiers: [{ thresholdValue: 500, rewardValue: 1 }],
     rewardPool: [
       {
         goodCode: 'A1',

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OiNotLightListService } from '../../../../service/other-income/oi-not-light-list.service';
 import { DatePipe } from '@angular/common';
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-purchase-home',
   imports: [RouterLink, DatePipe, OtherIncomePurchasingQueryTabComponent, FormsModule],
   templateUrl: './purchase-home.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './purchase-home.component.scss',
 })
 export class PurchaseHomeComponent {

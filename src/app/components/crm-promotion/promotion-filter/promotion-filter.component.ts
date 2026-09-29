@@ -5,6 +5,7 @@ import {
   input,
   model,
   output,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {
   TConfigGroup,
@@ -33,6 +34,7 @@ let id = 0;
     FormAlertTextComponent,
   ],
   templateUrl: './promotion-filter.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class PromotionFilterComponent {

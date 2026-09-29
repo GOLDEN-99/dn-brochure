@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
 import { getOrElse } from '../../../lib/utli';
@@ -17,6 +17,7 @@ import { convertToIso } from '../../../lib';
   selector: 'app-ibob-admin-edit',
   imports: [SelectDoorOptionComponent, NgbDatepicker, FormsModule, RouterLink],
   templateUrl: './ibob-admin-edit.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './ibob-admin-edit.component.scss'
 })
 export class IbobAdminEditComponent {

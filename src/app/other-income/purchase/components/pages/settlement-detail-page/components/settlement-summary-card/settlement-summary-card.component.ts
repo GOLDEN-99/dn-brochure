@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { TSettlementDetail } from '../../../../../../shared/types/other-income.type';
 
@@ -11,6 +11,7 @@ export type SettlementBalance = {
 @Component({
   selector: 'app-settlement-summary-card',
   imports: [DatePipe, DecimalPipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './settlement-summary-card.component.html',
 })
 export class SettlementSummaryCardComponent {

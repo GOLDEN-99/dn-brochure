@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -51,6 +51,7 @@ const settlementExportConfig: TAoaConfig<TSettlementOverviewItem> = {
   selector: 'app-settlement-worklist-page',
   imports: [RouterLink, DatePipe, DecimalPipe, FormsModule],
   templateUrl: './settlement-worklist-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './settlement-worklist-page.component.scss',
 })
 export class SettlementWorklistPageComponent {

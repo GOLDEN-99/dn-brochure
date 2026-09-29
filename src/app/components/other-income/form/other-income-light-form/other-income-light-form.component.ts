@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../service/api/api.service';
@@ -40,6 +40,7 @@ import { OiLightListService } from '../../../../service/other-income/oi-light-li
   > -->
 </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``
 })
 export class OtherIncomeLightFormComponent {

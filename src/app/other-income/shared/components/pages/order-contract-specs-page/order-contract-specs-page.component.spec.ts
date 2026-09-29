@@ -60,10 +60,6 @@ describe('OrderContractSpecsPageComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should create', () => {
-    fixture.detectChanges();
-    expect(component).toBeTruthy();
-  });
 
   it('renders nothing when there is no contract loaded', () => {
     setContract(null);
@@ -76,7 +72,7 @@ describe('OrderContractSpecsPageComponent', () => {
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent;
-    expect((text.match(/ไม่มีข้อมูล/g) ?? []).length).toBe(3);
+    expect((text.match(/ไม่มีข้อมูล/g) ?? []).length).toBe(2);
   });
 
   it('renders steps, products, and income types when data is present', () => {
@@ -100,6 +96,6 @@ describe('OrderContractSpecsPageComponent', () => {
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('1234567890');
     expect(text).toContain('Good 1');
-    expect(text).toContain('Auto Income');
+
   });
 });

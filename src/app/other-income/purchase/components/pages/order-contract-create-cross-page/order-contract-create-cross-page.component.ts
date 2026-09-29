@@ -1,4 +1,4 @@
-import { Component, computed, inject, viewChild } from '@angular/core';
+import { Component, computed, inject, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastService } from '../../../../../service/toast/toast.service';
 import { OtherIncomePurchaseApiService } from '../../../services/other-income-purchase-api.service';
@@ -9,6 +9,7 @@ import { mapPairedOrderContractFormToCreateReq } from '../../forms/create-schema
   selector: 'app-order-contract-create-cross-page',
   imports: [CreatePairedOrderContractComponent],
   templateUrl: './order-contract-create-cross-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './order-contract-create-cross-page.component.scss',
 })
 export class OrderContractCreateCrossPageComponent {

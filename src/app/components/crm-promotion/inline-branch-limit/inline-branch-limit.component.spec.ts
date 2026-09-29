@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { of, throwError } from 'rxjs';
 
 import { InlineBranchLimitComponent } from './inline-branch-limit.component';
@@ -16,8 +15,7 @@ describe('InlineBranchLimitComponent', () => {
   let loading: jasmine.SpyObj<LoadingService>;
   let toast: jasmine.SpyObj<ToastService>;
 
-  const selectGroup = (id: number) =>
-    ({ item: { id } } as NgbTypeaheadSelectItemEvent<TConfigGroup>);
+  const selectGroup = (id: number): TConfigGroup => ({ id, name: `group ${id}` });
 
   beforeEach(async () => {
     getByGroupId = jasmine.createSpy('getByGroupId');

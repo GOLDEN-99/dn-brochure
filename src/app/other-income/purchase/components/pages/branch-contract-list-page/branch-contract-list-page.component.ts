@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { ContractListController } from '../../../../shared/libs/contract-list-co
   selector: 'app-branch-contract-list-page',
   imports: [RouterLink, DatePipe, FormsModule],
   templateUrl: './branch-contract-list-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './branch-contract-list-page.component.scss',
 })
 export class BranchContractListPageComponent {

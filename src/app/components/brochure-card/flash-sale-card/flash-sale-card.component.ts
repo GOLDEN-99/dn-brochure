@@ -1,4 +1,4 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TFlashSaleItem } from '../../../types';
 import { DecimalPipe } from '@angular/common';
 
@@ -6,6 +6,7 @@ import { DecimalPipe } from '@angular/common';
   selector: 'app-flash-sale-card',
   imports: [DecimalPipe],
   templateUrl: './flash-sale-card.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './flash-sale-card.component.scss'
 })
 export class FlashSaleCardComponent {

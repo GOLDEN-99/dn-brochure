@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, model, output, signal } from '@angular/core';
+import { Component, computed, inject, input, model, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../../service/api/api.service';
 import { environment } from '../../../../../environments/environment';
@@ -57,6 +57,7 @@ import { firstValueFrom } from 'rxjs';
       </button>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class EditPeriodModalComponent {

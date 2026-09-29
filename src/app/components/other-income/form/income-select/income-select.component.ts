@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IncomeService } from '../../../../service/other-income/income.service';
 
@@ -19,6 +19,7 @@ import { IncomeService } from '../../../../service/other-income/income.service';
     }
   </select>
 </div>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``
 })
 export class IncomeSelectComponent {

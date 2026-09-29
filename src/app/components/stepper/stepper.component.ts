@@ -1,4 +1,4 @@
-import { Component, computed, contentChildren, signal, TemplateRef, viewChildren } from '@angular/core';
+import { Component, computed, contentChildren, signal, TemplateRef, viewChildren, ChangeDetectionStrategy } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 
 
@@ -6,6 +6,7 @@ import { NgTemplateOutlet } from '@angular/common';
   selector: 'app-stepper',
   imports: [NgTemplateOutlet],
   templateUrl: './stepper.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './stepper.component.scss',
 })
 export class StepperComponent {

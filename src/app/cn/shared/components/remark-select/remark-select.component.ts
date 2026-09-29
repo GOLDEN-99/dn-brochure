@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, model } from '@angular/core';
+import { Component, computed, effect, inject, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormValueControl, ValidationError } from '@angular/forms/signals';
 import { TRemark, TRemarkCategory } from '../../types/cn.type';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,7 @@ import { filterRemarkByGroup, isInGroup } from '../../libs/remark-group';
   selector: 'app-remark-select',
   imports: [FormsModule],
   templateUrl: './remark-select.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class RemarkSelectComponent implements FormValueControl<TMaybe<TRemark>> {

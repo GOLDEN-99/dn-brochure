@@ -1,4 +1,4 @@
-import { Component, input, InputSignal, InputSignalWithTransform, linkedSignal, model, ModelSignal, OutputRef, signal } from '@angular/core';
+import { Component, input, InputSignal, InputSignalWithTransform, linkedSignal, model, ModelSignal, OutputRef, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DisabledReason, FormValueControl, ValidationError, WithOptionalFieldTree } from '@angular/forms/signals';
 import { TGoodItemState } from '../../types/cn.type';
@@ -10,6 +10,7 @@ let ref = 0
   selector: 'cn-good-item',
   imports: [FormsModule, DecimalPipe],
   templateUrl: './good-item.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './good-item.component.scss',
 })
 export class GoodItemComponent implements FormValueControl<number> {
@@ -32,7 +33,6 @@ export class GoodItemComponent implements FormValueControl<number> {
   readonly = input(false)
   invalid = input(false)
   pending?: InputSignal<boolean> | InputSignalWithTransform<boolean, unknown> | undefined;
-  touched?: InputSignal<boolean> | InputSignalWithTransform<boolean, unknown> | ModelSignal<boolean> | OutputRef<boolean> | undefined;
   dirty?: InputSignal<boolean> | InputSignalWithTransform<boolean, unknown> | undefined;
   required = input(false)
 

@@ -1,4 +1,4 @@
-import { Component, computed, inject, output } from '@angular/core';
+import { Component, computed, inject, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OiProductService } from '../../../service/other-income/oi-product.service';
 
@@ -6,6 +6,7 @@ import { OiProductService } from '../../../service/other-income/oi-product.servi
   selector: 'app-search-product-modal',
   imports: [FormsModule],
   templateUrl: './search-product-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './search-product-modal.component.scss'
 })
 export class SearchProductModalComponent {

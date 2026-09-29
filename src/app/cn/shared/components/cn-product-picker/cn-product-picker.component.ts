@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, signal } from '@angular/core';
+import { Component, computed, inject, model, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CnApiService } from '../../services/cn-api.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
@@ -10,6 +10,7 @@ import { FormValueControl } from '@angular/forms/signals';
   selector: 'cn-product-picker',
   imports: [FormsModule],
   templateUrl: './cn-product-picker.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './cn-product-picker.component.scss',
 })
 export class CnProductPickerComponent implements FormValueControl<Array<TGoodFormItem>> {

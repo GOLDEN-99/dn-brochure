@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { FieldState } from '@angular/forms/signals';
 
 @Component({
@@ -13,6 +13,7 @@ import { FieldState } from '@angular/forms/signals';
   </div>
   }
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class FormAlertTextComponent {

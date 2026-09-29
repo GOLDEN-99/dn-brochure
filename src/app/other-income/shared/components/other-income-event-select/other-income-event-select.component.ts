@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { SelectComponent } from '../../../../shared/components/select/select.component';
 import { TContractLabel, TContractLabelType } from '../../types/other-income.type'
@@ -9,6 +9,7 @@ import { OtherIncomeEventService } from '../../services/other-income-event.servi
   selector: 'other-income-event-select',
   imports: [SelectComponent, OptionComponent, FormField],
   templateUrl: './other-income-event-select.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-event-select.component.scss',
 })
 export class OtherIncomeEventSelectComponent {

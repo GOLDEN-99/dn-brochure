@@ -1,4 +1,4 @@
-import { Component, inject, InjectionToken } from '@angular/core';
+import { Component, inject, InjectionToken, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -10,6 +10,7 @@ import { RouterOutlet } from '@angular/router';
       <router-outlet />
     </section>
     `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     .layout {
       margin: auto;

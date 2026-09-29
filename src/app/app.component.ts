@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { ToastComponent } from "./components/toast/toast.component";
 import { LoadingComponent } from "./components/loading/loading.component";
@@ -7,6 +7,7 @@ import { LoadingComponent } from "./components/loading/loading.component";
   selector: 'app-root',
   imports: [RouterOutlet, ToastComponent, LoadingComponent],
   templateUrl: './app.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.component.scss'
 })
 export class AppComponent {

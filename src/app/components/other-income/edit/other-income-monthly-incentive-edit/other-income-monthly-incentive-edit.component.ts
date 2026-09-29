@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, output, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { NgbCalendar, NgbDateStruct, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MonthlyService } from '../../../../service/other-income/monthly.service';
 import { TIncomeItem } from '../../../../service/other-income/base-oi';
@@ -9,6 +9,7 @@ import { DateInputComponent } from "../../../date-input/date-input.component";
   selector: 'app-other-income-monthly-incentive-edit',
   imports: [DecimalPipe, FormsModule, DateInputComponent],
   templateUrl: './other-income-monthly-incentive-edit.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-monthly-incentive-edit.component.scss'
 })
 export class OtherIncomeMonthlyIncentiveEditComponent {

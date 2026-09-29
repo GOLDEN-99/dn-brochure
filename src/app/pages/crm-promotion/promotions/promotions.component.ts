@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { PromotionTypePipe } from '../../../lib/crm-promotion/promotion-type.pip
 @Component({
   selector: 'app-promotions',
   imports: [DatePipe, FormsModule, PromotionBenefitNamePipe, PromotionPriorityPipe, PromotionTypePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './promotions.component.html',
 })
 export class PromotionsComponent {

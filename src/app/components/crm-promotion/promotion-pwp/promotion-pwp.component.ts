@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { TPromotionBenefit, TPromotionProductBase } from '../../../types/crm-promotion.type';
 import { ProductPickerComponent } from "../product-picker/product-picker.component";
 import { ProductNamePipe } from '../../../lib/crm-promotion/product-name.pipe';
@@ -10,6 +10,7 @@ import { FormAlertTextComponent } from "../form-alert-text.component";
   selector: 'app-promotion-pwp',
   imports: [ProductPickerComponent, ProductNamePipe, FormsModule, FormField, FormAlertTextComponent],
   templateUrl: './promotion-pwp.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class PromotionPwpComponent {

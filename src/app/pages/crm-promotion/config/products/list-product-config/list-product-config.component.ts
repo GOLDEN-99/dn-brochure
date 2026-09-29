@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ToastService } from '../../../../../service/toast/toast.service';
 import { ProductConfigService } from '../../../../../service/crm-promotion/product-config.service';
 import { RouterLink } from '@angular/router';
@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-list-product-config',
   imports: [RouterLink, FormsModule],
   templateUrl: './list-product-config.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './list-product-config.component.scss',
 })
 export class ListProductConfigComponent {

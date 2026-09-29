@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TPromotionBenefit, TPromotionTier } from '../../../types/crm-promotion.type';
 import { FormsModule } from '@angular/forms';
 import { CRM_PAGE_CONFIG } from '../../../service/crm-promotion/crm-token';
@@ -12,6 +12,7 @@ import { FormAlertTextComponent } from "../form-alert-text.component";
   selector: 'app-benefit-select',
   imports: [FormsModule, PromotionPwpComponent, PromotionGiftComponent, BenefitTierComponent, FormField, FormAlertTextComponent],
   templateUrl: './benefit-select.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class BenefitSelectComponent {

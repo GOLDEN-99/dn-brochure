@@ -1,10 +1,11 @@
-import { Component, model } from '@angular/core';
+import { Component, model, ChangeDetectionStrategy } from '@angular/core';
 import { form, FormField, schema, min, validate } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-promotion-condition',
   imports: [FormField],
   templateUrl: './promotion-condition.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './promotion-condition.component.scss',
 })
 export class PromotionConditionComponent {

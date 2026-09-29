@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, Signal } from '@angular/core';
+import { Component, computed, inject, input, output, Signal, ChangeDetectionStrategy } from '@angular/core';
 import { TEnchanceIncomeItem, TIncomeItem } from '../../../service/other-income/base-oi';
 import { MonthlyService } from '../../../service/other-income/monthly.service';
 import { TFieldSelector } from '../../../types';
@@ -7,6 +7,7 @@ import { customFormatDate, customFormatMonth } from '../../../lib/formatter';
 @Component({
   selector: 'app-other-income-monthly-list',
   imports: [],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <table class="table">
     <thead>

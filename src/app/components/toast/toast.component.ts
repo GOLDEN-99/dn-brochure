@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastService, TToastProps } from '../../service/toast/toast.service';
@@ -11,6 +11,7 @@ interface ToastItem extends TToastProps {
   selector: 'app-toast',
   imports: [NgbAlertModule],
   templateUrl: './toast.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './toast.component.scss'
 })
 export class ToastComponent implements OnDestroy {

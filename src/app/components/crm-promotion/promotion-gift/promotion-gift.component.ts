@@ -1,4 +1,4 @@
-import { Component, computed, input, model } from '@angular/core';
+import { Component, computed, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { ProductPickerComponent } from "../product-picker/product-picker.component";
 import { ProductNamePipe } from '../../../lib/crm-promotion/product-name.pipe';
 import { TPromotionBenefit, TPromotionProductBase } from '../../../types/crm-promotion.type';
@@ -8,6 +8,7 @@ import { FieldTree } from '@angular/forms/signals';
   selector: 'app-promotion-gift',
   imports: [ProductPickerComponent, ProductNamePipe],
   templateUrl: './promotion-gift.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class PromotionGiftComponent {

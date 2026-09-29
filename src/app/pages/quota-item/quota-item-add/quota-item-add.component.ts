@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TBaseProduct } from '../../../service/stock-item/stock-item-api.service';
@@ -8,6 +8,7 @@ import { TMaybe } from '../../../types';
   selector: 'app-quota-item-add',
   imports: [FormsModule],
   templateUrl: './quota-item-add.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './quota-item-add.component.scss'
 })
 export class QuotaItemAddComponent {

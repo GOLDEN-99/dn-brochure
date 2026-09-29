@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { FormAlertTextComponent } from "../../../../../components/crm-promotion/form-alert-text.component";
 import { RadioComponent } from "../../../../../shared/components/radio/radio.component";
@@ -8,6 +8,7 @@ import { TCalcSpecForm } from '../../forms/create-schema';
   selector: 'other-income-step-form',
   imports: [FormField, FormAlertTextComponent, RadioComponent],
   templateUrl: './step-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class StepFormComponent {

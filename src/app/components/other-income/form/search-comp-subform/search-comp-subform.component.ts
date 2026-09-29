@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit, output, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TCompType } from '../../../../types';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -8,6 +8,7 @@ import { CompanyService } from '../../../../service/other-income/company.service
   selector: 'app-search-comp-subform',
   imports: [FormsModule],
   templateUrl: './search-comp-subform.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './search-comp-subform.component.scss'
 })
 export class SearchCompSubformComponent {

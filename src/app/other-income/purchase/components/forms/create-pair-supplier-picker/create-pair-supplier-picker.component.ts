@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, inject, input, model, ModelSignal, viewChild } from '@angular/core';
+import { Component, computed, ElementRef, inject, input, model, ModelSignal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormValueControl, ValidationError } from '@angular/forms/signals';
 import { SelectComponent } from '../../../../../shared/components/select/select.component';
 import { OptionComponent } from '../../../../../shared/components/select/option.component';
@@ -17,6 +17,7 @@ const EMPTY_COMP = { compCode: '', compName: '', compName2: '' }
   selector: 'other-income-create-pair-supplier-picker',
   imports: [SelectComponent, OptionComponent],
   templateUrl: './create-pair-supplier-picker.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class CreatePairSupplierPickerComponent implements FormValueControl<TPairSupplierFormState> {

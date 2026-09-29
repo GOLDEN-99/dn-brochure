@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, OnInit, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DoorService } from '../../../../service/ibob/door.service';
 import { DailyCalendarService } from '../../../../service/ibob/daily-calendar.service';
 import { FormsModule } from '@angular/forms';
@@ -9,6 +9,7 @@ import { NgbAlertModule, NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDatepi
   selector: 'app-calendar-daily',
   imports: [NgbDatepickerModule, NgbAlertModule, FormsModule, CalendarCellComponent],
   templateUrl: './calendar-daily.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './calendar-daily.component.scss'
 })
 export class CalendarDailyComponent {

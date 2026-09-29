@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ToastService } from '../../../../../service/toast/toast.service';
 import { ProductConfigService } from '../../../../../service/crm-promotion/product-config.service';
 import { form, FormField, required, validate } from '@angular/forms/signals';
@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
   selector: 'app-create-product-config',
   imports: [FormField, FormAlertTextComponent],
   templateUrl: './create-product-config.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class CreateProductConfigComponent {

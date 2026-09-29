@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { TContractHeadForm } from '../create-schema';
 import { OtherIncomeEventSelectComponent } from '../../../../shared/components/other-income-event-select/other-income-event-select.component';
@@ -11,6 +11,7 @@ import { TContractLabelType } from '../../../../shared/types/other-income.type';
   selector: 'other-income-create-single-head',
   imports: [FormField, OtherIncomeEventSelectComponent, SelectComponent, OptionComponent, SignalDatepickerComponent],
   templateUrl: './create-single-head.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class CreateSingleHeadComponent {

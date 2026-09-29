@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { TCardProps } from '../../types/brochure.type';
 import { environment } from '../../../../environments/environment';
 import { DecimalPipe } from '@angular/common';
@@ -8,6 +8,7 @@ import { TColor } from '../../utils/param-schema';
   selector: 'brochure-special-card',
   imports: [DecimalPipe],
   templateUrl: './brochure-special-card.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './brochure-special-card.component.scss',
 })
 export class BrochureSpecialCardComponent {

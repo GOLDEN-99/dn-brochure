@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { finalize } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
@@ -16,6 +16,7 @@ import { AccountIssuingDocumentReportComponent } from "../../../../components/ot
   selector: 'app-purchase-report',
   imports: [FormsModule, DateInputComponent, PurchaseAppendOrderReportComponent, AccountIssuingDocumentReportComponent],
   templateUrl: './purchase-report.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './purchase-report.component.scss'
 })
 export class PurchaseReportComponent {

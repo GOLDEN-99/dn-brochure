@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { FieldTree } from '@angular/forms/signals';
 import { TPromotionDatetime } from '../../../../types/crm-promotion.type';
 import { DayCheckbooxComponent } from "../../day-checkboox/day-checkboox.component";
@@ -9,6 +9,7 @@ import { FormAlertTextComponent } from '../../form-alert-text.component';
   selector: 'app-promotion-datetime',
   imports: [DayCheckbooxComponent, TimespanPickerComponent, FormAlertTextComponent],
   templateUrl: './promotion-datetime.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class PromotionDatetimeComponent {

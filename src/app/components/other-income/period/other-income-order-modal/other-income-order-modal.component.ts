@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { OrderService, TOiBill, TOiOrder } from '../../../../service/other-income/order.service';
 import { PeriodService } from '../../../../service/other-income/period.service';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,7 @@ import { DateInputComponent } from "../../../date-input/date-input.component";
   selector: 'app-other-income-order-modal',
   imports: [FormsModule, DecimalPipe, DiscountSelectComponent, DateInputComponent, DatePipe],
   templateUrl: './other-income-order-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-order-modal.component.scss'
 })
 export class OtherIncomeOrderModalComponent {

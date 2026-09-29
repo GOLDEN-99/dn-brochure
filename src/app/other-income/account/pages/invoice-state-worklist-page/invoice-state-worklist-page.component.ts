@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -47,6 +47,7 @@ const invoiceStateExportConfig: TAoaConfig<TInvoiceStateRow> = {
   selector: 'app-invoice-state-worklist-page',
   imports: [RouterLink, DatePipe, DecimalPipe, FormsModule],
   templateUrl: './invoice-state-worklist-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './invoice-state-worklist-page.component.scss',
 })
 export class InvoiceStateWorklistPageComponent {

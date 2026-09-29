@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, OnDestroy, OnInit, output, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, input, OnDestroy, OnInit, output, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { NgbCalendar, NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TBranchItem } from '../../../../service/other-income/base-oi';
 import { DatePipe } from '@angular/common';
@@ -13,6 +13,7 @@ import { OiLightService } from '../../../../service/other-income/oi-light.servic
   selector: 'app-other-income-branch',
   imports: [DatePipe, DateInputComponent, FormsModule],
   templateUrl: './other-income-branch.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-branch.component.scss'
 })
 export class OtherIncomeBranchComponent implements OnInit, OnDestroy {

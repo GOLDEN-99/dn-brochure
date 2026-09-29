@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
 import { TCreateReceiptForm, createReceiptSchema, defaultCreateReceipt } from './other-income-create-receipt';
 import { SignalDatepickerComponent } from '../../../crm-promotion/signal-datepicker.component';
@@ -10,6 +10,7 @@ import { PeriodService } from '../../../../service/other-income/period.service';
   selector: 'app-other-income-create-receipt',
   imports: [SignalDatepickerComponent, FormField, FormsModule],
   templateUrl: './other-income-create-receipt.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class OtherIncomeCreateReceiptComponent {

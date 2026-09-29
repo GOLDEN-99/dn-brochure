@@ -1,4 +1,4 @@
-import { Component, computed, input, model } from '@angular/core';
+import { Component, computed, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormValueControl, ValidationError } from '@angular/forms/signals';
 import { TMaybe } from '../../../../types';
 import { TRemarkResult } from '../../types/cn.type';
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'cn-result-select',
   imports: [FormsModule],
   templateUrl: './result-select.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class ResultSelectComponent implements FormValueControl<TMaybe<TRemarkResult>> {

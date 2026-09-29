@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, ViewEncapsulation } from '@angular/core';
+import { Component, computed, effect, input, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { TBorchureHead, TCardProps, TItem, TPrice, TWhole, TZone } from '../../../types';
 import { zoneToColor } from '../../../lib';
 import { ProchureCardComponent } from '../../brochure-card/prochure-card/prochure-card.component';
@@ -11,6 +11,7 @@ import { BrochureCardSpecialComponent } from '../../brochure-card/brochure-card-
   imports: [ProchureCardComponent, BrochureCardSpecialComponent],
   templateUrl: './prochure.component.html',
   styleUrl: './prochure.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None
 })
 export class ProchureComponent {

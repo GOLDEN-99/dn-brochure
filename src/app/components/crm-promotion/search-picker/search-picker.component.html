@@ -1,0 +1,19 @@
+<div>
+  <label class="form-label fw-semibold text-muted small mb-1" [for]="inputId()">{{
+    label()
+  }}</label>
+  <input
+    #searchInput
+    [id]="inputId()"
+    type="text"
+    class="form-control form-control-sm"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    [ngbTypeahead]="search"
+    [resultFormatter]="format()"
+    [editable]="false"
+    (focus)="focus$.next(searchInput.value)"
+    (click)="click$.next(searchInput.value)"
+    (selectItem)="onSelect($event, searchInput)"
+  />
+</div>
