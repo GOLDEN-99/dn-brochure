@@ -1,0 +1,185 @@
+<section class="m-3">
+  <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+    <a class="btn btn-sm btn-outline-secondary" routerLink="/crm-promotion/item-price-requests">
+      <i class="bi bi-arrow-left"></i> กลับ
+    </a>
+    <h1 class="m-0">คำขอนำเข้าราคาโปร #{{ id() }}</h1>
+    @if (detail(); as d) {
+      <div class="ms-auto d-flex gap-2">
+        @if (d.status === "FAILED") {
+          <button type="button" class="btn btn-sm btn-warning" [disabled]="retrying()" (click)="retry()">
+            @if (retrying()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+            } @else {
+              <i class="bi bi-arrow-counterclockwise me-1"></i>
+            }
+            ลองใหม่
+          </button>
+        }
+        <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="loading()" (click)="refresh()">
+          <i class="bi bi-arrow-repeat me-1"></i> รีเฟรช
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (!detail() && loading()) {
+    <div class="text-center text-muted py-5">
+      <span class="spinner-border spinner-border-sm me-2"></span> กำลังโหลด...
+    </div>
+  }
+
+  @if (detail(); as d) {
+    <!-- Header -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+          <h2 class="m-0">{{ d.name }}</h2>
+          <span [class]="'badge ' + badgeClass[d.status]">{{ statusLabel[d.status] }}</span>
+          @if (polling()) {
+            <span class="text-muted small"><span class="spinner-border spinner-border-sm me-1"></span> อัพเดตทุก 3 วินาที</span>
+          }
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-lg-3 col-6">
+            <div class="text-muted small">ช่วงวันที่</div>
+            <div>{{ d.startDate | date: "dd/MM/yyyy" }} - {{ d.endDate | date: "dd/MM/yyyy" }}</div>
+          </div>
+          <div class="col-lg-3 col-6">
+            <div class="text-muted small">โปรโมชั่นของ</div>
+            <div>{{ d.source | promotionSource }}</div>
+          </div>
+          <div class="col-lg-2 col-6">
+            <div class="text-muted small">ลำดับการคำนวณ</div>
+            <div>{{ d.promotionOrder | promotionOrder }}</div>
+          </div>
+          <div class="col-lg-2 col-6">
+            <div class="text-muted small">วันที่ใช้ได้</div>
+            <div class="font-monospace">{{ d.activeDay }}</div>
+          </div>
+          <div class="col-lg-2 col-6">
+            <div class="text-muted small">สร้างโดย</div>
+            <div>{{ d.createdBy }} · {{ d.createdAt | date: "dd/MM/yyyy HH:mm" }}</div>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="d-flex justify-content-between small mb-1">
+          <span>ออกโปรโมชั่นแล้ว <strong>{{ d.issuedCount }}</strong> / {{ d.totalCount }} รายการ</span>
+          <span class="text-muted">ข้าม {{ d.skippedCount }}</span>
+        </div>
+        <div class="progress" role="progressbar" [attr.aria-valuenow]="progressPercent()" aria-valuemin="0" aria-valuemax="100">
+          <div
+            class="progress-bar"
+            [class.progress-bar-striped]="!isTerminal()"
+            [class.progress-bar-animated]="!isTerminal()"
+            [class.bg-success]="d.status === 'ISSUED'"
+            [class.bg-warning]="d.status === 'ISSUED_WITH_SKIPS'"
+            [class.bg-danger]="d.status === 'FAILED'"
+            [style.width.%]="progressPercent()"
+          ></div>
+        </div>
+
+        <div class="row g-3 mt-2 small text-muted">
+          <div class="col-auto">เริ่มออกโปร: {{ d.issueStartedAt ? (d.issueStartedAt | date: "dd/MM/yyyy HH:mm:ss") : "-" }}</div>
+          <div class="col-auto">เสร็จ: {{ d.issueFinishedAt ? (d.issueFinishedAt | date: "dd/MM/yyyy HH:mm:ss") : "-" }}</div>
+        </div>
+
+        @if (d.issueError) {
+          <div class="alert alert-danger mt-3 mb-0">
+            <strong>ข้อผิดพลาด:</strong> {{ d.issueError }}
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Lines -->
+    <div class="card">
+      <div class="card-header">รายการสินค้า ({{ d.lines.length }})</div>
+      <div class="table-responsive" style="max-height: 65vh; overflow-y: auto">
+        <table class="table table-sm table-bordered table-hover import-table mb-0">
+          <thead class="table-light sticky-top">
+            <tr>
+              <th>แถว</th>
+              <th>barcode</th>
+              <th>ชื่อสินค้า</th>
+              <th class="text-end">ราคาโปร</th>
+              @for (key of ladderKeys; track key) {
+                <th class="text-end">{{ ladderLabels[key] }}</th>
+              }
+              <th>สถานะ/สาเหตุ</th>
+              <th>โปรโมชั่น</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (line of d.lines; track line.id) {
+              @let hl = highlight(line);
+              <tr [class.table-danger]="line.resolveStatus === 'ERROR'" [class.table-warning]="line.resolveStatus === 'SKIP'">
+                <td>{{ line.rowNumber }}</td>
+                <td>
+                  {{ line.barcode }}
+                  @if (line.goodCode && line.goodCode !== line.barcode) {
+                    <div class="text-muted small">{{ line.goodCode }}</div>
+                  }
+                </td>
+                <td class="wrap">
+                  {{ line.goodName ?? "-" }}
+                  @if (line.name) {
+                    <div class="text-muted small">ชื่อโปร: {{ line.name }}</div>
+                  }
+                </td>
+                <td class="text-end fw-semibold">{{ line.price | number: "1.2-2" }}</td>
+                @for (key of ladderKeys; track key) {
+                  @let v = line.ladder?.[key];
+                  <td class="ladder-cell" [class.ladder-cell--above]="hl.has(key)" [class.ladder-cell--empty]="!v">
+                    @if (v) {
+                      {{ v | number: "1.0-2" }}
+                    } @else {
+                      -
+                    }
+                  </td>
+                }
+                <td class="wrap">
+                  @switch (line.resolveStatus) {
+                    @case ("OK") {
+                      <span class="badge bg-success">ถูกต้อง</span>
+                    }
+                    @case ("SKIP") {
+                      <span class="badge bg-warning text-dark">ข้าม</span>
+                    }
+                    @default {
+                      <span class="badge bg-danger">ผิดพลาด</span>
+                    }
+                  }
+                  @if (line.reason) {
+                    <div class="small text-muted">{{ line.reason }}</div>
+                  } @else if (line.reasonCode) {
+                    <div class="small text-muted">{{ line.reasonCode }}</div>
+                  }
+                </td>
+                <td>
+                  @if (line.promotionId) {
+                    <a [routerLink]="['/crm-promotion', line.promotionId]">#{{ line.promotionId }}</a>
+                  } @else if (line.resolveStatus === "OK" && !isTerminal()) {
+                    <span class="text-muted small">รอออกโปร</span>
+                  } @else {
+                    <span class="text-muted">-</span>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="15" class="text-center text-muted py-4">ไม่มีรายการ</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</section>

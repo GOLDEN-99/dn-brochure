@@ -16,6 +16,13 @@ export const CREATE_ROUTE_PATH = [
     { path: "create-cheapest", name: 'แถมในกลุ่ม', icon: 'bi bi-gift me-2' }
 ]
 
+// Create pages that have their own component and are NOT backed by
+// provideCreatePromotionConfig / PromotionFormComponent. Listed separately so the
+// layout menu can show them without CREATE_ROUTE mapping them onto the shared form.
+export const STANDALONE_CREATE_ROUTE_PATH = [
+    { path: "create-item-import", name: 'นำเข้าราคาโปรรายสินค้า', icon: 'bi bi-file-earmark-excel me-2' },
+]
+
 
 
 const CREATE_ROUTE = CREATE_ROUTE_PATH.map<Route>(({ path }) => ({
@@ -50,6 +57,31 @@ export const CRM_PROMOTION_ROUTE: Route[] = [
                         }
                     },
                     ...CREATE_ROUTE,
+                    {
+                        path: "create-item-import",
+                        loadComponent() {
+                            return import("../pages/crm-promotion/create/item-price-import/item-price-import.component")
+                                .then(r => r.ItemPriceImportComponent)
+                                .catch(handleLazyLoadError('crm-promotion/create-item-import'))
+                        }
+                    },
+                    // Before ":id" so the literal segment is not swallowed by the promotion detail route.
+                    {
+                        path: "item-price-requests",
+                        loadComponent() {
+                            return import("../pages/crm-promotion/item-price-requests/item-price-request-list.component")
+                                .then(r => r.ItemPriceRequestListComponent)
+                                .catch(handleLazyLoadError('crm-promotion/item-price-requests'))
+                        }
+                    },
+                    {
+                        path: "item-price-requests/:id",
+                        loadComponent() {
+                            return import("../pages/crm-promotion/item-price-requests/item-price-request-detail.component")
+                                .then(r => r.ItemPriceRequestDetailComponent)
+                                .catch(handleLazyLoadError('crm-promotion/item-price-requests/:id'))
+                        }
+                    },
                     {
                         path: "config-branch",
                         loadComponent() {

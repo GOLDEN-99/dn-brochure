@@ -1,0 +1,59 @@
+.ladder-cell {
+  min-width: 4.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ladder-cell--above {
+  background-color: var(--bs-success-bg-subtle);
+  font-weight: 600;
+}
+
+.ladder-cell--empty {
+  color: var(--bs-secondary-color);
+  opacity: 0.5;
+}
+
+.level-chip {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  border: 1px solid var(--bs-border-color);
+  white-space: nowrap;
+}
+
+.level-chip--ok {
+  background-color: var(--bs-success-bg-subtle);
+  border-color: var(--bs-success-border-subtle);
+  color: var(--bs-success-text-emphasis);
+}
+
+.level-chip--muted {
+  color: var(--bs-secondary-color);
+  text-decoration: line-through;
+}
+
+.import-table {
+  font-size: 0.875rem;
+
+  th,
+  td {
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  td.wrap {
+    white-space: normal;
+    min-width: 12rem;
+  }
+}
+
+.row-excluded td {
+  opacity: 0.45;
+}
+
+.overlap-list {
+  font-size: 0.8rem;
+}
