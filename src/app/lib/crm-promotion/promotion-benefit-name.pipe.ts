@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { CHEAPEST_LABEL } from './benefit-hints';
 
 @Pipe({
   name: 'promotionBenefitName',
@@ -21,9 +22,9 @@ export class PromotionBenefitNamePipe implements PipeTransform {
       case "ITEMPERCENTDISC": return "ลดสินค้าเป็นเปอร์เซ็นต์"
       case "ITEMPRICE": return "ปรับราคาสินค้า"
       case "REGISTERFEE": return "ฟรีค่าสมัครสมาชิก"
-      // Doubles as the tier input's label on the แถมในกลุ่ม page, where the reward
-      // value is a count of free units rather than an amount.
-      case "CHEAPEST": return "แถมสินค้าถูกสุด(ชิ้น)"
+      // Label only (z8qgvby6ht); the stored action stays CHEAPEST. The tier input on the
+      // แถมในกลุ่ม page no longer borrows this -- it has a count label of its own.
+      case "CHEAPEST": return CHEAPEST_LABEL
       default: return "สิทธิประโยชน์ไม่ถูกต้อง"
     }
   }

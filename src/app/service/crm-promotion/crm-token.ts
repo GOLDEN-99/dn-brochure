@@ -2,6 +2,7 @@ import { InjectionToken } from "@angular/core";
 import { TBenefitOption, TBenefitThreshold } from "../../types/crm-promotion.type";
 import { TCreatePromotionForm } from "../../pages/crm-promotion/create/create-bill-discount-promotion/createPromotionSchema";
 import { CHEAPEST_ACTION, REGISTER_FEE_ACTION } from "../../lib/crm-promotion/promotion-actions";
+import { CHEAPEST_LABEL } from "../../lib/crm-promotion/benefit-hints";
 
 interface IFilterOption {
     showFilter: boolean
@@ -31,6 +32,11 @@ interface IRewardOption {
     fixedAction?: boolean
     showThresholdInput?: boolean
     showRewardInput?: boolean
+    // Always-visible copy under the controls (z8qgvby6ht). benefitHints is keyed by action and
+    // follows the สิทธิ select; ladderHint sits by เพิ่มสิทธิประโยชน์. Pages that declare neither
+    // show nothing.
+    benefitHints?: Readonly<Record<string, string>>
+    ladderHint?: string
 }
 
 
@@ -59,7 +65,7 @@ export const CRM_BUNDLE_REWARD: TBenefitOption[] = [
     { action: "BUNDLEPERCENTDISC", label: "ลดราคา SET เป็นเปอร์เซ็นต์" },
     { action: "PWP", label: "สิทธิแลกซื้อ" },
     { action: "GIFT", label: "สินค้าแถม" },
-    { action: CHEAPEST_ACTION, label: "แถมสินค้าถูกสุด(ชิ้น)" },
+    { action: CHEAPEST_ACTION, label: CHEAPEST_LABEL },
 ]
 
 // The BUNDLESUBTOTAL ("spend N baht on these goods") page. No BUNDLEPRICE / CHEAPEST: both
