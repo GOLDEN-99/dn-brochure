@@ -145,6 +145,21 @@ describe('createPromotionSchema — threshold floor per thresholdType', () => {
   });
 });
 
+describe('createPromotionSchema — reward floor exemptions', () => {
+  it('accepts a 0 reward on REGISTERFEE: the grant is boolean and the page hides the box', () => {
+    // The floor added 2026-09-20 disabled the ค่าสมาชิก page and the live promotion's edit
+    // with no message: the reward input is not rendered on that page.
+    const r = validityOf({
+      action: 'REGISTERFEE',
+      thresholdType: 'BILLSUBTOTAL',
+      isRepeat: false,
+      tiers: [{ thresholdValue: 1000, rewardValue: 0 }],
+    });
+    expect(r.rewardErrors).toEqual([]);
+    expect(r.benefitValid).toBeTrue();
+  });
+});
+
 describe('createPromotionSchema — repeating rung', () => {
   // BILLSUBTOTAL 0 is legal on a one-shot tier but not on a repeating one, where
   // it divides into the basket an unbounded number of times.
