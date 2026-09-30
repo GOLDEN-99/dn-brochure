@@ -126,6 +126,33 @@ describe('provideCreatePromotionConfig', () => {
     ]);
   });
 
+  describe('benefit hints and the CHEAPEST label (z8qgvby6ht)', () => {
+    it('ส่วนลดตามกลุ่มสินค้า hints สินค้าแถม and CHEAPEST, and nothing else', () => {
+      const hints = provideCreatePromotionConfig('create-group').rewardOption.benefitHints!;
+      expect(Object.keys(hints).sort()).toEqual(['CHEAPEST', 'GIFT']);
+      expect(hints['GIFT']).toContain('เพิ่มเข้าบิล');
+      expect(hints['CHEAPEST']).toContain('N+M');
+    });
+
+    it('แถมในกลุ่ม pins CHEAPEST under its new label and carries the same hint', () => {
+      const opt = provideCreatePromotionConfig('create-cheapest').rewardOption;
+      expect(opt.rewardList).toEqual([{ action: 'CHEAPEST', label: 'ซื้อ N แถม M (แถมชิ้นที่ถูกที่สุดในชุด)' }]);
+      expect(opt.benefitHints?.['CHEAPEST']).toContain('N+M');
+    });
+
+    it('ส่วนลดตามยอดซื้อกลุ่มสินค้า carries the ladder hint and no action hint', () => {
+      const opt = provideCreatePromotionConfig('create-spend').rewardOption;
+      expect(opt.ladderHint).toContain('อย่าแยกเป็นหลายโปร');
+      expect(opt.benefitHints).toBeUndefined();
+    });
+
+    it('the CHEAPEST option reads the new label on the group page too, value unchanged', () => {
+      const cheapest = provideCreatePromotionConfig('create-group').rewardOption.rewardList
+        .find((r) => r.action === 'CHEAPEST');
+      expect(cheapest?.label).toBe('ซื้อ N แถม M (แถมชิ้นที่ถูกที่สุดในชุด)');
+    });
+  });
+
   it('rejects an unknown path', () => {
     expect(() => provideCreatePromotionConfig('nope')).toThrow();
   });
@@ -196,5 +223,18 @@ describe('provideEditPromotionConfig', () => {
 
     expect(bill.filterOption.showFilter).toBeTrue();
     expect(bill.filterOption.showPool).toBeTrue();
+  });
+
+  // z8qgvby6ht: hints on edit as well as create, keyed the same way the controls are.
+  it('carries the same benefit hints as the matching create page', () => {
+    const set = provideEditPromotionConfig({ ...detail('BUNDLE', 'GIFT'), thresholdType: 'BUNDLECOUNT' });
+    const spend = provideEditPromotionConfig({ ...detail('BUNDLE', 'BUNDLEBATHDISC'), thresholdType: 'BUNDLESUBTOTAL' });
+    const bill = provideEditPromotionConfig(detail('BILL', 'BILLBATHDISC'));
+
+    expect(set.rewardOption.benefitHints?.['GIFT']).toContain('เพิ่มเข้าบิล');
+    expect(set.rewardOption.benefitHints?.['CHEAPEST']).toContain('N+M');
+    expect(spend.rewardOption.ladderHint).toContain('อย่าแยกเป็นหลายโปร');
+    expect(bill.rewardOption.benefitHints).toBeUndefined();
+    expect(bill.rewardOption.ladderHint).toBeUndefined();
   });
 });

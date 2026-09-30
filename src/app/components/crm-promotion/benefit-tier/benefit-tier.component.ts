@@ -5,7 +5,7 @@ import { PromotionBenefitNamePipe } from '../../../lib/crm-promotion/promotion-b
 import { PromotionThresholdPipe } from '../../../lib/crm-promotion/promotion-threshold.pipe';
 import { FieldTree, FormField } from "@angular/forms/signals";
 import { FormAlertTextComponent } from "../form-alert-text.component";
-import { isPoolOnlyAction } from '../../../lib/crm-promotion/promotion-actions';
+import { CHEAPEST_ACTION, isPoolOnlyAction } from '../../../lib/crm-promotion/promotion-actions';
 
 let benefitId = 0
 
@@ -31,6 +31,9 @@ export class BenefitTierComponent {
   // present and valid in the payload.
   readonly showThreshold = input(true)
   readonly showReward = input(true)
+  // The option label from the page's own list, so the input reads as the option the user picked.
+  // Null falls back to the shared benefit-name pipe.
+  readonly rewardLabel = input<string | null>(null)
 
   deleteTier = output()
   onDeleteTier() {
@@ -50,5 +53,10 @@ export class BenefitTierComponent {
 
   poolCountLabel = computed(() =>
     this.action() === 'GIFT' ? 'จำนวนของแถม (ชิ้น)' : 'จำนวนสิทธิ์แลกซื้อ (ชิ้น)')
+
+  // CHEAPEST is a count too (free units per set). It used to borrow the option label, which now
+  // reads "ซื้อ N แถม M (...)" -- a fine name for the option, not for a number box.
+  isCheapest = computed(() => this.action() === CHEAPEST_ACTION)
+  readonly cheapestCountLabel = 'จำนวนชิ้นที่แถม (ชิ้นถูกสุดในชุด)'
 
 }

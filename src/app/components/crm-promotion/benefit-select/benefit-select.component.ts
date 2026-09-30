@@ -7,6 +7,7 @@ import { PromotionGiftComponent } from "../promotion-gift/promotion-gift.compone
 import { BenefitTierComponent } from "../benefit-tier/benefit-tier.component";
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { FormAlertTextComponent } from "../form-alert-text.component";
+import { benefitHintFor } from '../../../lib/crm-promotion/benefit-hints';
 
 @Component({
   selector: 'app-benefit-select',
@@ -28,6 +29,19 @@ export class BenefitSelectComponent {
   readonly showRewardInput = signal(this.config.rewardOption.showRewardInput ?? true)
   form = input.required<FieldTree<TPromotionBenefit>>()
 
+  // Always-visible copy (z8qgvby6ht). The action hint follows the select; on a fixed-action page
+  // the select is not rendered but the hint still is, which is how แถมในกลุ่ม gets its CHEAPEST hint.
+  readonly benefitHint = computed(() =>
+    benefitHintFor(this.config.rewardOption.benefitHints, this.form().action().value()))
+  readonly ladderHint = signal(this.config.rewardOption.ladderHint ?? null)
+
+  // The tier's reward input takes its label from THIS page's option list, so it reads the same
+  // as the option the user picked (the spend page says ลดราคากลุ่มสินค้าเป็นบาท where the shared
+  // pipe would say ลดราคา SET เป็นบาท). Null lets the tier fall back to the pipe.
+  readonly rewardLabel = computed(() => {
+    const action = this.form().action().value()
+    return this.rewardOption().find(o => o.action === action)?.label ?? null
+  })
 
   showRewardPool = computed(() => {
     const action = this.form().action().value()
