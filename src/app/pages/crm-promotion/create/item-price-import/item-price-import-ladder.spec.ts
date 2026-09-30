@@ -38,9 +38,10 @@ const resolvedLine = (rowNumber: number, over: Partial<TResolvedLine> = {}): TRe
   goodName: 'Good',
   competitiveGroup: '-',
   ladder,
-  levels: [{ level: '1', memberPrice: 2500, walkInPrice: null, branchCount: 14, qualifies: true }],
+  levels: [{ level: '1', memberPrice: 2500, walkInPrice: null, branchCount: 14, qualifies: true, inScope: true }],
   branchesAbove: 59,
   branchesBelow: 3,
+  branchesInScope: 60,
   overlapping: [],
   ...over,
 })

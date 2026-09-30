@@ -37,6 +37,7 @@ export type TImportTableRow = {
   levels: TResolvedLevel[]
   branchesAbove: number
   branchesBelow: number
+  branchesInScope: number
   overlapping: TOverlappingPromotion[]
   /** Only true for client-side failures -- the server never saw the row. */
   clientError: boolean
@@ -75,6 +76,7 @@ function fromClientRow(row: TParsedRow): TImportTableRow {
     levels: [],
     branchesAbove: 0,
     branchesBelow: 0,
+    branchesInScope: 0,
     overlapping: [],
     clientError: true,
   }
@@ -96,6 +98,7 @@ function fromResolvedLine(line: TResolvedLine): TImportTableRow {
     levels: line.levels ?? [],
     branchesAbove: line.branchesAbove,
     branchesBelow: line.branchesBelow,
+    branchesInScope: line.branchesInScope ?? line.branchesAbove,
     overlapping: line.overlapping ?? [],
     clientError: false,
   }

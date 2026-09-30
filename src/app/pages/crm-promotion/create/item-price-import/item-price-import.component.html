@@ -276,7 +276,7 @@
                   <th class="text-end">{{ ladderLabels[key] }}</th>
                 }
                 <th>ระดับที่ใช้ได้</th>
-                <th class="text-center" title="สาขาที่ราคาขายสูงกว่า / ต่ำกว่าหรือเท่ากับราคาโปร">สาขาสูงกว่า/ต่ำกว่า</th>
+                <th class="text-center" title="สาขาที่จะตั้งโปร (ระดับสูงสุดที่ราคาสมาชิกสูงกว่าราคาโปร +1 ไม่เกิน 6) / สาขาที่ราคาสมาชิกสูงกว่าราคาโปร">สาขาตั้งโปร / สูงกว่า</th>
                 <th>โปรซ้อน</th>
                 <th>สถานะ/สาเหตุ</th>
               </tr>
@@ -334,8 +334,9 @@
                       <span
                         class="level-chip me-1 mb-1"
                         [class.level-chip--ok]="lv.qualifies"
-                        [class.level-chip--muted]="!lv.qualifies"
-                        [title]="'ราคาสมาชิก ' + lv.memberPrice + (lv.walkInPrice !== null ? ' / ทั่วไป ' + lv.walkInPrice : '')"
+                        [class.level-chip--scope]="lv.inScope && !lv.qualifies"
+                        [class.level-chip--muted]="!lv.inScope"
+                        [title]="'ราคาสมาชิก ' + lv.memberPrice + (lv.walkInPrice !== null ? ' / ทั่วไป ' + lv.walkInPrice : '') + (lv.inScope && !lv.qualifies ? ' · ตั้งโปรเผื่อลูกค้าทั่วไป (+1 ระดับ)' : '')"
                       >
                         L{{ lv.level }} · {{ lv.branchCount }} สาขา
                       </span>
@@ -345,9 +346,9 @@
                   </td>
                   <td class="text-center">
                     @if (row.ladder) {
-                      <span class="text-success fw-semibold">{{ row.branchesAbove }}</span>
+                      <span class="fw-semibold">{{ row.branchesInScope }}</span>
                       <span class="text-muted"> / </span>
-                      <span class="text-secondary">{{ row.branchesBelow }}</span>
+                      <span class="text-success">{{ row.branchesAbove }}</span>
                     } @else {
                       <span class="text-muted">-</span>
                     }

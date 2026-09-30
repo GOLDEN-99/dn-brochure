@@ -58,7 +58,10 @@ export type TResolvedLevel = {
   memberPrice: number
   walkInPrice: number | null
   branchCount: number
+  /** Member price at this level is strictly above the promo price. */
   qualifies: boolean
+  /** The promotion is created for this level: highest qualifying level + 1, capped at 6 (walk-in step). */
+  inScope: boolean
 }
 
 export type TOverlappingPromotion = {
@@ -85,6 +88,8 @@ export type TResolvedLine = TItemPriceLine & {
   levels: TResolvedLevel[] | null
   branchesAbove: number
   branchesBelow: number
+  /** Branches the promotion will be created for (>= branchesAbove). */
+  branchesInScope: number
   overlapping: TOverlappingPromotion[]
 }
 

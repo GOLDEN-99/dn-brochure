@@ -30,6 +30,12 @@
   color: var(--bs-success-text-emphasis);
 }
 
+.level-chip--scope {
+  background-color: var(--bs-warning-bg-subtle);
+  border-color: var(--bs-warning-border-subtle);
+  color: var(--bs-warning-text-emphasis);
+}
+
 .level-chip--muted {
   color: var(--bs-secondary-color);
   text-decoration: line-through;

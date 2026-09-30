@@ -33,9 +33,10 @@ const resolved = (rowNumber: number, over: Partial<TResolvedLine> = {}): TResolv
   goodName: `Good ${rowNumber}`,
   competitiveGroup: '-',
   ladder: { price1: 150, price2: 140, price3: 130, price4: 120, price5: 110, price6: 90, priceA: 0, priceB: 0, priceC: 0 },
-  levels: [{ level: '1', memberPrice: 150, walkInPrice: null, branchCount: 10, qualifies: true }],
+  levels: [{ level: '1', memberPrice: 150, walkInPrice: null, branchCount: 10, qualifies: true, inScope: true }],
   branchesAbove: 10,
   branchesBelow: 2,
+  branchesInScope: 11,
   overlapping: [],
   ...over,
 })

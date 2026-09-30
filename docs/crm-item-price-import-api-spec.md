@@ -44,12 +44,14 @@ Response — one entry per input line, in input order
       "ladder": { "price1": 2500, "price2": 2400, "price3": 2350, "price4": 2300,
                   "price5": 2250, "price6": 2100, "priceA": 0, "priceB": 0, "priceC": 0 },
       "levels": [                           // the human view: good × applied level
-        { "level": "1", "memberPrice": 2500, "walkInPrice": null, "branchCount": 14, "qualifies": true },
-        { "level": "3", "memberPrice": 2350, "walkInPrice": 2400, "branchCount": 45, "qualifies": true },
-        { "level": "5", "memberPrice": 2100, "walkInPrice": 2250, "branchCount": 3,  "qualifies": false }
+        { "level": "1", "memberPrice": 2500, "walkInPrice": null, "branchCount": 14, "qualifies": true,  "inScope": true },
+        { "level": "3", "memberPrice": 2350, "walkInPrice": 2400, "branchCount": 45, "qualifies": true,  "inScope": true },
+        { "level": "4", "memberPrice": 2150, "walkInPrice": 2350, "branchCount": 8,  "qualifies": false, "inScope": true },
+        { "level": "5", "memberPrice": 2100, "walkInPrice": 2250, "branchCount": 3,  "qualifies": false, "inScope": false }
       ],
-      "branchesAbove": 59,
-      "branchesBelow": 3,
+      "branchesAbove": 59,                  // member price above the promo
+      "branchesBelow": 11,                  // member price at or below
+      "branchesInScope": 67,                // the promotion is created for these (>= branchesAbove)
       "overlapping": [                      // active ITEM promotions on the same good in the window
         { "id": 131, "promotionName": "…", "action": "ITEMPRICE", "rewardValue": 2299,
           "promotionPriority": 0, "promotionOrder": 1,
@@ -69,6 +71,12 @@ Response — one entry per input line, in input order
 
 `ladder`, `levels`, `goodCode`, `goodName` are `null` when the good was not resolved.
 `walkInPrice` is `null` for level 1 (the server cannot compute the uplift).
+`qualifies`: member price strictly above the promo. `inScope`: the promotion is created for this
+level — every numeric level up to the highest qualifying level **+ 1, capped at 6** (the walk-in at
+a member-only-price branch pays one level dearer); the till never raises a price, so the extra
+level is a no-op where it does not apply. The promotion is created `isBranchSpecific: true` with
+exactly the branches whose applied level is in scope, taken again at issue time. The branch codes
+are not returned; the page shows counts only.
 `overlapping` is `[]` when none; `outcome` semantics in the plan §4.1a. Overlap is a **warning**,
 never blocks.
 
