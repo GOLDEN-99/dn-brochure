@@ -58,6 +58,14 @@ const bundleFilter: TPromotionFilterState[] = [
   },
 ];
 
+const itemFilter: TPromotionFilterState[] = [
+  {
+    filterType: 'EXIST',
+    filterValue: 1,
+    productList: [{ goodCode: 'A1', goodName: 'ยา A', sku: '1' }],
+  },
+];
+
 // A BUNDLE promotion needs a filter group, so these two travel together.
 const asBundle = { promotionType: 'BUNDLE', filter: bundleFilter };
 
@@ -158,6 +166,23 @@ describe('createPromotionSchema — repeating rung', () => {
       tiers: [{ thresholdValue: 0, rewardValue: 50 }],
     });
     expect(r.errors).not.toContain('zero threshold on repeat');
+  });
+
+  // The ITEM page's exact seed: ITEMEXIST is never authored (threshold stays 0)
+  // and the page sets isRepeat = true. The rule blocked every ITEM promotion, and
+  // the error sat on the benefit node where the inline page shows no alert.
+  it('exempts ITEMEXIST — a 10% item discount must be submittable', () => {
+    const r = validityOf(
+      {
+        action: 'ITEMPERCENTDISC',
+        thresholdType: 'ITEMEXIST',
+        isRepeat: true,
+        tiers: [{ thresholdValue: 0, rewardValue: 10 }],
+      },
+      { promotionType: 'ITEM', filter: itemFilter },
+    );
+    expect(r.errors).not.toContain('zero threshold on repeat');
+    expect(r.benefitValid).toBeTrue();
   });
 });
 

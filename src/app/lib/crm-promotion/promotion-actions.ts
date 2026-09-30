@@ -50,6 +50,12 @@ export const THRESHOLD_RULES: Record<
   ITEMEXIST: { min: 0, integer: true, unit: '' },
 };
 
+// The ITEM page's threshold: "the item is on the bill". Nothing is authored, the
+// tier's thresholdValue stays 0, and the page seeds isRepeat = true (once per
+// unit). Any rule that reads "threshold 0 on a repeating tier" as unbounded must
+// skip this type -- there is no rung to divide into the basket.
+export const PRESENCE_THRESHOLD = 'ITEMEXIST';
+
 // "Spend N baht on these goods": a BUNDLE whose tiers are read against the pool's
 // baht rather than a set count (DrugPOSApp sale RULES §1.20). The filter group is a
 // plain EXIST pool that only NAMES the goods -- the baht lives on the tiers, never in

@@ -143,6 +143,12 @@ backend work that should follow. The non-obvious ones:
   not in `promotionTierSchema`.
 - `isRepeat = true` additionally requires every `thresholdValue > 0` — the
   compound case, which catches `BILLSUBTOTAL` where 0 is otherwise legal.
+  **`ITEMEXIST` is exempt** (`PRESENCE_THRESHOLD`): the ITEM page seeds
+  `isRepeat = true` and never authors a threshold, so the rule as first shipped
+  rejected every ITEM promotion. The error lands on the benefit node, which the
+  inline page renders no alert for — the only symptom was a submit button that
+  never enabled. Any new rule on `promotionBenefit` that reads `thresholdValue`
+  needs the same exemption, and the inline test in `createPromotionSchema.spec.ts`.
 - **Reward floors are per-`action`**: `*BATHDISC`/`*PERCENTDISC` need `> 0` (a 0
   deduction does nothing at the till); `BUNDLEPRICE`/`ITEMPRICE` allow 0 (an
   absolute price, so 0 = free); `CHEAPEST` needs an integer `>= 1`.

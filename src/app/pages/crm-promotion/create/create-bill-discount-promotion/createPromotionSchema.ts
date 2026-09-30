@@ -27,6 +27,7 @@ import {
 import {
   CHEAPEST_ACTION,
   POOL_PERCENT_TYPE,
+  PRESENCE_THRESHOLD,
   SPEND_THRESHOLD,
   THRESHOLD_RULES,
   isPoolOnlyAction,
@@ -390,9 +391,14 @@ export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
   // the threshold fits into the basket. A threshold of 0 fits infinitely often.
   // The per-type floor above already blocks this for COUNT types; this catches it
   // for BILLSUBTOTAL, where 0 is otherwise legal.
+  //
+  // ITEMEXIST is exempt: the ITEM page never authors a threshold (it stays 0) and
+  // seeds isRepeat = true, so without this the rule rejected every ITEM promotion
+  // -- with the error on the benefit node, where the inline page renders no alert,
+  // the author only saw a submit button that would not enable.
   validate(_path, ({ value }) => {
-    const { isRepeat, tiers } = value();
-    if (!isRepeat) return null;
+    const { isRepeat, tiers, thresholdType } = value();
+    if (!isRepeat || thresholdType === PRESENCE_THRESHOLD) return null;
     return tiers.some((t) => t.thresholdValue <= 0)
       ? {
           kind: 'zero threshold on repeat',

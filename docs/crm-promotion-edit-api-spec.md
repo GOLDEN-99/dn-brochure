@@ -107,7 +107,9 @@ unbounded discount. This was a live authoring bug: `BUNDLECOUNT` accepted `0`.
 | `BUNDLESUBTOTAL` | baht of the group's goods | `1` (API enforces `> 0`) | no |
 | `ITEMEXIST`     | —    | `0` (not authored) | yes |
 
-Additionally: when `isRepeat = true`, every tier needs `thresholdValue > 0`.
+Additionally: when `isRepeat = true`, every tier needs `thresholdValue > 0` —
+except under `ITEMEXIST`, whose threshold is never authored and stays `0`
+(the ITEM page seeds `isRepeat = true`; a presence check has no rung to repeat).
 This is the compound case — it catches `BILLSUBTOTAL`, where `0` is otherwise
 legal but divides into the basket infinitely often.
 
