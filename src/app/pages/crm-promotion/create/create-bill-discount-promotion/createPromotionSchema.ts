@@ -206,11 +206,15 @@ export const promotionRewardPercentSchema = schema<TProductRewardPool>(
       message: 'ค่าส่วนลดต้องมากกว่าหรือเท่ากับ 0',
     });
     required(path.itemBenefitValue, { message: 'ต้องระบุค่าส่วนลด' });
+    // A percent is 1-100 (86exej34u). The tier-side percent already has this floor
+    // through the reward-floor rule below; the pool item had only the cap, so a
+    // 0% PWP line validated clean and gave nothing at the till.
     applyWhen(
       path,
       ({ value }) => value().itemBenefitType === POOL_PERCENT_TYPE,
       (p) => {
-        max(p.itemBenefitValue, 100, { message: 'ค่าส่วนลดต้องไม่เกิน 100' });
+        min(p.itemBenefitValue, 1, { message: 'ส่วนลด % ต้องอยู่ระหว่าง 1-100' });
+        max(p.itemBenefitValue, 100, { message: 'ส่วนลด % ต้องอยู่ระหว่าง 1-100' });
       },
     );
   },

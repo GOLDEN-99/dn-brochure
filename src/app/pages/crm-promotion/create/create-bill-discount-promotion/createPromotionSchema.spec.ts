@@ -322,6 +322,22 @@ describe('createPromotionSchema — reward pool item values', () => {
     expect(validityOf(poolItem('PERCENTDISC', 100)).benefitValid).toBeTrue();
   });
 
+  // 86exej34u: a percent is 1-100. 0% passed the pool rule (it only had the cap)
+  // and was created end to end on PROD.
+  it('rejects a 0% PERCENTDISC pool item', () => {
+    expect(validityOf(poolItem('PERCENTDISC', 0)).benefitValid).toBeFalse();
+  });
+
+  it('accepts a PERCENTDISC pool item at 1', () => {
+    expect(validityOf(poolItem('PERCENTDISC', 1)).benefitValid).toBeTrue();
+  });
+
+  // The 1-100 rule is a percent rule; a 0-baht pool line is still governed only
+  // by the non-negative floor, as before.
+  it('does not apply the percent floor to a BATHDISC pool item', () => {
+    expect(validityOf(poolItem('BATHDISC', 0)).benefitValid).toBeTrue();
+  });
+
   it('rejects a negative pool item value', () => {
     expect(validityOf(poolItem('BATHDISC', -10)).benefitValid).toBeFalse();
   });
