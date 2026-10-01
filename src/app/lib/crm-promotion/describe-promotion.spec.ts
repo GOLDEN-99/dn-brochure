@@ -1,5 +1,5 @@
 import { TPromotionDetail, TPromotionProductBase, TProductRewardPool } from '../../types/crm-promotion.type';
-import { describePromotion, PromotionDescription } from './describe-promotion';
+import { describePromotion, PromotionDescription, promotionSection } from './describe-promotion';
 
 // The golden cases G01-G21 are CRM-PROMOTIONS.md §3b, row for row. DrugPOSApp's
 // CrmPromotionDescriber asserts the same table; if a row changes, change the doc first.
@@ -94,6 +94,16 @@ describe('describePromotion — golden cases (CRM-PROMOTIONS.md §3b)', () => {
       expect(describePromotion(input)).toEqual({ isWarning: false, ...expected });
     });
   }
+});
+
+describe('promotionSection', () => {
+  it('splits BUNDLE by threshold type and leaves unknown types unplaced', () => {
+    expect(promotionSection('ITEM', 'ITEMEXIST')).toBe('GOODS');
+    expect(promotionSection('BUNDLE', 'BUNDLECOUNT')).toBe('GOODS');
+    expect(promotionSection('BUNDLE', 'BUNDLESUBTOTAL')).toBe('SPEND');
+    expect(promotionSection('BILL', 'BILLSUBTOTAL')).toBe('BILL');
+    expect(promotionSection('COMBO', 'BILLSUBTOTAL')).toBeNull();
+  });
 });
 
 describe('describePromotion — shapes outside the golden table', () => {

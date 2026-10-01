@@ -222,6 +222,10 @@ export type TPromotionListItem = {
     promotionOrder: number
 }
 
+// GET /crm/promotions?include=details: the detail shape with the branch list reduced to a count,
+// which is all a list row shows (branch lists were ~60% of the payload; CRM-PROMOTIONS.md §7b)
+export type TPromotionListDetail = Omit<TPromotionDetail, 'branches'> & { branchCount: number }
+
 export type TPromotionDetail = {
     id: number
     promotionName: string

@@ -13,6 +13,10 @@ import { CHEAPEST_ACTION, REGISTER_FEE_ACTION } from './promotion-actions';
 
 export type PromotionSection = 'GOODS' | 'SPEND' | 'BILL';
 
+// Everything but the branch list, which the wording never reads -- so the list endpoint's
+// branchCount shape (TPromotionListDetail) and a full detail both qualify.
+export type DescribablePromotion = Omit<TPromotionDetail, 'branches'>;
+
 export interface PromotionDescription {
   // null only for an unknown promotionType, which neither engine phase evaluates
   section: PromotionSection | null;
@@ -54,9 +58,14 @@ const PWP_HINT = 'ดูสิทธิ์ที่ F10 · ใช้ตอนค
 const amount = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
 const fmt = (n: number): string => amount.format(n);
 
-export function describePromotion(d: TPromotionDetail): PromotionDescription {
-  const isSpend = d.promotionType === 'BUNDLE' && d.thresholdType === 'BUNDLESUBTOTAL';
-  const section: PromotionSection | null = isSpend ? 'SPEND' : SECTIONS[d.promotionType] ?? null;
+// Needs only header fields, so a list can place a row before its detail has loaded
+export function promotionSection(promotionType: string, thresholdType: string): PromotionSection | null {
+  if (promotionType === 'BUNDLE' && thresholdType === 'BUNDLESUBTOTAL') return 'SPEND';
+  return SECTIONS[promotionType] ?? null;
+}
+
+export function describePromotion(d: DescribablePromotion): PromotionDescription {
+  const section = promotionSection(d.promotionType, d.thresholdType);
   const groups = d.filterList ?? [];
   const tiers = [...(d.tiers ?? [])].sort((a, b) => a.thresholdValue - b.thresholdValue);
 
@@ -72,7 +81,7 @@ export function describePromotion(d: TPromotionDetail): PromotionDescription {
   return { ...base, deal: dealFor(d, section!, tiers), isWarning: false, posHint: posHintFor(d) };
 }
 
-function shapeWarning(d: TPromotionDetail, section: PromotionSection | null, tiers: TPromotionTier[]): string | null {
+function shapeWarning(d: DescribablePromotion, section: PromotionSection | null, tiers: TPromotionTier[]): string | null {
   if (section === null) return `ไม่รู้จักประเภท ${d.promotionType}`;
   if (!KNOWN_ACTIONS.has(d.action)) return `ไม่รู้จักสิทธิ์ ${d.action}`;
   if (d.thresholdType === 'BILLCOUNT') return 'ไม่มีผลที่เครื่องขาย (BILLCOUNT)';
@@ -114,7 +123,7 @@ function isNewInCrm(action: string): boolean {
   return action === 'GIFT' || action === CHEAPEST_ACTION || action === 'BILLBATHDISC' || action === 'BILLPERCENTDISC';
 }
 
-function posHintFor(d: TPromotionDetail): string | null {
+function posHintFor(d: DescribablePromotion): string | null {
   const hints: string[] = [];
   if (d.action === 'GIFT') hints.push(GIFT_HINT);
   if (d.action === 'PWP') hints.push(PWP_HINT);
@@ -122,7 +131,7 @@ function posHintFor(d: TPromotionDetail): string | null {
   return hints.length ? hints.join(' · ') : null;
 }
 
-function dealFor(d: TPromotionDetail, section: PromotionSection, tiers: TPromotionTier[]): string {
+function dealFor(d: DescribablePromotion, section: PromotionSection, tiers: TPromotionTier[]): string {
   const groups = d.filterList ?? [];
   if (section === 'SPEND') return `${poolTerm(groups)} ${rungs(d, tiers, 'ครบ', 'ทุก')}`;
   if (section === 'BILL') {
@@ -154,7 +163,7 @@ function setTerm(group: TPromotionDetail['filterList'][number], sets = 1): strin
     : `เลือก ${units} ชิ้นจากกลุ่มสินค้า ${group.productList.length} รายการ`;
 }
 
-function setDeal(d: TPromotionDetail, tiers: TPromotionTier[]): string {
+function setDeal(d: DescribablePromotion, tiers: TPromotionTier[]): string {
   const groups = d.filterList ?? [];
   if (tiers.length === 1) {
     // A tier threshold counts SETS: "every 2 sets" of a 2-unit set is 4 units
@@ -174,19 +183,19 @@ function withSets(subject: string, sets: number): string {
   return sets === 1 ? subject : `(${subject}) ×${sets}`;
 }
 
-function rungs(d: TPromotionDetail, tiers: TPromotionTier[], reach: string, every: string): string {
+function rungs(d: DescribablePromotion, tiers: TPromotionTier[], reach: string, every: string): string {
   if (d.isRepeat) return `${every} ${fmt(tiers[0].thresholdValue)} → ${result(d, tiers[0].rewardValue)}`;
   return tiers.map(t => `${reach} ${fmt(t.thresholdValue)} → ${result(d, t.rewardValue)}`).join(' · ');
 }
 
-function billRungs(d: TPromotionDetail, tiers: TPromotionTier[]): string {
+function billRungs(d: DescribablePromotion, tiers: TPromotionTier[]): string {
   if (d.isRepeat) return `ทุก ${fmt(tiers[0].thresholdValue)} บาทในบิล → ${result(d, tiers[0].rewardValue)}`;
   return tiers
     .map(t => `${t.thresholdValue > 0 ? `ครบบิล ${fmt(t.thresholdValue)}` : 'ทุกบิล'} → ${result(d, t.rewardValue)}`)
     .join(' · ');
 }
 
-function result(d: TPromotionDetail, reward: number): string {
+function result(d: DescribablePromotion, reward: number): string {
   switch (d.action) {
     case 'ITEMPRICE':
     case 'BUNDLEPRICE':

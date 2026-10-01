@@ -3,7 +3,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Observable, switchMap } from 'rxjs';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
-import { TCreatePromotionRequest, TPromotionDetail, TPromotionListItem } from '../../types/crm-promotion.type';
+import { TCreatePromotionRequest, TPromotionDetail, TPromotionListDetail, TPromotionListItem } from '../../types/crm-promotion.type';
 import {
   TCreateItemPriceRequest,
   TItemPriceRequestDetail,
@@ -34,6 +34,15 @@ export class CrmPromotionService {
 
   getPromotionById(id: number): Observable<TPromotionDetail> {
     return this.api.get(`${this.url}/promotions/${id}`)
+  }
+
+  /**
+   * Every promotion with its tiers, goods and pool, in one call. An API older than include=details
+   * ignores the parameter and returns plain headers -- callers must check for `tiers` before
+   * treating the items as details.
+   */
+  getPromotionDetails(): Observable<(TPromotionListDetail | TPromotionListItem)[]> {
+    return this.api.get<(TPromotionListDetail | TPromotionListItem)[]>(`${this.url}/promotions`, { params: { include: 'details' } })
   }
 
   updatePromotion(id: number, req: TCreatePromotionRequest): Observable<{ message: string }> {
