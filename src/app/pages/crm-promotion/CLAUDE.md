@@ -36,7 +36,9 @@ src/app/
 │                                        product-group-config, member-config, crm-token
 ├── layout/crm-promotion-layout/         Shell for all /crm-promotion routes
 ├── lib/crm-promotion/                   Display pipes (promotion-type, -order, -priority,
-│                                        -threshold, -benefit-name, product-name)
+│                                        -threshold, -benefit-name, product-name);
+│                                        describe-promotion.ts — one-line BU wording,
+│                                        golden cases in workspace CRM-PROMOTIONS.md §3b
 └── types/crm-promotion.type.ts          All domain/request/response types
 ```
 
