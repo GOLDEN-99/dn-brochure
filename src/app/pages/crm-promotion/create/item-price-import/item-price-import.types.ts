@@ -11,7 +11,9 @@ export type TServerReasonCode =
   | 'AMBIGUOUS_CODE'
   | 'GOOD_INACTIVE'
   | 'NO_BASE_UNIT_BARCODE'
+  | 'UNIT_NOT_SOLD'
   | 'NO_BRANCH_ABOVE_PRICE'
+  | 'UNIT_UNPRICED'
 
 /** Reasons the client sets before calling resolve; those rows are never sent. */
 export type TClientReasonCode = 'DUPLICATE_IN_FILE' | 'INVALID_PRICE' | 'EMPTY_BARCODE'
@@ -29,6 +31,22 @@ export type TItemPriceLine = {
   barcode: string
   price: number
   name: string | null
+  /**
+   * The units of this row to keep, when the server split it into one row per unit and the user
+   * dropped some (CRM-PROMOTION-UNIT-PLAN.md §1.5). Omitted = every unit the good is sold in.
+   */
+  unitCodes?: string[]
+}
+
+/** The (sheet row, unit) fields a resolved row and a stored line share. */
+export type TLineUnit = {
+  /** GoodBarcode.unitCode of this row's unit; null on an ERROR row. */
+  unitCode: string | null
+  unitDesc: string | null
+  unitFactor: number | null
+  /** 1..splitCount; a sheet row whose good is sold in N units comes back as N rows. */
+  splitSeq: number
+  splitCount: number
 }
 
 export type TResolveRequest = {
@@ -76,7 +94,7 @@ export type TOverlappingPromotion = {
   outcome: TOverlapOutcome
 }
 
-export type TResolvedLine = TItemPriceLine & {
+export type TResolvedLine = TItemPriceLine & TLineUnit & {
   status: TResolveRowStatus
   reasonCode: TReasonCode | null
   reason: string | null
@@ -84,12 +102,16 @@ export type TResolvedLine = TItemPriceLine & {
   goodCode: string | null
   goodName: string | null
   competitiveGroup: string
+  /** The unit's own scan barcode (a pack unit has no 6-digit code). */
+  unitBarcode: string | null
+  /** THIS unit's ladder: a pack row carries the pack's own total price. */
   ladder: TPriceLadder | null
   levels: TResolvedLevel[] | null
   branchesAbove: number
   branchesBelow: number
   /** Branches the promotion will be created for (>= branchesAbove). */
   branchesInScope: number
+  /** Promotions on the same (good, unit) only; one not yet backfilled lists against every unit. */
   overlapping: TOverlappingPromotion[]
 }
 
@@ -116,7 +138,7 @@ export type TCreateItemPriceRequest = {
   lines: TItemPriceLine[]
 }
 
-export type TItemPriceRequestLine = TItemPriceLine & {
+export type TItemPriceRequestLine = TItemPriceLine & TLineUnit & {
   id: number
   goodCode: string | null
   goodName: string | null
@@ -178,6 +200,9 @@ export const REQUEST_STATUS_LABEL: Record<TItemPriceRequestStatus, string> = {
   ISSUED_WITH_SKIPS: 'ออกโปรแล้ว (มีข้าม)',
   FAILED: 'ล้มเหลว',
 }
+
+/** Shown on a row the server split into one row per unit the good is sold in. */
+export const splitLabel = (splitCount: number): string => `เพิ่ม ${splitCount} แถวจาก 1`
 
 export const CLIENT_REASON_LABEL: Record<TClientReasonCode, string> = {
   EMPTY_BARCODE: 'บาร์โค้ดว่าง',

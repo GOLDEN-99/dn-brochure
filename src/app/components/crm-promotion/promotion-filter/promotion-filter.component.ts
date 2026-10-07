@@ -20,6 +20,7 @@ import { ProductNamePipe } from '../../../lib/crm-promotion/product-name.pipe';
 import { PromotionThresholdPipe } from '../../../lib/crm-promotion/promotion-threshold.pipe';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { FormAlertTextComponent } from '../form-alert-text.component';
+import { productKey, sameProduct } from '../../../lib/crm-promotion/product-key';
 
 let id = 0;
 
@@ -71,19 +72,21 @@ export class PromotionFilterComponent {
     ...this.currentProductList(),
     ...this.otherGroupProducts(),
   ]);
+  // keyed on the pair (good, unit): the same good in another unit is another product
   readonly currentProduct = computed(
-    () => new Set(this.currentProductList().map((p) => p.goodCode)),
+    () => new Set(this.currentProductList().map(productKey)),
   );
   validProduct = computed(() => {
     const ref = this.currentProduct();
-    return this.allProducts().filter((p) => !ref.has(p.goodCode));
+    return this.allProducts().filter((p) => !ref.has(productKey(p)));
   });
+  readonly productKey = productKey;
 
-  onRemoveProduct(goodCode: string) {
+  onRemoveProduct(product: TPromotionProductBase) {
     this.form()
       .productList()
       .controlValue.update((products) =>
-        products.filter((product) => product.goodCode !== goodCode),
+        products.filter((p) => !sameProduct(p, product)),
       );
   }
 

@@ -28,7 +28,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of currentProductInGroup(); track item.goodCode) {
+        @for (item of currentProductInGroup(); track item.id) {
           <tr>
             <td class="align-middle">{{ item | productName }}</td>
             <td>

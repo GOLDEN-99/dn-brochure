@@ -24,6 +24,10 @@ export const CHEAPEST_ACTION = 'CHEAPEST';
 // it from the synced promotion rather than keep its own copy. Two copies would drift
 // the day the code changes, and the till's copy is the one nobody here can grep for.
 export const REGISTER_FEE_GOOD_CODE = '11755';
+// Its one sale unit (GoodBarcode goodAmou = 1 row, unitFactor 1, barcode 066 — Drug1 2026-10-07).
+// A product is the pair (goodCode, unitCode) since 2026-10-07; the pool is derived, so the unit
+// is pinned here beside the code it belongs to.
+export const REGISTER_FEE_UNIT_CODE = '13';
 
 // ── Threshold semantics ────────────────────────────────────────────────────
 // What a tier's thresholdValue counts, per thresholdType. The floor is NOT

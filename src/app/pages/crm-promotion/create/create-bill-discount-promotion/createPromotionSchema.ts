@@ -1,3 +1,4 @@
+import { productKey } from '../../../../lib/crm-promotion/product-key';
 import {
   apply,
   applyEach,
@@ -483,14 +484,16 @@ export const createPromotionSchema = schema<TCreatePromotionForm>((_path) => {
           kind: 'invalid filter type',
           message: 'เงื่อนไขสินค้าต้องเหมือนกันทั้งกลุ่ม',
         };
-      //check cross group duplicate product
+      // check cross group duplicate product -- by the pair (good, unit): the strip in one group
+      // and the box in another are two products at the till (CRM-PROMOTION-UNIT-PLAN.md §1.2)
       for (const product of productList) {
-        if (ref.has(product.goodCode))
+        const key = productKey(product);
+        if (ref.has(key))
           return {
             kind: 'invalid filter cross product in filter',
             message: 'เงื่อนไขสินค้าต้องไม่มีสินค้าข้ามกลุ่ม',
           };
-        ref.add(product.goodCode);
+        ref.add(key);
       }
     }
     return null;
@@ -548,7 +551,7 @@ const uniqueValidator =
     };
 
 const rewardPoolUniqueValidator = uniqueValidator<TProductRewardPool, string>(
-  (p) => p.goodCode,
+  productKey,
 );
 const branchUniqueValidator = uniqueValidator<TBranch, string>(
   (b) => b.branchCode,

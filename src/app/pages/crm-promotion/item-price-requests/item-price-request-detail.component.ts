@@ -11,6 +11,7 @@ import {
   TItemPriceRequestDetail,
   TItemPriceRequestLine,
   isTerminalStatus,
+  splitLabel,
 } from '../create/item-price-import/item-price-import.types';
 import { STATUS_BADGE_CLASS } from './item-price-request-list.component';
 
@@ -33,6 +34,7 @@ export class ItemPriceRequestDetailComponent {
   readonly badgeClass = STATUS_BADGE_CLASS
   readonly ladderKeys = LADDER_KEYS
   readonly ladderLabels = LADDER_LABELS
+  readonly splitLabel = splitLabel
 
   readonly detail = signal<TItemPriceRequestDetail | null>(null)
   readonly loading = signal(false)

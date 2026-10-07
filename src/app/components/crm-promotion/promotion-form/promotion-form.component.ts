@@ -20,7 +20,9 @@ import { CRM_PAGE_CONFIG } from '../../../service/crm-promotion/crm-token';
 import {
   REGISTER_FEE_ACTION,
   REGISTER_FEE_GOOD_CODE,
+  REGISTER_FEE_UNIT_CODE,
 } from '../../../lib/crm-promotion/promotion-actions';
+import { toProductRef } from '../../../lib/crm-promotion/product-key';
 import {
   createPromotionSchema,
   TCreatePromotionForm,
@@ -262,8 +264,11 @@ export class PromotionFormComponent {
       startTime: this.ngbTimeToTime(startTime),
       endTime: this.ngbTimeToTime(endTime),
       activeDay: activeDay.reduce((acc, cur) => acc + (cur ? '1' : '0'), ''),
+      // products = the pairs the API stores; productList = the pre-unit shape, kept for an API one
+      // release behind (it resolves the unit itself). Both name the same goods.
       filterList: promotionFilter.map(({ productList, ...res }) => ({
         productList: productList.map((p) => p.goodCode),
+        products: productList.map(toProductRef),
         ...res,
       })),
       action,
@@ -288,12 +293,18 @@ export class PromotionFormComponent {
       return [
         {
           goodCode: REGISTER_FEE_GOOD_CODE,
+          unitCode: REGISTER_FEE_UNIT_CODE,
           itemBenefitType: 'PRICE',
           itemBenefitValue: 0,
         },
       ];
     if (action !== 'PWP' && action !== 'GIFT') return [];
-    return rewardPool.map(({ goodName, sku, ...res }) => ({ ...res }));
+    return rewardPool.map(({ goodCode, unitCode, itemBenefitType, itemBenefitValue }) => ({
+      goodCode,
+      unitCode: unitCode ?? null,
+      itemBenefitType,
+      itemBenefitValue,
+    }));
   }
 
   private ngbDateToIso({

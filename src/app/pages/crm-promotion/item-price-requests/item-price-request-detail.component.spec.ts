@@ -27,6 +27,7 @@ const detail = (status: TItemPriceRequestStatus, over: Partial<TItemPriceRequest
       id: 901, rowNumber: 2, barcode: '408569', price: 2199, name: null,
       goodCode: '000123', goodName: 'Good', resolveStatus: 'OK', reasonCode: null, reason: null,
       promotionId: null,
+      unitCode: '3', unitDesc: 'แผง', unitFactor: 1, splitSeq: 1, splitCount: 1,
       ladder: { price1: 2500, price2: 2400, price3: 2350, price4: 2300, price5: 2250, price6: 2100, priceA: 0, priceB: 0, priceC: 0 },
     },
   ],

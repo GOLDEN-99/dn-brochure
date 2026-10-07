@@ -32,6 +32,12 @@ const resolved = (rowNumber: number, over: Partial<TResolvedLine> = {}): TResolv
   goodCode: `G${rowNumber}`,
   goodName: `Good ${rowNumber}`,
   competitiveGroup: '-',
+  unitCode: '3',
+  unitDesc: 'แผง',
+  unitFactor: 1,
+  unitBarcode: `B${rowNumber}`,
+  splitSeq: 1,
+  splitCount: 1,
   ladder: { price1: 150, price2: 140, price3: 130, price4: 120, price5: 110, price6: 90, priceA: 0, priceB: 0, priceC: 0 },
   levels: [{ level: '1', memberPrice: 150, walkInPrice: null, branchCount: 10, qualifies: true, inScope: true }],
   branchesAbove: 10,
@@ -174,11 +180,11 @@ describe('ItemPriceImportComponent', () => {
     component.resolve()
     expect(component.sendableCount()).toBe(2)
 
-    component.setExcluded(3, true)
+    component.setExcluded('3:3', true)
     expect(component.sendableCount()).toBe(1)
     expect(component.buildRequest().lines.map(l => l.rowNumber)).toEqual([2])
 
-    component.setExcluded(3, false)
+    component.setExcluded('3:3', false)
     expect(component.sendableCount()).toBe(2)
   })
 
@@ -221,7 +227,7 @@ describe('ItemPriceImportComponent', () => {
     expect(service.createItemPriceRequest).not.toHaveBeenCalled()
 
     component.name.set('x')
-    component.setExcluded(2, true)
+    component.setExcluded('2:3', true)
     expect(component.canIssue()).toBeFalse()
     component.issue()
     expect(service.createItemPriceRequest).not.toHaveBeenCalled()
@@ -246,5 +252,52 @@ describe('ItemPriceImportComponent', () => {
     expect(component.errorMessage()).toBe('ข้อมูลไม่ถูกต้อง')
     expect(component.apiFieldErrors()).toEqual({ name: ['required'] })
     expect(router.navigate).not.toHaveBeenCalled()
+  })
+})
+
+describe('ItemPriceImportComponent — a good sold in several units', () => {
+  let component: ItemPriceImportComponent
+  let service: jasmine.SpyObj<CrmPromotionService>
+
+  beforeEach(async () => {
+    service = jasmine.createSpyObj<CrmPromotionService>('CrmPromotionService', ['resolveItemPrice', 'createItemPriceRequest'])
+    await TestBed.configureTestingModule({
+      imports: [ItemPriceImportComponent],
+      providers: [
+        provideRouter([]),
+        { provide: CrmPromotionService, useValue: service },
+        { provide: ToastService, useValue: jasmine.createSpyObj<ToastService>('ToastService', ['success', 'danger']) },
+      ],
+    }).compileComponents()
+    const fixture = TestBed.createComponent(ItemPriceImportComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  })
+
+  it('shows one row per unit, and the POST names the units left in', () => {
+    component.name.set('โปรทดสอบ')
+    component.startDate.set('2026-10-01')
+    component.endDate.set('2026-10-31')
+    service.resolveItemPrice.and.returnValue(of({
+      rows: [
+        resolved(2, { unitCode: '3', unitDesc: 'แผง', splitSeq: 1, splitCount: 2 }),
+        resolved(2, { unitCode: '38', unitDesc: 'กล่อง x 10', unitFactor: 10, splitSeq: 2, splitCount: 2 }),
+        resolved(3),
+      ],
+      summary: { total: 3, ok: 3, skip: 0, error: 0 },
+    }))
+    component.applyParsedRows([parsed(2), parsed(3)])
+    component.resolve()
+
+    expect(component.tableRows().map(r => r.key)).toEqual(['2:3', '2:38', '3:3'])
+    expect(component.sendableCount()).toBe(3)
+
+    // the user cuts the box row: row 2 is still sent, naming the strip only
+    component.setExcluded('2:38', true)
+    expect(component.sendableCount()).toBe(2)
+    expect(component.buildRequest().lines).toEqual([
+      { rowNumber: 2, barcode: 'B2', price: 100, name: null, unitCodes: ['3'] },
+      { rowNumber: 3, barcode: 'B3', price: 100, name: null },
+    ])
   })
 })

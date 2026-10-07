@@ -22,9 +22,9 @@ export class ProductGroupConfigService {
 
   refetchAllProducts() { this.productConfig.refetchAllProducts() }
 
-  addProducts(groupId: number | undefined, goodCodes: string[]) {
+  addProducts(groupId: number | undefined, products: { goodCode: string; unitCode: string | null }[]) {
     if (!groupId) throw new Error('groupId not set')
-    return this.productConfig.addProductToGroup(groupId, goodCodes)
+    return this.productConfig.addProductToGroup(groupId, products)
   }
 
   deleteProduct(listId: number) {

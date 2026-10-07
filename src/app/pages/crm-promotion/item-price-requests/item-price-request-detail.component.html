@@ -108,6 +108,7 @@
               <th>แถว</th>
               <th>barcode</th>
               <th>ชื่อสินค้า</th>
+              <th>หน่วย</th>
               <th class="text-end">ราคาโปร</th>
               @for (key of ladderKeys; track key) {
                 <th class="text-end">{{ ladderLabels[key] }}</th>
@@ -131,6 +132,19 @@
                   {{ line.goodName ?? "-" }}
                   @if (line.name) {
                     <div class="text-muted small">ชื่อโปร: {{ line.name }}</div>
+                  }
+                </td>
+                <td class="wrap">
+                  @if (line.unitCode) {
+                    {{ line.unitDesc ?? line.unitCode }}
+                    @if (line.unitFactor && line.unitFactor > 1) {
+                      <span class="text-muted small">(×{{ line.unitFactor }})</span>
+                    }
+                    @if (line.splitCount > 1) {
+                      <div><span class="badge text-bg-info">{{ splitLabel(line.splitCount) }}</span></div>
+                    }
+                  } @else {
+                    <span class="text-muted">-</span>
                   }
                 </td>
                 <td class="text-end fw-semibold">{{ line.price | number: "1.2-2" }}</td>
@@ -174,7 +188,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="15" class="text-center text-muted py-4">ไม่มีรายการ</td>
+                <td colspan="16" class="text-center text-muted py-4">ไม่มีรายการ</td>
               </tr>
             }
           </tbody>

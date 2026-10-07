@@ -73,10 +73,19 @@ export type TBranch = {
     branchCode: string
     branchName: string
 }
+// A product is the pair (goodCode, unitCode) -- lib/crm-promotion/product-key.ts. The unit fields
+// are optional-nullable: the API returns them on every row (null on a row not yet backfilled),
+// older fixtures and a REGISTERFEE pool derived at submit may omit them. Display only beyond
+// unitCode: unitDesc / unitFactor from UnitInfo, barcode = the unit's own scan code (what a pack
+// unit has instead of the 6-digit sku).
 export type TPromotionProductBase = {
     goodCode: string
     goodName: string
     sku: string
+    unitCode?: string | null
+    unitDesc?: string | null
+    unitFactor?: number | null
+    barcode?: string | null
 }
 
 export type TProductRewardPool = {
@@ -152,6 +161,8 @@ export type TMember = {
     custType: string
 }
 
+// GET /crm/all-products: one row per (good, unit, supplier) from the GoodBarcode base tier
+// (goodAmou = 1). A good sold as strip and box is two rows; the author picks the one meant.
 export type TProductDetail = {
     id: number
     goodCode: string
@@ -166,6 +177,12 @@ export type TProductDetail = {
     typeDesc: string
     goodGroupCode: string
     goodGroupDesc: string
+    unitCode: string | null
+    unitDesc: string | null
+    unitFactor: number | null
+    barcode: string | null
+    /** The unit's own price1, so a ฿0 (dead) row is visible in the picker. */
+    price1: number | null
 }
 
 export type TProductCate = {
@@ -198,12 +215,16 @@ export type TPromotionFilterState = {
 
 type TCreatePromotionRewardPool = {
     goodCode: string
+    unitCode: string | null
     itemBenefitType: string
     itemBenefitValue: number
 }
 
+// `products` is what the API stores (the pairs); `productList` (bare good codes) is the pre-unit
+// shape, still sent so an API one release behind keeps working. When both arrive, products wins.
 type TCreatePromotionFilter = {
     productList: string[]
+    products: { goodCode: string; unitCode: string | null }[]
 } & TPromotionFilterBase
 
 export type TPromotionListItem = {

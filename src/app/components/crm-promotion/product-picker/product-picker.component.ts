@@ -3,9 +3,12 @@ import { ProductConfigService } from '../../../service/crm-promotion/product-con
 import { LoadingService } from '../../../service/loading/loading.service';
 import { ToastService } from '../../../service/toast/toast.service';
 import { finalize } from 'rxjs';
-import { TConfigGroup, TPromotionProductBase } from '../../../types/crm-promotion.type';
+import { TConfigGroup, TProductDetail, TPromotionProductBase } from '../../../types/crm-promotion.type';
 import { SearchPickerComponent } from '../search-picker/search-picker.component';
+import { formatProductLabel, productKey } from '../../../lib/crm-promotion/product-key';
 
+// Picker rows are (good, unit, supplier) -- see TProductDetail. A good sold as strip and box
+// shows twice, labelled by unit; picking one adds that pair only, and the other stays offered.
 @Component({
   selector: 'app-product-picker',
   imports: [SearchPickerComponent],
@@ -20,7 +23,7 @@ export class ProductPickerComponent {
   productAdd = output<TPromotionProductBase[]>()
 
   private readonly exclusionSet = computed(() =>
-    new Set(this.exclusionPool().map(({ goodCode }) => goodCode))
+    new Set(this.exclusionPool().map(productKey))
   )
   //di
   private readonly productService = inject(ProductConfigService)
@@ -32,18 +35,19 @@ export class ProductPickerComponent {
   //// filter out excluded products
   validProduct = computed(() => {
     const ref = this.exclusionSet();
-    return this.allProducts().filter(p => !ref.has(p.goodCode))
+    return this.allProducts().filter(p => !ref.has(productKey(p)))
   })
 
   // search picker accessors
-  readonly goodName = ({ goodName }: TPromotionProductBase) => goodName
-  readonly sku = ({ sku }: TPromotionProductBase) => sku
-  readonly formatProduct = ({ sku, goodName }: TPromotionProductBase) => `(${sku}) ${goodName}`
+  readonly goodName = ({ goodName }: TProductDetail) => goodName
+  // the 6-digit sku, or the unit's own scan code -- a pack unit has no 6-digit code
+  readonly sku = ({ sku, barcode }: TProductDetail) => `${sku ?? ''} ${barcode ?? ''}`
+  readonly formatProduct = (p: TProductDetail) => formatProductLabel(p)
   readonly groupName = ({ name }: TConfigGroup) => name
 
   // emit value out
-  onSelectProduct({ goodCode, goodName, sku }: TPromotionProductBase) {
-    this.productAdd.emit([{ goodCode, goodName, sku }])
+  onSelectProduct(product: TProductDetail) {
+    this.productAdd.emit([toBase(product)])
   }
   // handle add product from group
   onSelectpromoitionproductGroup({ id }: TConfigGroup) {
@@ -53,7 +57,7 @@ export class ProductPickerComponent {
     ).subscribe({
       next: (v) => {
         const ref = this.exclusionSet()
-        const incoming = v.flatMap(({ goodCode, goodName, sku }) => ref.has(goodCode) ? [] : [{ goodCode, goodName, sku }])
+        const incoming = v.flatMap(p => ref.has(productKey(p)) ? [] : [toBase(p)])
         this.productAdd.emit(incoming)
       },
       error: () => {
@@ -62,3 +66,6 @@ export class ProductPickerComponent {
     })
   }
 }
+
+const toBase = ({ goodCode, goodName, sku, unitCode, unitDesc, unitFactor, barcode }: TProductDetail): TPromotionProductBase =>
+  ({ goodCode, goodName, sku, unitCode: unitCode ?? null, unitDesc: unitDesc ?? null, unitFactor: unitFactor ?? null, barcode: barcode ?? null })

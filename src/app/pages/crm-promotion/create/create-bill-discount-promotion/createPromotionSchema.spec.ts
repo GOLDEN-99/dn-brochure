@@ -550,3 +550,38 @@ describe('createPromotionSchema — spend threshold (BUNDLESUBTOTAL)', () => {
     expect(r.filterErrors).toEqual([]);
   });
 });
+
+// A product is the pair (good, unit) -- workspace CRM-PROMOTION-UNIT-PLAN.md. The same good in
+// two units (strip, box) is two products at the till, so it may sit in two groups; the same pair
+// may not.
+describe('createPromotionSchema — products are (good, unit) pairs', () => {
+  const group = (unitCode: string | null, goodCode = 'A1'): TPromotionFilterState => ({
+    filterType: 'EXIST',
+    filterValue: 1,
+    productList: [{ goodCode, goodName: 'ยา', sku: '1', unitCode, unitDesc: unitCode === '38' ? 'กล่อง' : 'แผง' }],
+  });
+  const set = { action: 'BUNDLEBATHDISC', thresholdType: 'BUNDLECOUNT', isRepeat: false, tiers: [{ thresholdValue: 1, rewardValue: 10 }] };
+
+  it('allows the same good in two units across two groups', () => {
+    const r = validityOf(set, { promotionType: 'BUNDLE', filter: [group('3'), group('38')] });
+    expect(r.filterErrors).not.toContain('invalid filter cross product in filter');
+  });
+
+  it('rejects the same pair in two groups', () => {
+    const r = validityOf(set, { promotionType: 'BUNDLE', filter: [group('3'), group('3')] });
+    expect(r.filterErrors).toContain('invalid filter cross product in filter');
+  });
+
+  it('still rejects a good repeated with no unit on either row (pre-unit data)', () => {
+    const r = validityOf(set, { promotionType: 'BUNDLE', filter: [group(null), group(null)] });
+    expect(r.filterErrors).toContain('invalid filter cross product in filter');
+  });
+
+  it('keys the reward pool on the pair too', () => {
+    const item = (unitCode: string) => ({ goodCode: 'G', goodName: 'ของแถม', sku: '2', unitCode, itemBenefitType: 'PRICE', itemBenefitValue: 0 });
+    const twoUnits = validityOf({ action: 'GIFT', thresholdType: 'BILLSUBTOTAL', isRepeat: false, tiers: [{ thresholdValue: 500, rewardValue: 1 }], rewardPool: [item('3'), item('38')] });
+    expect(twoUnits.benefitValid).toBeTrue();
+    const samePair = validityOf({ action: 'GIFT', thresholdType: 'BILLSUBTOTAL', isRepeat: false, tiers: [{ thresholdValue: 500, rewardValue: 1 }], rewardPool: [item('3'), item('3')] });
+    expect(samePair.benefitValid).toBeFalse();
+  });
+});
