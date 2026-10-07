@@ -112,7 +112,33 @@ The conversions between these are where the real logic sits:
   `activeDay` as a 7-tuple of booleans, priority/order as **strings** (they
   bind to `<select>`), products as full objects.
 - **`TCreatePromotionRequest`** — POST/PUT body. Back to ISO strings, binary
-  string, numbers; products flattened to bare `goodCode` strings.
+  string, numbers; products as `products: {goodCode, unitCode}[]` pairs, with the
+  pre-unit `productList: string[]` sent beside them for an API one release behind.
+
+### A product is the pair (goodCode, unitCode) — since 2026-10-07
+
+Workspace `CRM-PROMOTION-UNIT-PLAN.md`. The unit is `GoodBarcode.unitCode` of a
+`goodAmou = 1` row — one good is sold in several units (strip, box) and a pack row
+carries its own total price, so the till matches good **and** unit. In this module:
+
+- `lib/crm-promotion/product-key.ts` — `productKey`, `sameProduct`, `toProductRef`,
+  `formatProductLabel`. **Every `Set` / `filter` / `track` that keys a product uses
+  `productKey`, never `goodCode`** (picker exclusion, filter groups, GIFT/PWP pools,
+  the preset admin pages, the schema's cross-group and pool uniqueness).
+- `TPromotionProductBase` carries `unitCode / unitDesc / unitFactor / barcode`,
+  optional-nullable: the API returns them on every row (null on a stored row the
+  backfill has not reached). `ProductNamePipe` renders `(sku) name · unit`.
+- `/crm/all-products` is one row per (good, unit, supplier); the picker's barcode
+  box searches the 6-digit `sku` **and** the unit's own `barcode` (a pack unit has
+  no 6-digit code, and `GoodInfo.barCode` is blank on 11 goods).
+- `REGISTER_FEE_UNIT_CODE` (`promotion-actions.ts`) pins the derived REGISTERFEE
+  pool's unit beside its good code.
+- Item-price import: a sheet row whose good is sold in N units comes back as N
+  table rows sharing `rowNumber` (`splitSeq / splitCount`, badge "เพิ่ม N แถวจาก 1"),
+  each judged on **its own** ladder at the sheet price; exclusion and the overlap
+  toggle key on `rowKey(rowNumber, unitCode)`, and `toRequestLines` sends
+  `unitCodes` for a split row so the server issues only the units left in. New
+  server reasons `UNIT_UNPRICED` (skip) and `UNIT_NOT_SOLD` (error).
 
 Detail→form is the exported pure function in `factory/crm-promotion/
 promotion-detail-to-form.ts`. Form→request is the **private** `buildRequest()`
@@ -177,8 +203,9 @@ backend work that should follow. The non-obvious ones:
 - `PWP` / `GIFT` require a non-empty `rewardPool`; for any other action
   `buildRequest()` sends `rewardPool: []`, and changing the action clears the
   pool, so items cannot carry across reward types.
-- All filter groups must share one `filterType`; no `goodCode` may appear in
-  two groups. `filterValue >= 1` for every type — an `EXIST` group stores **1**,
+- All filter groups must share one `filterType`; no **(goodCode, unitCode) pair**
+  may appear in two groups — the same good in two units may (`productKey`). The
+  reward pool is unique on the pair too. The API enforces both. `filterValue >= 1` for every type — an `EXIST` group stores **1**,
   not 0. The engine coerces it either way (`required = FilterValue > 0 ?
   FilterValue : 1`), so 0 only ever worked because a fallback rescued it, and was
   ambiguous between "EXIST, deliberately" and "nobody filled this in". The API

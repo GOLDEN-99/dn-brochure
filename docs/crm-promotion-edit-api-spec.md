@@ -38,7 +38,8 @@ PUT /crm/promotions/:id
     {
       "filterType": "COUNT | SUBTOTAL | EXIST",
       "filterValue": 0, // must be >= 1 unless filterType = EXIST
-      "productList": ["goodCode"], // string[]; non-empty
+      "productList": ["goodCode"], // string[]; the pre-unit shape, still sent for an API one release behind
+      "products": [{ "goodCode": "string", "unitCode": "string | null" }], // the pairs the API stores (since 2026-10-07); wins when both are present
     },
   ],
   "action": "BILLBATHDISC | BILLPERCENTDISC | BUNDLEBATHDISC | BUNDLEPERCENTDISC | ITEMPERCENTDISC | ITEMBATHDISC | PWP | GIFT",
@@ -48,12 +49,20 @@ PUT /crm/promotions/:id
   "rewardPool": [
     {
       "goodCode": "string",
+      "unitCode": "string | null", // GoodBarcode.unitCode of a goodAmou = 1 row; null = let the API resolve it
       "itemBenefitType": "PRICE | BATHDISC | PERCENTDISC",
       "itemBenefitValue": 0,
     },
   ],
 }
 ```
+
+A product is the pair `(goodCode, unitCode)` — workspace `CRM-PROMOTION-UNIT-PLAN.md`. The unit is
+`GoodBarcode.unitCode` of a `goodAmou = 1` row (one good is sold in several units; a pack row carries
+its own total price, so the till matches good **and** unit). A `null` unit is resolved by the API on
+write (the unit carrying `GoodInfo.barCode`, else the single factor-1 unit) — a client should always
+send the unit the picker gave it. The detail response returns `unitCode / unitDesc / unitFactor /
+barcode` on every product row (`unitCode` null on a row the backfill has not reached).
 
 ## Response
 
@@ -76,7 +85,10 @@ PUT /crm/promotions/:id
 - When `action = PWP | GIFT`: `rewardPool` must have at least 1 item
 - When `promotionType != BILL`: `filterList` must have at least 1 group
 - All `filterType` values within `filterList` must be identical
-- No product (`goodCode`) may appear in more than one filter group
+- No product **pair** (`goodCode`, `unitCode`) may appear in more than one filter group — the same good
+  in two units may; a pair with no unit collides with any entry of the same good
+- No pair may appear twice in `rewardPool`
+- Every pair must be a `goodAmou = 1` `GoodBarcode` row on an active good (400 `products`, naming the pair)
 - When `thresholdType = BUNDLESUBTOTAL` ("spend N baht on these goods"): `promotionType` must be
   `BUNDLE`; `action` one of `BUNDLEBATHDISC | BUNDLEPERCENTDISC | PWP | GIFT`; `filterList` exactly
   one group with `filterType = EXIST`; every tier `thresholdValue > 0` (baht). The baht lives on

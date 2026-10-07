@@ -8,7 +8,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ProductConfigService } from '../../../../../service/crm-promotion/product-config.service';
 import { ProductGroupConfigService } from '../../../../../service/crm-promotion/product-group-config.service';
-import { TProductCate, TProductGroup, TProductType } from '../../../../../types/crm-promotion.type';
+import { TProductCate, TProductDetail, TProductGroup, TProductType } from '../../../../../types/crm-promotion.type';
+import { productKey, toProductRef } from '../../../../../lib/crm-promotion/product-key';
 
 @Component({
   selector: 'app-add-product-config',
@@ -33,9 +34,11 @@ export class AddProductConfigComponent {
     )
 
   readonly currentProductInGroup = toSignal(this.currentProductInGroup$, { initialValue: [] })
+  // a preset row is the pair (good, unit): the strip may be in the group while the box is not
   readonly currentProductSet = computed(() =>
-    new Set(this.currentProductInGroup().map(p => p.goodCode))
+    new Set(this.currentProductInGroup().map(productKey))
   )
+  readonly productKey = productKey
   private readonly groupConfig = inject(ProductGroupConfigService)
   private readonly router = inject(Router)
   private readonly route = inject(ActivatedRoute)
@@ -145,10 +148,10 @@ export class AddProductConfigComponent {
   }
 
   // ── sort state ───────────────────────────────────────────────────────────────
-  sortCol = signal<'sku' | 'goodName' | 'compName' | 'cateDesc' | null>(null)
+  sortCol = signal<'sku' | 'goodName' | 'unitDesc' | 'compName' | 'cateDesc' | null>(null)
   sortDir = signal<'asc' | 'desc'>('asc')
 
-  toggleSort(col: 'sku' | 'goodName' | 'compName' | 'cateDesc') {
+  toggleSort(col: 'sku' | 'goodName' | 'unitDesc' | 'compName' | 'cateDesc') {
     if (this.sortCol() === col) {
       this.sortDir.update(d => d === 'asc' ? 'desc' : 'asc')
     } else {
@@ -167,7 +170,7 @@ export class AddProductConfigComponent {
     const dir = this.sortDir()
 
     const filtered = this.groupConfig.allProducts()
-      .filter(p => !currentSet.has(p.goodCode))
+      .filter(p => !currentSet.has(productKey(p)))
       .filter(p => !compLower || p.compName.toLowerCase().includes(compLower) || (p.compName2 ?? '').toLowerCase().includes(compLower))
       .filter(p => !goodLower || p.goodName.toLowerCase().includes(goodLower))
       .filter(p => productCate.length === 0 || productCate.includes(p.cateCode))
@@ -183,30 +186,32 @@ export class AddProductConfigComponent {
   })
 
   // ── selection ────────────────────────────────────────────────────────────────
-  selectedCodes = signal<Set<string>>(new Set())
+  // keyed by the pair (good, unit); the picked rows are kept so the save can send the pairs
+  selected = signal<ReadonlyMap<string, TProductDetail>>(new Map())
 
-  isSelected(code: string) { return this.selectedCodes().has(code) }
+  isSelected(item: TProductDetail) { return this.selected().has(productKey(item)) }
 
-  toggleSelect(code: string) {
-    this.selectedCodes.update(s => {
-      const next = new Set(s)
-      next.has(code) ? next.delete(code) : next.add(code)
+  toggleSelect(item: TProductDetail) {
+    this.selected.update(s => {
+      const next = new Map(s)
+      const key = productKey(item)
+      next.has(key) ? next.delete(key) : next.set(key, item)
       return next
     })
   }
 
-  selectedCount = computed(() => this.selectedCodes().size)
+  selectedCount = computed(() => this.selected().size)
 
   // ── save ─────────────────────────────────────────────────────────────────────
   saving = signal(false)
   saveError = signal<string | null>(null)
 
   confirmAdd() {
-    const codes = [...this.selectedCodes()]
-    if (codes.length === 0) return
+    const products = [...this.selected().values()].map(toProductRef)
+    if (products.length === 0) return
     this.saving.set(true)
     this.saveError.set(null)
-    this.groupConfig.addProducts(this.productGroupId(), codes).pipe(
+    this.groupConfig.addProducts(this.productGroupId(), products).pipe(
       catchError((err: HttpErrorResponse) => {
         this.saveError.set(err.error?.message ?? 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
         this.saving.set(false)

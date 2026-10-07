@@ -65,8 +65,13 @@ export class ProductConfigService {
     return this.api.get<TProductDetail[]>(`${this.basePath}/promotion-product-groups/${groupId}/items`)
   }
 
-  addProductToGroup(groupId: number, goodCodes: string[]) {
-    return this.api.post<void>(`${this.basePath}/promotion-product-groups/${groupId}/items/batch`, { goodCodes })
+  // A preset row is the pair (good, unit). `products` is what the API stores; `goodCodes` is the
+  // pre-unit shape, still sent for an API one release behind (it resolves the unit itself).
+  addProductToGroup(groupId: number, products: { goodCode: string; unitCode: string | null }[]) {
+    return this.api.post<void>(`${this.basePath}/promotion-product-groups/${groupId}/items/batch`, {
+      goodCodes: [...new Set(products.map(p => p.goodCode))],
+      products,
+    })
   }
 
   deleteProductFromGroup(listId: number) {

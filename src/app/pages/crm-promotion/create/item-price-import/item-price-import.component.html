@@ -271,6 +271,7 @@
                 <th>แถว</th>
                 <th>barcode</th>
                 <th>ชื่อสินค้า</th>
+                <th title="หน่วยที่ขาย — สินค้าที่ขายหลายหน่วย (แผง/กล่อง) จะแยกเป็นแถวละหน่วย ราคาโปรเดียวกัน เทียบกับราคาของหน่วยนั้น">หน่วย</th>
                 <th class="text-end">ราคาโปร</th>
                 @for (key of ladderKeys; track key) {
                   <th class="text-end">{{ ladderLabels[key] }}</th>
@@ -282,8 +283,8 @@
               </tr>
             </thead>
             <tbody>
-              @for (row of tableRows(); track row.rowNumber) {
-                @let excludedRow = isExcluded(row.rowNumber);
+              @for (row of tableRows(); track row.key) {
+                @let excludedRow = isExcluded(row.key);
                 <tr
                   [class.table-danger]="row.status === 'ERROR'"
                   [class.table-warning]="row.status === 'SKIP'"
@@ -296,7 +297,7 @@
                         type="checkbox"
                         [attr.aria-label]="'ตัดแถว ' + row.rowNumber"
                         [ngModel]="excludedRow"
-                        (ngModelChange)="setExcluded(row.rowNumber, $event)"
+                        (ngModelChange)="setExcluded(row.key, $event)"
                         [disabled]="state() === 'submitting'"
                       />
                     }
@@ -312,6 +313,26 @@
                     {{ row.goodName ?? "-" }}
                     @if (row.name) {
                       <div class="text-muted small">ชื่อโปร: {{ row.name }}</div>
+                    }
+                  </td>
+                  <td class="wrap">
+                    @if (row.unitCode) {
+                      {{ row.unitDesc ?? row.unitCode }}
+                      @if (row.unitFactor && row.unitFactor > 1) {
+                        <span class="text-muted small">(×{{ row.unitFactor }})</span>
+                      }
+                      @if (row.splitCount > 1) {
+                        <div>
+                          <span class="badge text-bg-info" [title]="'แถว ' + row.rowNumber + ' ขายหลายหน่วย — หน่วยที่ ' + row.splitSeq + '/' + row.splitCount + ' ตัดหน่วยที่ไม่ต้องการออกได้'">
+                            {{ splitLabel(row.splitCount) }}
+                          </span>
+                        </div>
+                      }
+                      @if (row.unitBarcode && row.unitBarcode !== row.barcode) {
+                        <div class="text-muted small">{{ row.unitBarcode }}</div>
+                      }
+                    } @else {
+                      <span class="text-muted">-</span>
                     }
                   </td>
                   <td class="text-end fw-semibold">{{ row.price | number: "1.2-2" }}</td>
@@ -358,14 +379,14 @@
                       <button
                         type="button"
                         class="btn btn-sm btn-outline-warning py-0"
-                        (click)="toggleOverlaps(row.rowNumber)"
-                        [attr.aria-expanded]="isOverlapExpanded(row.rowNumber)"
+                        (click)="toggleOverlaps(row.key)"
+                        [attr.aria-expanded]="isOverlapExpanded(row.key)"
                         [title]="row.overlapping.length + ' โปรโมชั่นซ้อนในช่วงวันที่นี้'"
                       >
                         <span class="badge text-bg-warning">{{ row.overlapping.length }}</span>
-                        <i class="bi ms-1" [class.bi-chevron-down]="!isOverlapExpanded(row.rowNumber)" [class.bi-chevron-up]="isOverlapExpanded(row.rowNumber)"></i>
+                        <i class="bi ms-1" [class.bi-chevron-down]="!isOverlapExpanded(row.key)" [class.bi-chevron-up]="isOverlapExpanded(row.key)"></i>
                       </button>
-                      @if (isOverlapExpanded(row.rowNumber)) {
+                      @if (isOverlapExpanded(row.key)) {
                         <ul class="list-unstyled overlap-list mb-0 mt-1">
                           @for (o of row.overlapping; track o.id) {
                             <li>
@@ -405,7 +426,7 @@
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="18" class="text-center text-muted py-4">ไม่มีข้อมูล</td>
+                  <td colspan="19" class="text-center text-muted py-4">ไม่มีข้อมูล</td>
                 </tr>
               }
             </tbody>
@@ -416,6 +437,7 @@
           <i class="bi bi-info-circle me-1"></i>
           โปรโมชั่นใช้ทุกสาขา และลดเฉพาะสาขาที่ราคาขายสูงกว่าราคาโปรเท่านั้น
           — ช่องราคาที่ไฮไลต์คือระดับราคาที่สูงกว่าราคาโปร (ช่อง "-" คือไม่มีราคาระดับนั้น)
+          — สินค้าที่ขายหลายหน่วยจะแยกเป็นแถวละหน่วยด้วยราคาโปรเดียวกัน แถวของหน่วยที่ไม่ต้องการให้ติ๊ก "ตัด"
         </p>
       </div>
 

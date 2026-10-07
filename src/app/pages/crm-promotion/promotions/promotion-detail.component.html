@@ -163,19 +163,22 @@
               <table class="table table-sm mb-0">
                 <colgroup>
                   <col />
+                  <col style="width: 140px" />
                   <col style="width: 160px" />
                 </colgroup>
                 <thead class="table-light">
                   <tr>
                     <th>ชื่อสินค้า</th>
-                    <th>บาร์โค้ด 6 หลัก</th>
+                    <th>หน่วย</th>
+                    <th>บาร์โค้ด</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @for (p of f.productList; track p.goodCode) {
+                  @for (p of f.productList; track p.goodCode + "|" + (p.unitCode ?? "")) {
                     <tr>
                       <td>{{ p.goodName }}</td>
-                      <td>{{ p.sku }}</td>
+                      <td>{{ p.unitDesc ?? "-" }}</td>
+                      <td>{{ p.sku || p.barcode || "-" }}</td>
                     </tr>
                   }
                 </tbody>
@@ -197,19 +200,22 @@
             <table class="table table-sm mb-3">
               <colgroup>
                 <col />
+                <col style="width: 140px" />
                 <col style="width: 160px" />
               </colgroup>
               <thead class="table-light">
                 <tr>
                   <th>ชื่อสินค้า</th>
-                  <th>บาร์โค้ด 6 หลัก</th>
+                  <th>หน่วย</th>
+                  <th>บาร์โค้ด</th>
                 </tr>
               </thead>
               <tbody>
-                @for (r of d.rewardPool; track r.goodCode) {
+                @for (r of d.rewardPool; track r.goodCode + "|" + (r.unitCode ?? "")) {
                   <tr>
                     <td>{{ r.goodName }}</td>
-                    <td>{{ r.sku }}</td>
+                    <td>{{ r.unitDesc ?? "-" }}</td>
+                    <td>{{ r.sku || r.barcode || "-" }}</td>
                   </tr>
                 }
               </tbody>
@@ -221,6 +227,7 @@
             <table class="table table-sm mb-3">
               <colgroup>
                 <col />
+                <col style="width: 120px" />
                 <col style="width: 100px" />
                 <col style="width: 130px" />
                 <col style="width: 120px" />
@@ -228,16 +235,18 @@
               <thead class="table-light">
                 <tr>
                   <th>ชื่อสินค้า</th>
-                  <th>บาร์โค้ด 6 หลัก</th>
+                  <th>หน่วย</th>
+                  <th>บาร์โค้ด</th>
                   <th>Benefit Type</th>
                   <th>Benefit Value</th>
                 </tr>
               </thead>
               <tbody>
-                @for (r of d.rewardPool; track r.goodCode) {
+                @for (r of d.rewardPool; track r.goodCode + "|" + (r.unitCode ?? "")) {
                   <tr>
                     <td>{{ r.goodName }}</td>
-                    <td>{{ r.sku }}</td>
+                    <td>{{ r.unitDesc ?? "-" }}</td>
+                    <td>{{ r.sku || r.barcode || "-" }}</td>
                     <td>{{ r.itemBenefitType }}</td>
                     <td>{{ r.itemBenefitValue }}</td>
                   </tr>

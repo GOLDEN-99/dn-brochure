@@ -8,13 +8,13 @@
 @let rewards = rewardPool();
 @if (rewards.length !== 0) {
   <div class="d-flex flex-column gap-2 mt-2">
-    @for (reward of rewards; track reward.goodCode) {
+    @for (reward of rewards; track productKey(reward)) {
       <div class="d-flex justify-content-between align-items-center">
         <span class="form-control-plaintext">{{ reward | productName }}</span>
         <span>
           <button
             class="btn btn-danger btn-sm"
-            (click)="onRemoveProduct(reward.goodCode)"
+            (click)="onRemoveProduct(reward)"
           >
             <i class="bi bi-x"></i>
           </button>

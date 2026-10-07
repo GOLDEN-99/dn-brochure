@@ -4,6 +4,7 @@ import {
   ladderCellState,
   mergeResolvedRows,
   sendableRows,
+  toRequestLines,
   summarizeRows,
 } from './item-price-import-ladder';
 import { TPriceLadder, TResolvedLine } from './item-price-import.types';
@@ -37,6 +38,12 @@ const resolvedLine = (rowNumber: number, over: Partial<TResolvedLine> = {}): TRe
   goodCode: '000123',
   goodName: 'Good',
   competitiveGroup: '-',
+  unitCode: '3',
+  unitDesc: 'แผง',
+  unitFactor: 1,
+  unitBarcode: `B${rowNumber}`,
+  splitSeq: 1,
+  splitCount: 1,
   ladder,
   levels: [{ level: '1', memberPrice: 2500, walkInPrice: null, branchCount: 14, qualifies: true, inScope: true }],
   branchesAbove: 59,
@@ -121,8 +128,41 @@ describe('item-price-import-ladder', () => {
         [parsedRow(2), parsedRow(3), parsedRow(4)],
         [resolvedLine(2), resolvedLine(3), resolvedLine(4, { status: 'SKIP' })],
       )
-      const out = sendableRows(rows, new Set([3]))
+      const out = sendableRows(rows, new Set(['3:3']))
       expect(out.map(r => r.rowNumber)).toEqual([2])
     })
+  })
+})
+
+// A sheet row whose good is sold in several units comes back as one server row per unit
+// (CRM-PROMOTION-UNIT-PLAN.md §1.5); the table shows them in place and the POST names the units
+// that were left in.
+describe('item-price-import-ladder — split rows (one row per unit)', () => {
+  const strip = resolvedLine(2, { unitCode: '3', unitDesc: 'แผง', unitFactor: 1, splitSeq: 1, splitCount: 2, status: 'SKIP', reasonCode: 'NO_BRANCH_ABOVE_PRICE' })
+  const box = resolvedLine(2, { unitCode: '38', unitDesc: 'กล่อง x 10', unitFactor: 10, unitBarcode: '885', splitSeq: 2, splitCount: 2, ladder: { ...ladder, price1: 9000 } })
+
+  it('expands a split sheet row into one table row per unit, keyed by row and unit', () => {
+    const rows = mergeResolvedRows([parsedRow(2), parsedRow(3)], [strip, box, resolvedLine(3)])
+    expect(rows.map(r => r.key)).toEqual(['2:3', '2:38', '3:3'])
+    expect(rows.map(r => r.rowNumber)).toEqual([2, 2, 3])
+    expect(rows[1].splitCount).toBe(2)
+    expect(rows[1].unitDesc).toBe('กล่อง x 10')
+    expect(rows[1].highlight.has('price1')).toBeTrue()   // judged against the box's own ladder
+    expect(summarizeRows(rows)).toEqual({ total: 3, ok: 2, skip: 1, error: 0 })
+  })
+
+  it('sends unitCodes only for a split row, and only the units left in', () => {
+    const rows = mergeResolvedRows([parsedRow(2), parsedRow(3)], [strip, { ...box, status: 'OK' }, { ...strip, status: 'OK' }, resolvedLine(3)])
+    // row 2: strip + box both OK; the user cuts the strip
+    const out = sendableRows(rows, new Set(['2:3']))
+    expect(toRequestLines(out)).toEqual([
+      { rowNumber: 2, barcode: 'B2', price: 2199, name: null, unitCodes: ['38'] },
+      { rowNumber: 3, barcode: 'B3', price: 2199, name: null },
+    ])
+  })
+
+  it('drops a sheet row entirely when every unit is cut', () => {
+    const rows = mergeResolvedRows([parsedRow(2)], [{ ...strip, status: 'OK' }, { ...box, status: 'OK' }])
+    expect(toRequestLines(sendableRows(rows, new Set(['2:3', '2:38'])))).toEqual([])
   })
 })

@@ -8,6 +8,7 @@ import {
   CHEAPEST_ACTION,
   REGISTER_FEE_ACTION,
   REGISTER_FEE_GOOD_CODE,
+  REGISTER_FEE_UNIT_CODE,
 } from '../../../lib/crm-promotion/promotion-actions';
 import { TCreatePromotionRequest } from '../../../types/crm-promotion.type';
 import { ComponentFixture } from '@angular/core/testing';
@@ -66,6 +67,7 @@ describe('PromotionFormComponent payload', () => {
       expect(req.rewardPool).toEqual([
         {
           goodCode: REGISTER_FEE_GOOD_CODE,
+          unitCode: REGISTER_FEE_UNIT_CODE,
           itemBenefitType: 'PRICE',
           itemBenefitValue: 0,
         },

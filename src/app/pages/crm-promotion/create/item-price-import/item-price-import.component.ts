@@ -16,6 +16,7 @@ import {
   mergeResolvedRows,
   sendableRows,
   summarizeRows,
+  toRequestLines,
 } from './item-price-import-ladder';
 import {
   OVERLAP_OUTCOME_LABEL,
@@ -24,6 +25,7 @@ import {
   TItemPriceLine,
   TItemPriceSource,
   TResolveResponse,
+  splitLabel,
 } from './item-price-import.types';
 
 /** header: no file yet · parsed: sheet read, not yet resolved · resolved: server verdict shown · submitting: POST in flight */
@@ -63,6 +65,7 @@ export class ItemPriceImportComponent {
   readonly outcomeLabel = OVERLAP_OUTCOME_LABEL
   readonly sourceOptions: readonly TItemPriceSource[] = ['SUPPLIER', 'HU', 'BOTH']
   readonly cellState = ladderCellState
+  readonly splitLabel = splitLabel
 
   // ── Header form (plain signals; the form is five fields, a schema would be heavier than the page) ──
   readonly name = signal('')
@@ -102,8 +105,9 @@ export class ItemPriceImportComponent {
   readonly fileName = signal('')
   readonly parsedRows = signal<TParsedRow[]>([])
   readonly resolveResponse = signal<TResolveResponse | null>(null)
-  readonly excluded = signal<ReadonlySet<number>>(new Set())
-  readonly expandedOverlaps = signal<ReadonlySet<number>>(new Set())
+  // both keyed by the table row's key (sheet row + unit), since a split sheet row is several rows
+  readonly excluded = signal<ReadonlySet<string>>(new Set())
+  readonly expandedOverlaps = signal<ReadonlySet<string>>(new Set())
   readonly resolving = signal(false)
   readonly errorMessage = signal('')
   readonly apiFieldErrors = signal<Record<string, string[]> | null>(null)
@@ -217,31 +221,31 @@ export class ItemPriceImportComponent {
     })
   }
 
-  // ── Table interaction ──
-  isExcluded(rowNumber: number) {
-    return this.excluded().has(rowNumber)
+  // ── Table interaction (by row key: a split sheet row is one table row per unit) ──
+  isExcluded(key: string) {
+    return this.excluded().has(key)
   }
 
-  setExcluded(rowNumber: number, excluded: boolean) {
+  setExcluded(key: string, excluded: boolean) {
     this.excluded.update(prev => {
       const next = new Set(prev)
-      if (excluded) next.add(rowNumber)
-      else next.delete(rowNumber)
+      if (excluded) next.add(key)
+      else next.delete(key)
       return next
     })
   }
 
-  toggleOverlaps(rowNumber: number) {
+  toggleOverlaps(key: string) {
     this.expandedOverlaps.update(prev => {
       const next = new Set(prev)
-      if (next.has(rowNumber)) next.delete(rowNumber)
-      else next.add(rowNumber)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
       return next
     })
   }
 
-  isOverlapExpanded(rowNumber: number) {
-    return this.expandedOverlaps().has(rowNumber)
+  isOverlapExpanded(key: string) {
+    return this.expandedOverlaps().has(key)
   }
 
   // ── Issue ──
@@ -254,7 +258,8 @@ export class ItemPriceImportComponent {
       source: this.source(),
       promotionOrder: this.effectivePromotionOrder(),
       activeDay: this.activeDayString(),
-      lines: this.sendable().map(toLine),
+      // one line per sheet row; a split row names the units left in (unitCodes)
+      lines: toRequestLines(this.sendable()),
     }
   }
 
