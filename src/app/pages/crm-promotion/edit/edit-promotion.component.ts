@@ -24,6 +24,7 @@ import { PromotionFormComponent } from '../../../components/crm-promotion/promot
     <app-promotion-form
       submitLabel="บันทึกการแก้ไข"
       [submitting]="submitting()"
+      [editingId]="id()"
       (submitted)="onSubmit($event)"
     >
       <div slot="header" class="d-flex align-items-center gap-2 mb-3">

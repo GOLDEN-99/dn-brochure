@@ -12,6 +12,15 @@ import {
 } from '../../../lib/crm-promotion/promotion-actions';
 import { TCreatePromotionRequest } from '../../../types/crm-promotion.type';
 import { ComponentFixture } from '@angular/core/testing';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { of, throwError } from 'rxjs';
+import { PromotionOverlapService } from '../../../service/crm-promotion/promotion-overlap.service';
+import { EMPTY_OVERLAP_REPORT, OverlapReport } from '../../../lib/crm-promotion/promotion-overlap';
+import { PromotionOverlapModalComponent } from '../promotion-overlap-modal/promotion-overlap-modal.component';
+
+// The pre-save overlap check answers "nothing live" unless a test says otherwise, so the
+// payload tests below stay synchronous and about the payload.
+const noOverlaps = { check: () => of(EMPTY_OVERLAP_REPORT) };
 
 function fixtureFor(path: string): ComponentFixture<PromotionFormComponent> {
   TestBed.resetTestingModule();
@@ -20,6 +29,7 @@ function fixtureFor(path: string): ComponentFixture<PromotionFormComponent> {
       provideHttpClient(withXhr()),
       provideHttpClientTesting(),
       { provide: CRM_PAGE_CONFIG, useValue: provideCreatePromotionConfig(path) },
+      { provide: PromotionOverlapService, useValue: noOverlaps },
     ],
   });
   return TestBed.createComponent(PromotionFormComponent);
@@ -42,6 +52,7 @@ function requestFor(path: string): TCreatePromotionRequest {
       provideHttpClient(withXhr()),
       provideHttpClientTesting(),
       { provide: CRM_PAGE_CONFIG, useValue: provideCreatePromotionConfig(path) },
+      { provide: PromotionOverlapService, useValue: noOverlaps },
     ],
   });
   const fixture = TestBed.createComponent(PromotionFormComponent);
@@ -195,3 +206,120 @@ describe('PromotionFormComponent submit gate', () => {
   });
 });
 
+
+describe('PromotionFormComponent pre-save overlap check', () => {
+  const overlap = (outcome: OverlapReport['overlaps'][number]['outcome']): OverlapReport => ({
+    blocking: outcome === 'COLLISION',
+    overlaps: [{
+      outcome, existingFirst: true, sharedProducts: [],
+      existing: {
+        id: 10, promotionName: 'live', promotionDesc: '', promotionType: 'BUNDLE', source: null,
+        action: 'BUNDLEBATHDISC', thresholdType: 'BUNDLECOUNT', isRepeat: true,
+        isBranchSpecific: false, isMemberSpecific: false,
+        startdate: '2026-10-01', enddate: '2026-10-31', limitTime: false, startTime: '', endTime: '',
+        activeDays: '1111111', promotionStatus: 'ACTIVE', promotionPriority: 0, promotionOrder: 0,
+        tiers: [], filterList: [], rewardPool: [], members: [],
+      },
+    }],
+  });
+
+  // Stands in for the modal instance: the form sets `report` on it
+  class FakeModal {
+    value: OverlapReport | null | undefined = undefined;
+    report = { set: (v: OverlapReport | null) => { this.value = v; } };
+  }
+
+  // `answer` is what the modal resolved: `true` from the confirm button, a rejection from cancel
+  function setup(path: string, check: PromotionOverlapService['check'], answer: Promise<unknown>) {
+    const modalRef = { componentInstance: new FakeModal(), result: answer };
+    const modal = jasmine.createSpyObj<NgbModal>('NgbModal', ['open']);
+    modal.open.and.returnValue(modalRef as never);
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(withXhr()),
+        provideHttpClientTesting(),
+        { provide: CRM_PAGE_CONFIG, useValue: provideCreatePromotionConfig(path) },
+        { provide: PromotionOverlapService, useValue: { check } },
+        { provide: NgbModal, useValue: modal },
+      ],
+    });
+    const fixture = TestBed.createComponent(PromotionFormComponent);
+    const c = fixture.componentInstance;
+    const emitted: TCreatePromotionRequest[] = [];
+    c.submitted.subscribe((r) => emitted.push(r));
+    return { fixture, c, modal, modalRef, emitted };
+  }
+
+  it('saves a BILL promotion without asking', () => {
+    const check = jasmine.createSpy('check').and.returnValue(of(EMPTY_OVERLAP_REPORT));
+    const { c, modal, emitted } = setup('create-bill', check, Promise.resolve(true));
+    c.onSubmit();
+    expect(check).not.toHaveBeenCalled();
+    expect(modal.open).not.toHaveBeenCalled();
+    expect(emitted.length).toBe(1);
+  });
+
+  it('saves a BUNDLE promotion straight away when nothing overlaps', () => {
+    const check = jasmine.createSpy('check').and.returnValue(of(EMPTY_OVERLAP_REPORT));
+    const { c, modal, emitted } = setup('create-cheapest', check, Promise.resolve(true));
+    c.onSubmit();
+    expect(check).toHaveBeenCalledWith(jasmine.objectContaining({ promotionType: 'BUNDLE' }), undefined);
+    expect(modal.open).not.toHaveBeenCalled();
+    expect(emitted.length).toBe(1);
+    expect(c.checking()).toBeFalse();
+  });
+
+  it('passes the id being edited to the check', () => {
+    const check = jasmine.createSpy('check').and.returnValue(of(EMPTY_OVERLAP_REPORT));
+    const { fixture, c } = setup('create-cheapest', check, Promise.resolve(true));
+    fixture.componentRef.setInput('editingId', 42);
+    c.onSubmit();
+    expect(check).toHaveBeenCalledWith(jasmine.anything(), 42);
+  });
+
+  it('asks, then saves on confirm', async () => {
+    const check = () => of(overlap('SHARES_UNITS'));
+    const { c, modal, modalRef, emitted } = setup('create-cheapest', check, Promise.resolve(true));
+    c.onSubmit();
+    expect(modal.open).toHaveBeenCalledWith(PromotionOverlapModalComponent, jasmine.objectContaining({ backdrop: 'static' }));
+    expect(modalRef.componentInstance.value?.overlaps.length).toBe(1);
+    await modalRef.result;
+    await Promise.resolve();
+    expect(emitted.length).toBe(1);
+  });
+
+  it('asks, and does not save on cancel', async () => {
+    const check = () => of(overlap('EXCLUSIVE'));
+    const answer = Promise.reject(new Error('cancel'));
+    const { c, emitted } = setup('create-cheapest', check, answer);
+    c.onSubmit();
+    await answer.catch(() => undefined);
+    await Promise.resolve();
+    expect(emitted.length).toBe(0);
+  });
+
+  // The modal has no confirm button on a blocking report; the form also saves on nothing
+  // but an explicit `true`
+  it('never saves a COLLISION, whatever the modal returns', async () => {
+    const check = () => of(overlap('COLLISION'));
+    const answer = Promise.resolve(undefined);
+    const { c, emitted, modalRef } = setup('create-cheapest', check, answer);
+    c.onSubmit();
+    expect(modalRef.componentInstance.value?.blocking).toBeTrue();
+    await answer;
+    await Promise.resolve();
+    expect(emitted.length).toBe(0);
+  });
+
+  it('reports a failed check and lets the author decide', async () => {
+    const check = () => throwError(() => new Error('down'));
+    const { c, modalRef, emitted } = setup('create-cheapest', check, Promise.resolve(true));
+    c.onSubmit();
+    expect(modalRef.componentInstance.value).toBeNull();
+    expect(c.checking()).toBeFalse();
+    await modalRef.result;
+    await Promise.resolve();
+    expect(emitted.length).toBe(1);
+  });
+});
