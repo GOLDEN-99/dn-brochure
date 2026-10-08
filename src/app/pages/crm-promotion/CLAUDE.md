@@ -28,17 +28,21 @@ src/app/
 ├── components/crm-promotion/
 │   ├── promotion-form/                  PromotionFormComponent — the whole form
 │   ├── create-promotion-subform/        promotion-master/-datetime/-limit-usage/-product-filter
+│   ├── promotion-overlap-modal/         The pre-save "these live promotions share your goods" dialog
 │   └── (benefit-*, inline-*, promotion-*, product-picker, ...)  Field-level controls
 ├── factory/crm-promotion/
 │   ├── create-promotion.ts              provideCreatePromotionConfig / provideEditPromotionConfig
 │   └── promotion-detail-to-form.ts      TPromotionDetail -> TCreatePromotionForm
 ├── service/crm-promotion/               crm-promotion (CRUD), branch-config, product-config,
-│                                        product-group-config, member-config, crm-token
+│                                        product-group-config, member-config, crm-token,
+│                                        promotion-overlap (the pre-save check's fetches)
 ├── layout/crm-promotion-layout/         Shell for all /crm-promotion routes
 ├── lib/crm-promotion/                   Display pipes (promotion-type, -order, -priority,
 │                                        -threshold, -benefit-name, product-name);
 │                                        describe-promotion.ts — one-line BU wording,
-│                                        golden cases in workspace CRM-PROMOTIONS.md §3b
+│                                        golden cases in workspace CRM-PROMOTIONS.md §3b;
+│                                        promotion-overlap.ts — what the till does when two
+│                                        promotions name one good (pre-save check)
 └── types/crm-promotion.type.ts          All domain/request/response types
 ```
 
@@ -230,6 +234,58 @@ backend work that should follow. The non-obvious ones:
   API enforces. Treating `00:00` as end-of-day is an open request that needs
   the evaluator changed in the same release; see ClickUp `86eynabyf`.
 - `promotionType !== 'BILL'` requires at least one filter group.
+
+## Pre-save overlap check (BUNDLE only) — since 2026-10-08
+
+A set bundle is activated by goods the cart must contain, and the same good sits in many
+sets, so two bundles naming one good are the common authoring accident — and at the till the
+accident is silent: two discount promotions at the **same non-zero priority** that both fire
+yield **nothing** (DrugPOSApp sale RULES §1.22). So `PromotionFormComponent.onSubmit()` does
+not emit a BUNDLE request straight away. It calls `PromotionOverlapService.check(req,
+editingId)` and, when anything comes back, opens `PromotionOverlapModalComponent` (NgbModal)
+and emits only on an explicit confirm. The button reads "กำลังตรวจสอบโปรโมชั่นที่ซ้อนกัน..."
+meanwhile and `canSubmit` is false.
+
+What counts (`lib/crm-promotion/promotion-overlap.ts`, pure, specs beside it):
+
+- Only the **same §1.22 group**: set BUNDLE (`BUNDLECOUNT`) against set bundles, spend
+  (`BUNDLESUBTOTAL`) against spend. ITEM and BILL saves are not checked (the item-price
+  import has its own overlap view; a BILL names no goods).
+- Only **activating actions** on both sides: GIFT, PWP and REGISTERFEE never collide.
+- The live promotion must be `ACTIVE`, its date range touch (by day, last day inclusive), a
+  weekday in common, time windows that meet (two limited windows can be disjoint; a window
+  whose end is not after its start is read as all day), a member in common when both are
+  member-specific, a branch in common when both are branch-specific, and **a (goodCode,
+  unitCode) pair in common** in any filter group — a stored row whose unit is still null
+  matches every unit of its good.
+- Outcome, from the priorities (`promotionPriority` of both) and then the open-tier order:
+
+  | Outcome | When | Shown as |
+  | --- | --- | --- |
+  | `COLLISION` | same priority > 0 | **refused** — the modal's only button is "กลับไปแก้ไข" |
+  | `EXCLUSIVE` | priorities differ, one > 0 | warning: the higher one settles the group and skips the other (0 included) |
+  | `SHARES_UNITS` | both 0, set bundles | info: units go to one set each, `promotionOrder` descending then id first (§1.23) |
+  | `STACKS` | both 0, spend bundles | info: nothing consumed, both discounts land on the shared goods |
+
+  A ladder (set-of-3, set-of-2 on one good at priority 0) is therefore a `SHARES_UNITS` note
+  the author confirms, not a refusal — CRM-PROMOTIONS.md §2 *Ladders* says that overlap is
+  how a ladder is built.
+
+Fetching (`service/crm-promotion/promotion-overlap.service.ts`): one
+`GET /crm/promotions?include=details&promotionType=<type>&status=ACTIVE`, screened on header
+fields, then products, members and days from the list rows; `GET /:id` only for a candidate
+the list cannot settle — both sides branch-specific (the list reduces branches to a count),
+or an API without `include=details` that answered with headers. Four in flight at most.
+
+If the check itself fails (API unreachable) the modal says so and offers "บันทึกโดยไม่ตรวจ":
+a guard that blocks every save on a network error would be worse than one that says it did
+not look. The create and edit pages are untouched beyond the edit page passing
+`[editingId]`; both still only see the `submitted` output.
+
+Not covered, deliberately: an **INACTIVE** promotion someone may reactivate later, and a
+promotion in the other clone's data (`Drug_Dev` lags prod, workspace CLAUDE.md §4). The rule
+lives in the FE only; the API's `POST /crm/promotions/validate` is a body dry-run and does
+not look across rows.
 
 ## Services
 
