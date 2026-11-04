@@ -1,5 +1,10 @@
 # Brochure restyle — engineering constraints (internal)
 
+> Companions: `SEND-TO-BUSINESS.md` (Thai, for the requester) ·
+> `DESIGNER-BRIEF.md` (Thai, for the design team — asset sizes, file-name matrix, safe areas,
+> colour rules) · `spike/RESULTS.md` (the date-range rasterisation spike).
+> **This file is internal — do not send it outside the team.**
+
 Written 2026-11-04 from the live code on `origin/prod`. The three brochures the business wants
 restyled are the three routes in `src/app/brochure/routes.ts`:
 
