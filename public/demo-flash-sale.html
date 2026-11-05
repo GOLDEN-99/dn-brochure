@@ -45,6 +45,24 @@
     color: #fff; font-weight: 600; line-height: 1; white-space: nowrap;
   }
 
+  /* our own chip, cut from the plate's own pixels: fixed caps, repeating
+     middle. Anchored on the right where the baked one sits and grown
+     leftward, because the page leaves only 210px to its right. Being wider
+     and taller than the baked chip, it covers it and its glow entirely. */
+  .ourchip {
+    position: absolute; right: 4.66%; top: 23.63%; height: 6.49%;
+    display: flex; align-items: stretch;
+  }
+  .ourchip .cap-l { width: 194px; background: url('/image/FS/chip/left.png') left center/100% 100% no-repeat; }
+  .ourchip .mid   { background: url('/image/FS/chip/mid.png') left center/auto 100% repeat-x; }
+  .ourchip .cap-r { width: 110px; background: url('/image/FS/chip/right.png') left center/100% 100% no-repeat; }
+  .ourchip .label {
+    position: absolute; left: 194px; right: 110px; top: 0; bottom: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 600; line-height: 1; white-space: nowrap;
+    transform: translateY(-2%);
+  }
+
   .card {
     position: absolute; width: var(--card-w); aspect-ratio: 1;
   }
@@ -91,6 +109,15 @@
 
 <div class="row" id="row-day"></div>
 
+<h1>ป้ายวันที่ที่เราวาดเอง — เทียบกับของเดิม</h1>
+<p class="note">
+  ตัดหัว–ท้าย–ลายกลางของป้ายออกมาจากไฟล์พื้นหลังเอง แล้วประกอบใหม่ให้ยาวตามข้อความ
+  วางทับป้ายเดิมให้มิด (กว้างและสูงกว่าเดิม) · ยึดขอบขวาไว้ที่เดิมแล้วยืดไปทางซ้าย
+  เพราะด้านขวาเหลือที่แค่ 210 px · <strong>ได้ตัวอักษรเต็มขนาด 108 px ทุกกรณี ไม่ต้องย่อ</strong>
+</p>
+
+<div class="row" id="row-chip"></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 // real payload: POST /ItemService2/PaperProFlash {idPromotion:"408", zone:"BKK"}
@@ -132,6 +159,30 @@ function buildCard(item, x, y) {
     <div class="photo"><img src="https://file.drugnetcenter.com/drugpos/GoodPictures/${item.goodCode}.jpg" alt="" crossorigin="anonymous"></div>
     <div class="price">${money(item.flashPrice)}</div>`;
   return el;
+}
+
+/** replace the baked chip with one built from its own slices, sized to the text */
+function addOurChip(stage, text, fontPx) {
+  stage.querySelector('.daterange').remove();
+  const chip = document.createElement('div');
+  chip.className = 'ourchip';
+  chip.innerHTML = `<div class="cap-l"></div><div class="mid"></div><div class="cap-r"></div>
+                    <div class="label">${text}</div>`;
+  stage.appendChild(chip);
+  // measure the text at the wanted size, then set the middle to suit
+  const label = chip.querySelector('.label');
+  label.style.fontSize = fontPx + 'px';
+  const probe = document.createElement('span');
+  probe.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;font:600 ${fontPx}px Kanit,sans-serif`;
+  probe.textContent = text;
+  stage.appendChild(probe);
+  const textW = probe.getBoundingClientRect().width / 0.110576;
+  probe.remove();
+  const PAD = 90;
+  // never narrower than the baked chip, or its ends would show
+  const midW = Math.max(1048 - 194 - 110, textW + PAD * 2 - 194 + 194);
+  chip.querySelector('.mid').style.width = Math.round(midW) + 'px';
+  return { textW: Math.round(textW), chipW: Math.round(194 + midW + 110) };
 }
 
 function buildStage(dateText, day = DATA.head.day, cap = true) {
@@ -230,8 +281,29 @@ window.__report = {};
     rowDay.appendChild(holder);
   }
 
+  const rowChip = document.getElementById('row-chip');
+  for (const c of CASES) {
+    const holder = document.createElement('div');
+    holder.className = 'holder';
+    holder.innerHTML = `<h2>${c.title} — ป้ายของเรา</h2><p class="meta" id="cmeta-${c.key}"></p>`;
+    const vp = document.createElement('div');
+    vp.className = 'viewport';
+    const stage = buildStage(c.text);
+    stage.id = 'cstage-' + c.key;
+    vp.appendChild(stage);
+    holder.appendChild(vp);
+    rowChip.appendChild(holder);
+  }
+
   // let images land, then size everything that depends on measured boxes
   await new Promise(r => setTimeout(r, 1200));
+  for (const c of CASES) {
+    const stage = document.getElementById('cstage-' + c.key);
+    sizeCard(stage);
+    const m = addOurChip(stage, c.text, 108);
+    document.getElementById('cmeta-' + c.key).textContent =
+      `ตัวอักษร 108px เต็มขนาด — ข้อความ ${m.textW}px ป้ายกว้าง ${m.chipW}px (เดิม 1048px)`;
+  }
   for (const d of DAY_CASES) {
     const stage = document.getElementById('stage-' + d.key);
     sizeCard(stage);
