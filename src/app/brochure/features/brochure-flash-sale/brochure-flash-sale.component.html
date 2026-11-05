@@ -7,34 +7,18 @@
   />
 }
 
-<div class="fs-head">
-  @if (dayCount(); as days) {
-    <div class="fs-daybox">
-      <span class="fs-digit">{{ days }}</span>
-      <span class="fs-dayword">วันเท่านั้น</span>
-    </div>
-  }
-  @if (dateRange(); as range) {
-    <div class="fs-date">
-      <span class="fs-cal" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="5" width="18" height="16" rx="3" />
-          <path d="M8 2.6v4M16 2.6v4M3 10.5h18" />
-          <circle cx="8" cy="14.5" r="1.1" fill="currentColor" stroke="none" />
-          <circle cx="12" cy="14.5" r="1.1" fill="currentColor" stroke="none" />
-          <circle cx="16" cy="14.5" r="1.1" fill="currentColor" stroke="none" />
-          <circle cx="8" cy="18" r="1.1" fill="currentColor" stroke="none" />
-          <circle cx="12" cy="18" r="1.1" fill="currentColor" stroke="none" />
-        </svg>
-      </span>
-      <span class="fs-daterange">{{ range }}</span>
-    </div>
-  }
-</div>
+@if (dayDigits().length) {
+  <div class="fs-digit">
+    @for (d of dayDigits(); track $index) {
+      <img [src]="'/image/FS/number/' + d + '.png'" alt="" />
+    }
+  </div>
+}
 
-<div class="fs-grid">
-  @for (item of items(); track $index) {
-    <app-flash-sale-card [cardProp]="item" [isStatic]="isStatic()" />
-  }
-</div>
+@if (dateRange(); as range) {
+  <div class="fs-date" #dateEl>{{ range }}</div>
+}
+
+@for (item of visibleItems(); track $index; let i = $index) {
+  <app-flash-sale-card [cardProp]="item" [slot]="slots()[i]" />
+}

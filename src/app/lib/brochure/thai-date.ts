@@ -22,10 +22,21 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000
 
 type Ymd = { y: number; m: number; d: number }
 
-/** the API returns UTC instants; the rest of the brochure code shifts by +7h
- *  to land on the Bangkok calendar date, so this matches it */
-function toBangkokYmd(iso: string): Ymd | null {
-  const unix = new Date(iso).getTime()
+/** PaperProFlash returns "11/01/2025 00:00:00" — MM/DD/YYYY, not ISO.
+ *  Confirmed against promotion 408, whose fromDate 11/01 / toDate 11/07 and
+ *  dayActive "01-07 พ.ย. 2568" agree only under MM/DD.
+ *  That form already names a calendar date, so it takes no timezone shift;
+ *  an ISO instant still does, matching the rest of the brochure code. */
+function toBangkokYmd(value: string): Ymd | null {
+  const slashed = value.match(/^\s*(\d{1,2})\/(\d{1,2})\/(\d{4})/)
+  if (slashed) {
+    const [, mm, dd, yyyy] = slashed
+    const y = +yyyy, m = +mm, d = +dd
+    if (m < 1 || m > 12 || d < 1 || d > 31) return null
+    return { y, m, d }
+  }
+
+  const unix = new Date(value).getTime()
   if (Number.isNaN(unix)) return null
   const shifted = new Date(unix + 7 * 60 * 60 * 1000)
   return {

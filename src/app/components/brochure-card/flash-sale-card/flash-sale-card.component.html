@@ -1,5 +1,7 @@
 @let prop = cardProp();
 
+<img class="fs-frame" src="/image/FS/card.png" alt="" />
+
 <div class="fs-code">{{ prop.barCode }}</div>
 
 <div class="fs-name">{{ prop.goodName }}</div>
@@ -15,14 +17,4 @@
   }
 </div>
 
-<div class="fs-price">
-  <span class="fs-cart" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-         stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="9.5" cy="20" r="1.5" fill="currentColor" stroke="none" />
-      <circle cx="18" cy="20" r="1.5" fill="currentColor" stroke="none" />
-      <path d="M1.8 2.6h3.1l2.6 12.1a2 2 0 0 0 2 1.6h8.3a2 2 0 0 0 2-1.55L22.2 7H6.2" />
-    </svg>
-  </span>
-  <span class="fs-amount">{{ prop.flashPrice | number : "1.2-2" }}.-</span>
-</div>
+<div class="fs-price">{{ prop.flashPrice | number : "1.2-2" }}.-</div>

@@ -2,6 +2,7 @@ import { Component, computed, input, signal, ChangeDetectionStrategy } from '@an
 import { TFlashSaleItem } from '../../../types';
 import { DecimalPipe } from '@angular/common';
 import { environment } from '../../../../environments/environment';
+import { FlashSaleSlot } from '../../../lib/brochure/flash-sale-layout';
 
 @Component({
   selector: 'app-flash-sale-card',
@@ -9,12 +10,17 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './flash-sale-card.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './flash-sale-card.component.scss',
-  host: { '[class.static]': 'isStatic()' },
+  host: {
+    '[style.left]': 'slot().left',
+    '[style.top]': 'slot().top',
+    '[style.width]': 'slot().width',
+  },
 })
 export class FlashSaleCardComponent {
   cardProp = input.required<TFlashSaleItem>()
 
-  isStatic = input<boolean>(true)
+  /** position and size come from the page's layout table */
+  slot = input.required<FlashSaleSlot>()
 
   /** the other four brochure cards all resolve the picture host this way */
   imgUrl = computed(() => `${environment.imagePath}/${this.cardProp().goodCode}.jpg`)
@@ -26,20 +32,15 @@ export class FlashSaleCardComponent {
   /** Contains the photo inside its slot by hand.
    *  object-fit is not used: html2canvas 1.4.1 does not reproduce it reliably
    *  and the exported JPG is the deliverable, so the fit is resolved to
-   *  explicit pixels the rasteriser cannot disagree with.
-   *  Measuring the slot rather than using a fixed cap keeps the photo as large
-   *  as the card allows in both modes; .fs-photo also carries max-width /
-   *  max-height so a photo can never overflow if this never runs. */
+   *  explicit pixels the rasteriser cannot disagree with. */
   handleOnLoad(e: Event) {
     const img = e.target as HTMLImageElement
-    const slot = img.parentElement
     if (!img.naturalWidth || !img.naturalHeight) return
 
-    const box = slot?.getBoundingClientRect()
-    const limitW = box?.width || (this.isStatic() ? 1100 : 300)
-    const limitH = box?.height || (this.isStatic() ? 700 : 190)
+    const box = img.parentElement?.getBoundingClientRect()
+    if (!box?.width || !box?.height) return
 
-    const scale = Math.min(limitW / img.naturalWidth, limitH / img.naturalHeight)
+    const scale = Math.min(box.width / img.naturalWidth, box.height / img.naturalHeight)
     img.style.width = `${Math.round(img.naturalWidth * scale)}px`
     img.style.height = `${Math.round(img.naturalHeight * scale)}px`
   }

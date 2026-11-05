@@ -66,6 +66,41 @@ describe('formatThaiDateRangeShort', () => {
   })
 })
 
+describe('the format PaperProFlash actually returns', () => {
+  // promotion 408: fromDate 11/01/2025, toDate 11/07/2025, day 7,
+  // dayActive "01-07 พ.ย. 2568" — which only agrees under MM/DD/YYYY
+  const FROM = '11/01/2025 00:00:00'
+  const TO = '11/07/2025 00:00:00'
+
+  it('reads MM/DD/YYYY rather than DD/MM/YYYY', () => {
+    expect(formatThaiDateRangeShort(FROM, TO)).toBe('1 – 7 พ.ย. 2568')
+  })
+
+  it('counts the days to match the API\'s own `day` field', () => {
+    expect(inclusiveDayCount(FROM, TO)).toBe(7)
+  })
+
+  it('does not shift a slashed date across midnight', () => {
+    // it names a calendar date, so it takes no +7h correction
+    expect(formatThaiDateRangeShort('12/31/2026 00:00:00', '12/31/2026 00:00:00'))
+      .toBe('31 ธ.ค. 2569')
+  })
+
+  it('handles a single-digit month and day', () => {
+    expect(formatThaiDateRangeShort('1/5/2026 00:00:00', '1/9/2026 00:00:00'))
+      .toBe('5 – 9 ม.ค. 2569')
+  })
+
+  it('still reads ISO, which the A4 brochures use', () => {
+    expect(formatThaiDateRangeShort(bkk(2026, 9, 15), bkk(2026, 9, 21)))
+      .toBe('15 – 21 ก.ย. 2569')
+  })
+
+  it('rejects an out-of-range month', () => {
+    expect(formatThaiDateRangeShort('13/01/2026 00:00:00', '13/05/2026 00:00:00')).toBe('')
+  })
+})
+
 describe('inclusiveDayCount', () => {
   it('counts both end days', () => {
     expect(inclusiveDayCount(bkk(2026, 9, 15), bkk(2026, 9, 21))).toBe(7)
