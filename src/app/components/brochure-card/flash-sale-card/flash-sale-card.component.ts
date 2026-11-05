@@ -1,6 +1,7 @@
 import { Component, computed, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TFlashSaleItem } from '../../../types';
 import { DecimalPipe } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-flash-sale-card',
@@ -15,7 +16,8 @@ export class FlashSaleCardComponent {
 
   isStatic = input<boolean>(true)
 
-  imgUrl = computed(() => `https://file.drugnetcenter.com/drugpos/GoodPictures/${this.cardProp().goodCode}.jpg`)
+  /** the other four brochure cards all resolve the picture host this way */
+  imgUrl = computed(() => `${environment.imagePath}/${this.cardProp().goodCode}.jpg`)
 
   /** a product with no picture on file leaves the slot empty rather than
    *  baking a broken-image glyph into the exported JPG */
