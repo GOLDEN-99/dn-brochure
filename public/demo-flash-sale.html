@@ -82,6 +82,15 @@
 
 <div class="row" id="row"></div>
 
+<h1>จำนวนวัน — เปลี่ยนเลขโดยใช้ไฟล์ 0–9 ที่ส่งมา</h1>
+<p class="note">
+  ช่วงวันที่คงที่ (ค่าจริงของโปรฯ 408) เปลี่ยนเฉพาะจำนวนวัน ·
+  ช่องว่างสำหรับเลขในแผงน้ำเงินกว้างประมาณ 415 px · เลข 1 หลักกว้างประมาณ 357 px ·
+  <strong>ใบที่สามแสดงเลข 2 หลักโดยไม่จำกัด เพื่อให้เห็นว่าทำไมจึงต้องจำกัดที่ 9</strong>
+</p>
+
+<div class="row" id="row-day"></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 // real payload: POST /ItemService2/PaperProFlash {idPromotion:"408", zone:"BKK"}
@@ -103,6 +112,12 @@ const CASES = [
   { key: 'year',  title: 'ข้ามปี',         text: '28 ธ.ค. 2569 – 3 ม.ค. 2570', note: 'ยาวที่สุด ต้องย่อตัวอักษรลงมาก' },
 ];
 
+const DAY_CASES = [
+  { key: 'd3',  day: 3,  cap: true,  title: '3 วัน',  note: 'เลขหลักเดียว ใช้ไฟล์ 3.png' },
+  { key: 'd9',  day: 9,  cap: true,  title: '9 วัน',  note: 'เลขหลักเดียวที่มากที่สุดที่ช่องรับได้' },
+  { key: 'd14', day: 14, cap: false, title: '14 วัน — ไม่จำกัด (ตัวอย่างปัญหา)', note: 'เลข 2 หลักกว้างประมาณ 674 px ล้นออกไปทับคำว่า "วันเท่านั้น"' },
+];
+
 const money = (n) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '.-';
 
 function buildCard(item, x, y) {
@@ -119,7 +134,7 @@ function buildCard(item, x, y) {
   return el;
 }
 
-function buildStage(dateText) {
+function buildStage(dateText, day = DATA.head.day, cap = true) {
   const stage = document.createElement('div');
   stage.className = 'stage';
 
@@ -132,7 +147,7 @@ function buildStage(dateText) {
   // artwork is ~415px and two digits need ~674px.
   const digit = document.createElement('div');
   digit.className = 'digit';
-  const shown = Math.min(DATA.head.day, 9);
+  const shown = cap ? Math.min(day, 9) : day;
   String(shown).split('').forEach(d => {
     const i = document.createElement('img');
     i.src = `/image/FS/number/${d}.png`;
@@ -201,8 +216,27 @@ window.__report = {};
     row.appendChild(holder);
   }
 
+  const rowDay = document.getElementById('row-day');
+  for (const d of DAY_CASES) {
+    const holder = document.createElement('div');
+    holder.className = 'holder';
+    holder.innerHTML = `<h2>${d.title}</h2><p class="meta">${d.note}</p>`;
+    const vp = document.createElement('div');
+    vp.className = 'viewport';
+    const stage = buildStage(DATA.head.dayActive, d.day, d.cap);
+    stage.id = 'stage-' + d.key;
+    vp.appendChild(stage);
+    holder.appendChild(vp);
+    rowDay.appendChild(holder);
+  }
+
   // let images land, then size everything that depends on measured boxes
   await new Promise(r => setTimeout(r, 1200));
+  for (const d of DAY_CASES) {
+    const stage = document.getElementById('stage-' + d.key);
+    sizeCard(stage);
+    fitText(stage.querySelector('.daterange'), 108, 48);
+  }
   for (const c of CASES) {
     const stage = document.getElementById('stage-' + c.key);
     sizeCard(stage);
