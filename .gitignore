@@ -45,3 +45,5 @@ Thumbs.db
 .claude
 
 .env
+# per-worktree dev server config (Claude Code)
+.claude/launch.json

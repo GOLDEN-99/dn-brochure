@@ -1,101 +1,96 @@
+/* Flash Sale card — the delivered artwork plus live text.
+   card.png carries the white card, the gold pill and the red price banner
+   with its cart badge, so nothing here redraws them. The card is always
+   square and the page sizes it, so every inner box is a percentage and the
+   whole thing scales with no stretching.
+   Boxes measured from Product-Template.png (1800x1800). */
+
 :host {
-  box-sizing: border-box;
-  aspect-ratio: 1;
-  background-color: #fff;
-
-  min-width: 350px;
-
-  display: flex;
-  flex-direction: column;
-
-  border-radius: 1rem;
-
-  &:has(div.header.static) {
-    width: 30%;
-    border-radius: 4rem;
-  }
-}
-
-.header {
-  display: flex;
-  justify-content: center;
-  background-color: #00a651;
-  margin: 1rem 0;
-  padding: 0.5rem;
-
-  &.static {
-    padding: 2rem;
-    margin: 4rem 0;
-  }
-
-  .header-text {
-    text-align: center;
-
-    &.long:not(.static) {
-    }
-
-    &.static {
-      font-size: 5rem;
-
-      &.long {
-      }
-    }
-  }
-
-  &.static img {
-    max-width: 1100px;
-  }
-}
-
-.content {
-  flex: 1 1 auto;
-  display: flex;
-  justify-content: center;
-  margin: 0 1rem;
-
-  &.static {
-    margin: 0 2rem;
-  }
-
-  .content-section {
-    flex: 1 1 50%;
-  }
-  img:not(.static) {
-    max-width: 150px;
-    max-height: 200px;
-  }
-
-  &.static img {
-    max-width: 590px;
-    max-height: 750px;
-  }
-}
-
-.price-text {
-  height: 50%;
   position: absolute;
+  box-sizing: border-box;
+  aspect-ratio: 1;        /* width comes from the slot the page assigns */
+  display: block;
+
+  /* every inner size below is in cqw, so one rule set serves both the small
+     preview and the 4160px export. Verified to survive html2canvas, which
+     reads resolved pixel values from getComputedStyle. */
+  container-type: inline-size;
+}
+
+.fs-frame {
+  position: absolute;
+  inset: 0;
   width: 100%;
+  height: 100%;
+}
+
+/* code, over the gold pill: x 518..1257, y 82..276 of 1800 */
+.fs-code {
+  position: absolute;
+  left: 28.8%;
+  top: 4.6%;
+  width: 41.1%;
+  height: 10.8%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fs-code-fg);
+  font-weight: 600;
+  line-height: 1;
+  font-size: 7.5cqw;
+}
+
+.fs-name {
+  position: absolute;
+  left: 6%;
+  top: 17.5%;
+  width: 88%;
+  height: 13%;
   text-align: center;
-  translate: 0 65%;
-  &.static {
-    font-size: 90px;
-    translate: 0 75%;
+  color: var(--fs-name-fg);
+  font-weight: 600;
+  line-height: 1.18;
+  font-size: 5.8cqw;
+
+  /* a long goodName must not push into the photo */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fs-photo {
+  position: absolute;
+  left: 8%;
+  top: 31.5%;
+  width: 84%;
+  height: 46%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* sized by handleOnLoad rather than object-fit, which html2canvas 1.4.1
+     does not reproduce reliably; max-* is the net if that never runs */
+  img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
   }
 }
 
-.goodcode {
-  border-bottom: solid #fff 1px;
-  background-color: #fff200;
-  padding: 4px 4px 0 4px;
-  border-radius: 8px 8px 0 0;
-
-  &.static {
-    font-size: 5rem;
-    padding: 0 1rem;
-    border-radius: 2.5rem 2.5rem 0 0;
-  }
-}
-
-.text-white {
-  color: #fff;
+/* price, over the red banner and clear of the cart badge on its left */
+.fs-price {
+  position: absolute;
+  left: 28%;
+  top: 79.4%;
+  width: 61%;
+  height: 16.4%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fs-price-fg);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  font-size: 10.5cqw;
 }

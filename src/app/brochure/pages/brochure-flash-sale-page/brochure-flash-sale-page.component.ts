@@ -52,7 +52,23 @@ export class BrochureFlashSalePageComponent implements OnInit, OnDestroy {
 
   onExport() {
     const b = document.querySelector('.flash-sale-bg.flash-sale-page.main-gap.static')
-    if (!b) return
+    if (!b) {
+      // used to return silently, leaving the button looking inert
+      this.toastService.danger('ไม่พบหน้าสำหรับ export')
+      return
+    }
+
+    /* The artwork fits one digit, so design capped the day number at 9. A
+       longer promotion still exports, printing a day count it does not have,
+       so say so rather than let it leave unnoticed.
+       See docs/brochure-restyle/FLASH-SALE-ASSET-LIST.md §4.1. */
+    const days = this.result()?.head?.day ?? 0
+    if (days > 9) {
+      this.toastService.danger(
+        `โปรโมชันนี้ยาว ${days} วัน แต่ไฟล์จะพิมพ์ว่า "9 วันเท่านั้น" เพราะช่องใส่เลขรองรับได้หลักเดียว`
+      )
+    }
+
     this.exporting.set(true)
     this.exportService
       .exportImg(b as HTMLElement, `${this.result()?.head.name ?? 'flash-sale'}.jpg`)
