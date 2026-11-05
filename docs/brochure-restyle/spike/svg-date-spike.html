@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SVG date-range spike</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root { --red: #e50020; --yellow: #fffbc7; }
+  body { font-family: Kanit, system-ui, sans-serif; margin: 0; padding: 16px; background: #f4f4f6; color: #111; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p.note { font-size: 12px; color: #555; margin: 0 0 16px; }
+  .variant { background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; padding: 10px; }
+  .variant h2 { font-size: 13px; margin: 0 0 8px; font-weight: 700; }
+  .row { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+  .pane { border: 1px dashed #bbb; padding: 4px; }
+  .pane > figcaption { font-size: 10px; color: #777; margin-bottom: 2px; }
+  /* every subject is a .subject node: that exact node is what html2canvas rasterises */
+  .subject { background: #fff; padding: 8px 14px; display: inline-block; }
+  .subject.on-red { background: var(--red); }
+  .date-text { font-size: 28px; font-weight: 700; white-space: nowrap; line-height: 1.3; }
+  /* dark fill, not the panel red: the measuring code treats panel-red as background */
+  .v-html-stroke .date-text {
+    color: #111; -webkit-text-stroke: 4px #fff; paint-order: stroke fill;
+  }
+  .v-html-shadow .date-text {
+    color: #111;
+    text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff,
+                 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;
+  }
+  table { border-collapse: collapse; font-size: 12px; background: #fff; width: 100%; }
+  th, td { border: 1px solid #ccc; padding: 4px 6px; text-align: left; }
+  th { background: #eee; }
+  td.pass { background: #e6f6e6; } td.fail { background: #fde2e2; } td.warn { background: #fff4d6; }
+  #status { font-size: 13px; margin: 8px 0; font-weight: 700; }
+</style>
+</head>
+<body>
+<h1>Date range through html2canvas 1.4.1</h1>
+<p class="note">
+  Each row: the live DOM node, then the same node rasterised by html2canvas with the exporter's own
+  options (<code>useCORS: true, scale: 1</code>, per <code>src/app/lib/brochure/pdf.ts</code>).
+  Text is the real computed range string.
+</p>
+<div id="status">running…</div>
+<div id="variants"></div>
+<h2 style="font-size:14px">Measurements</h2>
+<table id="results"><thead><tr>
+  <th>variant</th><th>ink px</th><th>ink w×h</th><th>width vs live</th><th>ink density vs control</th>
+  <th>white ink inside (stroke)</th><th>left→right ink color (gradient)</th><th>verdict</th>
+</tr></thead><tbody></tbody></table>
+
+<script>
+const DATE = '1 พฤศจิกายน 2569 - 30 พฤศจิกายน 2569';
+const FS = 28, FW = 700;
+
+// ---- variant builders. Each returns {id, label, node, liveWidth()} -------------------
+function htmlVariant(id, label, extraClass) {
+  const wrap = document.createElement('div');
+  wrap.className = 'subject ' + (extraClass || '');
+  const t = document.createElement('div');
+  t.className = 'date-text';
+  t.textContent = DATE;
+  wrap.appendChild(t);
+  return { id, label, node: wrap, liveWidth: () => t.getBoundingClientRect().width };
+}
+
+function svgVariant(id, label, opts) {
+  const o = opts || {};
+  const wrap = document.createElement('div');
+  wrap.className = 'subject' + (o.onRed ? ' on-red' : '');
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('width', '760'); svg.setAttribute('height', '52');
+  svg.setAttribute('viewBox', '0 0 760 52');
+  let defs = '';
+  if (o.gradient) {
+    defs += `<linearGradient id="g-${id}" x1="0" y1="0" x2="1" y2="0">
+               <stop offset="0" stop-color="#fffbc7"/><stop offset="1" stop-color="#e50020"/>
+             </linearGradient>`;
+  }
+  if (o.filter) {
+    defs += `<filter id="f-${id}" x="-20%" y="-20%" width="140%" height="140%">
+               <feDropShadow dx="3" dy="3" stdDeviation="2" flood-color="#000" flood-opacity="0.8"/>
+             </filter>`;
+  }
+  if (o.fontFaceCss) defs += `<style>${o.fontFaceCss}</style>`;
+  const family = o.fontFamily || 'Kanit';
+  const fill = o.gradient ? `url(#g-${id})` : (o.fill || '#111');
+  const strokeAttrs = o.stroke
+    ? `stroke="#ffffff" stroke-width="6" stroke-linejoin="round" style="paint-order:stroke fill"`
+    : '';
+  const filterAttr = o.filter ? `filter="url(#f-${id})"` : '';
+  svg.innerHTML = `<defs>${defs}</defs>
+    <text id="t-${id}" x="4" y="36" font-family="${family}" font-size="${FS}" font-weight="${FW}"
+          fill="${fill}" ${strokeAttrs} ${filterAttr}>${DATE}</text>`;
+  wrap.appendChild(svg);
+  return {
+    id, label, node: wrap,
+    liveWidth: () => {
+      const t = svg.querySelector('text');
+      try { return t.getComputedTextLength(); } catch (e) { return t.getBBox().width; }
+    }
+  };
+}
+
+// ---- measurement -------------------------------------------------------------------
+function measure(canvas) {
+  const w = canvas.width, h = canvas.height;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  const d = ctx.getImageData(0, 0, w, h).data;
+  let minX = w, minY = h, maxX = -1, maxY = -1, ink = 0, whiteInside = 0;
+  const isInk = (r, g, b) => {
+    // "ink" = clearly not the pale page background and not the flat red panel
+    const red = Math.abs(r - 229) < 26 && g < 40 && b < 50;        // #e50020 panel
+    const pale = r > 236 && g > 236 && b > 236;                     // white-ish page
+    return !pale && !red;
+  };
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4;
+      if (d[i + 3] < 8) continue;
+      if (isInk(d[i], d[i + 1], d[i + 2])) {
+        ink++;
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+      }
+    }
+  }
+  // near-white pixels inside the ink box = an outline/stroke actually rendered
+  if (maxX >= 0) {
+    for (let y = minY; y <= maxY; y++) {
+      for (let x = minX; x <= maxX; x++) {
+        const i = (y * w + x) * 4;
+        if (d[i] > 238 && d[i + 1] > 238 && d[i + 2] > 238) whiteInside++;
+      }
+    }
+  }
+  // sample ink color near the left and right edge of the ink box (gradient check)
+  const sampleCol = (xStart, dir) => {
+    for (let k = 0; k < 60; k++) {
+      const x = xStart + dir * k;
+      if (x < 0 || x >= w) break;
+      for (let y = Math.max(minY, 0); y <= Math.min(maxY, h - 1); y++) {
+        const i = (y * w + x) * 4;
+        if (d[i + 3] > 8 && isInk(d[i], d[i + 1], d[i + 2])) {
+          const hex = n => n.toString(16).padStart(2, '0');
+          return '#' + hex(d[i]) + hex(d[i + 1]) + hex(d[i + 2]);
+        }
+      }
+    }
+    return 'n/a';
+  };
+  const bw = maxX >= 0 ? maxX - minX + 1 : 0;
+  const bh = maxY >= 0 ? maxY - minY + 1 : 0;
+  return {
+    ink,
+    w: bw,
+    h: bh,
+    // ink per unit of bounding box: a regular-weight fallback is far lighter than Kanit 700,
+    // so this catches a font substitution that total width alone hides
+    density: bw && bh ? +(ink / (bw * bh)).toFixed(3) : 0,
+    whiteInside,
+    left: maxX >= 0 ? sampleCol(minX, 1) : 'n/a',
+    right: maxX >= 0 ? sampleCol(maxX, -1) : 'n/a'
+  };
+}
+
+// ---- Kanit Thai woff2 as base64, for the embedded-font variant ----------------------
+async function kanitThaiFontFace() {
+  const cssUrl = 'https://fonts.googleapis.com/css2?family=Kanit:wght@700';
+  const css = await fetch(cssUrl).then(r => r.text());
+  const blocks = css.split('@font-face').slice(1);
+  let pick = null;
+  for (const b of blocks) {
+    const ur = (b.match(/unicode-range:\s*([^;]+);/) || [])[1] || '';
+    const src = (b.match(/src:\s*url\(([^)]+)\)/) || [])[1];
+    if (!src) continue;
+    if (/U\+0E01/i.test(ur) || /thai/i.test(b)) { pick = src; break; }
+    if (!pick) pick = src; // fallback: first block
+  }
+  if (!pick) throw new Error('no woff2 url found in Google Fonts css');
+  const buf = await fetch(pick).then(r => r.arrayBuffer());
+  let bin = '';
+  const bytes = new Uint8Array(buf);
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  const b64 = btoa(bin);
+  return {
+    css: `@font-face{font-family:'KanitEmbedded';font-weight:700;src:url(data:font/woff2;base64,${b64}) format('woff2');}`,
+    bytes: bytes.length,
+    url: pick
+  };
+}
+
+// ---- run ---------------------------------------------------------------------------
+(async function run() {
+  await document.fonts.ready;
+
+  let embedded = null, embedErr = null;
+  try { embedded = await kanitThaiFontFace(); }
+  catch (e) { embedErr = String(e); }
+
+  const variants = [
+    htmlVariant('html-plain',  'A · HTML text (control — what ships today)'),
+    htmlVariant('html-stroke', 'B · HTML text + -webkit-text-stroke outline on red', 'on-red v-html-stroke'),
+    htmlVariant('html-shadow', 'C · HTML text + layered text-shadow outline on red', 'on-red v-html-shadow'),
+    svgVariant('svg-fill',     'D · inline SVG <text>, plain fill, font-family Kanit'),
+    svgVariant('svg-stroke',   'E · inline SVG <text> + stroke/paint-order on red', { stroke: true, onRed: true, fill: '#111' }),
+    svgVariant('svg-gradient', 'F · inline SVG <text> + linearGradient fill', { gradient: true }),
+    svgVariant('svg-filter',   'G · inline SVG <text> + feDropShadow filter', { filter: true }),
+    svgVariant('svg-embed',    'H · inline SVG <text> with @font-face base64 Kanit embedded',
+      embedded ? { fontFamily: 'KanitEmbedded', fontFaceCss: embedded.css } : {})
+  ];
+
+  const host = document.getElementById('variants');
+  const tbody = document.querySelector('#results tbody');
+  const results = {};
+  let control = null;
+
+  for (const v of variants) {
+    const box = document.createElement('div');
+    box.className = 'variant';
+    const label = v.id === 'svg-embed' && embedErr ? v.label + ' — FONT FETCH FAILED: ' + embedErr : v.label;
+    box.innerHTML = `<h2>${label}</h2>`;
+    const row = document.createElement('div');
+    row.className = 'row';
+    const livePane = document.createElement('figure');
+    livePane.className = 'pane';
+    livePane.style.margin = '0';
+    livePane.innerHTML = '<figcaption>live DOM</figcaption>';
+    livePane.appendChild(v.node);
+    const rasterPane = document.createElement('figure');
+    rasterPane.className = 'pane';
+    rasterPane.style.margin = '0';
+    rasterPane.innerHTML = '<figcaption>html2canvas raster</figcaption>';
+    row.appendChild(livePane); row.appendChild(rasterPane);
+    box.appendChild(row);
+    host.appendChild(box);
+
+    await document.fonts.ready;
+    const liveW = v.liveWidth();
+    let m, err = null;
+    try {
+      const canvas = await html2canvas(v.node, { useCORS: true, scale: 1, logging: false });
+      rasterPane.appendChild(canvas);
+      m = measure(canvas);
+    } catch (e) { err = String(e); m = { ink: 0, w: 0, h: 0, whiteInside: 0, left: 'n/a', right: 'n/a' }; }
+
+    const ratio = liveW ? m.w / liveW : 0;
+    if (v.id === 'html-plain') control = { liveW, m };
+    const dRatio = control ? m.density / control.m.density : 1;
+    const verdict = (() => {
+      if (err) return ['fail', 'threw: ' + err];
+      if (m.ink < 200) return ['fail', 'nothing rasterised'];
+      if (ratio < 0.9 || ratio > 1.12) return ['fail', 'width off ' + Math.round((ratio - 1) * 100) + '% → font substituted'];
+      // Width alone is not enough: the serif fallback lands within 2% of Kanit's total width but is
+      // much lighter, which shows up as ink density. Only meaningful without an outline/filter,
+      // which inflate the ink bounding box and drag density down on their own.
+      const plain = ['html-plain', 'svg-fill', 'svg-gradient', 'svg-embed'].includes(v.id);
+      if (plain && control && (dRatio < 0.82 || dRatio > 1.25))
+        return ['fail', 'ink density ' + dRatio.toFixed(2) + '× control → font/weight substituted'];
+      const extra = plain ? [] : ['density not comparable (outline/filter) — CHECK BY EYE'];
+      if (v.id === 'svg-stroke' || v.id === 'html-stroke' || v.id === 'html-shadow')
+        extra.push(m.whiteInside > 300 ? 'outline kept' : 'OUTLINE LOST');
+      if (v.id === 'svg-gradient')
+        extra.push(m.left !== m.right ? 'gradient kept' : 'GRADIENT FLATTENED');
+      const bad = extra.some(e => /OUTLINE LOST|GRADIENT FLATTENED/.test(e));
+      const unsure = extra.some(e => /CHECK BY EYE/.test(e));
+      return [bad ? 'fail' : (unsure ? 'warn' : 'pass'),
+              [plain ? 'font kept' : 'renders'].concat(extra).join(', ')];
+    })();
+
+    results[v.id] = { liveW: Math.round(liveW), ...m, ratio: +ratio.toFixed(3),
+                      densityVsControl: +dRatio.toFixed(2), pass: verdict[0] === 'pass', verdict: verdict[1], err };
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${v.id}</td><td>${m.ink}</td><td>${m.w}×${m.h}</td>
+      <td>${liveW ? Math.round(liveW) + ' → ' + m.w + ' (' + ratio.toFixed(2) + '×)' : 'n/a'}</td>
+      <td>${m.density} (${dRatio.toFixed(2)}×)</td>
+      <td>${m.whiteInside}</td><td>${m.left} → ${m.right}</td>
+      <td class="${verdict[0]}">${verdict[0].toUpperCase()} · ${verdict[1]}</td>`;
+    tbody.appendChild(tr);
+  }
+
+  window.__spike = { results, embedded: embedded ? { bytes: embedded.bytes, url: embedded.url } : null, embedErr, control };
+  document.getElementById('status').textContent =
+    'done · ' + Object.keys(results).length + ' variants · embedded font: ' +
+    (embedded ? (embedded.bytes / 1024).toFixed(1) + ' KB' : 'FAILED (' + embedErr + ')');
+})();
+</script>
+</body>
+</html>
