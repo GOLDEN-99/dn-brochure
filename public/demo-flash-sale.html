@@ -43,6 +43,9 @@
     width: var(--date-w); height: var(--date-h);
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-weight: 600; line-height: 1; white-space: nowrap;
+    /* the baked chip is not level: its top edge measures -5.13deg and its
+       bottom -4.57deg across the flat span, so the text follows it */
+    transform: rotate(-4.85deg);
   }
 
   /* our own chip, cut from the plate's own pixels: fixed caps, repeating
@@ -64,7 +67,7 @@
   }
 
   .card {
-    position: absolute; width: var(--card-w); aspect-ratio: 1;
+    position: absolute; aspect-ratio: 1;   /* width comes from the slot */
   }
   .card .frame { position: absolute; inset: 0; width: 100%; height: 100%; }
   .card .code {
@@ -118,6 +121,15 @@
 
 <div class="row" id="row-chip"></div>
 
+<h1>จำนวนสินค้าต่อใบ — 4 ช่องจัดเป็น 2 + 2 ตามที่ยืนยัน</h1>
+<p class="note">
+  การ์ดเป็นสี่เหลี่ยมจัตุรัสเสมอ ขนาดเปลี่ยนตามจำนวนการ์ดในแถวนั้น ·
+  แถวที่ไม่เต็มจะจัดกึ่งกลาง · ตัวเลขทั้งหมดวัดจากไฟล์ตัวอย่างที่ส่งมา
+  ยกเว้น 4 ช่องที่ยืนยันมาเป็น 2 + 2
+</p>
+
+<div class="row" id="row-count"></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 // real payload: POST /ItemService2/PaperProFlash {idPromotion:"408", zone:"BKK"}
@@ -142,16 +154,40 @@ const CASES = [
 const DAY_CASES = [
   { key: 'd3',  day: 3,  cap: true,  title: '3 วัน',  note: 'เลขหลักเดียว ใช้ไฟล์ 3.png' },
   { key: 'd9',  day: 9,  cap: true,  title: '9 วัน',  note: 'เลขหลักเดียวที่มากที่สุดที่ช่องรับได้' },
-  { key: 'd14', day: 14, cap: false, title: '14 วัน — ไม่จำกัด (ตัวอย่างปัญหา)', note: 'เลข 2 หลักกว้างประมาณ 674 px ล้นออกไปทับคำว่า "วันเท่านั้น"' },
+  { key: 'd14', day: 14, cap: true, title: '14 วัน → ส่งออกเป็น 9', note: 'ตามที่ตกลง: จำกัดหลักเดียว โปรฯ เกิน 9 วันพิมพ์เลข 9 ระบบจะเตือนตอน export' },
 ];
+
+/* Card geometry read off the delivered slot examples, as % of the page.
+   4 is 2+2, confirmed by design; the rest are measured. */
+const LAYOUTS = {
+  1: [{ y: 36.1, w: 48.0, xs: [26.1] }],
+  2: [{ y: 38.0, w: 42.7, xs: [5.5, 51.9] }],
+  3: [{ y: 45.1, w: 28.2, xs: [5.3, 36.0, 66.6] }],
+  4: [{ y: 32.7, w: 28.2, xs: [20.6, 51.2] },
+      { y: 62.8, w: 28.2, xs: [20.6, 51.2] }],
+  5: [{ y: 32.7, w: 28.2, xs: [20.6, 51.2] },
+      { y: 62.8, w: 28.2, xs: [5.3, 36.0, 66.6] }],
+  6: [{ y: 32.7, w: 28.2, xs: [5.3, 36.0, 66.6] },
+      { y: 62.8, w: 28.2, xs: [5.3, 36.0, 66.6] }],
+  7: [{ y: 36.1, w: 21.5, xs: [5.3, 27.9, 50.6, 73.2] },
+      { y: 62.8, w: 28.2, xs: [5.3, 36.0, 66.6] }],
+};
+
+const slotsFor = (n) => {
+  const rows = LAYOUTS[Math.min(Math.max(n, 1), 7)];
+  const out = [];
+  for (const r of rows) for (const x of r.xs) out.push({ x: x + '%', y: r.y + '%', w: r.w + '%' });
+  return out;
+};
 
 const money = (n) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '.-';
 
-function buildCard(item, x, y) {
+function buildCard(item, slot) {
   const el = document.createElement('div');
   el.className = 'card';
-  el.style.left = x;
-  el.style.top = y;
+  el.style.left = slot.x;
+  el.style.top = slot.y;
+  el.style.width = slot.w;
   el.innerHTML = `
     <img class="frame" src="/image/FS/card.png" alt="">
     <div class="code">${item.barCode}</div>
@@ -185,7 +221,7 @@ function addOurChip(stage, text, fontPx) {
   return { textW: Math.round(textW), chipW: Math.round(194 + midW + 110) };
 }
 
-function buildStage(dateText, day = DATA.head.day, cap = true) {
+function buildStage(dateText, day = DATA.head.day, cap = true, count = 6) {
   const stage = document.createElement('div');
   stage.className = 'stage';
 
@@ -211,11 +247,10 @@ function buildStage(dateText, day = DATA.head.day, cap = true) {
   date.textContent = dateText;
   stage.appendChild(date);
 
-  const xs = ['var(--grid-x1)', 'var(--grid-x2)', 'var(--grid-x3)'];
-  DATA.list.slice(0, 6).forEach((item, n) => {
-    const y = n < 3 ? 'var(--grid-y1)' : 'var(--grid-y2)';
-    stage.appendChild(buildCard(item, xs[n % 3], y));
-  });
+  // promotion 408 carries 6 products; repeat them to fill a wider layout
+  const items = Array.from({ length: count }, (_, i) => DATA.list[i % DATA.list.length]);
+  const slots = slotsFor(items.length);
+  items.forEach((item, n) => stage.appendChild(buildCard(item, slots[n])));
   return stage;
 }
 
@@ -295,8 +330,30 @@ window.__report = {};
     rowChip.appendChild(holder);
   }
 
+  const rowCount = document.getElementById('row-count');
+  for (const n of [2, 4, 5, 7]) {
+    const rows = LAYOUTS[n].map(r => r.xs.length).join(' + ');
+    const holder = document.createElement('div');
+    holder.className = 'holder';
+    holder.innerHTML = `<h2>${n} ช่อง — ${rows}</h2>` +
+      `<p class="meta">การ์ดกว้าง ${LAYOUTS[n].map(r => r.w + '%').join(' / ')}` +
+      `${n === 4 ? ' · ยืนยันโดยทีมออกแบบ ไม่มีไฟล์ตัวอย่าง' : ' · วัดจากไฟล์ตัวอย่าง'}</p>`;
+    const vp = document.createElement('div');
+    vp.className = 'viewport';
+    const stage = buildStage(DATA.head.dayActive, DATA.head.day, true, n);
+    stage.id = 'nstage-' + n;
+    vp.appendChild(stage);
+    holder.appendChild(vp);
+    rowCount.appendChild(holder);
+  }
+
   // let images land, then size everything that depends on measured boxes
   await new Promise(r => setTimeout(r, 1200));
+  for (const n of [2, 4, 5, 7]) {
+    const stage = document.getElementById('nstage-' + n);
+    sizeCard(stage);
+    fitText(stage.querySelector('.daterange'), 108, 48);
+  }
   for (const c of CASES) {
     const stage = document.getElementById('cstage-' + c.key);
     sizeCard(stage);
