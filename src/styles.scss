@@ -24,6 +24,25 @@ $font-family-base: $font-family-sans-serif;
   --brand-green-800: #007203;
   --brand-green-primary: #00a59b;
 
+  /* Flash Sale restyle 2026-11.
+     PLACEHOLDER VALUES — sampled from the approved poster (docs/brochure-restyle/
+     approved-flash-sale.jpg), not supplied by design. Replace every one of these
+     when the design team sends the spec sheet asked for in
+     docs/brochure-restyle/FLASH-SALE-ASSET-LIST.md §4. */
+  --fs-code-bg: #fed403;
+  --fs-code-fg: #17170a;
+  --fs-name-fg: #00002b;
+  --fs-price-bg: #cc0316;
+  --fs-price-fg: #ffffff;
+  --fs-card-bg: #ffffff;
+  --fs-panel-bg: #1c0369;
+  --fs-panel-fg: #ffffff;
+  --fs-date-bg: #ce0016;
+  --fs-date-fg: #ffffff;
+  --fs-digit-top: #fdf63f;
+  --fs-digit-bottom: #fcd406;
+  --fs-digit-outline: #ffffff;
+
   --a4-width-150: 1240px;
   --a4-height-150: 1754px;
 

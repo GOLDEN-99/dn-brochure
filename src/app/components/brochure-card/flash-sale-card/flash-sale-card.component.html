@@ -1,29 +1,28 @@
 @let prop = cardProp();
 
-<div [style]="headerContainer()">
-  <div [className]="headerClass()">
-    <div [className]="textClass()">{{ prop.goodName }}</div>
-  </div>
+<div class="fs-code">{{ prop.barCode }}</div>
+
+<div class="fs-name">{{ prop.goodName }}</div>
+
+<div class="fs-photo">
+  @if (!imgFailed()) {
+    <img
+      [src]="imgUrl()"
+      alt=""
+      (load)="handleOnLoad($event)"
+      (error)="imgFailed.set(true)"
+    />
+  }
 </div>
-<div [className]="contentClass()">
-  <div class="content-section">
-    <div style="height: 100%">
-      <div>
-        <span [className]="goodCodeClass()">{{ prop.barCode }}</span>
-      </div>
-      <div class="img-container" style="display: flex; justify-content: center">
-        <img
-          [src]="imgUrl()"
-          alt="product image"
-          (load)="handleOnLoad($event)"
-        />
-      </div>
-    </div>
-  </div>
-  <div class="content-section" style="position: relative; align-items: end">
-    <div [className]="priceTextClass()">
-      {{ prop.flashPrice | number : "1.2-2" }}.-
-    </div>
-    <img src="/image/FS/price.png" alt="price" />
-  </div>
+
+<div class="fs-price">
+  <span class="fs-cart" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="9.5" cy="20" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="20" r="1.5" fill="currentColor" stroke="none" />
+      <path d="M1.8 2.6h3.1l2.6 12.1a2 2 0 0 0 2 1.6h8.3a2 2 0 0 0 2-1.55L22.2 7H6.2" />
+    </svg>
+  </span>
+  <span class="fs-amount">{{ prop.flashPrice | number : "1.2-2" }}.-</span>
 </div>

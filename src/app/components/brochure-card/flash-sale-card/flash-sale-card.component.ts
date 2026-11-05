@@ -7,44 +7,38 @@ import { DecimalPipe } from '@angular/common';
   imports: [DecimalPipe],
   templateUrl: './flash-sale-card.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrl: './flash-sale-card.component.scss'
+  styleUrl: './flash-sale-card.component.scss',
+  host: { '[class.static]': 'isStatic()' },
 })
 export class FlashSaleCardComponent {
   cardProp = input.required<TFlashSaleItem>()
 
-  imgUrl = computed(() => `https://file.drugnetcenter.com/drugpos/GoodPictures/${this.cardProp().goodCode}.jpg`)
-
-  textClass = computed(() => {
-    const stat = this.isStatic()
-    if (stat) {
-      return 'header-text text-white static'
-      // return this.cardProp().goodName.length > 30 ? 'header-text text-white long static' : 'header-text text-white static'
-    }
-    return 'header-text text-white'
-    //return this.cardProp().goodName.length > 30 ? 'header-text text-white long' : 'header-text text-white'
-  }
-  )
-
   isStatic = input<boolean>(true)
 
-  headerClass = computed(() => this.isStatic() ? 'header static' : 'header')
+  imgUrl = computed(() => `https://file.drugnetcenter.com/drugpos/GoodPictures/${this.cardProp().goodCode}.jpg`)
 
-  contentClass = computed(() => this.isStatic() ? 'content static' : 'content')
+  /** a product with no picture on file leaves the slot empty rather than
+   *  baking a broken-image glyph into the exported JPG */
+  imgFailed = signal(false)
 
-  priceTextClass = computed(() => this.isStatic() ? 'price-text static text-white' : 'price-text text-white')
-
-  goodCodeClass = computed(() => this.isStatic() ? 'goodcode static' : 'goodcode')
-
-  headerContainer = computed(() => this.isStatic() ? 'height:35%;' : 'height:25%;')
-
-  handleOnLoad(e: any) {
-    const containerRatio = 0.8
+  /** Contains the photo inside its slot by hand.
+   *  object-fit is not used: html2canvas 1.4.1 does not reproduce it reliably
+   *  and the exported JPG is the deliverable, so the fit is resolved to
+   *  explicit pixels the rasteriser cannot disagree with.
+   *  Measuring the slot rather than using a fixed cap keeps the photo as large
+   *  as the card allows in both modes; .fs-photo also carries max-width /
+   *  max-height so a photo can never overflow if this never runs. */
+  handleOnLoad(e: Event) {
     const img = e.target as HTMLImageElement
-    const ratio = img.naturalWidth / img.naturalHeight
-    if (ratio < containerRatio) {
-      img.style.height = '730px'
-    } else {
-      img.style.width = '590px'
-    }
+    const slot = img.parentElement
+    if (!img.naturalWidth || !img.naturalHeight) return
+
+    const box = slot?.getBoundingClientRect()
+    const limitW = box?.width || (this.isStatic() ? 1100 : 300)
+    const limitH = box?.height || (this.isStatic() ? 700 : 190)
+
+    const scale = Math.min(limitW / img.naturalWidth, limitH / img.naturalHeight)
+    img.style.width = `${Math.round(img.naturalWidth * scale)}px`
+    img.style.height = `${Math.round(img.naturalHeight * scale)}px`
   }
 }

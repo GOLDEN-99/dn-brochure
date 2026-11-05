@@ -1,101 +1,146 @@
+/* Flash Sale card — restyle 2026-11.
+   Single column: code pill, name, photo, price bar. Replaces the old
+   two-column layout (green header + BEST PRICE ribbon).
+   Sizes are driven by the custom properties below so the responsive
+   preview and the 4160px export share one layout.
+   Colours come from the --fs-* tokens in styles.scss and are PLACEHOLDERS
+   until the design spec arrives. */
+
 :host {
+  --pad: 0.75rem;
+  --radius: 1rem;
+  --code-size: 1.25rem;
+  --code-pad: 0.1rem 0.9rem;
+  --code-radius: 999px;
+  --name-size: 1.1rem;
+  --name-lines: 2;
+  --gap: 0.4rem;
+  --price-h: 3.2rem;
+  --price-size: 1.6rem;
+  --price-radius: 1rem;
+  --cart-size: 2.4rem;
+
   box-sizing: border-box;
-  aspect-ratio: 1;
-  background-color: #fff;
 
-  min-width: 350px;
-
+  /* the page's .fs-grid sizes the card in both modes; the card only lays out
+     its own contents */
   display: flex;
   flex-direction: column;
+  align-items: center;
 
-  border-radius: 1rem;
+  padding: var(--pad) var(--pad) 0;
+  overflow: hidden;
 
-  &:has(div.header.static) {
-    width: 30%;
-    border-radius: 4rem;
-  }
+  background-color: var(--fs-card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 0.35rem 1.2rem rgba(0, 0, 0, 0.18);
 }
 
-.header {
-  display: flex;
-  justify-content: center;
-  background-color: #00a651;
-  margin: 1rem 0;
-  padding: 0.5rem;
+:host(.static) {
+  --pad: 3rem;
+  --radius: 4rem;
+  --code-size: 4.5rem;
+  --code-pad: 0.4rem 3rem;
+  --name-size: 4rem;
+  --gap: 1.5rem;
+  --price-h: 11.5rem;
+  --price-size: 6rem;
+  --price-radius: 3rem;
+  --cart-size: 8.5rem;
 
-  &.static {
-    padding: 2rem;
-    margin: 4rem 0;
-  }
-
-  .header-text {
-    text-align: center;
-
-    &.long:not(.static) {
-    }
-
-    &.static {
-      font-size: 5rem;
-
-      &.long {
-      }
-    }
-  }
-
-  &.static img {
-    max-width: 1100px;
-  }
+  box-shadow: 0 1.2rem 4rem rgba(0, 0, 0, 0.2);
 }
 
-.content {
-  flex: 1 1 auto;
-  display: flex;
-  justify-content: center;
-  margin: 0 1rem;
-
-  &.static {
-    margin: 0 2rem;
-  }
-
-  .content-section {
-    flex: 1 1 50%;
-  }
-  img:not(.static) {
-    max-width: 150px;
-    max-height: 200px;
-  }
-
-  &.static img {
-    max-width: 590px;
-    max-height: 750px;
-  }
+/* code pill ------------------------------------------------------------ */
+.fs-code {
+  flex: 0 0 auto;
+  background-color: var(--fs-code-bg);
+  color: var(--fs-code-fg);
+  font-size: var(--code-size);
+  font-weight: 700;
+  line-height: 1.25;
+  padding: var(--code-pad);
+  border-radius: var(--code-radius);
+  white-space: nowrap;
 }
 
-.price-text {
-  height: 50%;
-  position: absolute;
+/* product name --------------------------------------------------------- */
+.fs-name {
+  flex: 0 0 auto;
+  margin-top: var(--gap);
   width: 100%;
   text-align: center;
-  translate: 0 65%;
-  &.static {
-    font-size: 90px;
-    translate: 0 75%;
+  color: var(--fs-name-fg);
+  font-size: var(--name-size);
+  font-weight: 700;
+  line-height: 1.2;
+
+  /* clamp rather than overflow: a long goodName must not push the photo out */
+  display: -webkit-box;
+  -webkit-line-clamp: var(--name-lines);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* photo ---------------------------------------------------------------- */
+.fs-photo {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* sized by handleOnLoad rather than object-fit: html2canvas 1.4.1
+     does not reproduce object-fit reliably in the export.
+     The max-* pair is the safety net for when that handler has not run. */
+  img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
   }
 }
 
-.goodcode {
-  border-bottom: solid #fff 1px;
-  background-color: #fff200;
-  padding: 4px 4px 0 4px;
-  border-radius: 8px 8px 0 0;
+/* price bar ------------------------------------------------------------ */
+.fs-price {
+  flex: 0 0 auto;
+  width: calc(100% + var(--pad) * 2);
+  margin: var(--gap) calc(var(--pad) * -1) 0;
+  height: var(--price-h);
 
-  &.static {
-    font-size: 5rem;
-    padding: 0 1rem;
-    border-radius: 2.5rem 2.5rem 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  background-color: var(--fs-price-bg);
+  border-radius: var(--price-radius) var(--price-radius) 0 0;
+}
+
+.fs-cart {
+  position: absolute;
+  left: calc(var(--pad) * 0.9);
+  width: var(--cart-size);
+  height: var(--cart-size);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #fff;
+  border-radius: 50%;
+  color: var(--fs-price-bg);
+
+  svg {
+    width: 58%;
+    height: 58%;
   }
 }
 
-.text-white {
-  color: #fff;
+.fs-amount {
+  color: var(--fs-price-fg);
+  font-size: var(--price-size);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
 }

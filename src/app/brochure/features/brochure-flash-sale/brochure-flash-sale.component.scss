@@ -1,200 +1,166 @@
-.flash-sale-bg {
+/* Flash Sale page — restyle 2026-11.
+   The background is one fixed plate; everything that changes per promotion is
+   drawn over it. Positions are percentages measured off the approved poster
+   (docs/brochure-restyle/FLASH-SALE-ASSET-LIST.md §3.3) so the responsive
+   preview and the 4160px export agree.
+   Colours are --fs-* PLACEHOLDERS from styles.scss. */
+
+:host {
+  --head-gap: 0.25rem;
+  --panel-pad: 0.35rem 1.25rem;
+  --panel-radius: 0.9rem;
+  --digit-size: 3.9rem;
+  --digit-stroke: 1.5px;
+  --dayword-size: 2rem;
+  --date-pad: 0.3rem 1.1rem;
+  --date-size: 1.6rem;
+  --cal-size: 1.6rem;
+  --grid-gap: 1rem;
+
   position: relative;
-  &:not(.static) {
-    background-color: var(--brand-purple-primary);
-    img.bg-image {
-      display: none;
-    }
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
 
-    @media (min-width: 1200px) {
-      background-color: transparent;
-
-      img.bg-image {
-        display: block;
-        position: absolute;
-        aspect-ratio: 1;
-        width: 1140px;
-        z-index: -1;
-      }
-    }
-
-    @media (min-width: 1400px) {
-      img.bg-image {
-        width: 1320px;
-      }
-    }
-  }
-
-  &.static {
-    position: relative;
-    img.bg-image {
-      top: 0;
-      left: 0;
-      position: absolute;
-      z-index: -1;
-      width: 4160px;
-      height: 4160px;
-    }
-  }
+  /* fallback for when the plate is missing. Previously a null linkimg meant the
+     exported JPG had no background at all; now something always renders. */
+  background: radial-gradient(circle at 50% 38%, #b919f7 0%, #7a10c4 42%, #38088f 100%);
 }
 
-.flash-sale-page {
+:host(.static) {
+  --head-gap: 12px;
+  --panel-pad: 22px 70px;
+  --panel-radius: 50px;
+  --digit-size: 230px;
+  --digit-stroke: 5px;
+  --dayword-size: 120px;
+  --date-pad: 18px 60px;
+  --date-size: 95px;
+  --cal-size: 92px;
+  --grid-gap: 60px;
+
+  width: 4160px;
+  height: 4160px;
+  aspect-ratio: auto;
+
+  /* parked off-screen: this node exists only to be rasterised */
+  position: fixed;
+  translate: 100% 100%;
+}
+
+.fs-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* header: day count and date range ------------------------------------- */
+.fs-head {
+  position: absolute;
+  top: 17.5%;
+  right: 5.5%;
+  z-index: 1;
+
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-
-  justify-content: space-around;
-
-  @media (min-width: 1200px) {
-    aspect-ratio: 1;
-  }
-
-  &.static {
-    width: 4160px;
-    height: 4160px;
-    position: fixed;
-    translate: 100% 100%;
-  }
+  align-items: center;
+  gap: var(--head-gap);
 }
 
-.plain-day-text {
-  font-size: 32px;
-  @media (min-width: 1200px) {
-    display: none;
-  }
-
-  &.static {
-    display: none;
-  }
-}
-
-.flash-sale-head {
+.fs-daybox {
   display: flex;
-  &:not(.static) {
-    justify-content: start;
-    @media (min-width: 1200px) {
-      justify-content: end;
-    }
+  align-items: center;
+  gap: calc(var(--panel-radius) * 0.6);
 
-    .head-space:not(.static) {
-      display: none;
+  background-color: var(--fs-panel-bg);
+  border-radius: var(--panel-radius);
+  padding: var(--panel-pad);
+}
 
-      @media (min-width: 1200px) {
-        position: relative;
-        display: block;
-        width: 400px;
+.fs-digit {
+  font-size: var(--digit-size);
+  font-weight: 800;
+  line-height: 1;
 
-        .day-text {
-          position: absolute;
-          width: 60%;
-          height: 40%;
-          bottom: 0;
-          right: 0;
-          font-size: 24px;
-          transform: rotate(-7deg);
-          translate: 0 -5%;
-        }
+  /* Flat fill with a stroke, NOT a gradient.
+     The spike (docs/brochure-restyle/spike/RESULTS.md) measured this exactly:
+     -webkit-text-stroke on HTML text survives html2canvas with Kanit intact
+     (variant B), but inline SVG text loses the page webfont (D-G), and
+     background-clip:text is not supported by html2canvas at all — it would
+     look correct in the preview and come out wrong in every exported file.
+     TODO: the approved design's gold gradient needs the SVG route with the
+     font embedded as base64 @font-face (variant H), which is blocked on the
+     font file requested in FLASH-SALE-ASSET-LIST.md §4.1. Note that route
+     needs the LATIN subset embedded, not the Thai one. */
+  color: var(--fs-digit-bottom);
+  -webkit-text-stroke: var(--digit-stroke) var(--fs-digit-outline);
+  paint-order: stroke fill;
+}
 
-        img {
-          max-width: 350px;
-          max-height: 350px;
-        }
+.fs-dayword {
+  color: var(--fs-panel-fg);
+  font-size: var(--dayword-size);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
 
-        .static {
-          display: block;
-          position: relative;
-        }
-      }
+.fs-date {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--cal-size) * 0.35);
 
-      @media (min-width: 1400px) {
-        width: 480px;
+  /* the chip hugs its text: the range runs from "15 – 21 ก.ย. 2569" to
+     "28 ธ.ค. 2569 – 3 ม.ค. 2570", which a fixed-width graphic cannot hold */
+  background-color: var(--fs-date-bg);
+  color: var(--fs-date-fg);
+  border-radius: 999px;
+  padding: var(--date-pad);
+}
 
-        img {
-          max-width: 350px;
-          max-height: 350px;
-        }
+.fs-cal {
+  display: flex;
+  flex: 0 0 auto;
+  width: var(--cal-size);
+  height: var(--cal-size);
 
-        .day-text {
-          translate: -10% -10%;
-        }
-      }
-    }
-  }
-  &.static {
-    justify-content: end;
-  }
-
-  .head-space.static {
-    position: relative;
+  svg {
+    width: 100%;
+    height: 100%;
   }
 }
 
-.day-text.static {
-  font-weight: bold;
+.fs-daterange {
+  font-size: var(--date-size);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* product grid ---------------------------------------------------------- */
+.fs-grid {
   position: absolute;
-  font-size: 5rem;
-  bottom: 0;
-  right: 0;
-  width: 50%;
-  height: 39%;
-  transform: rotate(-7deg);
-}
+  top: 30.7%;
+  left: 3.3%;
+  right: 3.3%;
+  bottom: 10.7%;
+  z-index: 1;
 
-.flash-sale-layout {
   display: flex;
   flex-wrap: wrap;
-
+  align-content: center;
   justify-content: center;
+  gap: var(--grid-gap);
 
-  &.static {
-    gap: 4rem;
-  }
-}
-
-.main-pad {
-  padding: 0.25rem;
-
-  @media (min-width: 600px) {
-    padding: 1rem;
-  }
-
-  @media (min-width: 1200px) {
-    padding: 1.5rem;
-  }
-
-  &.static {
-    padding: 4rem;
-  }
-}
-
-.main-gap {
-  gap: 0.25rem;
-
-  @media (min-width: 600px) {
-    gap: 1rem;
-  }
-
-  @media (min-width: 1400px) {
-    gap: 2rem;
-  }
-
-  &.static {
-    gap: 4rem;
-  }
-}
-
-.flash-sale-row {
-  display: flex;
-  gap: 0.25rem;
-  &.row-3 {
-    justify-content: space-between;
-  }
-
-  &.row-2 {
-    justify-content: center;
-  }
-
-  .static {
-    gap: 4rem;
+  /* three across, and a short last row centres itself. Holds fewer than six
+     without leaving a hole; the agreed maximum is still pending
+     (FLASH-SALE-ASSET-LIST.md §6.3 question 2). */
+  app-flash-sale-card {
+    flex: 0 0 calc((100% - var(--grid-gap) * 2) / 3);
+    height: calc((100% - var(--grid-gap)) / 2);
   }
 }
