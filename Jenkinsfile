@@ -19,10 +19,10 @@
 //   2. SSH_CRED  — credential นี้มีสิทธิ์เขียน web root ของ promotion ไหม
 //   3. TESTHUB_API_TOKEN — job นี้ต้องอ่าน credential 'testhub-api-token' ได้ (dninhouse ใช้อยู่แล้ว)
 //                          ถ้าอ่านไม่ได้ pipeline จะพังตั้งแต่ตอน evaluate environment block
-//   4. PR นี้ "ไม่แก้" environment.development.ts — sandbox build ใช้ไฟล์เดิมทั้งไฟล์
-//      ในนั้น brochureEndpoint + ibob ชี้ dev.drugnetcenter.com แล้ว แต่ cnPath + oi ยังชี้ prod (api.*)
-//      → tester กดสร้าง/แก้ CN บน sandbox จะเขียนลงข้อมูล prod — ต้องตัดสินใจแยกอีก PR
-//      (oi คง api.otherincome.healthupgroup.com ถูกแล้ว — repo นั้นไม่มี dev host ที่ resolve ได้)
+//   4. environment.development.ts (= ไฟล์ที่ sandbox build ใช้) ตอนนี้ชี้ dev.drugnetcenter.com
+//      ครบทั้ง brochureEndpoint / cnPath / ibob แล้ว — tester บน sandbox จะไม่เขียน CN ลง prod
+//      แต่ `oi` ยังชี้ api.otherincome.healthupgroup.com (prod) อยู่ "โดยตั้งใจ": Other Income
+//      ไม่มี dev/sandbox host ที่ resolve ได้ → Other Income บน sandbox คุยกับ API prod
 //
 // ⚠️ สิทธิ์: การ swap แบบ sudo-free (mv html → html.bak) ต้องให้ผู้ใช้ deploy เป็นเจ้าของ "โฟลเดอร์แม่"
 //   ไม่ใช่แค่ตัว html — ถ้าไม่ใช่ mv จะ EACCES. chown ครั้งเดียวบนเซิร์ฟเวอร์ก็พอ.
@@ -39,8 +39,8 @@
 //     configuration `sandbox` = ของ production ทุกอย่าง (budgets + outputHashing) บวก fileReplacements
 //     ระวังอย่าสับสน: `sandbox` (ไว้ deploy) ≠ `development` (ไว้ ng serve — optimization:false + sourceMap:true)
 //     ห้ามใช้ `development` มา deploy เด็ดขาด แต่ทั้งคู่ชี้ environment.development.ts ไฟล์เดียวกัน
-//     สิ่งที่สองไฟล์ต่างกันจริง ๆ วันนี้: brochureEndpoint กับ ibob (dev.drugnetcenter.com ฝั่ง development)
-//     ส่วน cnPath, oi, imagePath ชี้ prod เหมือนกันทั้งสอง env — ดู TODO 4 ด้านบน
+//     สิ่งที่สองไฟล์ต่างกัน: brochureEndpoint, cnPath, ibob (ฝั่ง development ชี้ dev.drugnetcenter.com)
+//     ส่วน imagePath (static host ไม่มี dev) กับ oi ชี้ prod เหมือนกันทั้งสอง env — ดู TODO 4 ด้านบน
 pipeline {
   agent { label 'apd.local' }           // Jenkins node = apd.local (has Docker; jenkins user in docker group)
 
