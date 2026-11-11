@@ -23,7 +23,7 @@ Other Income v2 has its own spec tsconfig (`tsconfig.spec.other-income.json`, in
 ## Build & deploy
 
 `Jenkinsfile` at the repo root is the deploy channel (Jenkins multibranch job on the
-`apd.local` agent). It builds in a `node:22.22.0` container, archives the artifact, and
+`apd.local` agent). It builds in a `node:22.22.3` container, archives the artifact, and
 copies it over SSH to `file.drugnetcenter.com` (port 5333, credential
 `px-file-drugnetcenter`) with a `.new` → live → `.bak` swap, so a rollback is
 `mv html.bak html` on the host.
