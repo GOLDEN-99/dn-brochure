@@ -11,6 +11,7 @@ Angular 22 (standalone components, signals-based) frontend for internal Drug Net
 ```bash
 npm start                # ng serve, http://localhost:4200
 npm run build             # ng build --configuration production
+npm run build:sandbox     # ng build --configuration sandbox (what Jenkins builds for the dev deploy)
 npm run watch              # ng build --watch --configuration development
 npm test                   # ng test (Karma + Jasmine)
 ```
@@ -18,6 +19,25 @@ npm test                   # ng test (Karma + Jasmine)
 Run a single spec file: `ng test --include='**/cn-state.service.spec.ts'`
 
 Other Income v2 has its own spec tsconfig (`tsconfig.spec.other-income.json`, includes only `src/app/other-income/**/*.spec.ts`) — used when scoping test runs to that module.
+
+## Build & deploy
+
+`Jenkinsfile` at the repo root is the deploy channel (Jenkins multibranch job on the
+`apd.local` agent). It builds in a `node:22.22.0` container, archives the artifact, and
+copies it over SSH to `file.drugnetcenter.com` (port 5333, credential
+`px-file-drugnetcenter`) with a `.new` → live → `.bak` swap, so a rollback is
+`mv html.bak html` on the host.
+
+| Branch | Build | Web root | Gate |
+| --- | --- | --- | --- |
+| `dev` | `npm run build:sandbox` | `/var/www/sandbox.promotion.drugnetcenter.com/html` | none |
+| `prod` | `npm run build` | `/var/www/promotion.drugnetcenter.com/html` (live) | TestHub `/approvals` |
+| anything else, PRs | `npm run build:sandbox` | not deployed | — |
+
+Every live deploy waits on a TestHub approval request, not just the first, and the stage
+fails closed if TestHub is unreachable. There is no unit-test stage: the repo has no
+headless Karma setup (see the notes at the foot of the `Jenkinsfile`). The pipeline is
+not live yet — the infra prerequisites are listed in the `Jenkinsfile` header.
 
 ## Architecture
 
@@ -45,10 +65,13 @@ Nested `CLAUDE.md` files exist for individual modules and should be read when wo
 
 ### API endpoints
 
-Two files, swapped by the `development` build configuration's `fileReplacements`
-in `angular.json`. `npm start` / `npm run watch` build `development` and get
-`environment.development.ts`; `npm run build` is `production` (the default
-configuration) and gets `environment.ts`.
+Two files, swapped by `fileReplacements` in `angular.json`. `npm start` /
+`npm run watch` build `development` and get `environment.development.ts`;
+`npm run build` is `production` (the default configuration) and gets
+`environment.ts`. The `sandbox` configuration (`npm run build:sandbox`, what the
+Jenkins `dev` branch deploys) is `production` plus the same file replacement, so the
+sandbox site and local `ng serve` talk to one set of backends — there is no third
+env file.
 
 **`environment.ts` — production build, `api.*`:**
 

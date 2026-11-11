@@ -1,0 +1,231 @@
+// DN-BROCHURE frontend (Angular 22) — build in Docker on apd.local, deploy to file.drugnetcenter.com.
+// Modelled on ../dninhouse/Jenkinsfile: same agent, same SSH credential, same atomic .new/.bak swap.
+//
+// Stages: Checkout → Build → Archive → Approve PROD (prod only) → Deploy
+//
+// Multibranch-ready: use a "Multibranch Pipeline" job pointed at this repo. Every branch & PR is
+// built + archived; only the deploy branches push to a web root:
+//   branch dev  → sandbox.promotion.drugnetcenter.com   (DEV)
+//   branch prod → promotion.drugnetcenter.com           (PROD, live)
+// other branches / PRs are build-only.
+//
+// ⚠️ ไฟล์นี้เข้า branch prod ก่อน (PR ของรีโปนี้ merge เข้า prod ทุกอัน) — branch `dev` ยังไม่มี
+//   Jenkinsfile จนกว่าจะ merge prod ลงไป ตอนนี้ dev ตามหลัง prod อยู่ 47 commit (คนละเวอร์ชัน
+//   Angular: dev = 21, prod = 22) multibranch job จะ build แต่ branch ที่มีไฟล์นี้
+//
+// ⚠️ TODO ก่อนใช้จริง — ยืนยันกับคนที่ดูแล Jenkins/เซิร์ฟเวอร์ (ดู comment ที่ตัวแปรแต่ละตัว):
+//   1. DEV_PATH  — ต้องสร้าง DNS + nginx vhost ของ sandbox.promotion.drugnetcenter.com ก่อน (ยัง NXDOMAIN)
+//                  PROD_PATH ยืนยันแล้ว: promotion.drugnetcenter.com
+//   2. SSH_CRED  — credential นี้มีสิทธิ์เขียน web root ของ promotion ไหม
+//   3. TESTHUB_API_TOKEN — job นี้ต้องอ่าน credential 'testhub-api-token' ได้ (dninhouse ใช้อยู่แล้ว)
+//                          ถ้าอ่านไม่ได้ pipeline จะพังตั้งแต่ตอน evaluate environment block
+//   4. PR นี้ "ไม่แก้" environment.development.ts — sandbox build ใช้ไฟล์เดิมทั้งไฟล์
+//      ในนั้น brochureEndpoint + ibob ชี้ dev.drugnetcenter.com แล้ว แต่ cnPath + oi ยังชี้ prod (api.*)
+//      → tester กดสร้าง/แก้ CN บน sandbox จะเขียนลงข้อมูล prod — ต้องตัดสินใจแยกอีก PR
+//      (oi คง api.otherincome.healthupgroup.com ถูกแล้ว — repo นั้นไม่มี dev host ที่ resolve ได้)
+//
+// ⚠️ สิทธิ์: การ swap แบบ sudo-free (mv html → html.bak) ต้องให้ผู้ใช้ deploy เป็นเจ้าของ "โฟลเดอร์แม่"
+//   ไม่ใช่แค่ตัว html — ถ้าไม่ใช่ mv จะ EACCES. chown ครั้งเดียวบนเซิร์ฟเวอร์ก็พอ.
+//
+// Angular-22 notes (ต่างจาก dninhouse ที่เป็น Angular 17 — อย่าลอกค่าพวกนี้ข้ามโปรเจกต์):
+//   • builder = @angular-devkit/build-angular:application → dist มีโฟลเดอร์ย่อย /browser
+//     ของจริงคือ dist/dn-prochure/browser/index.html  (dninhouse ใช้ builder :browser จึงไม่มี /browser)
+//   • ชื่อโปรเจกต์ใน angular.json สะกดว่า "dn-prochure" (ไม่ใช่ brochure) — path ต้องตามนั้น
+//   • Node 22.22.3 (ตรงกับ .nvmrc; package.json engines = "^22.22.3 || ^24.15.0" ของ Angular 22)
+//     — ไม่ใช่ Node 20 และไม่ใช่ 22.22.0 (ต่ำกว่า engines)
+//   • build script แยกตาม branch (ดู BUILD_SCRIPT ใน stage 'Build') — ชื่อ script ตรงกับ dninhouse:
+//       prod → `npm run build`         (= --configuration production → src/environments/environment.ts)
+//       dev  → `npm run build:sandbox` (= --configuration sandbox    → environment.development.ts)
+//     configuration `sandbox` = ของ production ทุกอย่าง (budgets + outputHashing) บวก fileReplacements
+//     ระวังอย่าสับสน: `sandbox` (ไว้ deploy) ≠ `development` (ไว้ ng serve — optimization:false + sourceMap:true)
+//     ห้ามใช้ `development` มา deploy เด็ดขาด แต่ทั้งคู่ชี้ environment.development.ts ไฟล์เดียวกัน
+//     สิ่งที่สองไฟล์ต่างกันจริง ๆ วันนี้: brochureEndpoint กับ ibob (dev.drugnetcenter.com ฝั่ง development)
+//     ส่วน cnPath, oi, imagePath ชี้ prod เหมือนกันทั้งสอง env — ดู TODO 4 ด้านบน
+pipeline {
+  agent { label 'apd.local' }           // Jenkins node = apd.local (has Docker; jenkins user in docker group)
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(numToKeepStr: '15'))
+  }
+
+  environment {
+    NODE_IMAGE  = 'node:22.22.3'                  // ตรงกับ .nvmrc (engines: ^22.22.3 || ^24.15.0)
+    DIST_DIR    = 'dist/dn-prochure/browser'      // outputPath 'dist/dn-prochure' + builder :application → มี /browser
+                                                  // (ยืนยันจาก ng build --configuration sandbox บน branch นี้: ได้ index.html + chunk ที่ hash แล้ว)
+                                                  // (stage Build เช็กด้วย test -f index.html — ถ้าผิด build จะ fail ทันที)
+    NODE_OPTS   = '--max_old_space_size=4096'     // esbuild กินน้อยกว่า webpack แต่กันไว้
+    DEPLOY_HOST = 'px@file.drugnetcenter.com'
+    DEPLOY_PORT = '5333'                          // SSH port on file.drugnetcenter.com
+    SSH_CRED    = 'px-file-drugnetcenter'         // ⚠️ ยืนยัน: credential เดียวกับ dninhouse — มีสิทธิ์เขียน brochure web root ไหม
+    // branch → web root on the deploy host (the Deploy stage picks one of these)
+    // path convention ยืนยันจาก ../dninhouse/Jenkinsfile: /var/www/<domain>/html
+    // ⚠️ ยังไม่มี DNS record ของ sandbox.promotion.drugnetcenter.com (NXDOMAIN) — ต้องสร้าง DNS + nginx
+    //   vhost ก่อน ไม่งั้น deploy สำเร็จแต่ไม่มีใครเปิดดูได้ (เทียบ: sandbox.inhouse.drugnetcenter.com มีจริง)
+    DEV_PATH    = '/var/www/sandbox.promotion.drugnetcenter.com/html'  // branch: dev
+    PROD_PATH   = '/var/www/promotion.drugnetcenter.com/html'          // branch: prod — domain ยืนยันแล้ว (resolve → 27.254.207.182)
+    // --- TestHub: prod approval gate (แบบเดียวกับ ../dninhouse/Jenkinsfile) ---
+    // อนุมัติ prod ผ่านหน้า TestHub (/approvals) แทน input ของ Jenkins → PM ไม่ต้องเข้า Jenkins
+    // ต้องมี Jenkins credential 'testhub-api-token' (secret text) — dninhouse ใช้ตัวนี้อยู่แล้ว
+    TESTHUB_URL = "https://testhub.healthupgroup.com"
+    TESTHUB_API_TOKEN = credentials('testhub-api-token')
+  }
+
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+
+    stage('Build (Docker)') {
+      // Build inside node:22.22.3 so the agent only needs Docker (no Node tool install). Run as the
+      // jenkins uid/gid with HOME + npm cache UNDER the mounted workspace (/app) so they're writable
+      // by that uid (the uid has no home in the image → npm would hit EACCES on /home/node) and
+      // nothing lands root-owned (cleanWs works). The `docker run` is ONE line on purpose:
+      // backslash line-continuations inside a Groovy '''...''' string get consumed and mangle the args.
+      //
+      // npm ci ต้องออกเน็ตได้: dependency `xlsx` ดึงจาก https://cdn.sheetjs.com (tarball ตรง ไม่ใช่ registry)
+      // ถ้า agent ออกเน็ตจำกัด ต้อง allow host นั้นด้วย ไม่งั้น install พัง
+      // ไม่ต้องใช้ --legacy-peer-deps (ต่างจาก dninhouse) — dependency tree ของ Angular 22 สะอาด
+      //
+      // Per-branch environment: prod → build (configuration production → environment.ts);
+      // dev & everything else → build:sandbox (configuration sandbox → environment.development.ts)
+      // เพื่อให้ sandbox SPA ยิง API ชุด dev ไม่ใช่ prod. ค่า default เป็น sandbox เสมอ — build-only
+      // branch จะได้ไม่ยิง API prod ตอนเอา artifact ไปเปิดดู
+      steps {
+        script {
+          env.BUILD_SCRIPT = (env.BRANCH_NAME == 'prod') ? 'build' : 'build:sandbox'
+          echo "Build script: npm run ${env.BUILD_SCRIPT} (branch: ${env.BRANCH_NAME ?: 'pipeline'})"
+        }
+        sh '''
+          set -e
+          mkdir -p "${WORKSPACE}/.home" "${WORKSPACE}/.npm"
+          docker run --rm -u $(id -u):$(id -g) -e HOME=/app/.home -e npm_config_cache=/app/.npm -e CI=true -e NODE_OPTIONS=${NODE_OPTS} -v "${WORKSPACE}:/app" -w /app ${NODE_IMAGE} bash -c "node -v && (npm ci --no-audit --no-fund || npm install --no-audit --no-fund) && npm run ${BUILD_SCRIPT}"
+          test -f "${DIST_DIR}/index.html"
+        '''
+      }
+    }
+
+    stage('Archive') {
+      // เก็บ artifact ไว้ย้อนดู/rollback (เก็บตาม buildDiscarder = 15 builds ล่าสุด)
+      // ห่อ catchError ไว้เหมือน dninhouse: ถ้า archive พัง (เช่นวันหลังมีไฟล์ asset ชื่อภาษาไทย แล้ว
+      // JVM บน agent ไม่ได้ตั้ง locale UTF-8 → InvalidPathException) ต้องไม่บล็อก Deploy
+      // ตอนนี้ไฟล์ใน repo เป็น ASCII ล้วน จึงยังไม่เจอปัญหา — กันไว้ก่อน
+      steps {
+        catchError(message: 'archiveArtifacts failed — continuing to Deploy', buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+          archiveArtifacts artifacts: "${DIST_DIR}/**", fingerprint: true
+        }
+      }
+    }
+
+    stage('Approve PROD (TestHub)') {
+      // อนุมัติ prod ผ่านหน้า TestHub (/approvals) — สร้างคำขอ → poll จนกว่าจะอนุมัติ/ปฏิเสธ/หมดอายุ
+      // PM ไม่ต้องเข้า Jenkins กด. dev/สาขาอื่นข้าม gate นี้ไป
+      // Gate ทุกครั้งที่ deploy ขึ้น live ไม่ใช่แค่ครั้งแรก
+      // fail-safe: ถ้า TestHub เข้าไม่ได้/สร้างคำขอไม่ได้ → build fail (ไม่ deploy prod โดยไม่อนุมัติ)
+      when { branch 'prod' }
+      options { timeout(time: 60, unit: 'MINUTES') }
+      steps {
+        sh '''
+            BODY=$(printf '{"kind":"deploy-prod","title":"Deploy DN Brochure prod #%s","buildUrl":"%s","timeoutSec":3300}' "$BUILD_NUMBER" "$BUILD_URL")
+            ID=$(curl -sS -X POST "$TESTHUB_URL/api/approvals" -H "Authorization: Bearer $TESTHUB_API_TOKEN" -H "Content-Type: application/json" -d "$BODY" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+            if [ -z "$ID" ]; then echo "สร้างคำขออนุมัติที่ TestHub ไม่ได้ (เช็ก TESTHUB_URL/token/การเชื่อมต่อ)"; exit 1; fi
+            echo "รออนุมัติที่: $TESTHUB_URL/approvals/$ID"
+            while : ; do
+              S=$(curl -sS "$TESTHUB_URL/api/approvals/$ID" -H "Authorization: Bearer $TESTHUB_API_TOKEN" | grep -o '"status":"[a-z]*"' | head -1 | cut -d'"' -f4)
+              [ "$S" = pending ] || break
+              sleep 15
+            done
+            echo "ผลอนุมัติ: $S"
+            [ "$S" = approved ] || { echo "ยกเลิก deploy (prod $S)"; exit 1; }
+        '''
+      }
+    }
+
+    stage('Deploy') {
+      // Multibranch: dev → sandbox, prod → live; other branches & PRs (BRANCH_NAME = PR-*) are
+      // build-only. The null check keeps a plain (non-multibranch) pipeline job working (→ DEV).
+      when { anyOf { branch 'dev'; branch 'prod'; expression { env.BRANCH_NAME == null } } }
+      steps {
+        script {
+          // pick the web root for this branch — default = DEV/sandbox, ห้าม default เป็น prod เด็ดขาด
+          env.DEPLOY_PATH = (env.BRANCH_NAME == 'prod') ? env.PROD_PATH : env.DEV_PATH
+          env.DEPLOY_ENV  = (env.BRANCH_NAME == 'prod') ? 'PROD (live)' : 'DEV (sandbox)'
+          echo "Deploying ${env.DEPLOY_ENV} -> ${env.DEPLOY_PATH}"
+        }
+        // Use the SSH private-key credential directly (no SSH Agent plugin needed). Each ssh/scp is
+        // ONE line — backslash line-continuations get eaten by the Groovy '''...''' string.
+        withCredentials([sshUserPrivateKey(credentialsId: "${SSH_CRED}", keyFileVariable: 'SSH_KEY')]) {
+          sh '''
+            set -e
+            # Use ONLY the -i key: IdentityAgent=none ignores any ssh-agent on the Jenkins node and
+            # IdentitiesOnly=yes ignores default keys — otherwise ssh offers all of them and the server
+            # hits MaxAuthTries → "Too many authentication failures". Restrict auth to publickey too.
+            SSHOPT="-o IdentityAgent=none -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o StrictHostKeyChecking=accept-new"
+            SSH="ssh -i $SSH_KEY -p ${DEPLOY_PORT} $SSHOPT"
+            # atomic-ish swap: upload to .new, swap into place, keep .bak for rollback
+            $SSH ${DEPLOY_HOST} "rm -rf ${DEPLOY_PATH}.new && mkdir -p ${DEPLOY_PATH}.new"
+            scp -i $SSH_KEY -P ${DEPLOY_PORT} $SSHOPT -r ${DIST_DIR}/* ${DEPLOY_HOST}:${DEPLOY_PATH}.new/
+            $SSH ${DEPLOY_HOST} "rm -rf ${DEPLOY_PATH}.bak; [ -d ${DEPLOY_PATH} ] && mv ${DEPLOY_PATH} ${DEPLOY_PATH}.bak; mv ${DEPLOY_PATH}.new ${DEPLOY_PATH}"
+            # Rollback (remote): mv html html.broken && mv html.bak html
+          '''
+        }
+      }
+    }
+  }
+
+  post {
+    // แจ้งผลผ่าน TestHub เฉพาะ branch ที่ deploy จริง (dev/prod). || true กัน notify ล้มทำ build เพี้ยน
+    failure {
+      mail to: 'tom.dncenter@gmail.com',
+           subject: "❌ DN-BROCHURE build failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+           body: "Check ${env.BUILD_URL}"
+      sh '''
+        case "$BRANCH_NAME" in dev|prod) ;; *) exit 0 ;; esac
+        BODY=$(printf '{"title":"DN Brochure #%s","text":"deploy ล้มเหลว / ไม่อนุมัติ","level":"error","url":"%s"}' "$BUILD_NUMBER" "$BUILD_URL")
+        curl -sS -m 10 -X POST "$TESTHUB_URL/api/notify" -H "Authorization: Bearer $TESTHUB_API_TOKEN" -H "Content-Type: application/json" -d "$BODY" || true
+      '''
+    }
+    success {
+      script {
+        def br = env.BRANCH_NAME ?: 'pipeline'
+        if (env.DEPLOY_PATH)
+          echo "✅ DN-BROCHURE (${br}) deployed ${env.DEPLOY_ENV} -> ${DEPLOY_HOST}:${env.DEPLOY_PATH}"
+        else
+          echo "✅ DN-BROCHURE (${br}) built — not deployed (deploy branches: dev, prod)"
+      }
+      sh '''
+        case "$BRANCH_NAME" in dev|prod) ;; *) exit 0 ;; esac
+        BODY=$(printf '{"title":"DN Brochure #%s","text":"deploy สำเร็จ","level":"success","url":"%s"}' "$BUILD_NUMBER" "$BUILD_URL")
+        curl -sS -m 10 -X POST "$TESTHUB_URL/api/notify" -H "Authorization: Bearer $TESTHUB_API_TOKEN" -H "Content-Type: application/json" -d "$BODY" || true
+      '''
+    }
+    // เก็บ .npm (npm cache) และ .home (HOME ของ container — npm เขียน config/logs ที่นี่) ไม่ให้ถูกลบ
+    // ไม่งั้นทุก build จะโหลด dependency ใหม่หมด
+    always { cleanWs(patterns: [[pattern: '.npm/**', type: 'EXCLUDE'], [pattern: '.home/**', type: 'EXCLUDE']]) }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ต่างจาก ../dninhouse/Jenkinsfile ตรงไหนบ้าง (ตั้งใจให้ต่าง — อย่า "แก้ให้เหมือน" โดยไม่อ่านเหตุผล):
+//   • ชื่อ configuration/script (`sandbox`, `build:sandbox`) ตรงกับ dninhouse แต่ "ไฟล์ที่ชี้" ต่างกัน
+//     เพราะ convention ของ Angular กลับด้านกันระหว่างเวอร์ชัน:
+//       dninhouse (ng17): environment.ts = local, production ชี้ environment.prod.ts,
+//                         sandbox ชี้ environment.sandbox.ts → มี env 3 ชุด, ไม่มี config `development`
+//       ที่นี่   (ng22): environment.ts = prod (production ไม่มี fileReplacements เลย),
+//                         `development` ชี้ environment.development.ts ไว้ให้ ng serve
+//     รีโปนี้จึงมี env แค่ 2 ชุด — configuration `sandbox` เลยชี้ environment.development.ts
+//     ตั้งใจ: sandbox = ที่ tester เทสต์ และ local ng serve ยิง backend ชุดเดียวกัน ไม่แยกไฟล์ที่ 3
+//   • prod ใช้ script `build` ที่มีอยู่เดิมในรีโป (dninhouse ใช้ `build:prod`)
+//   • ไม่มี stage 'Unit test' (เหมือน dninhouse) — รีโปนี้มีแค่ `npm test` (Karma + Jasmine ที่เปิด
+//     Chrome ขึ้นมาจริง) ยังไม่มี config สำหรับ CI: ไม่มี karma.conf.js, ไม่มี ChromeHeadlessNoSandbox,
+//     ไม่มี puppeteer ใน devDependencies → รันใน container ไม่ได้
+//     ถ้าจะใส่ stage นี้: เพิ่ม karma headless config + script ก่อน แล้ววางคั่นระหว่าง Build กับ
+//     Archive (artifact จะได้เป็นของที่เทสต์ผ่าน) แล้วส่ง -e NODE_OPTIONS=${NODE_OPTS} ให้ container
+//     ด้วย — Karma bundle ทั้งแอปเหมือนกัน เสี่ยง heap พอกัน
+//   • ไม่มี stage E2E (TestHub smoke) — brochure ยังไม่มี suite ใน TestHub. ถ้ามีเมื่อไหร่
+//     ลอกจาก ../dninhouse/Jenkinsfile stage 'E2E (TestHub smoke)' ได้เลย (รันเฉพาะ dev, report-only)
+//   • ไม่ใช้ --legacy-peer-deps — dependency tree ของ Angular 22 สะอาด (ถ้า npm ci พัง stage Build
+//     fallback เป็น npm install ให้อยู่แล้ว)
+//   • builder :application → DIST_DIR มี /browser (dninhouse builder :browser จึงไม่มี)
+// ─────────────────────────────────────────────────────────────────────────────
