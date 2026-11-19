@@ -9,9 +9,9 @@
 //   branch prod → promotion.drugnetcenter.com           (PROD, live)
 // other branches / PRs are build-only.
 //
-// ⚠️ ไฟล์นี้เข้า branch prod ก่อน (PR ของรีโปนี้ merge เข้า prod ทุกอัน) — branch `dev` ยังไม่มี
-//   Jenkinsfile จนกว่าจะ merge prod ลงไป ตอนนี้ dev ตามหลัง prod อยู่ 47 commit (คนละเวอร์ชัน
-//   Angular: dev = 21, prod = 22) multibranch job จะ build แต่ branch ที่มีไฟล์นี้
+// branch `dev` ได้ไฟล์นี้ตอน fast-forward dev ขึ้นมาเท่า prod (2026-11-19 — ก่อนหน้านั้น dev ตามหลัง
+//   prod อยู่ 53 commit และยังเป็น Angular 21) multibranch job build เฉพาะ branch ที่มีไฟล์นี้
+//   ถ้า dev ตามหลัง prod อีก: merge prod → dev (dev ต่างจาก prod แค่ environment.development.ts ก็พอ)
 //
 // ⚠️ TODO ก่อนใช้จริง — ยืนยันกับคนที่ดูแล Jenkins/เซิร์ฟเวอร์ (ดู comment ที่ตัวแปรแต่ละตัว):
 //   1. DEV_PATH  — ต้องสร้าง DNS + nginx vhost ของ sandbox.promotion.drugnetcenter.com ก่อน (ยัง NXDOMAIN)
@@ -19,10 +19,12 @@
 //   2. SSH_CRED  — credential นี้มีสิทธิ์เขียน web root ของ promotion ไหม
 //   3. TESTHUB_API_TOKEN — job นี้ต้องอ่าน credential 'testhub-api-token' ได้ (dninhouse ใช้อยู่แล้ว)
 //                          ถ้าอ่านไม่ได้ pipeline จะพังตั้งแต่ตอน evaluate environment block
-//   4. environment.development.ts (= ไฟล์ที่ sandbox build ใช้) ตอนนี้ชี้ dev.drugnetcenter.com
-//      ครบทั้ง brochureEndpoint / cnPath / ibob แล้ว — tester บน sandbox จะไม่เขียน CN ลง prod
-//      แต่ `oi` ยังชี้ api.otherincome.healthupgroup.com (prod) อยู่ "โดยตั้งใจ": Other Income
-//      ไม่มี dev/sandbox host ที่ resolve ได้ → Other Income บน sandbox คุยกับ API prod
+//   4. environment.development.ts (= ไฟล์ที่ sandbox build ใช้) ชี้ dev.drugnetcenter.com
+//      ครบทั้ง brochureEndpoint / cnPath / ibob — tester บน sandbox จะไม่เขียน CN ลง prod
+//      และ `oi` ชี้ sandbox.otherincome.healthupgroup.com (other-income-api branch dev →
+//      hu.other.income.api.dev.service บน ap.local:6351 → Drug_Dev) — tester จะไม่เขียน CRM promotion ลง prod
+//      ⚠️ 2026-11-19 ชื่อนี้ยัง NXDOMAIN: ต้องขอ A record → 161.82.147.165 + vhost → http://192.168.1.184:6351
+//      (คำขอเดียวกับ sandbox.promotion ในข้อ 1) ก่อนหน้านั้นหน้า Other Income/CRM บน sandbox จะเรียก API ไม่ติด
 //
 // ⚠️ สิทธิ์: การ swap แบบ sudo-free (mv html → html.bak) ต้องให้ผู้ใช้ deploy เป็นเจ้าของ "โฟลเดอร์แม่"
 //   ไม่ใช่แค่ตัว html — ถ้าไม่ใช่ mv จะ EACCES. chown ครั้งเดียวบนเซิร์ฟเวอร์ก็พอ.
@@ -40,7 +42,8 @@
 //     ระวังอย่าสับสน: `sandbox` (ไว้ deploy) ≠ `development` (ไว้ ng serve — optimization:false + sourceMap:true)
 //     ห้ามใช้ `development` มา deploy เด็ดขาด แต่ทั้งคู่ชี้ environment.development.ts ไฟล์เดียวกัน
 //     สิ่งที่สองไฟล์ต่างกัน: brochureEndpoint, cnPath, ibob (ฝั่ง development ชี้ dev.drugnetcenter.com)
-//     ส่วน imagePath (static host ไม่มี dev) กับ oi ชี้ prod เหมือนกันทั้งสอง env — ดู TODO 4 ด้านบน
+//     และ oi (ฝั่ง development ชี้ sandbox.otherincome.healthupgroup.com) — ดู TODO 4 ด้านบน
+//     มีแค่ imagePath (static host ไม่มี dev) ที่ชี้ prod เหมือนกันทั้งสอง env (อ่านอย่างเดียว)
 pipeline {
   agent { label 'apd.local' }           // Jenkins node = apd.local (has Docker; jenkins user in docker group)
 
@@ -64,7 +67,7 @@ pipeline {
     // ⚠️ ยังไม่มี DNS record ของ sandbox.promotion.drugnetcenter.com (NXDOMAIN) — ต้องสร้าง DNS + nginx
     //   vhost ก่อน ไม่งั้น deploy สำเร็จแต่ไม่มีใครเปิดดูได้ (เทียบ: sandbox.inhouse.drugnetcenter.com มีจริง)
     DEV_PATH    = '/var/www/sandbox.promotion.drugnetcenter.com/html'  // branch: dev
-    PROD_PATH   = '/var/www/promotion.drugnetcenter.com/html'          // branch: prod — domain ยืนยันแล้ว (resolve → 27.254.207.182)
+    PROD_PATH   = '/var/www/promotion.drugnetcenter.com/html'          // branch: prod — domain ยืนยันแล้ว (resolve → 203.156.105.40 ตรวจ 2026-11-19)
     // --- TestHub: prod approval gate (แบบเดียวกับ ../dninhouse/Jenkinsfile) ---
     // อนุมัติ prod ผ่านหน้า TestHub (/approvals) แทน input ของ Jenkins → PM ไม่ต้องเข้า Jenkins
     // ต้องมี Jenkins credential 'testhub-api-token' (secret text) — dninhouse ใช้ตัวนี้อยู่แล้ว
