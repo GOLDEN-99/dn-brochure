@@ -1,4 +1,4 @@
-import { Component, computed, input, model, output } from '@angular/core';
+import { Component, computed, input, model, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TDayState } from '../../../types/crm-promotion.type';
 
@@ -6,6 +6,7 @@ import { TDayState } from '../../../types/crm-promotion.type';
   selector: 'app-day-checkboox',
   imports: [FormsModule],
   templateUrl: './day-checkboox.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './day-checkboox.component.scss'
 })
 export class DayCheckbooxComponent {

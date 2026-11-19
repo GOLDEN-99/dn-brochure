@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TPostCreditNoteReq } from '../../../../shared/types/other-income.type';
 import { AppendCreditNoteForm, appendCreditNoteSchema } from './append-credit-note';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
@@ -11,6 +11,7 @@ import { ngbDateToIso } from '../../../../shared/libs/date-time';
   selector: 'other-income-append-credit-note',
   imports: [FormField, SignalDatepickerComponent, FormAlertTextComponent],
   templateUrl: './append-credit-note.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class AppendCreditNoteComponent {

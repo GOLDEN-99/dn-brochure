@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TCreatePromotionRequest, TPromotionDetail } from '../../../types/crm-promotion.type';
 import { CrmPromotionService } from '../../../service/crm-promotion/crm-promotion.service';
@@ -19,10 +19,12 @@ import { PromotionFormComponent } from '../../../components/crm-promotion/promot
       },
     },
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-promotion-form
       submitLabel="บันทึกการแก้ไข"
       [submitting]="submitting()"
+      [editingId]="id()"
       (submitted)="onSubmit($event)"
     >
       <div slot="header" class="d-flex align-items-center gap-2 mb-3">

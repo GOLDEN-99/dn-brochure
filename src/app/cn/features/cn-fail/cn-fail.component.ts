@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CnStateService } from '../../shared/services/cn-state.service';
 
 @Component({
   selector: 'app-cn-fail',
   imports: [],
   templateUrl: './cn-fail.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './cn-fail.component.scss',
 })
 export class CnFailComponent {

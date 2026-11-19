@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, OnInit, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, Subject } from 'rxjs';
@@ -7,6 +7,7 @@ import { filter, Subject } from 'rxjs';
   selector: 'other-income-home-layout',
   imports: [RouterOutlet, RouterLinkActive, RouterLink],
   templateUrl: './other-income-home-layout.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-home-layout.component.scss',
 })
 export class OtherIncomeHomeLayoutComponent implements OnInit {

@@ -76,13 +76,28 @@
     </div>
   </div>
 
+  <!--
+    Why the button below is disabled, in one list. The per-node alerts above only show what hangs
+    on the node they are given; a rule on a node a page renders no alert for is invisible without
+    this (the ITEM page, 2026-09-30).
+  -->
+  <app-promotion-validation-summary [formState]="promotionForm()" />
+
+  <!--
+    A BUNDLE save first asks which live promotions of the same kind name its goods and what the
+    till does when both fire (PromotionOverlapService); the answer is a modal the author confirms,
+    or a refusal when two would cancel each other out (sale RULES §1.22).
+  -->
   <button
     class="btn btn-primary w-100"
+    data-testid="submit"
     [disabled]="!canSubmit()"
     (click)="onSubmit()"
   >
     @if (submitting()) {
       กำลังบันทึก...
+    } @else if (checking()) {
+      กำลังตรวจสอบโปรโมชั่นที่ซ้อนกัน...
     } @else {
       {{ submitLabel() }}
     }

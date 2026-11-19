@@ -78,7 +78,7 @@
             <button
               type="button"
               class="btn btn-squre btn-danger btn-sm"
-              (click)="onRemoveLine(lineItem?.goodCode)"
+              (click)="onRemoveLine($safeNavigationMigration(lineItem?.goodCode))"
             >
               <i class="bi bi-trash"></i>
             </button>

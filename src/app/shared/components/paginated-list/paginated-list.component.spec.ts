@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PaginatedListComponent } from './paginated-list.component';
@@ -6,6 +6,7 @@ import { PaginatedListComponent } from './paginated-list.component';
 @Component({
   selector: 'app-paginated-list-test-host',
   imports: [PaginatedListComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-paginated-list [items]="items" [pageSize]="pageSize">
       <ng-template #row let-item let-index="index">

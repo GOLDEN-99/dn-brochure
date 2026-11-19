@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, model, signal } from '@angular/core';
+import { Component, computed, inject, input, model, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormValueControl, ValidationError } from '@angular/forms/signals';
 import { FormsModule } from '@angular/forms';
 import { OtherIncomeSearchCompService } from '../../../services/other-income-search-comp.service';
@@ -17,6 +17,7 @@ const DEFAULT_COMP: TOtherIncomeComp = { compCode: '', compName: '', compName2: 
   imports: [FormsModule, NgbTypeahead],
   templateUrl: './create-single-comp.component.html',
   styles: '',
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [OtherIncomeSearchCompService],
 })
 export class CreateSingleCompComponent implements FormValueControl<TOtherIncomeCompanyForm> {

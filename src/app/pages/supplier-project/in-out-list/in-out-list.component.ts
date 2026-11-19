@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DoorService } from '../../../service/ibob/door.service';
 
@@ -6,6 +6,7 @@ import { DoorService } from '../../../service/ibob/door.service';
   selector: 'app-in-out-list',
   imports: [RouterLink],
   templateUrl: './in-out-list.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class InOutListComponent {

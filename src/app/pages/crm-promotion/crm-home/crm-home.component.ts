@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-crm-home',
   imports: [],
   templateUrl: './crm-home.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './crm-home.component.scss'
 })
 export class CrmHomeComponent {

@@ -28,15 +28,21 @@ src/app/
 ├── components/crm-promotion/
 │   ├── promotion-form/                  PromotionFormComponent — the whole form
 │   ├── create-promotion-subform/        promotion-master/-datetime/-limit-usage/-product-filter
+│   ├── promotion-overlap-modal/         The pre-save "these live promotions share your goods" dialog
 │   └── (benefit-*, inline-*, promotion-*, product-picker, ...)  Field-level controls
 ├── factory/crm-promotion/
 │   ├── create-promotion.ts              provideCreatePromotionConfig / provideEditPromotionConfig
 │   └── promotion-detail-to-form.ts      TPromotionDetail -> TCreatePromotionForm
 ├── service/crm-promotion/               crm-promotion (CRUD), branch-config, product-config,
-│                                        product-group-config, member-config, crm-token
+│                                        product-group-config, member-config, crm-token,
+│                                        promotion-overlap (the pre-save check's fetches)
 ├── layout/crm-promotion-layout/         Shell for all /crm-promotion routes
 ├── lib/crm-promotion/                   Display pipes (promotion-type, -order, -priority,
-│                                        -threshold, -benefit-name, product-name)
+│                                        -threshold, -benefit-name, product-name);
+│                                        describe-promotion.ts — one-line BU wording,
+│                                        golden cases in workspace CRM-PROMOTIONS.md §3b;
+│                                        promotion-overlap.ts — what the till does when two
+│                                        promotions name one good (pre-save check)
 └── types/crm-promotion.type.ts          All domain/request/response types
 ```
 
@@ -110,7 +116,33 @@ The conversions between these are where the real logic sits:
   `activeDay` as a 7-tuple of booleans, priority/order as **strings** (they
   bind to `<select>`), products as full objects.
 - **`TCreatePromotionRequest`** — POST/PUT body. Back to ISO strings, binary
-  string, numbers; products flattened to bare `goodCode` strings.
+  string, numbers; products as `products: {goodCode, unitCode}[]` pairs, with the
+  pre-unit `productList: string[]` sent beside them for an API one release behind.
+
+### A product is the pair (goodCode, unitCode) — since 2026-10-07
+
+Workspace `CRM-PROMOTION-UNIT-PLAN.md`. The unit is `GoodBarcode.unitCode` of a
+`goodAmou = 1` row — one good is sold in several units (strip, box) and a pack row
+carries its own total price, so the till matches good **and** unit. In this module:
+
+- `lib/crm-promotion/product-key.ts` — `productKey`, `sameProduct`, `toProductRef`,
+  `formatProductLabel`. **Every `Set` / `filter` / `track` that keys a product uses
+  `productKey`, never `goodCode`** (picker exclusion, filter groups, GIFT/PWP pools,
+  the preset admin pages, the schema's cross-group and pool uniqueness).
+- `TPromotionProductBase` carries `unitCode / unitDesc / unitFactor / barcode`,
+  optional-nullable: the API returns them on every row (null on a stored row the
+  backfill has not reached). `ProductNamePipe` renders `(sku) name · unit`.
+- `/crm/all-products` is one row per (good, unit, supplier); the picker's barcode
+  box searches the 6-digit `sku` **and** the unit's own `barcode` (a pack unit has
+  no 6-digit code, and `GoodInfo.barCode` is blank on 11 goods).
+- `REGISTER_FEE_UNIT_CODE` (`promotion-actions.ts`) pins the derived REGISTERFEE
+  pool's unit beside its good code.
+- Item-price import: a sheet row whose good is sold in N units comes back as N
+  table rows sharing `rowNumber` (`splitSeq / splitCount`, badge "เพิ่ม N แถวจาก 1"),
+  each judged on **its own** ladder at the sheet price; exclusion and the overlap
+  toggle key on `rowKey(rowNumber, unitCode)`, and `toRequestLines` sends
+  `unitCodes` for a split row so the server issues only the units left in. New
+  server reasons `UNIT_UNPRICED` (skip) and `UNIT_NOT_SOLD` (error).
 
 Detail→form is the exported pure function in `factory/crm-promotion/
 promotion-detail-to-form.ts`. Form→request is the **private** `buildRequest()`
@@ -143,6 +175,12 @@ backend work that should follow. The non-obvious ones:
   not in `promotionTierSchema`.
 - `isRepeat = true` additionally requires every `thresholdValue > 0` — the
   compound case, which catches `BILLSUBTOTAL` where 0 is otherwise legal.
+  **`ITEMEXIST` is exempt** (`PRESENCE_THRESHOLD`): the ITEM page seeds
+  `isRepeat = true` and never authors a threshold, so the rule as first shipped
+  rejected every ITEM promotion. The error lands on the benefit node, which the
+  inline page renders no alert for — the only symptom was a submit button that
+  never enabled. Any new rule on `promotionBenefit` that reads `thresholdValue`
+  needs the same exemption, and the inline test in `createPromotionSchema.spec.ts`.
 - **Reward floors are per-`action`**: `*BATHDISC`/`*PERCENTDISC` need `> 0` (a 0
   deduction does nothing at the till); `BUNDLEPRICE`/`ITEMPRICE` allow 0 (an
   absolute price, so 0 = free); `CHEAPEST` needs an integer `>= 1`.
@@ -152,7 +190,10 @@ backend work that should follow. The non-obvious ones:
   continue` drops the promotion before `CollectReward` emits anything. An earlier
   version treated the value as meaningless and hid the input, which shipped 0 and
   killed every GIFT and PWP authored after that change. Integer `>= 1`, same as
-  `CHEAPEST`.
+  `CHEAPEST`. **`REGISTERFEE` is exempt**: its grant is boolean, the engine never
+  reads the value, and the page hides the box and always authors 0 — holding it to
+  the floor disabled the ค่าสมาชิก page and the live promotion's edit from
+  2026-09-20 to 09-30 with no message on screen.
 - Actions containing `"PERCENT"` cap `rewardValue` at 100.
 - Tier ladders must be monotonic once sorted by threshold — distinctness alone
   allowed "spend more, get less". Skipped for `PRICE` actions only (they invert:
@@ -166,12 +207,16 @@ backend work that should follow. The non-obvious ones:
 - `PWP` / `GIFT` require a non-empty `rewardPool`; for any other action
   `buildRequest()` sends `rewardPool: []`, and changing the action clears the
   pool, so items cannot carry across reward types.
-- All filter groups must share one `filterType`; no `goodCode` may appear in
-  two groups. `filterValue >= 1` for every type — an `EXIST` group stores **1**,
+- All filter groups must share one `filterType`; no **(goodCode, unitCode) pair**
+  may appear in two groups — the same good in two units may (`productKey`). The
+  reward pool is unique on the pair too. The API enforces both. `filterValue >= 1` for every type — an `EXIST` group stores **1**,
   not 0. The engine coerces it either way (`required = FilterValue > 0 ?
   FilterValue : 1`), so 0 only ever worked because a fallback rescued it, and was
   ambiguous between "EXIST, deliberately" and "nobody filled this in". The API
   lifts a posted 0 to 1 rather than rejecting it, so older clients are unaffected.
+  `promotionDetailToForm` opens a stored 0 as 1 for the same reason: 53 of the 90
+  live ITEM promotions still hold 0, and the ITEM page has no box to change it, so
+  without the lift their edit page was blocked.
 - ⚠️ **`filterType` itself is carried end-to-end and read by nothing.**
   `CrmPromotionEngine` never references it — only `filterValue` and the good
   codes. A `SUBTOTAL` group was therefore authored in baht
@@ -189,6 +234,58 @@ backend work that should follow. The non-obvious ones:
   API enforces. Treating `00:00` as end-of-day is an open request that needs
   the evaluator changed in the same release; see ClickUp `86eynabyf`.
 - `promotionType !== 'BILL'` requires at least one filter group.
+
+## Pre-save overlap check (BUNDLE only) — since 2026-10-08
+
+A set bundle is activated by goods the cart must contain, and the same good sits in many
+sets, so two bundles naming one good are the common authoring accident — and at the till the
+accident is silent: two discount promotions at the **same non-zero priority** that both fire
+yield **nothing** (DrugPOSApp sale RULES §1.22). So `PromotionFormComponent.onSubmit()` does
+not emit a BUNDLE request straight away. It calls `PromotionOverlapService.check(req,
+editingId)` and, when anything comes back, opens `PromotionOverlapModalComponent` (NgbModal)
+and emits only on an explicit confirm. The button reads "กำลังตรวจสอบโปรโมชั่นที่ซ้อนกัน..."
+meanwhile and `canSubmit` is false.
+
+What counts (`lib/crm-promotion/promotion-overlap.ts`, pure, specs beside it):
+
+- Only the **same §1.22 group**: set BUNDLE (`BUNDLECOUNT`) against set bundles, spend
+  (`BUNDLESUBTOTAL`) against spend. ITEM and BILL saves are not checked (the item-price
+  import has its own overlap view; a BILL names no goods).
+- Only **activating actions** on both sides: GIFT, PWP and REGISTERFEE never collide.
+- The live promotion must be `ACTIVE`, its date range touch (by day, last day inclusive), a
+  weekday in common, time windows that meet (two limited windows can be disjoint; a window
+  whose end is not after its start is read as all day), a member in common when both are
+  member-specific, a branch in common when both are branch-specific, and **a (goodCode,
+  unitCode) pair in common** in any filter group — a stored row whose unit is still null
+  matches every unit of its good.
+- Outcome, from the priorities (`promotionPriority` of both) and then the open-tier order:
+
+  | Outcome | When | Shown as |
+  | --- | --- | --- |
+  | `COLLISION` | same priority > 0 | **refused** — the modal's only button is "กลับไปแก้ไข" |
+  | `EXCLUSIVE` | priorities differ, one > 0 | warning: the higher one settles the group and skips the other (0 included) |
+  | `SHARES_UNITS` | both 0, set bundles | info: units go to one set each, `promotionOrder` descending then id first (§1.23) |
+  | `STACKS` | both 0, spend bundles | info: nothing consumed, both discounts land on the shared goods |
+
+  A ladder (set-of-3, set-of-2 on one good at priority 0) is therefore a `SHARES_UNITS` note
+  the author confirms, not a refusal — CRM-PROMOTIONS.md §2 *Ladders* says that overlap is
+  how a ladder is built.
+
+Fetching (`service/crm-promotion/promotion-overlap.service.ts`): one
+`GET /crm/promotions?include=details&promotionType=<type>&status=ACTIVE`, screened on header
+fields, then products, members and days from the list rows; `GET /:id` only for a candidate
+the list cannot settle — both sides branch-specific (the list reduces branches to a count),
+or an API without `include=details` that answered with headers. Four in flight at most.
+
+If the check itself fails (API unreachable) the modal says so and offers "บันทึกโดยไม่ตรวจ":
+a guard that blocks every save on a network error would be worse than one that says it did
+not look. The create and edit pages are untouched beyond the edit page passing
+`[editingId]`; both still only see the `submitted` output.
+
+Not covered, deliberately: an **INACTIVE** promotion someone may reactivate later, and a
+promotion in the other clone's data (`Drug_Dev` lags prod, workspace CLAUDE.md §4). The rule
+lives in the FE only; the API's `POST /crm/promotions/validate` is a body dry-run and does
+not look across rows.
 
 ## Services
 
@@ -236,6 +333,16 @@ members.
   seed zeros that the schema legitimately rejects. Container/cross-field nodes
   (tier ladder, filter groups, date range) need `[alwaysShow]="true"` — nothing
   ever marks them touched, so gating alone would silence them permanently.
+- **Every blocking rule is also listed above the submit button** by
+  `PromotionValidationSummaryComponent` (`components/crm-promotion/
+  promotion-validation-summary/`), which reads the root's `errorSummary()` and
+  names each error's section and field via `lib/crm-promotion/form-error-location.ts`.
+  It is not gated on `touched`: it exists to explain a disabled button. The
+  per-node alerts alone cannot, because a rule on a node whose alert a page does
+  not render is invisible — on 2026-09-30 every ITEM create/edit was disabled with
+  no message, since "zero threshold on repeat" hung on `promotionBenefit` and the
+  inline page renders no alert for that node. When adding a form field, add its
+  label to `FIELD_LABELS` there or the summary shows the raw key.
 - The create page component is still named
   `CreateBillDiscountPromotionComponent` but serves all three create routes.
 

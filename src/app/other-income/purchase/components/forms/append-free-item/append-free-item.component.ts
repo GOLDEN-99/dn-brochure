@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TFreeItemOrderLine, TFreeItemSearchParams, TItemRema, TPostFreeItemReq } from '../../../../shared/types/other-income.type';
 import { Observable } from 'rxjs';
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -29,6 +29,7 @@ export type TFreeItemSearchFilters = Omit<TFreeItemSearchParams, 'compType' | 'c
   selector: 'other-income-append-free-item',
   imports: [DecimalPipe, DatePipe, FormsModule, DateInputComponent],
   templateUrl: './append-free-item.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class AppendFreeItemComponent {

@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { OtherIncomeEventSelectComponent } from "../../../../shared/components/other-income-event-select/other-income-event-select.component";
 import { SelectComponent } from "../../../../../shared/components/select/select.component";
 import { OptionComponent } from "../../../../../shared/components/select/option.component";
@@ -10,6 +10,7 @@ import { TContractHeadForm } from '../../forms/create-schema';
   selector: 'other-income-create-pair-head',
   imports: [FormField, OtherIncomeEventSelectComponent, SelectComponent, OptionComponent, SignalDatepickerComponent],
   templateUrl: './create-pair-head.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class CreatePairHeadComponent {

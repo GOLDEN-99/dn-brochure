@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { TPromotionMaster } from '../../../../types/crm-promotion.type';
 import { SignalDatepickerComponent } from '../../signal-datepicker.component';
@@ -9,6 +9,7 @@ import { PromotionSourcePipe } from '../../../../lib/crm-promotion/promotion-sou
   selector: 'app-promotion-master',
   imports: [FormField, SignalDatepickerComponent, FormAlertTextComponent, PromotionSourcePipe],
   templateUrl: './promotion-master.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class PromotionMasterComponent {

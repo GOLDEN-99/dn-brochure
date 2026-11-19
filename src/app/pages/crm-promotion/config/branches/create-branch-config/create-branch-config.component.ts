@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ToastService } from '../../../../../service/toast/toast.service';
 import { BranchConfigService } from '../../../../../service/crm-promotion/branch-config.service';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { FormAlertTextComponent } from "../../../../../components/crm-promotion/
   selector: 'app-create-branch-config',
   imports: [FormField, FormAlertTextComponent],
   templateUrl: './create-branch-config.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class CreateBranchConfigComponent {

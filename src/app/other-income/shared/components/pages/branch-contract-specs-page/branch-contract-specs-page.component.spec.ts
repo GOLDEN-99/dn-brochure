@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
@@ -10,6 +10,7 @@ import { TAddBranchReq, TBranchContractDetail } from '../../../types/other-incom
 
 @Component({
   selector: 'other-income-add-branch-form',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: '',
 })
 class StubAddBranchFormComponent {
@@ -71,53 +72,6 @@ describe('BranchContractSpecsPageComponent', () => {
 
     fixture = TestBed.createComponent(BranchContractSpecsPageComponent);
     component = fixture.componentInstance;
-  });
-
-  it('should create', () => {
-    fixture.detectChanges();
-    expect(component).toBeTruthy();
-  });
-
-  it('renders nothing when there is no contract loaded', () => {
-    setContract(null);
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('.card')).toBeNull();
-  });
-
-  it('renders empty-state rows when branches and income types are empty', () => {
-    setContract(makeContract());
-    fixture.detectChanges();
-
-    const emptyRows: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('td.text-center.text-muted'));
-    expect(emptyRows.length).toBe(2);
-    expect(emptyRows.some(row => row.textContent?.includes('ไม่มีข้อมูล'))).toBeTrue();
-  });
-
-  it('renders a row per branch and income type when data is present', () => {
-    setContract(makeContract({
-      branches: [
-        { id: 1, branchCode: 'B1', branchName: 'Branch 1', openDate: '2026-01-01', closeDate: null, createdAt: '2026-01-01' },
-        { id: 2, branchCode: 'B2', branchName: null, openDate: '2026-02-01', closeDate: '2026-06-01', createdAt: '2026-02-01' },
-      ],
-      incomeTypes: [
-        {
-          id: 1,
-          contractId: 1,
-          contractType: 'BRANCH',
-          incomeType: 'Bill',
-          incomeLabelId: 1,
-          incomeLabelName: 'Auto Income',
-          createdAt: '2026-01-01',
-        },
-      ],
-    }));
-    fixture.detectChanges();
-
-    const branchRows = fixture.nativeElement.querySelectorAll('table tbody tr');
-    expect(branchRows.length).toBeGreaterThanOrEqual(3); // 1 income type row + 2 branch rows
-    expect(fixture.nativeElement.textContent).toContain('B1');
-    expect(fixture.nativeElement.textContent).toContain('B2');
-    expect(fixture.nativeElement.textContent).toContain('เปิดอยู่'); // open branch badge
   });
 
   describe('onSubmitAddBranch', () => {

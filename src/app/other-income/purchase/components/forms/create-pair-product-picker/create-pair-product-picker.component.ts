@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, inject, input, model, ModelSignal, signal, viewChild } from '@angular/core';
+import { Component, computed, ElementRef, inject, input, model, ModelSignal, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormValueControl, ValidationError } from '@angular/forms/signals';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,6 +11,7 @@ import { OtherIncomeSearchProductService } from '../../../services/other-income-
   imports: [FormsModule],
   templateUrl: './create-pair-product-picker.component.html',
   styles: '',
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [OtherIncomeSearchProductService],
 })
 export class CreatePairProductPickerComponent implements FormValueControl<TOtherIncomeProduct[]> {

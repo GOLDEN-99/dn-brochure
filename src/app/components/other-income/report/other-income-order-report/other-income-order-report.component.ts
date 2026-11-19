@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { ApiService } from '../../../../service/api/api.service';
 import { environment } from '../../../../../environments/environment';
 import { catchError, combineLatest, map, Observable, of, Subject, switchMap, tap, throwError } from 'rxjs';
@@ -13,6 +13,7 @@ import { LoadingService } from '../../../../service/loading/loading.service';
   selector: 'app-other-income-order-report',
   imports: [],
   templateUrl: './other-income-order-report.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-order-report.component.scss'
 })
 export class OtherIncomeOrderReportComponent {

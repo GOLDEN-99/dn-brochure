@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CRM_PAGE_CONFIG } from '../../../service/crm-promotion/crm-token';
 import { TPromotionBenefit } from '../../../types/crm-promotion.type';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { FormAlertTextComponent } from '../form-alert-text.component';
   selector: 'app-inline-benefit',
   imports: [FormsModule, PromotionBenefitNamePipe, FormField, FormAlertTextComponent],
   templateUrl: './inline-benefit.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class InlineBenefitComponent {

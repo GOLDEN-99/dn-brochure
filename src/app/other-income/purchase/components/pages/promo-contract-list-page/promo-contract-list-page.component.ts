@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,6 +13,7 @@ import { DatePickerComponent } from '../../../../../shared/components/date-picke
   selector: 'app-promo-contract-list-page',
   imports: [RouterLink, DatePipe, DecimalPipe, FormsModule, DatePickerComponent],
   templateUrl: './promo-contract-list-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './promo-contract-list-page.component.scss',
 })
 export class PromoContractListPageComponent {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EventService } from '../../../../service/other-income/event.service';
 
@@ -19,6 +19,7 @@ import { EventService } from '../../../../service/other-income/event.service';
     }
   </select>
 </div>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``
 })
 export class EventSelectComponent {

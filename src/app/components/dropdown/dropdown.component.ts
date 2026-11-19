@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { TDropdownProps } from '../../types';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
@@ -6,6 +6,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
     selector: 'app-dropdown',
     imports: [ReactiveFormsModule],
     templateUrl: './dropdown.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './dropdown.component.scss'
 })
 export class DropdownComponent {

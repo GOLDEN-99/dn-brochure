@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MonthlyService } from '../../../../service/other-income/monthly.service';
@@ -14,6 +14,7 @@ import { OiNotLightListService } from '../../../../service/other-income/oi-not-l
   selector: 'app-other-income-monthly-edit',
   imports: [FormsModule, MonthSelectComponent, YearSelectComponent, DecimalPipe],
   templateUrl: './other-income-monthly-edit.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-monthly-edit.component.scss'
 })
 export class OtherIncomeMonthlyEditComponent {

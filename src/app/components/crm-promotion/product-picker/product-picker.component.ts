@@ -1,16 +1,19 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { ProductConfigService } from '../../../service/crm-promotion/product-config.service';
 import { LoadingService } from '../../../service/loading/loading.service';
 import { ToastService } from '../../../service/toast/toast.service';
-import { debounceTime, distinctUntilChanged, finalize, map, Observable } from 'rxjs';
-import { TConfigGroup, TPromotionProductBase } from '../../../types/crm-promotion.type';
-import { NgbTypeaheadSelectItemEvent, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
+import { TConfigGroup, TProductDetail, TPromotionProductBase } from '../../../types/crm-promotion.type';
+import { SearchPickerComponent } from '../search-picker/search-picker.component';
+import { formatProductLabel, productKey } from '../../../lib/crm-promotion/product-key';
 
+// Picker rows are (good, unit, supplier) -- see TProductDetail. A good sold as strip and box
+// shows twice, labelled by unit; picking one adds that pair only, and the other stays offered.
 @Component({
   selector: 'app-product-picker',
-  imports: [NgbTypeahead, FormsModule],
+  imports: [SearchPickerComponent],
   templateUrl: './product-picker.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './product-picker.component.scss',
 })
 export class ProductPickerComponent {
@@ -18,68 +21,43 @@ export class ProductPickerComponent {
   disabled = input(false)
   exclusionPool = input<TPromotionProductBase[]>([])
   productAdd = output<TPromotionProductBase[]>()
-  //productRemove = output<string>()
 
   private readonly exclusionSet = computed(() =>
-    new Set(this.exclusionPool().map(({ goodCode }) => goodCode))
+    new Set(this.exclusionPool().map(productKey))
   )
   //di
   private readonly productService = inject(ProductConfigService)
   private readonly allProducts = this.productService.allProduct
   private readonly loadingService = inject(LoadingService)
   private readonly toastService = inject(ToastService)
-  private readonly promotionProductGroup = this.productService.allPromotionProductGroup
+  readonly promotionProductGroup = this.productService.allPromotionProductGroup
   // state
   //// filter out excluded products
   validProduct = computed(() => {
     const ref = this.exclusionSet();
-    return this.allProducts().filter(p => !ref.has(p.goodCode))
+    return this.allProducts().filter(p => !ref.has(productKey(p)))
   })
 
-  // type ahead method
-  onSearchName = (term$: Observable<string>) => term$.pipe(
-    distinctUntilChanged(),
-    debounceTime(300),
-    map(t => this.validProduct().filter(p => p.goodName.toLocaleLowerCase().includes(t.toLocaleLowerCase())).slice(0, 10))
-  )
-  onSearchSku = (term$: Observable<string>) => term$.pipe(
-    distinctUntilChanged(),
-    debounceTime(300),
-    map(t => this.validProduct().filter(p => p.sku.includes(t)).slice(0, 10))
-  )
-  formatProduct({ sku, goodName }: TPromotionProductBase) {
-    return `(${sku}) ${goodName}`
-  }
-  formatGoodName({ goodName }: TPromotionProductBase) {
-    return goodName
-  }
+  // search picker accessors
+  readonly goodName = ({ goodName }: TProductDetail) => goodName
+  // the 6-digit sku, or the unit's own scan code -- a pack unit has no 6-digit code
+  readonly sku = ({ sku, barcode }: TProductDetail) => `${sku ?? ''} ${barcode ?? ''}`
+  readonly formatProduct = (p: TProductDetail) => formatProductLabel(p)
+  readonly groupName = ({ name }: TConfigGroup) => name
+
   // emit value out
-  onSelectProduct({ item: { goodCode, goodName, sku } }: NgbTypeaheadSelectItemEvent<TPromotionProductBase>) {
-    this.productAdd.emit([{ goodCode, goodName, sku }])
+  onSelectProduct(product: TProductDetail) {
+    this.productAdd.emit([toBase(product)])
   }
-  // onRemoveProduct(goodCode: string) {
-  //   this.productRemove.emit(goodCode)
-  // }
   // handle add product from group
-  searchPromotionProductGroup = (term$: Observable<string>) =>
-    term$.pipe(
-      distinctUntilChanged(),
-      debounceTime(300),
-      map(t => this.promotionProductGroup().filter(p =>
-        p.name.toLocaleLowerCase().includes(t.toLocaleLowerCase()))
-      )
-    )
-  formatPromotionProductGroup({ name }: TConfigGroup) {
-    return name
-  }
-  onSelectpromoitionproductGroup({ item: { id } }: NgbTypeaheadSelectItemEvent<TConfigGroup>) {
+  onSelectpromoitionproductGroup({ id }: TConfigGroup) {
     this.loadingService.startLoad()
     this.productService.getAllProductGroup(id).pipe(
       finalize(() => this.loadingService.endLoad())
     ).subscribe({
       next: (v) => {
         const ref = this.exclusionSet()
-        const incoming = v.flatMap(({ goodCode, goodName, sku }) => ref.has(goodCode) ? [] : [{ goodCode, goodName, sku }])
+        const incoming = v.flatMap(p => ref.has(productKey(p)) ? [] : [toBase(p)])
         this.productAdd.emit(incoming)
       },
       error: () => {
@@ -88,3 +66,6 @@ export class ProductPickerComponent {
     })
   }
 }
+
+const toBase = ({ goodCode, goodName, sku, unitCode, unitDesc, unitFactor, barcode }: TProductDetail): TPromotionProductBase =>
+  ({ goodCode, goodName, sku, unitCode: unitCode ?? null, unitDesc: unitDesc ?? null, unitFactor: unitFactor ?? null, barcode: barcode ?? null })

@@ -175,7 +175,9 @@
         <col style="width: 24px" />
         <col style="width: 140px" />
         <col />
-        <col style="width: 360px" />
+        <col style="width: 140px" />
+        <col style="width: 90px" />
+        <col style="width: 300px" />
         <col style="width: 160px" />
       </colgroup>
       <thead class="table-light" style="position: sticky; top: 0; z-index: 1">
@@ -215,6 +217,23 @@
           </th>
           <th
             style="cursor: pointer; user-select: none"
+            (click)="toggleSort('unitDesc')"
+            (keydown.enter)="toggleSort('unitDesc')"
+          >
+            หน่วย
+            @if (sortCol() === "unitDesc") {
+              <i
+                class="bi"
+                [class.bi-sort-up]="sortDir() === 'asc'"
+                [class.bi-sort-down]="sortDir() === 'desc'"
+              ></i>
+            } @else {
+              <i class="bi bi-arrow-down-up text-muted opacity-50"></i>
+            }
+          </th>
+          <th class="text-end">ราคา P1</th>
+          <th
+            style="cursor: pointer; user-select: none"
             (click)="toggleSort('compName')"
             (keydown.enter)="toggleSort('compName')"
           >
@@ -248,25 +267,32 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of filteredProducts(); track item.goodCode + item.compCode) {
+        @for (item of filteredProducts(); track productKey(item) + item.compCode) {
           <tr
             style="cursor: pointer"
-            (click)="toggleSelect(item.goodCode)"
-            (keydown.space)="toggleSelect(item.goodCode)"
+            (click)="toggleSelect(item)"
+            (keydown.space)="toggleSelect(item)"
           >
             <td>
-              @if (isSelected(item.goodCode)) {
+              @if (isSelected(item)) {
                 <i class="bi bi-check"></i>
               }
             </td>
-            <td class="text-truncate">{{ item.sku }}</td>
+            <td class="text-truncate">{{ item.sku || item.barcode }}</td>
             <td class="text-truncate">{{ item.goodName }}</td>
+            <td class="text-truncate">
+              {{ item.unitDesc ?? "-" }}
+              @if (item.unitFactor && item.unitFactor > 1) {
+                <span class="badge text-bg-light border ms-1">×{{ item.unitFactor }}</span>
+              }
+            </td>
+            <td class="text-end" [class.text-danger]="!item.price1">{{ item.price1 ?? "-" }}</td>
             <td class="text-truncate">{{ item.compName }}</td>
             <td class="text-truncate">{{ item.cateDesc }}</td>
           </tr>
         } @empty {
           <tr>
-            <td colspan="5" class="text-center text-muted py-5">
+            <td colspan="7" class="text-center text-muted py-5">
               <i class="bi bi-inbox d-block fs-3 mb-1"></i>
               ไม่มีข้อมูล
             </td>

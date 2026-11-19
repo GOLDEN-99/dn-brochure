@@ -1,14 +1,15 @@
-import { Component, DestroyRef, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
-import { CREATE_ROUTE_PATH, } from '../../routes/crm-promotion.route';
+import { CREATE_ROUTE_PATH, STANDALONE_CREATE_ROUTE_PATH } from '../../routes/crm-promotion.route';
 
 
 @Component({
   selector: 'app-crm-promotion-layout',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './crm-promotion-layout.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './crm-promotion-layout.component.scss'
 })
 export class CrmPromotionLayoutComponent {
@@ -17,7 +18,7 @@ export class CrmPromotionLayoutComponent {
   private readonly router = inject(Router)
   private readonly destroyRef = inject(DestroyRef)
 
-  readonly createObject = CREATE_ROUTE_PATH.map(({ path, name, icon }) => ({
+  readonly createObject = [...CREATE_ROUTE_PATH, ...STANDALONE_CREATE_ROUTE_PATH].map(({ path, name, icon }) => ({
     path: `/crm-promotion/${path}`,
     name,
     icon

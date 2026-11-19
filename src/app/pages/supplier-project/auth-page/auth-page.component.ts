@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnDestroy, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { BaseSupplierForm } from '../../../lib/supplier/baseForm';
 import { FormsModule } from '@angular/forms';
 import { SupplierApiService } from '../../../service/supplier/supplier-api.service';
@@ -9,6 +9,7 @@ import { takeUntil, tap } from 'rxjs';
   selector: 'app-auth-page',
   imports: [FormsModule],
   templateUrl: './auth-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './auth-page.component.scss'
 })
 export class AuthPageComponent extends BaseSupplierForm {

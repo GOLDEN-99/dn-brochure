@@ -25,7 +25,11 @@
             names the benefit in the list and detail views, where "จำนวนของแถม" would read wrongly.
           -->
           <label [htmlFor]="form().rewardValue().name()" class="form-label">{{
-            isPoolOnly() ? poolCountLabel() : (action() | promotionBenefitName)
+            isPoolOnly()
+              ? poolCountLabel()
+              : isCheapest()
+                ? cheapestCountLabel
+                : (rewardLabel() ?? (action() | promotionBenefitName))
           }}</label>
           <input
             class="form-control"

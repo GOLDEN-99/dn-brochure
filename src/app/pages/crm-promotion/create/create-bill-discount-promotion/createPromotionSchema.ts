@@ -1,3 +1,4 @@
+import { productKey } from '../../../../lib/crm-promotion/product-key';
 import {
   apply,
   applyEach,
@@ -27,6 +28,8 @@ import {
 import {
   CHEAPEST_ACTION,
   POOL_PERCENT_TYPE,
+  PRESENCE_THRESHOLD,
+  REGISTER_FEE_ACTION,
   SPEND_THRESHOLD,
   THRESHOLD_RULES,
   isPoolOnlyAction,
@@ -206,11 +209,15 @@ export const promotionRewardPercentSchema = schema<TProductRewardPool>(
       message: 'ค่าส่วนลดต้องมากกว่าหรือเท่ากับ 0',
     });
     required(path.itemBenefitValue, { message: 'ต้องระบุค่าส่วนลด' });
+    // A percent is 1-100 (86exej34u). The tier-side percent already has this floor
+    // through the reward-floor rule below; the pool item had only the cap, so a
+    // 0% PWP line validated clean and gave nothing at the till.
     applyWhen(
       path,
       ({ value }) => value().itemBenefitType === POOL_PERCENT_TYPE,
       (p) => {
-        max(p.itemBenefitValue, 100, { message: 'ค่าส่วนลดต้องไม่เกิน 100' });
+        min(p.itemBenefitValue, 1, { message: 'ส่วนลด % ต้องอยู่ระหว่าง 1-100' });
+        max(p.itemBenefitValue, 100, { message: 'ส่วนลด % ต้องอยู่ระหว่าง 1-100' });
       },
     );
   },
@@ -292,10 +299,17 @@ export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
     // `if (reward <= 0) continue` drops the promotion before CollectReward emits a
     // single gift or entitlement. Exempting them here shipped 0 and killed every
     // GIFT and PWP authored since.
+    //
+    // REGISTERFEE IS exempt: its grant is boolean (the register SKU goes on the bill at
+    // 0 baht, or it does not), the engine tests it before the reward guard and never reads
+    // the value, and the page hides the box and always authors 0. Holding it to the floor
+    // disabled the ค่าสมาชิก page and the edit of the live one from 2026-09-20 to 09-30.
     required(p.rewardValue, { message: 'ต้องระบุจำนวน' });
     applyWhen(
       p.rewardValue,
-      ({ valueOf }) => !isPriceAction(valueOf(_path.action)),
+      ({ valueOf }) =>
+        !isPriceAction(valueOf(_path.action)) &&
+        valueOf(_path.action) !== REGISTER_FEE_ACTION,
       (rv) => {
         min(rv, 1, { message: 'จำนวนต้องมากกว่า 0' });
       },
@@ -386,9 +400,14 @@ export const promotionBenefitSchema = schema<TPromotionBenefit>((_path) => {
   // the threshold fits into the basket. A threshold of 0 fits infinitely often.
   // The per-type floor above already blocks this for COUNT types; this catches it
   // for BILLSUBTOTAL, where 0 is otherwise legal.
+  //
+  // ITEMEXIST is exempt: the ITEM page never authors a threshold (it stays 0) and
+  // seeds isRepeat = true, so without this the rule rejected every ITEM promotion
+  // -- with the error on the benefit node, where the inline page renders no alert,
+  // the author only saw a submit button that would not enable.
   validate(_path, ({ value }) => {
-    const { isRepeat, tiers } = value();
-    if (!isRepeat) return null;
+    const { isRepeat, tiers, thresholdType } = value();
+    if (!isRepeat || thresholdType === PRESENCE_THRESHOLD) return null;
     return tiers.some((t) => t.thresholdValue <= 0)
       ? {
           kind: 'zero threshold on repeat',
@@ -465,14 +484,16 @@ export const createPromotionSchema = schema<TCreatePromotionForm>((_path) => {
           kind: 'invalid filter type',
           message: 'เงื่อนไขสินค้าต้องเหมือนกันทั้งกลุ่ม',
         };
-      //check cross group duplicate product
+      // check cross group duplicate product -- by the pair (good, unit): the strip in one group
+      // and the box in another are two products at the till (CRM-PROMOTION-UNIT-PLAN.md §1.2)
       for (const product of productList) {
-        if (ref.has(product.goodCode))
+        const key = productKey(product);
+        if (ref.has(key))
           return {
             kind: 'invalid filter cross product in filter',
             message: 'เงื่อนไขสินค้าต้องไม่มีสินค้าข้ามกลุ่ม',
           };
-        ref.add(product.goodCode);
+        ref.add(key);
       }
     }
     return null;
@@ -530,7 +551,7 @@ const uniqueValidator =
     };
 
 const rewardPoolUniqueValidator = uniqueValidator<TProductRewardPool, string>(
-  (p) => p.goodCode,
+  productKey,
 );
 const branchUniqueValidator = uniqueValidator<TBranch, string>(
   (b) => b.branchCode,

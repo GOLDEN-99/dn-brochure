@@ -1,10 +1,11 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, computed, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TDate } from '../../../../lib';
 
 @Component({
   selector: 'app-calendar-cell',
   imports: [],
   templateUrl: './calendar-cell.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './calendar-cell.component.scss'
 })
 export class CalendarCellComponent {

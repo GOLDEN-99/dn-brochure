@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { TBorchureHead, TCardProps, TItem, TPrice } from '../../types/brochure.type';
 import { TColor, TWhole, TZone } from '../../utils/param-schema';
 import { zoneToColor } from '../../libs/libs';
@@ -9,6 +9,7 @@ import { BrochureCardComponent } from "../../components/brochure-card/brochure-c
   selector: 'brochure-page',
   imports: [BrochureSpecialCardComponent, BrochureCardComponent],
   templateUrl: './brochure-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './brochure-page.component.scss',
 })
 export class BrochurePageComponent {

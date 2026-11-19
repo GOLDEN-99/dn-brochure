@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TPostInvoiceReq } from '../../../../shared/types/other-income.type';
 import { AppendInvoiceForm, appendInvoiceSchema } from './append-invoice';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
@@ -12,6 +12,7 @@ import { floorSatang, roundSatang } from '../../../../shared/libs/money';
   selector: 'other-income-append-invoice',
   imports: [FormField, SignalDatepickerComponent, FormAlertTextComponent],
   templateUrl: './append-invoice.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class AppendInvoiceComponent {

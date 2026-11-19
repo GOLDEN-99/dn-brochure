@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { InlineMemberComponent } from "../../inline-member/inline-member.component";
 import { InlineBranchLimitComponent } from "../../inline-branch-limit/inline-branch-limit.component";
 import { FieldTree } from '@angular/forms/signals';
@@ -9,6 +9,7 @@ import { FormAlertTextComponent } from "../../form-alert-text.component";
   selector: 'app-promotion-limit-usage',
   imports: [InlineMemberComponent, InlineBranchLimitComponent, FormAlertTextComponent],
   templateUrl: './promotion-limit-usage.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class PromotionLimitUsageComponent {

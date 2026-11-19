@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastService } from '../../../service/toast/toast.service';
 import { VERSION_TOKEN } from '../../../shared/tokens/injection-token';
@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-search-brochure',
   imports: [FormsModule],
   templateUrl: './search-brochure.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class SearchBrochureComponent {

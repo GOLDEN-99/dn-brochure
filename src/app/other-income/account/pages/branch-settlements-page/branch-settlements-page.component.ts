@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { BranchContractContextService } from '../../../purchase/services/branch-contract-context.service';
@@ -7,6 +7,7 @@ import { BranchContractContextService } from '../../../purchase/services/branch-
   selector: 'app-branch-settlements-page',
   imports: [RouterLink, DatePipe],
   templateUrl: './branch-settlements-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './branch-settlements-page.component.scss',
 })
 export class BranchSettlementsPageComponent {

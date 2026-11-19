@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { TPopulatedPeriodResult } from '../../../../service/other-income/base-oi';
 import { BasePeriodComponent } from '../base-period.component';
 import { EditPeriodModalComponent } from '../edit-period-modal/edit-period-modal.component';
@@ -31,6 +31,7 @@ import { OtherIncomeCreateCreditNoteComponent } from "../other-income-create-cre
     OtherIncomeCreateCreditNoteComponent
   ],
   templateUrl: './other-income-period-display.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-period-display.component.scss'
 })
 export class OtherIncomePeriodDisplayComponent extends BasePeriodComponent {

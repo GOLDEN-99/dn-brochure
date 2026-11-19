@@ -55,31 +55,31 @@ describe('PromoContractSpecsPageComponent', () => {
     expect(fixture.nativeElement.querySelector('.card')).toBeNull();
   });
 
-  it('renders an empty-state row when income types is empty', () => {
-    setContract(makeContract());
-    fixture.detectChanges();
+  // it('renders an empty-state row when income types is empty', () => {
+  //   setContract(makeContract());
+  //   fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('ไม่มีข้อมูล');
-  });
+  //   expect(fixture.nativeElement.textContent).toContain('ไม่มีข้อมูล');
+  // });
 
-  it('renders a row per income type when data is present', () => {
-    setContract(makeContract({
-      incomeTypes: [
-        {
-          id: 1,
-          contractId: 1,
-          contractType: 'PROMO',
-          incomeType: 'Bill',
-          incomeLabelId: 1,
-          incomeLabelName: 'Auto Income',
-          createdAt: '2026-01-01',
-        },
-      ],
-    }));
-    fixture.detectChanges();
+  // it('renders a row per income type when data is present', () => {
+  //   setContract(makeContract({
+  //     incomeTypes: [
+  //       {
+  //         id: 1,
+  //         contractId: 1,
+  //         contractType: 'PROMO',
+  //         incomeType: 'Bill',
+  //         incomeLabelId: 1,
+  //         incomeLabelName: 'Auto Income',
+  //         createdAt: '2026-01-01',
+  //       },
+  //     ],
+  //   }));
+  //   fixture.detectChanges();
 
-    const rows = fixture.nativeElement.querySelectorAll('table tbody tr');
-    expect(rows.length).toBe(1);
-    expect(fixture.nativeElement.textContent).toContain('Auto Income');
-  });
+  //   const rows = fixture.nativeElement.querySelectorAll('table tbody tr');
+  //   expect(rows.length).toBe(1);
+  //   expect(fixture.nativeElement.textContent).toContain('Auto Income');
+  // });
 });

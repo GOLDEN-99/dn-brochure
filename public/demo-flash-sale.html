@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<title>Flash Sale — date range cases</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* measured from the delivered artwork, as % of the 4160px page */
+    --digit-l: 63.1%;  --digit-t: 18.0%;  --digit-w: 10.0%;  --digit-h: 9.6%;
+    --date-l: 74.3%;   --date-t: 23.8%;   --date-w: 20.4%;   --date-h: 5.8%;
+    --grid-x1: 5.3%;   --grid-x2: 36.0%;  --grid-x3: 66.6%;
+    --grid-y1: 32.7%;  --grid-y2: 62.8%;  --card-w: 28.2%;
+  }
+  body { margin: 0; background: #1b1b22; color: #ddd; font-family: Kanit, sans-serif; }
+  h1 { font-size: 18px; font-weight: 600; margin: 18px 16px 4px; }
+  p.note { font-size: 13px; margin: 0 16px 16px; color: #9a9aa8; max-width: 70ch; line-height: 1.6; }
+  .row { display: flex; gap: 18px; padding: 0 16px 28px; flex-wrap: wrap; }
+  .holder { width: 460px; }
+  .holder h2 { font-size: 14px; font-weight: 500; margin: 0 0 6px; color: #cfcfe0; }
+  .holder .meta { font-size: 12px; color: #8f8fa2; margin: 0 0 8px; min-height: 2.6em; line-height: 1.4; }
+  .viewport { width: 460px; height: 460px; overflow: hidden; border-radius: 6px; }
+
+  /* the real page: always 4160, scaled only for viewing */
+  .stage {
+    width: 4160px; height: 4160px; position: relative;
+    transform-origin: top left; transform: scale(0.110576);
+    background: #38088f;
+  }
+  .stage .bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .digit {
+    position: absolute; left: var(--digit-l); top: var(--digit-t);
+    width: var(--digit-w); height: var(--digit-h);
+    display: flex; align-items: center; justify-content: center; gap: 0;
+  }
+  .digit img { height: 100%; width: auto; display: block; }
+
+  .daterange {
+    position: absolute; left: var(--date-l); top: var(--date-t);
+    width: var(--date-w); height: var(--date-h);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 600; line-height: 1; white-space: nowrap;
+    /* the baked chip is not level: its top edge measures -5.13deg and its
+       bottom -4.57deg across the flat span, so the text follows it */
+    transform: rotate(-4.85deg);
+  }
+
+  /* our own chip, cut from the plate's own pixels: fixed caps, repeating
+     middle. Anchored on the right where the baked one sits and grown
+     leftward, because the page leaves only 210px to its right. Being wider
+     and taller than the baked chip, it covers it and its glow entirely. */
+  .ourchip {
+    position: absolute; right: 4.66%; top: 23.63%; height: 6.49%;
+    display: flex; align-items: stretch;
+  }
+  .ourchip .cap-l { width: 194px; background: url('/image/FS/chip/left.png') left center/100% 100% no-repeat; }
+  .ourchip .mid   { background: url('/image/FS/chip/mid.png') left center/auto 100% repeat-x; }
+  .ourchip .cap-r { width: 110px; background: url('/image/FS/chip/right.png') left center/100% 100% no-repeat; }
+  .ourchip .label {
+    position: absolute; left: 194px; right: 110px; top: 0; bottom: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 600; line-height: 1; white-space: nowrap;
+    transform: translateY(-2%);
+  }
+
+  .card {
+    position: absolute; aspect-ratio: 1;   /* width comes from the slot */
+  }
+  .card .frame { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .card .code {
+    position: absolute; left: 28.8%; top: 4.6%; width: 41.1%; height: 10.8%;
+    display: flex; align-items: center; justify-content: center;
+    color: #17170a; font-weight: 600; line-height: 1;
+  }
+  .card .name {
+    position: absolute; left: 6%; top: 17.5%; width: 88%; height: 13%;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    text-align: center; color: #10204e; font-weight: 600; line-height: 1.18;
+  }
+  .card .photo {
+    position: absolute; left: 8%; top: 31.5%; width: 84%; height: 46%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card .photo img { display: block; }
+  .card .price {
+    position: absolute; left: 28%; top: 79.4%; width: 61%; height: 16.4%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 600; line-height: 1; white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<h1>Flash Sale — ช่วงวันที่ 3 แบบ บนไฟล์พื้นหลังจริง</h1>
+<p class="note">
+  สินค้าดึงจากโปรโมชัน 408 (BKK) ของจริง · พื้นหลัง เลข และการ์ด ใช้ไฟล์ที่ทีมออกแบบส่งมา ·
+  หน้าจริงเรนเดอร์ที่ 4160 × 4160 px ย่อลงเพื่อดูเท่านั้น ·
+  ข้อความวันที่ย่อขนาดอัตโนมัติให้พอดีป้าย (ทางเลือก ข)
+</p>
+
+<div class="row" id="row"></div>
+
+<h1>จำนวนวัน — เปลี่ยนเลขโดยใช้ไฟล์ 0–9 ที่ส่งมา</h1>
+<p class="note">
+  ช่วงวันที่คงที่ (ค่าจริงของโปรฯ 408) เปลี่ยนเฉพาะจำนวนวัน ·
+  ช่องว่างสำหรับเลขในแผงน้ำเงินกว้างประมาณ 415 px · เลข 1 หลักกว้างประมาณ 357 px ·
+  <strong>ใบที่สามแสดงเลข 2 หลักโดยไม่จำกัด เพื่อให้เห็นว่าทำไมจึงต้องจำกัดที่ 9</strong>
+</p>
+
+<div class="row" id="row-day"></div>
+
+<h1>ป้ายวันที่ที่เราวาดเอง — เทียบกับของเดิม</h1>
+<p class="note">
+  ตัดหัว–ท้าย–ลายกลางของป้ายออกมาจากไฟล์พื้นหลังเอง แล้วประกอบใหม่ให้ยาวตามข้อความ
+  วางทับป้ายเดิมให้มิด (กว้างและสูงกว่าเดิม) · ยึดขอบขวาไว้ที่เดิมแล้วยืดไปทางซ้าย
+  เพราะด้านขวาเหลือที่แค่ 210 px · <strong>ได้ตัวอักษรเต็มขนาด 108 px ทุกกรณี ไม่ต้องย่อ</strong>
+</p>
+
+<div class="row" id="row-chip"></div>
+
+<h1>จำนวนสินค้าต่อใบ — 4 ช่องจัดเป็น 2 + 2 ตามที่ยืนยัน</h1>
+<p class="note">
+  การ์ดเป็นสี่เหลี่ยมจัตุรัสเสมอ ขนาดเปลี่ยนตามจำนวนการ์ดในแถวนั้น ·
+  แถวที่ไม่เต็มจะจัดกึ่งกลาง · ตัวเลขทั้งหมดวัดจากไฟล์ตัวอย่างที่ส่งมา
+  ยกเว้น 4 ช่องที่ยืนยันมาเป็น 2 + 2
+</p>
+
+<div class="row" id="row-count"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// real payload: POST /ItemService2/PaperProFlash {idPromotion:"408", zone:"BKK"}
+const DATA = {
+  head: { id: 408, name: 'Flash I', day: 7, dayActive: '01-07 พ.ย. 2568' },
+  list: [
+    { goodCode: '13690', barCode: '101311', goodName: 'Swisse Calcium+Vitamin D3 90tab', flashPrice: 220 },
+    { goodCode: '11800', barCode: '101258', goodName: 'Swisse Astaxanthin+Gluta 1x30cap', flashPrice: 510 },
+    { goodCode: '13974', barCode: '514846', goodName: 'Testsealabs 1x1test 2in1 ATK Covid-19', flashPrice: 12.3 },
+    { goodCode: '10738', barCode: '514382', goodName: 'Testsealabs 1x1test(Home Test) ATK Covid-19', flashPrice: 22.19 },
+    { goodCode: '12612', barCode: '514665', goodName: 'Testsealabs Flu A/B+Covid 19 ATK (Orange)', flashPrice: 43.18 },
+    { goodCode: '9385', barCode: '101218', goodName: 'GPO Omeprazole 20mg 1x10x10cap', flashPrice: 59.25 },
+  ],
+};
+
+const CASES = [
+  { key: 'same',  title: 'เดือนเดียวกัน',  text: '01-07 พ.ย. 2568',          note: 'ค่าจริงจาก dayActive ของโปรโมชัน 408' },
+  { key: 'month', title: 'ข้ามเดือน',      text: '28 ก.ย. – 4 ต.ค. 2569',    note: 'ยาวกว่าแบบแรก ป้ายเริ่มตึง' },
+  { key: 'year',  title: 'ข้ามปี',         text: '28 ธ.ค. 2569 – 3 ม.ค. 2570', note: 'ยาวที่สุด ต้องย่อตัวอักษรลงมาก' },
+];
+
+const DAY_CASES = [
+  { key: 'd3',  day: 3,  cap: true,  title: '3 วัน',  note: 'เลขหลักเดียว ใช้ไฟล์ 3.png' },
+  { key: 'd9',  day: 9,  cap: true,  title: '9 วัน',  note: 'เลขหลักเดียวที่มากที่สุดที่ช่องรับได้' },
+  { key: 'd14', day: 14, cap: true, title: '14 วัน → ส่งออกเป็น 9', note: 'ตามที่ตกลง: จำกัดหลักเดียว โปรฯ เกิน 9 วันพิมพ์เลข 9 ระบบจะเตือนตอน export' },
+];
+
+/* Card geometry read off the delivered slot examples, as % of the page.
+   4 is 2+2, confirmed by design; the rest are measured. */
+const LAYOUTS = {
+  1: [{ y: 36.1, w: 48.0, xs: [26.1] }],
+  2: [{ y: 38.0, w: 42.7, xs: [5.5, 51.9] }],
+  3: [{ y: 45.1, w: 28.2, xs: [5.3, 36.0, 66.6] }],
+  4: [{ y: 32.7, w: 28.2, xs: [20.6, 51.2] },
+      { y: 62.8, w: 28.2, xs: [20.6, 51.2] }],
+  5: [{ y: 32.7, w: 28.2, xs: [20.6, 51.2] },
+      { y: 62.8, w: 28.2, xs: [5.3, 36.0, 66.6] }],
+  6: [{ y: 32.7, w: 28.2, xs: [5.3, 36.0, 66.6] },
+      { y: 62.8, w: 28.2, xs: [5.3, 36.0, 66.6] }],
+  7: [{ y: 36.1, w: 21.5, xs: [5.3, 27.9, 50.6, 73.2] },
+      { y: 62.8, w: 28.2, xs: [5.3, 36.0, 66.6] }],
+};
+
+const slotsFor = (n) => {
+  const rows = LAYOUTS[Math.min(Math.max(n, 1), 7)];
+  const out = [];
+  for (const r of rows) for (const x of r.xs) out.push({ x: x + '%', y: r.y + '%', w: r.w + '%' });
+  return out;
+};
+
+const money = (n) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '.-';
+
+function buildCard(item, slot) {
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.style.left = slot.x;
+  el.style.top = slot.y;
+  el.style.width = slot.w;
+  el.innerHTML = `
+    <img class="frame" src="/image/FS/card.png" alt="">
+    <div class="code">${item.barCode}</div>
+    <div class="name">${item.goodName}</div>
+    <div class="photo"><img src="https://file.drugnetcenter.com/drugpos/GoodPictures/${item.goodCode}.jpg" alt="" crossorigin="anonymous"></div>
+    <div class="price">${money(item.flashPrice)}</div>`;
+  return el;
+}
+
+/** replace the baked chip with one built from its own slices, sized to the text */
+function addOurChip(stage, text, fontPx) {
+  stage.querySelector('.daterange').remove();
+  const chip = document.createElement('div');
+  chip.className = 'ourchip';
+  chip.innerHTML = `<div class="cap-l"></div><div class="mid"></div><div class="cap-r"></div>
+                    <div class="label">${text}</div>`;
+  stage.appendChild(chip);
+  // measure the text at the wanted size, then set the middle to suit
+  const label = chip.querySelector('.label');
+  label.style.fontSize = fontPx + 'px';
+  const probe = document.createElement('span');
+  probe.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;font:600 ${fontPx}px Kanit,sans-serif`;
+  probe.textContent = text;
+  stage.appendChild(probe);
+  const textW = probe.getBoundingClientRect().width / 0.110576;
+  probe.remove();
+  const PAD = 90;
+  // never narrower than the baked chip, or its ends would show
+  const midW = Math.max(1048 - 194 - 110, textW + PAD * 2 - 194 + 194);
+  chip.querySelector('.mid').style.width = Math.round(midW) + 'px';
+  return { textW: Math.round(textW), chipW: Math.round(194 + midW + 110) };
+}
+
+function buildStage(dateText, day = DATA.head.day, cap = true, count = 6) {
+  const stage = document.createElement('div');
+  stage.className = 'stage';
+
+  const bg = document.createElement('img');
+  bg.className = 'bg';
+  bg.src = '/image/FS/bg.jpg';
+  stage.appendChild(bg);
+
+  // day count: one image per digit, composed. Capped at 9 — the slot in the
+  // artwork is ~415px and two digits need ~674px.
+  const digit = document.createElement('div');
+  digit.className = 'digit';
+  const shown = cap ? Math.min(day, 9) : day;
+  String(shown).split('').forEach(d => {
+    const i = document.createElement('img');
+    i.src = `/image/FS/number/${d}.png`;
+    digit.appendChild(i);
+  });
+  stage.appendChild(digit);
+
+  const date = document.createElement('div');
+  date.className = 'daterange';
+  date.textContent = dateText;
+  stage.appendChild(date);
+
+  // promotion 408 carries 6 products; repeat them to fill a wider layout
+  const items = Array.from({ length: count }, (_, i) => DATA.list[i % DATA.list.length]);
+  const slots = slotsFor(items.length);
+  items.forEach((item, n) => stage.appendChild(buildCard(item, slots[n])));
+  return stage;
+}
+
+/** shrink until it fits the baked chip, down to a floor, and report the result */
+function fitText(el, startPx, minPx) {
+  let size = startPx;
+  el.style.fontSize = size + 'px';
+  const limit = el.clientWidth;
+  while (size > minPx && el.scrollWidth > limit) {
+    size -= 2;
+    el.style.fontSize = size + 'px';
+  }
+  return { size, fits: el.scrollWidth <= limit + 1, limit, needed: el.scrollWidth };
+}
+
+function sizeCard(stage) {
+  stage.querySelectorAll('.card').forEach(card => {
+    const w = card.getBoundingClientRect().width / 0.110576; // undo the view scale
+    card.querySelector('.code').style.fontSize = (w * 0.075) + 'px';
+    card.querySelector('.name').style.fontSize = (w * 0.058) + 'px';
+    card.querySelector('.price').style.fontSize = (w * 0.105) + 'px';
+  });
+  stage.querySelectorAll('.photo img').forEach(img => {
+    const box = img.parentElement.getBoundingClientRect();
+    const bw = box.width / 0.110576, bh = box.height / 0.110576;
+    if (!img.naturalWidth) return;
+    const s = Math.min(bw / img.naturalWidth, bh / img.naturalHeight);
+    img.style.width = Math.round(img.naturalWidth * s) + 'px';
+    img.style.height = Math.round(img.naturalHeight * s) + 'px';
+  });
+}
+
+window.__report = {};
+
+(async () => {
+  await document.fonts.ready;
+  const row = document.getElementById('row');
+
+  for (const c of CASES) {
+    const holder = document.createElement('div');
+    holder.className = 'holder';
+    holder.innerHTML = `<h2>${c.title}</h2><p class="meta" id="meta-${c.key}">${c.note}</p>`;
+    const vp = document.createElement('div');
+    vp.className = 'viewport';
+    const stage = buildStage(c.text);
+    stage.id = 'stage-' + c.key;
+    vp.appendChild(stage);
+    holder.appendChild(vp);
+    row.appendChild(holder);
+  }
+
+  const rowDay = document.getElementById('row-day');
+  for (const d of DAY_CASES) {
+    const holder = document.createElement('div');
+    holder.className = 'holder';
+    holder.innerHTML = `<h2>${d.title}</h2><p class="meta">${d.note}</p>`;
+    const vp = document.createElement('div');
+    vp.className = 'viewport';
+    const stage = buildStage(DATA.head.dayActive, d.day, d.cap);
+    stage.id = 'stage-' + d.key;
+    vp.appendChild(stage);
+    holder.appendChild(vp);
+    rowDay.appendChild(holder);
+  }
+
+  const rowChip = document.getElementById('row-chip');
+  for (const c of CASES) {
+    const holder = document.createElement('div');
+    holder.className = 'holder';
+    holder.innerHTML = `<h2>${c.title} — ป้ายของเรา</h2><p class="meta" id="cmeta-${c.key}"></p>`;
+    const vp = document.createElement('div');
+    vp.className = 'viewport';
+    const stage = buildStage(c.text);
+    stage.id = 'cstage-' + c.key;
+    vp.appendChild(stage);
+    holder.appendChild(vp);
+    rowChip.appendChild(holder);
+  }
+
+  const rowCount = document.getElementById('row-count');
+  for (const n of [2, 4, 5, 7]) {
+    const rows = LAYOUTS[n].map(r => r.xs.length).join(' + ');
+    const holder = document.createElement('div');
+    holder.className = 'holder';
+    holder.innerHTML = `<h2>${n} ช่อง — ${rows}</h2>` +
+      `<p class="meta">การ์ดกว้าง ${LAYOUTS[n].map(r => r.w + '%').join(' / ')}` +
+      `${n === 4 ? ' · ยืนยันโดยทีมออกแบบ ไม่มีไฟล์ตัวอย่าง' : ' · วัดจากไฟล์ตัวอย่าง'}</p>`;
+    const vp = document.createElement('div');
+    vp.className = 'viewport';
+    const stage = buildStage(DATA.head.dayActive, DATA.head.day, true, n);
+    stage.id = 'nstage-' + n;
+    vp.appendChild(stage);
+    holder.appendChild(vp);
+    rowCount.appendChild(holder);
+  }
+
+  // let images land, then size everything that depends on measured boxes
+  await new Promise(r => setTimeout(r, 1200));
+  for (const n of [2, 4, 5, 7]) {
+    const stage = document.getElementById('nstage-' + n);
+    sizeCard(stage);
+    fitText(stage.querySelector('.daterange'), 108, 48);
+  }
+  for (const c of CASES) {
+    const stage = document.getElementById('cstage-' + c.key);
+    sizeCard(stage);
+    const m = addOurChip(stage, c.text, 108);
+    document.getElementById('cmeta-' + c.key).textContent =
+      `ตัวอักษร 108px เต็มขนาด — ข้อความ ${m.textW}px ป้ายกว้าง ${m.chipW}px (เดิม 1048px)`;
+  }
+  for (const d of DAY_CASES) {
+    const stage = document.getElementById('stage-' + d.key);
+    sizeCard(stage);
+    fitText(stage.querySelector('.daterange'), 108, 48);
+  }
+  for (const c of CASES) {
+    const stage = document.getElementById('stage-' + c.key);
+    sizeCard(stage);
+    const el = stage.querySelector('.daterange');
+    const res = fitText(el, 108, 48);
+    window.__report[c.key] = res;
+    document.getElementById('meta-' + c.key).textContent =
+      `${c.note} — ต้องการ ${Math.round(res.needed)}px ในช่อง ${Math.round(res.limit)}px → ตัวอักษร ${res.size}px${res.fits ? '' : ' (ยังไม่พอ)'}`;
+  }
+  window.__ready = true;
+})();
+
+window.exportCase = async (key, scale) => {
+  const stage = document.getElementById('stage-' + key);
+  const prev = stage.style.transform;
+  stage.style.transform = 'scale(1)';
+  const canvas = await html2canvas(stage, { useCORS: true, scale: 1, logging: false, width: 4160, height: 4160 });
+  stage.style.transform = prev;
+  const out = document.createElement('canvas');
+  out.width = Math.round(4160 * scale); out.height = Math.round(4160 * scale);
+  out.getContext('2d').drawImage(canvas, 0, 0, out.width, out.height);
+  return out.toDataURL('image/jpeg', 0.92);
+};
+</script>
+</body>
+</html>

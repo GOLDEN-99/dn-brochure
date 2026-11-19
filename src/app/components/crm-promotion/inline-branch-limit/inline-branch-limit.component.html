@@ -12,45 +12,26 @@
     </div>
   </div>
   <div class="col">
-    <div>
-      <label
-        class="form-label fw-semibold text-muted small mb-1"
-        for="search-branch"
-        >ชื่อสาขา</label
-      >
-      <input
-        [disabled]="allowSelectBranch()"
-        id="search-branch"
-        type="text"
-        class="form-control form-control-sm"
-        placeholder="พิมพ์เพื่อค้นหา..."
-        [ngbTypeahead]="searchBranch"
-        [inputFormatter]="b => b['branchName']"
-        [resultFormatter]="b => b['branchName']"
-        (selectItem)="onSelectBranch($event)"
-        [editable]="false"
-      />
-    </div>
+    <app-search-picker
+      inputId="search-branch"
+      label="ชื่อสาขา"
+      [items]="renderBranch()"
+      [searchBy]="branchName"
+      [format]="branchName"
+      [limit]="10"
+      [disabled]="allowSelectBranch()"
+      (picked)="onSelectBranch($event)"
+    />
   </div>
   <div class="col">
-    <div>
-      <label
-        for="search-promotion-branch"
-        class="form-label fw-semibold text-muted small mb-1"
-        >ชื่อกลุ่มสาขา</label
-      >
-      <input
-        [disabled]="allowSelectBranch()"
-        id="search-promotion-branch"
-        type="text"
-        class="form-control form-control-sm"
-        placeholder="พิมพ์เพื่อค้นหา..."
-        [ngbTypeahead]="searchPromotionBranchGroup"
-        [inputFormatter]="pbg => pbg.name"
-        [resultFormatter]="pbg => pbg.name"
-        (selectItem)="onSelcetPromotionBranchGroup($event)"
-        [editable]="false"
-      />
-    </div>
+    <app-search-picker
+      inputId="search-promotion-branch"
+      label="ชื่อกลุ่มสาขา"
+      [items]="promotionBranchGroup()"
+      [searchBy]="groupName"
+      [format]="groupName"
+      [disabled]="allowSelectBranch()"
+      (picked)="onSelcetPromotionBranchGroup($event)"
+    />
   </div>
 </div>

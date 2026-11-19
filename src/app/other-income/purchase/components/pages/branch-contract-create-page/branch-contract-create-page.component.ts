@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CreateSingleHeadComponent } from "../../forms/create-single-head/create-single-head.component";
 import { form, FormField } from "@angular/forms/signals";
 import { CreateSingleCompWithoutProductComponent } from "../../forms/create-single-comp-without-product/create-single-comp-without-product.component";
@@ -37,6 +37,7 @@ const initialFormData: TCreateBranchContractForm = {
   selector: 'app-branch-contract-create-page',
   imports: [CreateSingleHeadComponent, FormField, CreateSingleCompWithoutProductComponent, OtherIncomeIncomeSelectComponent, FormsModule, DecimalPipe],
   templateUrl: './branch-contract-create-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './branch-contract-create-page.component.scss',
 })
 export class BranchContractCreatePageComponent {

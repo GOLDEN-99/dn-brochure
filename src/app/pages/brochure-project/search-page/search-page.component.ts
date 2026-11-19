@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TDropdownProps, TPromotionType } from '../../../types';
 import { Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { DropdownComponent } from "../../../components/dropdown/dropdown.compone
   selector: 'app-search-page',
   imports: [ReactiveFormsModule, DropdownComponent],
   templateUrl: './search-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './search-page.component.scss'
 })
 export class SearchPageComponent {

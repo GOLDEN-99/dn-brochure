@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject, InjectionToken, TemplateRef, viewChild } from '@angular/core';
+import { afterNextRender, Component, inject, InjectionToken, TemplateRef, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { getItem, setItem } from '../../../service/local/local-lib';
@@ -234,6 +234,7 @@ const getDismissed = getItem<boolean, null>({
       </div>
     </ng-template>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     .form-wrapper {
       margin: auto;

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DoorMutationService } from '../../../service/ibob/door-mutation.service';
 import { FormsModule } from '@angular/forms';
 import { NgbTimepicker } from '@ng-bootstrap/ng-bootstrap';
@@ -10,6 +10,7 @@ import { TFormKey } from '../../../service/ibob/baseDoorForm';
   selector: 'app-in-out-detail',
   imports: [FormsModule, NgbTimepicker, RouterLink],
   templateUrl: './in-out-detail.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class InOutDetailComponent {

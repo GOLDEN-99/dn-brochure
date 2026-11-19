@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-create-promotion-set-config',
   imports: [FormsModule, RouterLink],
   templateUrl: './create-promotion-set-config.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './create-promotion-set-config.component.scss'
 })
 export class CreatePromotionSetConfigComponent {

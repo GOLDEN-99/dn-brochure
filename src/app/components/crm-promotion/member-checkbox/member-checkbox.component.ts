@@ -1,10 +1,11 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-member-checkbox',
   imports: [FormsModule],
   templateUrl: './member-checkbox.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './member-checkbox.component.scss'
 })
 export class MemberCheckboxComponent {

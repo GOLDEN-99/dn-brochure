@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'cn-complete',
   imports: [],
   templateUrl: './cn-complete.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './cn-complete.component.scss',
 })
 export class CnCompleteComponent {

@@ -1,14 +1,23 @@
 <section class="m-3">
-  <div class="d-flex align-items-center justify-content-between mb-3">
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
     <h1 class="m-0">รายการโปรโมชั่น</h1>
     <div class="d-flex gap-2 align-items-center">
+      <input
+        type="search"
+        class="form-control form-control-sm"
+        style="width: 16rem"
+        placeholder="ค้นหาชื่อโปร สินค้า หรือรหัสสินค้า"
+        aria-label="ค้นหาโปรโมชั่น"
+        [ngModel]="query()"
+        (ngModelChange)="setQuery($event)"
+      />
       <label for="status-filter" class="mb-0">สถานะ</label>
       <select
         id="status-filter"
         class="form-select form-select-sm"
         style="width: auto"
         [ngModel]="statusFilter()"
-        (ngModelChange)="statusFilter.set($event)"
+        (ngModelChange)="setStatus($event)"
       >
         <option value="">ทั้งหมด</option>
         <option value="ACTIVE">ACTIVE</option>
@@ -17,48 +26,88 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-body p-0">
-      <table class="table table-hover mb-0">
-        <thead class="table-light">
-          <tr>
-            <th>ชื่อโปรโมชั่น</th>
-            <th>ประเภท</th>
-            <th>สิทธิ</th>
-            <th>วันเริ่ม</th>
-            <th>วันสิ้นสุด</th>
-            <th>Priority</th>
-            <th>สถานะ</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (p of filteredPromotions(); track p.id) {
-            <tr tabindex="0" (click)="onClickRow(p.id)">
-              <td>{{ p.promotionName }}</td>
-              <td>{{ p.promotionType | promotionType }}</td>
-              <td>{{ p.action | promotionBenefitName }}</td>
-              <td>{{ p.startdate | date: "dd/MM/yyyy" }}</td>
-              <td>{{ p.enddate | date: "dd/MM/yyyy" }}</td>
-              <td>{{ p.promotionPriority | promotionPriority }}</td>
-              <td>
-                <span
-                  class="badge"
-                  [class.bg-success]="p.promotionStatus === 'ACTIVE'"
-                  [class.bg-secondary]="p.promotionStatus !== 'ACTIVE'"
-                >
-                  {{ p.promotionStatus }}
-                </span>
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="10" class="text-center text-muted py-4">
-                ไม่พบข้อมูล
-              </td>
-            </tr>
+  <ul class="nav nav-tabs" role="tablist">
+    @for (s of sections(); track s.key) {
+      <li class="nav-item" role="presentation">
+        <button
+          type="button"
+          role="tab"
+          class="nav-link"
+          [class.active]="activeSection() === s.key"
+          [attr.aria-selected]="activeSection() === s.key"
+          [title]="s.legacy"
+          (click)="selectSection(s.key)"
+        >
+          {{ s.label }} <span class="badge text-bg-light">{{ s.rows.length }}</span>
+        </button>
+      </li>
+    }
+    @if (mode() === 'pending') {
+      <li class="ms-auto align-self-center small text-muted">กำลังโหลดรายละเอียด…</li>
+    } @else if (mode() === 'perRow') {
+      <li class="ms-auto align-self-center small text-muted" title="API ยังไม่รองรับ include=details">
+        โหลดรายละเอียดทีละหน้า · ค้นหาตามสินค้าได้เฉพาะหน้าที่โหลดแล้ว
+      </li>
+    }
+  </ul>
+
+  <div class="list-group list-group-flush border border-top-0 rounded-bottom">
+    @for (row of pagedRows(); track row.item.id) {
+      <button
+        type="button"
+        class="list-group-item list-group-item-action py-2"
+        (click)="onClickRow(row.item.id)"
+      >
+        @if (row.description; as desc) {
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            @if (desc.badge) {
+              <span class="badge" [class]="badgeClass(desc.badge)">{{ desc.badge }}</span>
+            }
+            @if (desc.isWarning) {
+              <span class="text-danger fw-semibold">
+                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i> {{ desc.deal }}
+              </span>
+            } @else {
+              <span class="fw-semibold">{{ desc.deal }}</span>
+            }
+            @if (desc.isNewInCrm) {
+              <span class="badge border border-warning text-warning-emphasis fw-normal">ใหม่ใน CRM</span>
+            }
+          </div>
+        } @else if (row.detail === null) {
+          <div class="text-danger">โหลดรายละเอียดไม่ได้ · เปิดเพื่อดูโปรโมชั่น</div>
+        } @else {
+          <div class="text-muted">กำลังโหลด…</div>
+        }
+        <div class="small text-muted d-flex flex-wrap gap-3 mt-1">
+          <span class="text-body">{{ row.item.promotionName }}</span>
+          <span>{{ row.source | promotionSource }}</span>
+          @if (row.detail; as d) {
+            <span>{{ memberScope(d) }}</span>
+            <span>{{ branchScope(d) }}</span>
           }
-        </tbody>
-      </table>
-    </div>
+          <span>{{ row.item.startdate | date: "dd/MM/yyyy" }} – {{ row.item.enddate | date: "dd/MM/yyyy" }}</span>
+          <span
+            [class.text-success]="row.item.promotionStatus === 'ACTIVE'"
+            [class.text-secondary]="row.item.promotionStatus !== 'ACTIVE'"
+          >{{ row.item.promotionStatus }}</span>
+        </div>
+      </button>
+    } @empty {
+      <div class="list-group-item text-center text-muted py-4">ไม่พบข้อมูล</div>
+    }
   </div>
+  @if (pageCount() > 1) {
+    <nav class="d-flex justify-content-end align-items-center gap-2 mt-2" aria-label="เปลี่ยนหน้า">
+      <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="currentPage() === 0"
+        (click)="goToPage(currentPage() - 1)" aria-label="หน้าก่อน">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+      <span class="small text-muted">หน้า {{ currentPage() + 1 }} / {{ pageCount() }}</span>
+      <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="currentPage() === pageCount() - 1"
+        (click)="goToPage(currentPage() + 1)" aria-label="หน้าถัดไป">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </button>
+    </nav>
+  }
 </section>

@@ -10,7 +10,7 @@ describe('PromotionBenefitNamePipe', () => {
 
   it('labels the new actions', () => {
     expect(pipe.transform(REGISTER_FEE_ACTION)).toBe('ฟรีค่าสมัครสมาชิก');
-    expect(pipe.transform(CHEAPEST_ACTION)).toBe('แถมสินค้าถูกสุด(ชิ้น)');
+    expect(pipe.transform(CHEAPEST_ACTION)).toBe('ซื้อ N แถม M (แถมชิ้นที่ถูกที่สุดในชุด)');
   });
 
   it('does not render a known action as invalid', () => {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { SignalDatepickerComponent } from '../../../crm-promotion/signal-datepicker.component';
 import { form, FormField, readonly, required, schema, validate } from '@angular/forms/signals';
 import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -40,6 +40,7 @@ const createInvoiceSchema = schema<TCreateInvoiceForm>((schema) => {
   selector: 'app-other-income-create-invoice',
   imports: [SignalDatepickerComponent, FormField, FormsModule],
   templateUrl: './other-income-create-invoice.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class OtherIncomeCreateInvoiceComponent {

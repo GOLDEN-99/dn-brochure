@@ -14,24 +14,14 @@
     </div>
   </div>
   <div class="col-4">
-    <div>
-      <label
-        class="form-label fw-semibold text-muted small mb-1"
-        for="search-member"
-        >ระดับสมาชิก</label
-      >
-      <input
-        [disabled]="allowAddTier()"
-        id="search-member"
-        type="text"
-        class="form-control form-control-sm"
-        placeholder="พิมพ์เพื่อค้นหา..."
-        [ngbTypeahead]="searchTier"
-        [inputFormatter]="t => t.memberName"
-        [resultFormatter]="t => t.memberName"
-        (selectItem)="onSelectTier($event)"
-        [editable]="false"
-      />
-    </div>
+    <app-search-picker
+      inputId="search-member"
+      label="ระดับสมาชิก"
+      [items]="validMember()"
+      [searchBy]="memberName"
+      [format]="memberName"
+      [disabled]="allowAddTier()"
+      (picked)="onSelectTier($event)"
+    />
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { TExtendedIncomeItem, TIncomeItem } from '../../../service/other-income/base-oi';
 import { customFormatMonth } from '../../../lib/formatter';
 
@@ -7,6 +7,7 @@ type TDualIncomeRow = TIncomeItem & { compType: 'DN' | 'HU' }
 @Component({
   selector: 'app-other-income-dual-monthly-list',
   imports: [],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <table class="table">
       <thead>

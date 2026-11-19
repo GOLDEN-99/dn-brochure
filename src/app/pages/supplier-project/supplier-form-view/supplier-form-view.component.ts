@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { SUPPLIER_TOKEN } from '../../../service/supplier/supplier.token';
 import { JsonPipe } from '@angular/common';
 import { AuthPageComponent } from '../auth-page/auth-page.component';
@@ -14,6 +14,7 @@ import { ConditionPageComponent } from "../condition-page/condition-page.compone
   selector: 'app-supplier-form-view',
   imports: [AuthPageComponent, GeneralPageComponent, StepThreePageComponent, RouterLink, ConditionPageComponent],
   templateUrl: './supplier-form-view.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './supplier-form-view.component.scss'
 })
 export class SupplierFormViewComponent implements OnInit, OnDestroy {

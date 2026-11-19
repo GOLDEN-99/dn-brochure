@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { DatePipe, Location } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -8,6 +8,7 @@ import { OrderContractContextService } from '../../../../purchase/services/order
   selector: 'app-account-order-contract-layout',
   imports: [RouterLink, RouterLinkActive, RouterOutlet, DatePipe],
   templateUrl: './account-order-contract-layout.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './account-order-contract-layout.component.scss',
 })
 export class AccountOrderContractLayoutComponent {

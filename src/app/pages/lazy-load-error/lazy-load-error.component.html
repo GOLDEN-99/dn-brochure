@@ -6,7 +6,7 @@
         <div class="error-details">
             <p><strong>Path:</strong> {{ error()?.path }}</p>
             <p><strong>Error:</strong> {{ error()?.message }}</p>
-            <p><strong>Time:</strong> {{ error()?.timestamp | date:'medium' }}</p>
+            <p><strong>Time:</strong> {{ $safeNavigationMigration(error()?.timestamp) | date:'medium' }}</p>
 
             @if (error()?.stack) {
                 <details>

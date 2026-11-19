@@ -24,6 +24,10 @@ export const CHEAPEST_ACTION = 'CHEAPEST';
 // it from the synced promotion rather than keep its own copy. Two copies would drift
 // the day the code changes, and the till's copy is the one nobody here can grep for.
 export const REGISTER_FEE_GOOD_CODE = '11755';
+// Its one sale unit (GoodBarcode goodAmou = 1 row, unitFactor 1, barcode 066 — Drug1 2026-10-07).
+// A product is the pair (goodCode, unitCode) since 2026-10-07; the pool is derived, so the unit
+// is pinned here beside the code it belongs to.
+export const REGISTER_FEE_UNIT_CODE = '13';
 
 // ── Threshold semantics ────────────────────────────────────────────────────
 // What a tier's thresholdValue counts, per thresholdType. The floor is NOT
@@ -49,6 +53,12 @@ export const THRESHOLD_RULES: Record<
   // presence-only: the threshold is not authored and stays 0
   ITEMEXIST: { min: 0, integer: true, unit: '' },
 };
+
+// The ITEM page's threshold: "the item is on the bill". Nothing is authored, the
+// tier's thresholdValue stays 0, and the page seeds isRepeat = true (once per
+// unit). Any rule that reads "threshold 0 on a repeating tier" as unbounded must
+// skip this type -- there is no rung to divide into the basket.
+export const PRESENCE_THRESHOLD = 'ITEMEXIST';
 
 // "Spend N baht on these goods": a BUNDLE whose tiers are read against the pool's
 // baht rather than a set count (DrugPOSApp sale RULES §1.20). The filter group is a

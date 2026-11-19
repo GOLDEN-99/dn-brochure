@@ -3,7 +3,14 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Observable, switchMap } from 'rxjs';
 import { ApiService } from '../api/api.service';
 import { environment } from '../../../environments/environment';
-import { TCreatePromotionRequest, TPromotionDetail, TPromotionListItem } from '../../types/crm-promotion.type';
+import { TCreatePromotionRequest, TPromotionDetail, TPromotionListDetail, TPromotionListItem, TPromotionQuery } from '../../types/crm-promotion.type';
+import {
+  TCreateItemPriceRequest,
+  TItemPriceRequestDetail,
+  TItemPriceRequestSummary,
+  TResolveRequest,
+  TResolveResponse,
+} from '../../pages/crm-promotion/create/item-price-import/item-price-import.types';
 
 @Injectable({
   providedIn: 'root',
@@ -29,11 +36,49 @@ export class CrmPromotionService {
     return this.api.get(`${this.url}/promotions/${id}`)
   }
 
+  /**
+   * Every promotion with its tiers, goods and pool, in one call. `filter` narrows it server side
+   * (PromotionQueryRequest: status, promotionType, thresholdType, ...); an older API ignores it. An API older than include=details
+   * ignores the parameter and returns plain headers -- callers must check for `tiers` before
+   * treating the items as details.
+   */
+  getPromotionDetails(filter: TPromotionQuery = {}): Observable<(TPromotionListDetail | TPromotionListItem)[]> {
+    const params: Record<string, string> = { include: 'details' }
+    for (const [k, v] of Object.entries(filter)) if (v) params[k] = v
+    return this.api.get<(TPromotionListDetail | TPromotionListItem)[]>(`${this.url}/promotions`, { params })
+  }
+
   updatePromotion(id: number, req: TCreatePromotionRequest): Observable<{ message: string }> {
     return this.api.put<{ message: string }>(`${this.url}/promotions/${id}`, req)
   }
 
   togglePromotionStatus(id: number, status: 'ACTIVE' | 'INACTIVE'): Observable<void> {
     return this.api.patch(`${this.url}/promotions/${id}/status`, { status })
+  }
+
+  // ── Item-price import (docs/crm-item-price-import-api-spec.md) ──────────
+
+  /** Stateless validation view: ladder, qualifying levels, overlaps per line. */
+  resolveItemPrice(req: TResolveRequest): Observable<TResolveResponse> {
+    return this.api.post<TResolveResponse>(`${this.url}/item-price-requests/resolve`, req)
+  }
+
+  /** Stores the request and starts issuing; 202 with the new id. */
+  createItemPriceRequest(req: TCreateItemPriceRequest): Observable<{ id: number }> {
+    return this.api.post<{ id: number }>(`${this.url}/item-price-requests`, req)
+  }
+
+  getItemPriceRequest(id: number): Observable<TItemPriceRequestDetail> {
+    return this.api.get<TItemPriceRequestDetail>(`${this.url}/item-price-requests/${id}`)
+  }
+
+  /** Newest first, as returned by the API. */
+  listItemPriceRequests(): Observable<TItemPriceRequestSummary[]> {
+    return this.api.get<TItemPriceRequestSummary[]>(`${this.url}/item-price-requests`)
+  }
+
+  /** Allowed only on FAILED; re-queues lines without a promotionId. */
+  retryItemPriceRequest(id: number): Observable<{ id: number }> {
+    return this.api.post<{ id: number }>(`${this.url}/item-price-requests/${id}/retry`, {})
   }
 }

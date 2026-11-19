@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { OtherIncomeEmplAuthService } from '../../services/other-income-empl-auth.service';
 
@@ -6,6 +6,7 @@ import { OtherIncomeEmplAuthService } from '../../services/other-income-empl-aut
   selector: 'other-income-empl-gate',
   imports: [RouterOutlet],
   templateUrl: './other-income-empl-gate.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-empl-gate.component.scss',
 })
 export class OtherIncomeEmplGateComponent {

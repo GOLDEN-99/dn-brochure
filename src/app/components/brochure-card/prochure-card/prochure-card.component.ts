@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { TColor, TCardProps, TPrice } from '../../../types';
 import { environment } from '../../../../environments/environment';
 import { DecimalPipe } from '@angular/common';
@@ -7,6 +7,7 @@ import { DecimalPipe } from '@angular/common';
   selector: 'app-prochure-card',
   imports: [DecimalPipe],
   templateUrl: './prochure-card.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './prochure-card.component.scss'
 })
 export class ProchureCardComponent {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Location } from '@angular/common';
@@ -33,6 +33,7 @@ const INCOME_TYPE_TO_TAB: Partial<Record<string, DocTab>> = {
     SettlementCreditNoteTabComponent,
   ],
   templateUrl: './settlement-detail-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './settlement-detail-page.component.scss',
 })
 export class SettlementDetailPageComponent implements OnInit {

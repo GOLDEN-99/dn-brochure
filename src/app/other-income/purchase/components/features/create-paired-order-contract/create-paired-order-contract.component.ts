@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OtherIncomeNotLightPairService } from '../../../services/other-income-not-light-pair.service';
 import { form, FormField } from '@angular/forms/signals';
@@ -14,6 +14,7 @@ import { createPairedOrderContractSchema, TCreatePairedOrderContractForm } from 
   selector: 'app-create-paired-order-contract',
   imports: [FormField, StepFormComponent, OtherIncomeIncomeSelectComponent, CreatePairSupplierPickerComponent, CreatePairHeadComponent, CreatePairProductPickerComponent, ProductConditionFormComponent],
   templateUrl: './create-paired-order-contract.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class CreatePairedOrderContractComponent {

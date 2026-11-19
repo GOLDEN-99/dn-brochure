@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ImageUploaderComponent } from "../../shared/components/image-uploader/image-uploader.component";
 import { FormField } from "@angular/forms/signals";
 import { CnStateService } from '../../shared/services/cn-state.service';
@@ -13,6 +13,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
   selector: 'cn-upload',
   imports: [ImageUploaderComponent, FormField, FormsModule, RouterLink],
   templateUrl: './cn-upload.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './cn-upload.component.scss',
 })
 export class CnUploadComponent {

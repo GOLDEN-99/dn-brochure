@@ -24,6 +24,16 @@ $font-family-base: $font-family-sans-serif;
   --brand-green-800: #007203;
   --brand-green-primary: #00a59b;
 
+  /* Flash Sale restyle 2026-11.
+     The artwork now carries every fill — card, gold pill, red banner, date
+     chip, day digits — so only the live text colours remain here.
+     These three are still PROVISIONAL: design has not sent the typography
+     spec asked for in docs/brochure-restyle/FLASH-SALE-ASSET-LIST.md §4,
+     and the font itself is unresolved. */
+  --fs-code-fg: #17170a;
+  --fs-name-fg: #10204e;
+  --fs-price-fg: #ffffff;
+
   --a4-width-150: 1240px;
   --a4-height-150: 1754px;
 

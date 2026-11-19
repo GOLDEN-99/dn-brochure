@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ImageUploaderComponent } from "../../shared/components/image-uploader/image-uploader.component";
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../service/toast/toast.service';
@@ -16,6 +16,7 @@ import { CnApiService } from '../../shared/services/cn-api.service';
   selector: 'cn-partial-cancel-order',
   imports: [ImageUploaderComponent, GoodItemComponent, FormField, DecimalPipe, RouterLink],
   templateUrl: './partial-cancel-order.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class PartialCancelOrderComponent {

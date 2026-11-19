@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, Signal, signal } from '@angular/core';
+import { Component, computed, effect, inject, Signal, signal, ChangeDetectionStrategy } from '@angular/core';
 import { StockItemApiService } from '../../../service/stock-item/stock-item-api.service';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,6 +13,7 @@ import { LoadingSkeletonComponent } from '../loading-skeleton.component';
   selector: 'app-stock-item-add',
   imports: [FormsModule, DecimalPipe, LoadingSkeletonComponent],
   templateUrl: './stock-item-add.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './stock-item-add.component.scss'
 })
 export class StockItemAddComponent {

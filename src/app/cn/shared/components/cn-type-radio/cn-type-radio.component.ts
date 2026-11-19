@@ -1,4 +1,4 @@
-import { Component, computed, input, model } from '@angular/core';
+import { Component, computed, input, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CN_TYPE, TCnType } from '../../types/cn.type';
 import { TMaybe } from '../../../../shared/types/index.type';
@@ -10,6 +10,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
   selector: 'cn-type-radio',
   imports: [FormsModule, NgbTooltipModule],
   templateUrl: './cn-type-radio.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class CnTypeRadioComponent implements FormValueControl<TMaybe<TCnType>> {

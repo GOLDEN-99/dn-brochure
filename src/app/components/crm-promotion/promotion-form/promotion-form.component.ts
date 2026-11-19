@@ -5,9 +5,12 @@ import {
   input,
   output,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { form } from '@angular/forms/signals';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { finalize } from 'rxjs';
 import {
   TCreatePromotionRequest,
   TMember,
@@ -16,10 +19,14 @@ import {
   TPromotionProductBase,
 } from '../../../types/crm-promotion.type';
 import { CRM_PAGE_CONFIG } from '../../../service/crm-promotion/crm-token';
+import { PromotionOverlapService } from '../../../service/crm-promotion/promotion-overlap.service';
+import { needsOverlapCheck, OverlapReport } from '../../../lib/crm-promotion/promotion-overlap';
 import {
   REGISTER_FEE_ACTION,
   REGISTER_FEE_GOOD_CODE,
+  REGISTER_FEE_UNIT_CODE,
 } from '../../../lib/crm-promotion/promotion-actions';
+import { toProductRef } from '../../../lib/crm-promotion/product-key';
 import {
   createPromotionSchema,
   TCreatePromotionForm,
@@ -30,6 +37,8 @@ import { PromotionMasterComponent } from '../create-promotion-subform/promotion-
 import { PromotionDatetimeComponent } from '../create-promotion-subform/promotion-datetime/promotion-datetime.component';
 import { PromotionLimitUsageComponent } from '../create-promotion-subform/promotion-limit-usage/promotion-limit-usage.component';
 import { PromotionProductFilterComponent } from '../create-promotion-subform/promotion-product-filter/promotion-product-filter.component';
+import { PromotionValidationSummaryComponent } from '../promotion-validation-summary/promotion-validation-summary.component';
+import { PromotionOverlapModalComponent } from '../promotion-overlap-modal/promotion-overlap-modal.component';
 
 @Component({
   selector: 'app-promotion-form',
@@ -41,14 +50,20 @@ import { PromotionProductFilterComponent } from '../create-promotion-subform/pro
     PromotionDatetimeComponent,
     PromotionLimitUsageComponent,
     PromotionProductFilterComponent,
+    PromotionValidationSummaryComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './promotion-form.component.html',
 })
 export class PromotionFormComponent {
   private readonly config = inject(CRM_PAGE_CONFIG);
+  private readonly overlapService = inject(PromotionOverlapService);
+  private readonly modal = inject(NgbModal);
 
   submitLabel = input('บันทึก');
   initialData = input<TCreatePromotionForm>();
+  // The promotion being edited, so the overlap check leaves it out of the live set
+  editingId = input<number>();
   submitted = output<TCreatePromotionRequest>();
 
   showFilterOption = signal(this.config.filterOption.showFilter);
@@ -60,6 +75,8 @@ export class PromotionFormComponent {
   showPool = signal(this.config.filterOption.showPool ?? false);
 
   submitting = input(false);
+  // The pre-save overlap check is in flight (one list GET, a few detail GETs at most)
+  checking = signal(false);
 
   formModel = signal<TCreatePromotionForm>(this.initialData() ?? this.config.initialData);
 
@@ -67,7 +84,7 @@ export class PromotionFormComponent {
 
   canSubmit = computed(() => {
     const { invalid } = this.promotionForm();
-    return !invalid() && !this.submitting();
+    return !invalid() && !this.submitting() && !this.checking();
   });
 
   // ── Master ────────────────────────────────────────────────
@@ -207,8 +224,43 @@ export class PromotionFormComponent {
 
   // ── Submit ────────────────────────────────────────────────
 
+  // A BUNDLE promotion is activated by goods the cart must contain, and the same good sits in
+  // many sets, so before it is saved the live promotions of its kind that name its goods are
+  // listed with what the till does when both fire (sale RULES §1.22, §1.23). Two at the same
+  // non-zero priority cancel each other out silently at the till; that save is refused.
+  // Anything else is the author's call. A check that cannot run (API down) is reported as
+  // such and the author decides -- a guard that blocks every save on a network error is worse
+  // than one that says it did not look.
   onSubmit() {
-    this.submitted.emit(this.buildRequest());
+    const req = this.buildRequest();
+    if (!needsOverlapCheck(req)) {
+      this.submitted.emit(req);
+      return;
+    }
+    this.checking.set(true);
+    this.overlapService
+      .check(req, this.editingId())
+      .pipe(finalize(() => this.checking.set(false)))
+      .subscribe({
+        next: (report) => {
+          if (report.overlaps.length === 0) {
+            this.submitted.emit(req);
+            return;
+          }
+          this.confirmOverlaps(report).then((ok) => ok && this.submitted.emit(req));
+        },
+        error: () => this.confirmOverlaps(null).then((ok) => ok && this.submitted.emit(req)),
+      });
+  }
+
+  /** Resolves true only when the author confirms; a blocking report never does. */
+  private confirmOverlaps(report: OverlapReport | null): Promise<boolean> {
+    const ref = this.modal.open(PromotionOverlapModalComponent, { size: 'lg', backdrop: 'static' });
+    (ref.componentInstance as PromotionOverlapModalComponent).report.set(report);
+    return ref.result.then(
+      (result) => result === true,
+      () => false,
+    );
   }
 
   private buildRequest(): TCreatePromotionRequest {
@@ -258,8 +310,11 @@ export class PromotionFormComponent {
       startTime: this.ngbTimeToTime(startTime),
       endTime: this.ngbTimeToTime(endTime),
       activeDay: activeDay.reduce((acc, cur) => acc + (cur ? '1' : '0'), ''),
+      // products = the pairs the API stores; productList = the pre-unit shape, kept for an API one
+      // release behind (it resolves the unit itself). Both name the same goods.
       filterList: promotionFilter.map(({ productList, ...res }) => ({
         productList: productList.map((p) => p.goodCode),
+        products: productList.map(toProductRef),
         ...res,
       })),
       action,
@@ -284,12 +339,18 @@ export class PromotionFormComponent {
       return [
         {
           goodCode: REGISTER_FEE_GOOD_CODE,
+          unitCode: REGISTER_FEE_UNIT_CODE,
           itemBenefitType: 'PRICE',
           itemBenefitValue: 0,
         },
       ];
     if (action !== 'PWP' && action !== 'GIFT') return [];
-    return rewardPool.map(({ goodName, sku, ...res }) => ({ ...res }));
+    return rewardPool.map(({ goodCode, unitCode, itemBenefitType, itemBenefitValue }) => ({
+      goodCode,
+      unitCode: unitCode ?? null,
+      itemBenefitType,
+      itemBenefitValue,
+    }));
   }
 
   private ngbDateToIso({

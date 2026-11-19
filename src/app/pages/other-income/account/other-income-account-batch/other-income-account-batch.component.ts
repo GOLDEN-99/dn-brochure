@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { NgbAlertModule, NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
@@ -18,6 +18,7 @@ type TUploadState = 'initial' | 'parsed' | 'processing' | 'complete';
   imports: [FormsModule, DecimalPipe, NgbAlertModule, NgbProgressbarModule],
   templateUrl: './other-income-account-batch.component.html',
   styleUrl: './other-income-account-batch.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [BatchExcelService, BatchStrategyRegistry, InvoiceBatchStrategy, ReceiptBatchStrategy, CreditBatchStrategy]
 })
 export class OtherIncomeAccountBatchComponent {

@@ -1,15 +1,17 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { TPromotionBenefit, TPromotionProductBase } from '../../../types/crm-promotion.type';
 import { ProductPickerComponent } from "../product-picker/product-picker.component";
 import { ProductNamePipe } from '../../../lib/crm-promotion/product-name.pipe';
 import { FormsModule } from '@angular/forms';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { FormAlertTextComponent } from "../form-alert-text.component";
+import { sameProduct } from '../../../lib/crm-promotion/product-key';
 
 @Component({
   selector: 'app-promotion-pwp',
   imports: [ProductPickerComponent, ProductNamePipe, FormsModule, FormField, FormAlertTextComponent],
   templateUrl: './promotion-pwp.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class PromotionPwpComponent {
@@ -29,19 +31,21 @@ export class PromotionPwpComponent {
     ])
   }
 
-  onRemoveProduct(goodCode: string) {
-    this.rewardForm().rewardPool().controlValue.update(prev => prev.filter(p => p.goodCode !== goodCode))
+  // Rows are addressed by the pair (good, unit), never by goodCode alone: the same good in two
+  // units is two claimable SKUs with possibly different benefits.
+  onRemoveProduct(product: TPromotionProductBase) {
+    this.rewardForm().rewardPool().controlValue.update(prev => prev.filter(p => !sameProduct(p, product)))
   }
 
-  onChangeBenefitType(goodCode: string, itemBenefitType: string) {
+  onChangeBenefitType(product: TPromotionProductBase, itemBenefitType: string) {
     this.rewardForm().rewardPool().controlValue.update(prev =>
-      prev.map(p => p.goodCode === goodCode ? { ...p, itemBenefitType } : p)
+      prev.map(p => sameProduct(p, product) ? { ...p, itemBenefitType } : p)
     )
   }
 
-  onChangeBenefitValue(goodCode: string, itemBenefitValue: number) {
+  onChangeBenefitValue(product: TPromotionProductBase, itemBenefitValue: number) {
     this.rewardForm().rewardPool().controlValue.update(prev =>
-      prev.map(p => p.goodCode === goodCode ? { ...p, itemBenefitValue } : p)
+      prev.map(p => sameProduct(p, product) ? { ...p, itemBenefitValue } : p)
     )
   }
 }

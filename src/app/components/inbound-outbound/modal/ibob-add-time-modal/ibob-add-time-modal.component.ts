@@ -1,4 +1,4 @@
-import { Component, computed, input, OnInit, output, signal } from '@angular/core';
+import { Component, computed, input, OnInit, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TimeslotRowComponent } from '../../timeslot-row/timeslot-row.component';
 import { TDuration } from '../../../../service/ibob/baseDoorForm';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -7,6 +7,7 @@ import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-ibob-add-time-modal',
   imports: [TimeslotRowComponent],
   templateUrl: './ibob-add-time-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './ibob-add-time-modal.component.scss'
 })
 export class IbobAddTimeModalComponent implements OnInit {

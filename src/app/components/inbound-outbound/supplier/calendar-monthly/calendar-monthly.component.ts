@@ -1,4 +1,4 @@
-import { Component, computed, contentChild, effect, inject, signal, TemplateRef, viewChild } from '@angular/core';
+import { Component, computed, contentChild, effect, inject, signal, TemplateRef, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { genCalendar, TDate } from '../../../../lib';
 import { CalendarCellComponent } from "../calendar-cell/calendar-cell.component";
 import { NgbCalendar, NgbDate, NgbDatepicker, NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,6 +13,7 @@ import { TMaybe } from '../../../../types';
   selector: 'app-calendar-monthly',
   imports: [CalendarCellComponent, NgbDatepickerModule, FormsModule],
   templateUrl: './calendar-monthly.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './calendar-monthly.component.scss'
 })
 export class CalendarMonthlyComponent {

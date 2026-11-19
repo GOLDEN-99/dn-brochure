@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FieldTree } from '@angular/forms/signals';
 import { TPromotionFilterState } from '../../../../types/crm-promotion.type';
 import { PromotionFilterComponent } from '../../promotion-filter/promotion-filter.component';
@@ -10,6 +10,7 @@ import { FormAlertTextComponent } from '../../form-alert-text.component';
   selector: 'app-promotion-product-filter',
   imports: [PromotionFilterComponent, FormAlertTextComponent],
   templateUrl: './promotion-product-filter.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class PromotionProductFilterComponent {

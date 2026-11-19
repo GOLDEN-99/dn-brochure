@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DateInputComponent } from "../../../date-input/date-input.component";
 import { OiBaseformService } from '../../../../service/other-income/oi-baseform.service';
@@ -13,6 +13,7 @@ import { OiNotLightPairService } from '../../../../service/other-income/oi-not-l
   selector: 'app-other-income-baseform',
   imports: [FormsModule, DateInputComponent, SearchCompSubformComponent, EventSelectComponent, SearchProductSubformComponent, IncomeSelectComponent],
   templateUrl: './other-income-baseform.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-baseform.component.scss'
 })
 export class OtherIncomeBaseformComponent {

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CUSTOM_FIELD_SEARCH_TOKEN, OTHER_INCOME_L_SEARCH } from '../../../components/inbound-outbound/ibob-query-tab/ibob-query-tab-token';
 import { OtherIncomeAccountQueryTabComponent } from "./other-income-account-query-tab.component";
@@ -57,6 +57,7 @@ import { PeriodStatus } from '../../../types/other-income';
       </table>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: CUSTOM_FIELD_SEARCH_TOKEN,

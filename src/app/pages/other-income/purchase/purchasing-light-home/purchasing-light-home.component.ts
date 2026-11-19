@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { OiLightListService } from '../../../../service/other-income/oi-light-list.service';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -8,6 +8,7 @@ import { OtherIncomePurchasingQueryTabComponent } from "../../account/other-inco
   selector: 'app-purchasing-light-home',
   imports: [DatePipe, RouterLink, OtherIncomePurchasingQueryTabComponent],
   templateUrl: './purchasing-light-home.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './purchasing-light-home.component.scss',
 })
 export class PurchasingLightHomeComponent {

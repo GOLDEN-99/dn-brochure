@@ -58,6 +58,14 @@ const bundleFilter: TPromotionFilterState[] = [
   },
 ];
 
+const itemFilter: TPromotionFilterState[] = [
+  {
+    filterType: 'EXIST',
+    filterValue: 1,
+    productList: [{ goodCode: 'A1', goodName: 'ยา A', sku: '1' }],
+  },
+];
+
 // A BUNDLE promotion needs a filter group, so these two travel together.
 const asBundle = { promotionType: 'BUNDLE', filter: bundleFilter };
 
@@ -137,6 +145,21 @@ describe('createPromotionSchema — threshold floor per thresholdType', () => {
   });
 });
 
+describe('createPromotionSchema — reward floor exemptions', () => {
+  it('accepts a 0 reward on REGISTERFEE: the grant is boolean and the page hides the box', () => {
+    // The floor added 2026-09-20 disabled the ค่าสมาชิก page and the live promotion's edit
+    // with no message: the reward input is not rendered on that page.
+    const r = validityOf({
+      action: 'REGISTERFEE',
+      thresholdType: 'BILLSUBTOTAL',
+      isRepeat: false,
+      tiers: [{ thresholdValue: 1000, rewardValue: 0 }],
+    });
+    expect(r.rewardErrors).toEqual([]);
+    expect(r.benefitValid).toBeTrue();
+  });
+});
+
 describe('createPromotionSchema — repeating rung', () => {
   // BILLSUBTOTAL 0 is legal on a one-shot tier but not on a repeating one, where
   // it divides into the basket an unbounded number of times.
@@ -158,6 +181,23 @@ describe('createPromotionSchema — repeating rung', () => {
       tiers: [{ thresholdValue: 0, rewardValue: 50 }],
     });
     expect(r.errors).not.toContain('zero threshold on repeat');
+  });
+
+  // The ITEM page's exact seed: ITEMEXIST is never authored (threshold stays 0)
+  // and the page sets isRepeat = true. The rule blocked every ITEM promotion, and
+  // the error sat on the benefit node where the inline page shows no alert.
+  it('exempts ITEMEXIST — a 10% item discount must be submittable', () => {
+    const r = validityOf(
+      {
+        action: 'ITEMPERCENTDISC',
+        thresholdType: 'ITEMEXIST',
+        isRepeat: true,
+        tiers: [{ thresholdValue: 0, rewardValue: 10 }],
+      },
+      { promotionType: 'ITEM', filter: itemFilter },
+    );
+    expect(r.errors).not.toContain('zero threshold on repeat');
+    expect(r.benefitValid).toBeTrue();
   });
 });
 
@@ -245,36 +285,50 @@ describe('createPromotionSchema — pool-only actions', () => {
     },
   ];
 
-  // The benefit is the pool; the tier's reward number carries no meaning, so it
-  // must not be demanded of the author nor block submit at 0.
-  it('does not require a tier reward for GIFT', () => {
-    const r = validityOf({
-      action: 'GIFT',
-      thresholdType: 'BILLSUBTOTAL',
-      isRepeat: false,
-      tiers: [{ thresholdValue: 500, rewardValue: 0 }],
-      rewardPool: pool,
+  // The pool carries which SKU and at what price; the tier's reward is the
+  // quantity. DrugPos drops the promotion at `reward <= 0`, so 0 must not submit.
+  for (const action of ['GIFT', 'PWP']) {
+    it(`rejects a tier reward of 0 for ${action}`, () => {
+      const r = validityOf({
+        action,
+        thresholdType: 'BILLSUBTOTAL',
+        isRepeat: false,
+        tiers: [{ thresholdValue: 500, rewardValue: 0 }],
+        rewardPool: pool,
+      });
+      expect(r.benefitValid).toBeFalse();
+      expect(r.rewardErrors).toContain('min');
     });
-    expect(r.benefitValid).toBeTrue();
-  });
 
-  it('does not require a tier reward for PWP', () => {
-    const r = validityOf({
-      action: 'PWP',
-      thresholdType: 'BILLSUBTOTAL',
-      isRepeat: false,
-      tiers: [{ thresholdValue: 500, rewardValue: 0 }],
-      rewardPool: pool,
+    it(`accepts a whole-number tier reward for ${action}`, () => {
+      const r = validityOf({
+        action,
+        thresholdType: 'BILLSUBTOTAL',
+        isRepeat: false,
+        tiers: [{ thresholdValue: 500, rewardValue: 1 }],
+        rewardPool: pool,
+      });
+      expect(r.benefitValid).toBeTrue();
     });
-    expect(r.benefitValid).toBeTrue();
-  });
+
+    it(`rejects a fractional tier reward for ${action}`, () => {
+      const r = validityOf({
+        action,
+        thresholdType: 'BILLSUBTOTAL',
+        isRepeat: false,
+        tiers: [{ thresholdValue: 500, rewardValue: 1.5 }],
+        rewardPool: pool,
+      });
+      expect(r.rewardErrors).toContain('not an integer');
+    });
+  }
 
   it('still requires a non-empty pool for PWP', () => {
     const r = validityOf({
       action: 'PWP',
       thresholdType: 'BILLSUBTOTAL',
       isRepeat: false,
-      tiers: [{ thresholdValue: 500, rewardValue: 0 }],
+      tiers: [{ thresholdValue: 500, rewardValue: 1 }],
       rewardPool: [],
     });
     expect(r.benefitValid).toBeFalse();
@@ -286,7 +340,7 @@ describe('createPromotionSchema — reward pool item values', () => {
     action: 'PWP',
     thresholdType: 'BILLSUBTOTAL',
     isRepeat: false,
-    tiers: [{ thresholdValue: 500, rewardValue: 0 }],
+    tiers: [{ thresholdValue: 500, rewardValue: 1 }],
     rewardPool: [
       {
         goodCode: 'A1',
@@ -306,6 +360,22 @@ describe('createPromotionSchema — reward pool item values', () => {
 
   it('accepts a PERCENTDISC pool item at 100', () => {
     expect(validityOf(poolItem('PERCENTDISC', 100)).benefitValid).toBeTrue();
+  });
+
+  // 86exej34u: a percent is 1-100. 0% passed the pool rule (it only had the cap)
+  // and was created end to end on PROD.
+  it('rejects a 0% PERCENTDISC pool item', () => {
+    expect(validityOf(poolItem('PERCENTDISC', 0)).benefitValid).toBeFalse();
+  });
+
+  it('accepts a PERCENTDISC pool item at 1', () => {
+    expect(validityOf(poolItem('PERCENTDISC', 1)).benefitValid).toBeTrue();
+  });
+
+  // The 1-100 rule is a percent rule; a 0-baht pool line is still governed only
+  // by the non-negative floor, as before.
+  it('does not apply the percent floor to a BATHDISC pool item', () => {
+    expect(validityOf(poolItem('BATHDISC', 0)).benefitValid).toBeTrue();
   });
 
   it('rejects a negative pool item value', () => {
@@ -478,5 +548,40 @@ describe('createPromotionSchema — spend threshold (BUNDLESUBTOTAL)', () => {
       asBundle,
     );
     expect(r.filterErrors).toEqual([]);
+  });
+});
+
+// A product is the pair (good, unit) -- workspace CRM-PROMOTION-UNIT-PLAN.md. The same good in
+// two units (strip, box) is two products at the till, so it may sit in two groups; the same pair
+// may not.
+describe('createPromotionSchema — products are (good, unit) pairs', () => {
+  const group = (unitCode: string | null, goodCode = 'A1'): TPromotionFilterState => ({
+    filterType: 'EXIST',
+    filterValue: 1,
+    productList: [{ goodCode, goodName: 'ยา', sku: '1', unitCode, unitDesc: unitCode === '38' ? 'กล่อง' : 'แผง' }],
+  });
+  const set = { action: 'BUNDLEBATHDISC', thresholdType: 'BUNDLECOUNT', isRepeat: false, tiers: [{ thresholdValue: 1, rewardValue: 10 }] };
+
+  it('allows the same good in two units across two groups', () => {
+    const r = validityOf(set, { promotionType: 'BUNDLE', filter: [group('3'), group('38')] });
+    expect(r.filterErrors).not.toContain('invalid filter cross product in filter');
+  });
+
+  it('rejects the same pair in two groups', () => {
+    const r = validityOf(set, { promotionType: 'BUNDLE', filter: [group('3'), group('3')] });
+    expect(r.filterErrors).toContain('invalid filter cross product in filter');
+  });
+
+  it('still rejects a good repeated with no unit on either row (pre-unit data)', () => {
+    const r = validityOf(set, { promotionType: 'BUNDLE', filter: [group(null), group(null)] });
+    expect(r.filterErrors).toContain('invalid filter cross product in filter');
+  });
+
+  it('keys the reward pool on the pair too', () => {
+    const item = (unitCode: string) => ({ goodCode: 'G', goodName: 'ของแถม', sku: '2', unitCode, itemBenefitType: 'PRICE', itemBenefitValue: 0 });
+    const twoUnits = validityOf({ action: 'GIFT', thresholdType: 'BILLSUBTOTAL', isRepeat: false, tiers: [{ thresholdValue: 500, rewardValue: 1 }], rewardPool: [item('3'), item('38')] });
+    expect(twoUnits.benefitValid).toBeTrue();
+    const samePair = validityOf({ action: 'GIFT', thresholdType: 'BILLSUBTOTAL', isRepeat: false, tiers: [{ thresholdValue: 500, rewardValue: 1 }], rewardPool: [item('3'), item('3')] });
+    expect(samePair.benefitValid).toBeFalse();
   });
 });

@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { BranchContractContextService } from '../../../../purchase/services/branch-contract-context.service';
 import { AddBranchFormComponent } from '../../add-branch-form/add-branch-form.component';
@@ -9,6 +9,7 @@ import { TAddBranchReq } from '../../../types/other-income.type';
   selector: 'app-branch-contract-specs-page',
   imports: [DatePipe, AddBranchFormComponent],
   templateUrl: './branch-contract-specs-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class BranchContractSpecsPageComponent {

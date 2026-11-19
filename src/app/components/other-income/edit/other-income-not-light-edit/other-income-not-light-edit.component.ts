@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TargetSubformComponent } from "../../form/target-subform.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -8,6 +8,7 @@ import { DecimalPipe } from '@angular/common';
   selector: 'app-other-income-not-light-edit',
   imports: [FormsModule, TargetSubformComponent, DecimalPipe],
   templateUrl: './other-income-not-light-edit.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './other-income-not-light-edit.component.scss'
 })
 export class OtherIncomeNotLightEditComponent {

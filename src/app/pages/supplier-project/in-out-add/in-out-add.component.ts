@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DoorMutationService } from '../../../service/ibob/door-mutation.service';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
@@ -10,6 +10,7 @@ import { DoorFormCreateService } from '../../../service/ibob/door-form-create.se
   selector: 'app-in-out-add',
   imports: [ReactiveFormsModule, NgbTimepickerModule, FormsModule],
   templateUrl: './in-out-add.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ''
 })
 export class InOutAddComponent {

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IbobAddService } from '../../../service/ibob/ibob-add.service';
 import { WarehouseService } from '../../../service/ibob/warehouse.service';
@@ -10,6 +10,7 @@ import { DatePipe } from '@angular/common';
   selector: 'app-supplier-reserve',
   imports: [RouterLink, DateInputComponent, DatePipe],
   templateUrl: './supplier-reserve.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './supplier-reserve.component.scss'
 })
 export class SupplierReserveComponent {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TIncomeEntry, TPostPairedSettlementReq } from '../../../../shared/types/other-income.type';
 import { CreatePairedSettlementForm, createPairedSettlementSchema } from './create-paired-settlement-form';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
@@ -11,6 +11,7 @@ import { DatePipe } from '@angular/common';
   selector: 'other-income-create-paired-settlement-form',
   imports: [FormField, SignalDatepickerComponent, FormAlertTextComponent, DatePipe],
   templateUrl: './create-paired-settlement-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export class CreatePairedSettlementFormComponent {

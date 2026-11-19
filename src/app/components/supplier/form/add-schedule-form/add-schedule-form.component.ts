@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormGroup, FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TMapForm } from '../../../../types';
 import { NgbTimepicker, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -8,6 +8,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-add-schedule-form',
   imports: [FormsModule, ReactiveFormsModule, NgbTimepicker, RouterLink],
   templateUrl: './add-schedule-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './add-schedule-form.component.scss'
 })
 export class AddScheduleFormComponent {

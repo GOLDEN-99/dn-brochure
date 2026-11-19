@@ -2,6 +2,7 @@ import {
     CRM_BILL_REWARD, CRM_BUNDLE_REWARD, CRM_INLINE_REWARD, CRM_SPEND_REWARD, ICrmPageConfig
 } from "../../service/crm-promotion/crm-token"
 import { CHEAPEST_ACTION, REGISTER_FEE_ACTION, SPEND_THRESHOLD } from "../../lib/crm-promotion/promotion-actions"
+import { BUNDLE_BENEFIT_HINTS, CHEAPEST_LABEL, LADDER_HINT } from "../../lib/crm-promotion/benefit-hints"
 import {
     initialMaster, initialDatetime, initialMember, initialBranch, initialBenefit
 } from "../../pages/crm-promotion/create/create-bill-discount-promotion/createPromotionSchema"
@@ -21,6 +22,15 @@ const SPEND_FILTER_OPTION: ICrmPageConfig['filterOption'] = {
 const SPEND_REWARD_OPTION: ICrmPageConfig['rewardOption'] = {
     rewardList: CRM_SPEND_REWARD,
     thresholdList: [{ threshold: SPEND_THRESHOLD, label: "ยอดซื้อสินค้าในกลุ่ม(บาท)" }],
+    ladderHint: LADDER_HINT,
+}
+
+// The set-bundle reward option, shared by ส่วนลดตามกลุ่มสินค้า and the edit page's BUNDLE case so
+// the hint under สิทธิ shows on both.
+const BUNDLE_REWARD_OPTION: ICrmPageConfig['rewardOption'] = {
+    rewardList: CRM_BUNDLE_REWARD,
+    thresholdList: [{ threshold: "BUNDLECOUNT", label: "จำนวน SET (ชุด)" }],
+    benefitHints: BUNDLE_BENEFIT_HINTS,
 }
 
 export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
@@ -83,12 +93,7 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
                     showItem: false,
                     showList: true,
                 },
-                rewardOption: {
-                    rewardList: CRM_BUNDLE_REWARD,
-                    thresholdList: [
-                        { threshold: "BUNDLECOUNT", label: "จำนวน SET (ชุด)" },
-                    ]
-                }
+                rewardOption: BUNDLE_REWARD_OPTION,
             }
         case "create-inline":
             return {
@@ -183,10 +188,12 @@ export function provideCreatePromotionConfig(path: string): ICrmPageConfig {
                     showList: true,
                 },
                 rewardOption: {
-                    rewardList: [{ action: CHEAPEST_ACTION, label: "แถมสินค้าถูกสุด(ชิ้น)" }],
+                    rewardList: [{ action: CHEAPEST_ACTION, label: CHEAPEST_LABEL }],
                     thresholdList: [{ threshold: "BUNDLECOUNT", label: "จำนวน SET (ชุด)" }],
                     fixedAction: true,
                     showThresholdInput: false,
+                    // The action is pinned, so the select is not rendered; the hint still is.
+                    benefitHints: BUNDLE_BENEFIT_HINTS,
                 }
             }
         case "create-spend":
@@ -233,10 +240,7 @@ export function provideEditPromotionConfig(detail: TPromotionDetail): ICrmPageCo
                 { threshold: "BILLCOUNT", label: "จำนวนสินค้า(ชิ้น)" },
             ],
         },
-        BUNDLE: {
-            rewardList: CRM_BUNDLE_REWARD,
-            thresholdList: [{ threshold: "BUNDLECOUNT", label: "จำนวน SET (ชุด)" }],
-        },
+        BUNDLE: BUNDLE_REWARD_OPTION,
         ITEM: {
             rewardList: CRM_INLINE_REWARD,
             thresholdList: [],

@@ -8,6 +8,8 @@
 
 # Node
 /node_modules
+/.npm
+/.home
 npm-debug.log
 yarn-error.log
 
@@ -45,3 +47,5 @@ Thumbs.db
 .claude
 
 .env
+# per-worktree dev server config (Claude Code)
+.claude/launch.json

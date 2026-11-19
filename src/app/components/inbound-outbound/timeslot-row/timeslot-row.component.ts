@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnDestroy, OnInit, output } from '@angular/core';
+import { Component, computed, inject, input, OnDestroy, OnInit, output, ChangeDetectionStrategy } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbTimepicker, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -9,6 +9,7 @@ import { TDuration } from '../../../service/ibob/baseDoorForm';
   selector: 'app-timeslot-row',
   imports: [ReactiveFormsModule, NgbTimepicker],
   templateUrl: './timeslot-row.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './timeslot-row.component.scss'
 })
 export class TimeslotRowComponent implements OnInit, OnDestroy {

@@ -9,11 +9,18 @@ import { CrmPromotionService } from "../service/crm-promotion/crm-promotion.serv
 
 export const CREATE_ROUTE_PATH = [
     { path: "create-inline", name: 'ลดรายสินค้า', icon: 'bi bi-list-ul me-2' },
-    { path: "create-bill", name: 'ส่วนลดท้ายบิล', icon: 'bi bi-receipt me-2' },
     { path: "create-group", name: 'ส่วนลดตามกลุ่มสินค้า', icon: 'bi bi-tags me-2' },
     { path: "create-spend", name: 'ส่วนลดตามยอดซื้อกลุ่มสินค้า', icon: 'bi bi-cash-stack me-2' },
     { path: "create-register-fee", name: 'ค่าสมาชิก', icon: 'bi bi-person-plus me-2' },
-    { path: "create-cheapest", name: 'แถมในกลุ่ม', icon: 'bi bi-gift me-2' }
+    { path: "create-cheapest", name: 'แถมในกลุ่ม', icon: 'bi bi-gift me-2' },
+    { path: "create-bill", name: 'ส่วนลดท้ายบิล', icon: 'bi bi-receipt me-2' },
+]
+
+// Create pages that have their own component and are NOT backed by
+// provideCreatePromotionConfig / PromotionFormComponent. Listed separately so the
+// layout menu can show them without CREATE_ROUTE mapping them onto the shared form.
+export const STANDALONE_CREATE_ROUTE_PATH = [
+    { path: "create-item-import", name: 'นำเข้าราคาโปรรายสินค้า', icon: 'bi bi-file-earmark-excel me-2' },
 ]
 
 
@@ -50,6 +57,31 @@ export const CRM_PROMOTION_ROUTE: Route[] = [
                         }
                     },
                     ...CREATE_ROUTE,
+                    {
+                        path: "create-item-import",
+                        loadComponent() {
+                            return import("../pages/crm-promotion/create/item-price-import/item-price-import.component")
+                                .then(r => r.ItemPriceImportComponent)
+                                .catch(handleLazyLoadError('crm-promotion/create-item-import'))
+                        }
+                    },
+                    // Before ":id" so the literal segment is not swallowed by the promotion detail route.
+                    {
+                        path: "item-price-requests",
+                        loadComponent() {
+                            return import("../pages/crm-promotion/item-price-requests/item-price-request-list.component")
+                                .then(r => r.ItemPriceRequestListComponent)
+                                .catch(handleLazyLoadError('crm-promotion/item-price-requests'))
+                        }
+                    },
+                    {
+                        path: "item-price-requests/:id",
+                        loadComponent() {
+                            return import("../pages/crm-promotion/item-price-requests/item-price-request-detail.component")
+                                .then(r => r.ItemPriceRequestDetailComponent)
+                                .catch(handleLazyLoadError('crm-promotion/item-price-requests/:id'))
+                        }
+                    },
                     {
                         path: "config-branch",
                         loadComponent() {
