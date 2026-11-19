@@ -1,5 +1,9 @@
-// DN-BROCHURE frontend (Angular 22) — build in Docker on apd.local, deploy to file.drugnetcenter.com.
-// Modelled on ../dninhouse/Jenkinsfile: same agent, same SSH credential, same atomic .new/.bak swap.
+// DN-BROCHURE frontend (Angular 22) — build in Docker on apd.local, deploy by branch to a web host:
+//   dev  → dev nginx  support@192.168.1.66:22          (credential support-nginx-dev)
+//   prod → prod web   px@file.drugnetcenter.com:5333   (credential px-file-drugnetcenter)
+// Same host/user/credential split as ../DrugPOSApp/jenkinsfile (Distribute App). The sandbox must NOT go to
+// file.drugnetcenter.com: that is the prod web server (dev build #1 on 2026-11-19 tried, px got EACCES on /var/www).
+// Modelled on ../dninhouse/Jenkinsfile: same agent, same atomic .new/.bak swap.
 //
 // Stages: Checkout → Build → Archive → Approve PROD (prod only) → Deploy
 //
@@ -14,9 +18,13 @@
 //   ถ้า dev ตามหลัง prod อีก: merge prod → dev (dev ต่างจาก prod แค่ environment.development.ts ก็พอ)
 //
 // ⚠️ TODO ก่อนใช้จริง — ยืนยันกับคนที่ดูแล Jenkins/เซิร์ฟเวอร์ (ดู comment ที่ตัวแปรแต่ละตัว):
-//   1. DEV_PATH  — ต้องสร้าง DNS + nginx vhost ของ sandbox.promotion.drugnetcenter.com ก่อน (ยัง NXDOMAIN)
-//                  PROD_PATH ยืนยันแล้ว: promotion.drugnetcenter.com
-//   2. SSH_CRED  — credential นี้มีสิทธิ์เขียน web root ของ promotion ไหม
+//   1. DEV_PATH  — บน 192.168.1.66: สร้างโฟลเดอร์แม่ให้ support เป็นเจ้าของครั้งเดียว
+//                    sudo install -d -o support -g "$(id -gn support)" -m 755 /var/www/sandbox.promotion.drugnetcenter.com
+//                  + DNS A sandbox.promotion.drugnetcenter.com → 161.82.147.165 (dev front เดียวกับ sandbox.drugpos)
+//                  + nginx vhost บน 192.168.1.66 (root .../html, try_files $uri $uri/ /index.html, noindex)
+//                  ยัง NXDOMAIN 2026-11-19. PROD_PATH ยืนยันแล้ว: promotion.drugnetcenter.com
+//   2. DEV_CRED / PROD_CRED — support-nginx-dev (DrugPOSApp ใช้อยู่) / px-file-drugnetcenter (dninhouse ใช้อยู่)
+//                  job นี้ต้องอ่านทั้งสองตัวได้ — ถ้า credential เป็น folder-scoped ต้องเพิ่มให้ job นี้
 //   3. TESTHUB_API_TOKEN — job นี้ต้องอ่าน credential 'testhub-api-token' ได้ (dninhouse ใช้อยู่แล้ว)
 //                          ถ้าอ่านไม่ได้ pipeline จะพังตั้งแต่ตอน evaluate environment block
 //   4. environment.development.ts (= ไฟล์ที่ sandbox build ใช้) ชี้ dev.drugnetcenter.com
@@ -59,14 +67,19 @@ pipeline {
                                                   // (ยืนยันจาก ng build --configuration sandbox บน branch นี้: ได้ index.html + chunk ที่ hash แล้ว)
                                                   // (stage Build เช็กด้วย test -f index.html — ถ้าผิด build จะ fail ทันที)
     NODE_OPTS   = '--max_old_space_size=4096'     // esbuild กินน้อยกว่า webpack แต่กันไว้
-    DEPLOY_HOST = 'px@file.drugnetcenter.com'
-    DEPLOY_PORT = '5333'                          // SSH port on file.drugnetcenter.com
-    SSH_CRED    = 'px-file-drugnetcenter'         // ⚠️ ยืนยัน: credential เดียวกับ dninhouse — มีสิทธิ์เขียน brochure web root ไหม
+    // deploy target per branch — stage Deploy picks DEV_* or PROD_* into DEPLOY_HOST/PORT/CRED
+    // (ตั้งใน script ไม่ใช่ที่นี่: ค่าใน environment{} ถูก override จาก env.X = ... ไม่ได้)
+    DEV_HOST    = 'support@192.168.1.66'          // dev nginx (LAN) — เหมือน DrugPOSApp branch dev
+    DEV_PORT    = '22'
+    DEV_CRED    = 'support-nginx-dev'
+    PROD_HOST   = 'px@file.drugnetcenter.com'     // prod web host (= dninhouse prod)
+    PROD_PORT   = '5333'
+    PROD_CRED   = 'px-file-drugnetcenter'
     // branch → web root on the deploy host (the Deploy stage picks one of these)
     // path convention ยืนยันจาก ../dninhouse/Jenkinsfile: /var/www/<domain>/html
     // ⚠️ ยังไม่มี DNS record ของ sandbox.promotion.drugnetcenter.com (NXDOMAIN) — ต้องสร้าง DNS + nginx
-    //   vhost ก่อน ไม่งั้น deploy สำเร็จแต่ไม่มีใครเปิดดูได้ (เทียบ: sandbox.inhouse.drugnetcenter.com มีจริง)
-    DEV_PATH    = '/var/www/sandbox.promotion.drugnetcenter.com/html'  // branch: dev
+    //   vhost บน 192.168.1.66 ก่อน ไม่งั้น deploy สำเร็จแต่ไม่มีใครเปิดดูได้ (ดู TODO 1 ด้านบน)
+    DEV_PATH    = '/var/www/sandbox.promotion.drugnetcenter.com/html'  // branch: dev  — บน 192.168.1.66
     PROD_PATH   = '/var/www/promotion.drugnetcenter.com/html'          // branch: prod — domain ยืนยันแล้ว (resolve → 203.156.105.40 ตรวจ 2026-11-19)
     // --- TestHub: prod approval gate (แบบเดียวกับ ../dninhouse/Jenkinsfile) ---
     // อนุมัติ prod ผ่านหน้า TestHub (/approvals) แทน input ของ Jenkins → PM ไม่ต้องเข้า Jenkins
@@ -152,13 +165,17 @@ pipeline {
       steps {
         script {
           // pick the web root for this branch — default = DEV/sandbox, ห้าม default เป็น prod เด็ดขาด
-          env.DEPLOY_PATH = (env.BRANCH_NAME == 'prod') ? env.PROD_PATH : env.DEV_PATH
-          env.DEPLOY_ENV  = (env.BRANCH_NAME == 'prod') ? 'PROD (live)' : 'DEV (sandbox)'
-          echo "Deploying ${env.DEPLOY_ENV} -> ${env.DEPLOY_PATH}"
+          def isProd = (env.BRANCH_NAME == 'prod')
+          env.DEPLOY_PATH = isProd ? env.PROD_PATH : env.DEV_PATH
+          env.DEPLOY_HOST = isProd ? env.PROD_HOST : env.DEV_HOST
+          env.DEPLOY_PORT = isProd ? env.PROD_PORT : env.DEV_PORT
+          env.DEPLOY_CRED = isProd ? env.PROD_CRED : env.DEV_CRED
+          env.DEPLOY_ENV  = isProd ? 'PROD (live)' : 'DEV (sandbox)'
+          echo "Deploying ${env.DEPLOY_ENV} -> ${env.DEPLOY_HOST}:${env.DEPLOY_PORT} ${env.DEPLOY_PATH} (credential ${env.DEPLOY_CRED})"
         }
         // Use the SSH private-key credential directly (no SSH Agent plugin needed). Each ssh/scp is
         // ONE line — backslash line-continuations get eaten by the Groovy '''...''' string.
-        withCredentials([sshUserPrivateKey(credentialsId: "${SSH_CRED}", keyFileVariable: 'SSH_KEY')]) {
+        withCredentials([sshUserPrivateKey(credentialsId: env.DEPLOY_CRED, keyFileVariable: 'SSH_KEY')]) {
           sh '''
             set -e
             # Use ONLY the -i key: IdentityAgent=none ignores any ssh-agent on the Jenkins node and
@@ -193,7 +210,7 @@ pipeline {
       script {
         def br = env.BRANCH_NAME ?: 'pipeline'
         if (env.DEPLOY_PATH)
-          echo "✅ DN-BROCHURE (${br}) deployed ${env.DEPLOY_ENV} -> ${DEPLOY_HOST}:${env.DEPLOY_PATH}"
+          echo "✅ DN-BROCHURE (${br}) deployed ${env.DEPLOY_ENV} -> ${env.DEPLOY_HOST}:${env.DEPLOY_PATH}"
         else
           echo "✅ DN-BROCHURE (${br}) built — not deployed (deploy branches: dev, prod)"
       }
