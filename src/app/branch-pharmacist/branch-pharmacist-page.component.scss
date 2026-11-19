@@ -1,0 +1,18 @@
+.branch-pharmacist {
+  &__search {
+    max-width: 320px;
+  }
+
+  // The editor row belongs to the row above it: no hover highlight, a tinted well.
+  &__editor > td {
+    background: var(--bs-tertiary-bg);
+    padding: 1rem 1.25rem;
+    --bs-table-bg-state: var(--bs-tertiary-bg);
+  }
+
+  &__candidates,
+  &__history {
+    max-height: 260px;
+    overflow-y: auto;
+  }
+}
