@@ -4,7 +4,6 @@ import { NotfoundComponent } from './pages/notfound/notfound.component';
 //already review
 import { BROCHURE_ROUTES } from './brochure/routes';
 import { CN_ROUTES } from './cn/routes/cn.route';
-import { SUPPLIER_ROUTES } from './routes/supplier.route';
 import { DN_INBOUND_ROUTE, HU_INBOUND_ROUTE } from './routes/inbound.route';
 import { OTHER_INCOME_ROUTES as OTHER_INCOME_ROUTES_V1 } from './routes/other-income.route';
 import { OTHER_INCOME_ROUTES as OTHER_INCOME_ROUTES_V2 } from './other-income/routes/other-income.route'
@@ -25,8 +24,7 @@ export const routes: Routes = [
     // CN Project
     ...CN_ROUTES,
 
-    // Supplier (Reserve, In-Out, Inbound)
-    ...SUPPLIER_ROUTES,
+    // Supplier registration (DN / HU)
     ...DN_INBOUND_ROUTE,
     ...HU_INBOUND_ROUTE,
 
