@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Angular 22 (standalone components, signals-based) frontend for internal Drug Net Center tooling: product brochure/marketing, CN (credit note / return) requests, supplier stock transfers (IB/OB), quota items, CRM promotions, and Other Income (supplier-funded income tracking). Node ^22.22.3 or ^24.15.0 (Angular 22 minimum).
+Angular 22 (standalone components, signals-based) frontend for internal Drug Net Center tooling: product brochure/marketing, CN (credit note / return) requests, supplier registration (DN / HU), quota items, CRM promotions, and Other Income (supplier-funded income tracking). Node ^22.22.3 or ^24.15.0 (Angular 22 minimum).
 
 ## Commands
 
@@ -43,7 +43,7 @@ not live yet — the infra prerequisites are listed in the `Jenkinsfile` header.
 
 ### Multi-domain monolith, feature-folder structure
 
-`src/app/` hosts several largely-independent feature domains side by side, each with its own routes file mounted into `src/app/app.routes.ts`: `brochure`, `cn`, `routes/supplier.route.ts`, `routes/inbound.route.ts`, `routes/other-income.route.ts` (legacy v1), `other-income/routes/other-income.route.ts` (v2 rewrite), `routes/stock-item.route.ts`, `routes/quota-item.route.ts`, `routes/crm-promotion.route.ts`. Legacy pages live under `src/app/pages/<domain>/`; newer modules (`cn`, `other-income`) are self-contained top-level folders with their own `routes/`, `shared/`, `features/` or `purchase`/`account` subtrees.
+`src/app/` hosts several largely-independent feature domains side by side, each with its own routes file mounted into `src/app/app.routes.ts`: `brochure`, `cn`, `routes/inbound.route.ts` (supplier registration), `routes/other-income.route.ts` (legacy v1), `other-income/routes/other-income.route.ts` (v2 rewrite), `routes/stock-item.route.ts`, `routes/quota-item.route.ts`, `routes/crm-promotion.route.ts`. Legacy pages live under `src/app/pages/<domain>/`; newer modules (`cn`, `other-income`) are self-contained top-level folders with their own `routes/`, `shared/`, `features/` or `purchase`/`account` subtrees.
 
 **Other Income has two live versions mounted in parallel**: `src/app/routes/other-income.route.ts` (v1, legacy, mounted at `other-income`) and `src/app/other-income/routes/other-income.route.ts` (v2 rewrite, mounted at `v2/other-income`). They are intentionally decoupled — do not assume shared state or components between them. See `src/app/other-income/CLAUDE.md` for the v2 architecture, business context docs (`src/app/other-income/docs/context/*.md`, start with `settlement-reference.md` for anything settlement-related), and known gaps.
 
@@ -80,7 +80,7 @@ env file.
 | `brochureEndpoint` | `api.drugnetcenter.com/ItemService2` | Product/Item |
 | `imagePath` | `file.drugnetcenter.com/drugpos/GoodPictures` | Product images |
 | `cnPath` | `api.drugnetcenter.com/ReturnRequest` | CN / return requests |
-| `ibob` | `api.drugnetcenter.com/IbOb` | IB/OB transfers |
+| `ibob` | `api.drugnetcenter.com/IbOb` | Supplier registration (the IB/OB booking screens were removed 2026-11) |
 | `oi` | `api.otherincome.healthupgroup.com` | Other Income |
 
 **`environment.development.ts` — local dev, `dev.*`:** the three
