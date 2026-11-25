@@ -1,0 +1,12 @@
+.receiving-board {
+  // Queue number and gate number share one fixed-width column so the lists scan vertically.
+  &__ticket {
+    min-width: 3.25rem;
+  }
+
+  // The truck to call next.
+  &__next {
+    border-left: 4px solid var(--bs-success);
+    background: var(--bs-success-bg-subtle);
+  }
+}

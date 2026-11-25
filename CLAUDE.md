@@ -52,6 +52,7 @@ not live yet — the infra prerequisites are listed in the `Jenkinsfile` header.
 Nested `CLAUDE.md` files exist for individual modules and should be read when working in them:
 - `src/app/cn/CLAUDE.md` — CN (credit note / return request) module
 - `src/app/other-income/CLAUDE.md` — Other Income v2 module
+- `src/app/inbound-outbound/CLAUDE.md` — goods-receiving slots (warehouse check-in and queue), laid out like Other Income v2
 - `src/app/other-income/shared/libs/CLAUDE.md` — `ContractListController` URL-driven filter/pagination pattern
 - `src/app/pages/crm-promotion/CLAUDE.md` — CRM Promotion module (note: its components, services, factories and types live in the top-level `components/`, `service/`, `factory/`, `types/` folders, not under the pages folder)
 
