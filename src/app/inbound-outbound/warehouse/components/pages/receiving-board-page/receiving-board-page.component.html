@@ -119,7 +119,7 @@
                     <div class="d-flex flex-wrap align-items-center gap-1 mt-2">
                       <span class="small text-muted me-1">ส่งเข้าประตู</span>
                       @for (g of free(); track g.id) {
-                        <button type="button" class="btn btn-sm btn-success" [disabled]="busy()" (click)="assignGate(v, g)">{{ g.gateName }}</button>
+                        <button type="button" class="btn btn-sm btn-success" [disabled]="busy()" [attr.aria-label]="'ส่งคิว ' + v.queueNo + ' เข้าประตู ' + g.gateName" (click)="assignGate(v, g)">{{ g.gateName }}</button>
                       }
                       @for (g of occupied(); track g.id) {
                         <button
@@ -127,7 +127,7 @@
                           class="btn btn-sm"
                           [class]="isDoubleArmed(v, g) ? 'btn-warning' : 'btn-outline-secondary'"
                           [disabled]="busy()"
-                          [title]="'ประตู ' + g.gateName + ' มีรถอยู่'"
+                          [attr.aria-label]="isDoubleArmed(v, g) ? 'ยืนยันส่งคิว ' + v.queueNo + ' ซ้อนประตู ' + g.gateName : 'ส่งคิว ' + v.queueNo + ' เข้าประตู ' + g.gateName + ' (มีรถอยู่)'"
                           (click)="assignGate(v, g)"
                         >
                           {{ isDoubleArmed(v, g) ? 'ยืนยันซ้อนประตู ' + g.gateName : g.gateName + ' (มีรถ)' }}
