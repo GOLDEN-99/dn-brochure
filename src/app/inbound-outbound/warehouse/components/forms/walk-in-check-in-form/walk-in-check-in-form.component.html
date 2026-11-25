@@ -1,0 +1,82 @@
+<form class="vstack gap-2" (submit)="$event.preventDefault(); submit()" novalidate>
+  <div class="position-relative">
+    <label class="form-label small mb-1" for="walkin-supplier">ผู้ส่งสินค้า</label>
+    <input
+      id="walkin-supplier"
+      type="text"
+      class="form-control"
+      autocomplete="off"
+      maxlength="200"
+      placeholder="ชื่อบริษัท หรือชื่อผู้กระจายสินค้า"
+      [class.is-invalid]="touched() && errors().supplierName"
+      [value]="supplierName()"
+      (input)="typeSupplier($any($event.target).value)"
+    />
+    @if (touched() && errors().supplierName) {
+      <div class="invalid-feedback">{{ errors().supplierName }}</div>
+    }
+    @if (picked(); as hit) {
+      <div class="form-text">รหัสผู้ขาย {{ hit.compType }} {{ hit.compCode }}</div>
+    }
+    @if (suggestions().length) {
+      <div class="list-group shadow-sm mt-1">
+        @for (hit of suggestions(); track hit.compType + hit.compCode) {
+          <button type="button" class="list-group-item list-group-item-action py-1 small" (click)="pick(hit)">
+            <span class="badge text-bg-light me-1">{{ hit.compType }}</span>{{ hit.compName }}
+            <span class="text-muted">({{ hit.compCode }})</span>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <div>
+    <span class="form-label small d-block mb-1">บิลของบริษัท</span>
+    <div class="form-check form-check-inline">
+      <input id="walkin-dn" class="form-check-input" type="checkbox" [checked]="carriesDn()" (change)="carriesDn.set($any($event.target).checked)" />
+      <label class="form-check-label" for="walkin-dn">DN</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input id="walkin-hu" class="form-check-input" type="checkbox" [checked]="carriesHu()" (change)="carriesHu.set($any($event.target).checked)" />
+      <label class="form-check-label" for="walkin-hu">HU</label>
+    </div>
+    @if (touched() && errors().company) {
+      <div class="text-danger small">{{ errors().company }}</div>
+    }
+  </div>
+
+  <div class="row g-2">
+    <div class="col-5">
+      <label class="form-label small mb-1" for="walkin-bills">จำนวนบิล</label>
+      <input
+        id="walkin-bills"
+        type="number"
+        min="1"
+        max="200"
+        class="form-control"
+        [class.is-invalid]="touched() && errors().billCount"
+        [value]="billCount()"
+        (input)="billCount.set($any($event.target).value)"
+      />
+      @if (touched() && errors().billCount) {
+        <div class="invalid-feedback">{{ errors().billCount }}</div>
+      }
+    </div>
+    <div class="col-7">
+      <label class="form-label small mb-1" for="walkin-plate">ทะเบียนรถ (ไม่บังคับ)</label>
+      <input id="walkin-plate" type="text" class="form-control" maxlength="30" [value]="truckPlate()" (input)="truckPlate.set($any($event.target).value)" />
+    </div>
+  </div>
+  @if (size(); as s) {
+    <div class="small text-muted">ขนาดงาน: <span class="fw-semibold">{{ s }} ({{ sizeLabel[s] }})</span></div>
+  }
+
+  <div>
+    <label class="form-label small mb-1" for="walkin-note">หมายเหตุ (ไม่บังคับ)</label>
+    <input id="walkin-note" type="text" class="form-control" maxlength="500" [value]="note()" (input)="note.set($any($event.target).value)" />
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="busy()">
+    <i class="bi bi-box-arrow-in-right me-1"></i> เช็คอินเข้าคิว
+  </button>
+</form>

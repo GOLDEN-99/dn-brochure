@@ -1,0 +1,243 @@
+<section class="m-3 receiving-board">
+  <div class="d-flex align-items-start justify-content-between mb-3 flex-wrap gap-2">
+    <div>
+      <h1 class="m-0">คิวรับสินค้า {{ settings()?.warehouseName }}</h1>
+      <p class="text-muted mb-0 small">
+        เช็คอินรถเมื่อวางใบส่งของ แล้วเรียกเข้าประตูที่ว่าง — รถที่จองและมาตรงเวลาได้คิวก่อน
+      </p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      @if (employee(); as me) {
+        <span class="small text-muted">ผู้ทำรายการ: {{ me.emplCode }} {{ me.emplName }}</span>
+      }
+      @if (board(); as b) {
+        <span class="small text-muted">อัปเดต {{ b.serverNow | date: 'HH:mm' }}</span>
+      }
+      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="load()" [disabled]="loading()">
+        <i class="bi bi-arrow-repeat me-1"></i> รีเฟรช
+      </button>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (board(); as b) {
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <span class="badge text-bg-primary fs-6 fw-normal">รอเรียก {{ b.summary.waiting }}</span>
+      <span class="badge text-bg-success fs-6 fw-normal">กำลังลงของ {{ b.summary.unloading }}</span>
+      <span class="badge text-bg-light border fs-6 fw-normal">จองไว้ยังไม่มา {{ b.summary.booked }}</span>
+      <span class="badge text-bg-light border fs-6 fw-normal">เสร็จแล้ว {{ b.summary.done }}</span>
+      <span class="badge text-bg-light border fs-6 fw-normal">ประตูว่าง {{ free().length }}</span>
+    </div>
+
+    @if (b.summary.isBusy) {
+      <div class="alert alert-warning py-2">
+        <i class="bi bi-exclamation-triangle me-1"></i>
+        มีรถในคลัง {{ b.summary.waiting + b.summary.unloading }} คัน — ตั้งแต่ {{ settings()?.busyTruckThreshold }} คันขึ้นไปเวลารอจะเริ่มยาว
+      </div>
+    }
+
+    <div class="row g-3">
+      <!-- left: check-in -->
+      <div class="col-12 col-xl-3">
+        <div class="card mb-3">
+          <div class="card-header fw-semibold">เช็คอินรถที่ไม่ได้จอง</div>
+          <div class="card-body">
+            <receiving-walk-in-check-in-form [settings]="settings()" [busy]="busy()" (submitted)="checkInWalkIn($event)" />
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header fw-semibold">จองไว้วันนี้ ยังไม่มา ({{ b.expected.length }})</div>
+          <ul class="list-group list-group-flush">
+            @for (v of b.expected; track v.id) {
+              <li class="list-group-item">
+                <div class="d-flex justify-content-between gap-2">
+                  <span class="fw-semibold">{{ v.supplierName }}</span>
+                  <span class="badge text-bg-light border">{{ v.windowLabel }}</span>
+                </div>
+                <div class="small text-muted mb-2">{{ companiesLabel(v) }} · ประมาณ {{ v.billCount }} บิล</div>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text">บิลจริง</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="200"
+                    class="form-control"
+                    [attr.aria-label]="'จำนวนบิลจริงของ ' + v.supplierName"
+                    [value]="arrivalBillsOf(v)"
+                    (input)="setArrivalBills(v, $any($event.target).value)"
+                  />
+                  <button type="button" class="btn btn-primary" [disabled]="busy()" (click)="checkInBooked(v)">เช็คอิน</button>
+                  <button type="button" class="btn" [class]="isCancelArmed(v) ? 'btn-danger' : 'btn-outline-secondary'" [disabled]="busy()" (click)="cancel(v)">
+                    {{ isCancelArmed(v) ? 'ยืนยันยกเลิก' : 'ยกเลิก' }}
+                  </button>
+                </div>
+              </li>
+            } @empty {
+              <li class="list-group-item text-muted small">ไม่มีรายการจองที่ยังไม่มา</li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- middle: queue -->
+      <div class="col-12 col-xl-5">
+        <div class="card">
+          <div class="card-header fw-semibold">คิวรอเรียก ({{ b.queue.length }})</div>
+          <ul class="list-group list-group-flush">
+            @for (v of b.queue; track v.id) {
+              <li class="list-group-item" [class.receiving-board__next]="v.queuePosition === 1">
+                <div class="d-flex align-items-start gap-3">
+                  <div class="receiving-board__ticket text-center">
+                    <div class="small text-muted">คิว</div>
+                    <div class="fs-3 fw-bold lh-1">{{ v.queueNo }}</div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="d-flex flex-wrap align-items-center gap-1">
+                      <span class="fw-semibold me-1">{{ v.supplierName }}</span>
+                      <span class="badge text-bg-secondary">{{ v.sizeClass }} · {{ v.billCount }} บิล</span>
+                      <span class="badge text-bg-light border">{{ companiesLabel(v) }}</span>
+                      @if (v.hasPriority) {
+                        <span class="badge text-bg-success">จอง · ตรงเวลา</span>
+                      } @else if (v.source === 'BOOKED' && v.punctuality) {
+                        <span class="badge text-bg-warning">จอง · {{ punctualityLabel[v.punctuality] }}</span>
+                      } @else {
+                        <span class="badge text-bg-light border">ไม่ได้จอง</span>
+                      }
+                    </div>
+                    <div class="small text-muted">
+                      ลำดับเรียก {{ v.queuePosition }} · มาถึง {{ v.arrivedAt | date: 'HH:mm' }} · รอ {{ minutesLabel(v.waitMinutes) }}
+                      @if (v.windowLabel) { · จอง {{ v.windowLabel }} }
+                      @if (v.truckPlate) { · {{ v.truckPlate }} }
+                    </div>
+                    @if (v.note) {
+                      <div class="small">{{ v.note }}</div>
+                    }
+                    <div class="d-flex flex-wrap align-items-center gap-1 mt-2">
+                      <span class="small text-muted me-1">ส่งเข้าประตู</span>
+                      @for (g of free(); track g.id) {
+                        <button type="button" class="btn btn-sm btn-success" [disabled]="busy()" (click)="assignGate(v, g)">{{ g.gateName }}</button>
+                      }
+                      @for (g of occupied(); track g.id) {
+                        <button
+                          type="button"
+                          class="btn btn-sm"
+                          [class]="isDoubleArmed(v, g) ? 'btn-warning' : 'btn-outline-secondary'"
+                          [disabled]="busy()"
+                          [title]="'ประตู ' + g.gateName + ' มีรถอยู่'"
+                          (click)="assignGate(v, g)"
+                        >
+                          {{ isDoubleArmed(v, g) ? 'ยืนยันซ้อนประตู ' + g.gateName : g.gateName + ' (มีรถ)' }}
+                        </button>
+                      }
+                      <button type="button" class="btn btn-sm ms-auto" [class]="isCancelArmed(v) ? 'btn-danger' : 'btn-outline-secondary'" [disabled]="busy()" (click)="cancel(v)">
+                        {{ isCancelArmed(v) ? 'ยืนยันยกเลิก' : 'ยกเลิก' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            } @empty {
+              <li class="list-group-item text-muted">ไม่มีรถรอเรียก</li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- right: gates -->
+      <div class="col-12 col-xl-4">
+        <div class="card">
+          <div class="card-header fw-semibold">ประตู</div>
+          <ul class="list-group list-group-flush">
+            @for (g of b.gates; track g.id) {
+              <li class="list-group-item">
+                <div class="d-flex align-items-start gap-3">
+                  <div class="receiving-board__ticket text-center">
+                    <div class="small text-muted">ประตู</div>
+                    <div class="fs-3 fw-bold lh-1">{{ g.gateName }}</div>
+                  </div>
+                  <div class="flex-grow-1">
+                    @if (!g.isActive) {
+                      <span class="badge text-bg-secondary">ปิด</span>
+                    } @else {
+                      @for (v of g.unloading; track v.id) {
+                        <div class="d-flex justify-content-between align-items-start gap-2" [class.mt-2]="!$first">
+                          <div>
+                            <div class="fw-semibold">{{ v.supplierName }}</div>
+                            <div class="small text-muted">
+                              คิว {{ v.queueNo }} · {{ v.sizeClass }} · {{ v.billCount }} บิล · เข้า {{ v.calledAt | date: 'HH:mm' }} · {{ minutesLabel(v.unloadMinutes) }}
+                            </div>
+                          </div>
+                          <button type="button" class="btn btn-sm btn-outline-success text-nowrap" [disabled]="busy()" (click)="finish(v)">ปล่อยรถ</button>
+                        </div>
+                      } @empty {
+                        <span class="badge text-bg-success">ว่าง</span>
+                      }
+                    }
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <button type="button" class="btn btn-sm btn-link px-0" (click)="showDone.set(!showDone())">
+        {{ showDone() ? 'ซ่อน' : 'แสดง' }}รถที่เสร็จแล้ว ({{ b.done.length }}) และที่ยกเลิก ({{ b.cancelled.length }})
+      </button>
+      @if (showDone()) {
+        <div class="card mt-2">
+          <div class="card-body p-0 table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>คิว</th>
+                  <th>ผู้ส่งสินค้า</th>
+                  <th>ขนาด</th>
+                  <th>ประตู</th>
+                  <th>มาถึง</th>
+                  <th>รอ</th>
+                  <th>ลงของ</th>
+                  <th>สถานะ</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (v of b.done; track v.id) {
+                  <tr>
+                    <td>{{ v.queueNo }}</td>
+                    <td>{{ v.supplierName }}</td>
+                    <td>{{ v.sizeClass }} · {{ v.billCount }} บิล</td>
+                    <td>{{ v.gateName }}</td>
+                    <td>{{ v.arrivedAt | date: 'HH:mm' }}</td>
+                    <td>{{ minutesLabel(v.waitMinutes) }}</td>
+                    <td>{{ minutesLabel(v.unloadMinutes) }}</td>
+                    <td><span class="badge text-bg-light border">เสร็จ {{ v.finishedAt | date: 'HH:mm' }}</span></td>
+                  </tr>
+                }
+                @for (v of b.cancelled; track v.id) {
+                  <tr class="text-muted">
+                    <td>{{ v.queueNo ?? '-' }}</td>
+                    <td>{{ v.supplierName }}</td>
+                    <td>{{ v.sizeClass }} · {{ v.billCount }} บิล</td>
+                    <td>-</td>
+                    <td>{{ v.arrivedAt ? (v.arrivedAt | date: 'HH:mm') : '-' }}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><span class="badge text-bg-secondary">ยกเลิก</span></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (loading()) {
+    <div class="text-muted">กำลังโหลด…</div>
+  }
+</section>

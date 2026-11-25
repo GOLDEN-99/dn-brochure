@@ -11,6 +11,7 @@ import { STOCK_ITEM_ROUTES } from './routes/stock-item.route';
 import { QUOTA_ITEM_ROUTES } from './routes/quota-item.route';
 import { CRM_PROMOTION_ROUTE } from './routes/crm-promotion.route';
 import { BRANCH_PHARMACIST_ROUTES } from './branch-pharmacist/branch-pharmacist.route';
+import { INBOUND_OUTBOUND_ROUTES } from './inbound-outbound/routes/inbound-outbound.route';
 
 // Single toggle for which Other Income implementation is mounted — both
 // versions register routes under the same 'other-income' path, so exactly
@@ -43,6 +44,9 @@ export const routes: Routes = [
 
     // Branch drug-sale licence + assigned pharmacist (linked from HUG Inhouse)
     ...BRANCH_PHARMACIST_ROUTES,
+
+    // Goods-receiving slots: warehouse check-in and queue
+    ...INBOUND_OUTBOUND_ROUTES,
     // Fallback routes
     {
         path: "notfound",
