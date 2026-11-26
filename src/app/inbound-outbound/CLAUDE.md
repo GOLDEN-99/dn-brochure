@@ -36,6 +36,12 @@ subtrees; they mount beside `WAREHOUSE_ROUTES`.
 - **The supplier never picks a gate.** A gate is chosen on this screen when the truck is called.
   Free gates are one click; a gate that already has a truck takes two (arm, confirm) and sends
   `force: true`.
+- **Gate types are a hint, never a block.** Gates carry `gateType` (LARGE / NORMAL / EXPRESS) and a
+  visit carries `preferredGateType`; the matching gate buttons are starred, every gate stays
+  clickable. Both fields are optional so an older API still works (`gateTypeOf`,
+  `preferredGateTypeOf` in `receiving.util.ts`).
+- **The timeline is a view, not a booking grid.** Bookings are per wide window; the 30-minute ruler
+  only mirrors the Microsoft Bookings sheet staff used before. `buildTimeline` is pure and tested.
 - Cancel is two clicks as well. No modals on this screen.
 - Every write reloads the board, success or failure: a refusal (400/409 `{ error }`) means the
   screen was stale. The board also refreshes every 30 s.

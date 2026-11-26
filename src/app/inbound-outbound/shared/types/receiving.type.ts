@@ -5,6 +5,8 @@ export type TVisitStatus = 'BOOKED' | 'WAITING' | 'UNLOADING' | 'DONE' | 'CANCEL
 export type TVisitSource = 'BOOKED' | 'WALK_IN'
 export type TSizeClass = 'S' | 'M' | 'L'
 export type TPunctuality = 'EARLY' | 'ON_TIME' | 'LATE'
+/** LARGE = big loads, NORMAL = interchangeable, EXPRESS = one-bill trucks. Older API builds omit it (read as NORMAL). */
+export type TGateType = 'LARGE' | 'NORMAL' | 'EXPRESS'
 
 // ── config ──
 
@@ -22,6 +24,7 @@ export type TReceivingGate = {
   id: number
   gateName: string
   sortOrder: number
+  gateType?: TGateType
   isActive: boolean
   note: string | null
 }
@@ -62,6 +65,7 @@ export type TVisit = {
   carriesHu: boolean
   billCount: number
   sizeClass: TSizeClass
+  preferredGateType?: TGateType
   units: number
   windowId: number | null
   windowLabel: string | null
@@ -86,6 +90,7 @@ export type TGateBoard = {
   id: number
   gateName: string
   isActive: boolean
+  gateType?: TGateType
   unloading: TVisit[]
 }
 
@@ -140,4 +145,55 @@ export type TSupplierHit = {
   compCode: string
   compName: string
   compType: TCompType
+}
+
+// ── timeline view (built by buildTimeline in receiving.util.ts) ──
+
+export type TTimelineTick = { minute: number, label: string, leftPct: number }
+
+export type TTimelineBar = {
+  visitId: number
+  queueNo: number | null
+  supplierName: string
+  /** Supplier name cut to fit a bar; the full text is in `detail`. */
+  shortName: string
+  leftPct: number
+  widthPct: number
+  /** Row of the bar inside its gate when two trucks overlap (a doubled-up gate). */
+  lane: number
+  inProgress: boolean
+  /** Full text for title / aria-label: supplier, bills, times. */
+  detail: string
+}
+
+export type TTimelineGateRow = {
+  gateId: number
+  gateName: string
+  gateType: TGateType
+  isActive: boolean
+  laneCount: number
+  bars: TTimelineBar[]
+}
+
+export type TTimelineBooking = {
+  windowId: number
+  label: string
+  leftPct: number
+  widthPct: number
+  /** Booked visits of this window that are not cancelled. */
+  bookedCount: number
+  /** Booked trucks of this window that have not arrived yet. */
+  remainingCount: number
+}
+
+export type TTimelineModel = {
+  startMinute: number
+  endMinute: number
+  /** Width of 30 minutes in percent, for the grid lines. */
+  tickPct: number
+  ticks: TTimelineTick[]
+  bookings: TTimelineBooking[]
+  gates: TTimelineGateRow[]
+  /** Null unless the board is today's. */
+  nowPct: number | null
 }

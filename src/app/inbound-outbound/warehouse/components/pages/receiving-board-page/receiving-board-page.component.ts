@@ -7,9 +7,14 @@ import { ReceivingApiService } from '../../../services/receiving-api.service';
 import { WalkInCheckInFormComponent } from '../../forms/walk-in-check-in-form/walk-in-check-in-form.component';
 import {
   apiErrorMessage,
+  buildTimeline,
   busyGates,
   companiesLabel,
   freeGates,
+  GATE_TYPE_LABEL,
+  gateTypeOf,
+  isSuggestedGate,
+  preferredGateTypeOf,
   minutesLabel,
   parseBillCount,
   PUNCTUALITY_LABEL,
@@ -19,6 +24,7 @@ import {
   TGateBoard,
   TReceivingBoard,
   TReceivingSettings,
+  TReceivingWindow,
   TVisit,
   TWalkInDraft,
 } from '../../../../shared/types/receiving.type';
@@ -52,6 +58,10 @@ export class ReceivingBoardPageComponent {
   readonly punctualityLabel = PUNCTUALITY_LABEL
   readonly companiesLabel = companiesLabel
   readonly minutesLabel = minutesLabel
+  readonly gateTypeLabel = GATE_TYPE_LABEL
+  readonly gateTypeOf = gateTypeOf
+  readonly preferredGateTypeOf = preferredGateTypeOf
+  readonly isSuggestedGate = isSuggestedGate
 
   readonly employee = this.auth.employee
 
@@ -59,6 +69,14 @@ export class ReceivingBoardPageComponent {
   readonly error = signal('')
   readonly settings = signal<TReceivingSettings | null>(null)
   readonly board = signal<TReceivingBoard | null>(null)
+  readonly windows = signal<TReceivingWindow[]>([])
+
+  /** The board (default) or the Bookings-style day grid. */
+  readonly view = signal<'board' | 'timeline'>('board')
+  readonly timeline = computed(() => {
+    const b = this.board()
+    return b ? buildTimeline(b, this.windows()) : null
+  })
 
   /** True while a write is in flight: every action button is disabled. */
   readonly busy = signal(false)
@@ -76,7 +94,10 @@ export class ReceivingBoardPageComponent {
 
   constructor() {
     this.api.getConfig(WAREHOUSE_CODE).subscribe({
-      next: config => this.settings.set(config.settings),
+      next: config => {
+        this.settings.set(config.settings)
+        this.windows.set(config.windows ?? [])
+      },
       error: err => this.error.set(apiErrorMessage(err) ?? 'โหลดการตั้งค่าคลังไม่สำเร็จ'),
     })
     this.load()
