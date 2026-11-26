@@ -27,7 +27,7 @@ const CONFIG: TReceivingConfig = {
     onTimeToleranceMinutes: 30, busyTruckThreshold: 5,
   },
   gates: [],
-  windows: [],
+  windows: [{ id: 1, startMinute: 600, endMinute: 720, label: '10:00–12:00', capacityUnits: 6, isActive: true }],
 }
 
 const board = (over: Partial<TReceivingBoard> = {}): TReceivingBoard => ({
@@ -220,5 +220,66 @@ describe('ReceivingBoardPageComponent', () => {
     expect(toast.danger).toHaveBeenCalledWith('visit was changed by someone else; reload the board')
     expect(api.getBoard).toHaveBeenCalledTimes(2)
     expect(component.busy()).toBeFalse()
+  })
+
+  describe('gate types', () => {
+    const typedBoard = () => board({
+      queue: [visit(2, { sizeClass: 'L', preferredGateType: 'LARGE', queuePosition: 1 })],
+      gates: [
+        { ...gate(7), gateType: 'LARGE' },
+        { ...gate(8, [visit(3, { status: 'UNLOADING', gateId: 8, gateName: '8' })]), gateType: 'NORMAL' },
+        { ...gate(11), gateType: 'EXPRESS' },
+        gate(12),
+      ],
+    })
+    const buttons = () => Array.from((fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button[aria-label^="ส่งคิว"]'))
+
+    it('labels each gate card with its type, NORMAL when the API sends none', async () => {
+      await create(typedBoard())
+      const labels = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('[data-testid="gate-type"]')).map(e => e.textContent?.trim())
+      expect(labels).toEqual(['รถใหญ่', 'ทั่วไป', 'ด่วน', 'ทั่วไป'])
+    })
+
+    it('marks only gates of the preferred type as suggested and keeps every gate clickable', async () => {
+      await create(typedBoard())
+      const all = buttons()
+      const suggested = all.filter(b => b.classList.contains('receiving-board__suggested'))
+      expect(suggested.map(b => b.getAttribute('aria-label'))).toEqual(['ส่งคิว 2 เข้าประตู 7 (ประตูที่แนะนำ)'])
+      expect(all.length).toBe(4)
+      expect(all.every(b => !b.disabled)).toBeTrue()
+    })
+  })
+
+  describe('timeline view', () => {
+    const toggle = (id: string) => ((fixture.nativeElement as HTMLElement).querySelector(`[data-testid="${id}"]`) as HTMLButtonElement).click()
+    const timelineEl = () => (fixture.nativeElement as HTMLElement).querySelector('[data-testid="receiving-timeline"]')
+
+    it('shows the board by default and the timeline after the toggle, and back', async () => {
+      await create()
+      expect(timelineEl()).toBeNull()
+
+      toggle('receiving-view-timeline')
+      fixture.detectChanges()
+      expect(timelineEl()).not.toBeNull()
+      expect(text()).toContain('จองไว้')
+      expect(text()).not.toContain('เช็คอินรถที่ไม่ได้จอง')
+
+      toggle('receiving-view-board')
+      fixture.detectChanges()
+      expect(timelineEl()).toBeNull()
+      expect(text()).toContain('เช็คอินรถที่ไม่ได้จอง')
+    })
+
+    it('draws the unloading truck as an in-progress bar on its gate', async () => {
+      await create(board({
+        gates: [gate(7), gate(8, [visit(3, { status: 'UNLOADING', gateId: 8, gateName: '8', calledAt: '2026-11-25T10:00:00' })])],
+      }))
+      toggle('receiving-view-timeline')
+      fixture.detectChanges()
+
+      const live = (fixture.nativeElement as HTMLElement).querySelectorAll('.receiving-timeline__bar--live')
+      expect(live.length).toBe(1)
+      expect(live[0].getAttribute('aria-label')).toContain('ผู้ส่ง 3')
+    })
   })
 })

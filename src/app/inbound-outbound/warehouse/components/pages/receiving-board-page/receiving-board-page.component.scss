@@ -9,4 +9,125 @@
     border-left: 4px solid var(--bs-success);
     background: var(--bs-success-bg-subtle);
   }
+
+  // A gate of the type that suits this truck. A hint only; every gate stays clickable.
+  &__suggested {
+    font-weight: 700;
+    box-shadow: 0 0 0 0.2rem var(--bs-primary-border-subtle);
+  }
+}
+
+// Bookings-style day grid. It scrolls inside its own box so the page never scrolls sideways.
+.receiving-timeline {
+  &__scroll {
+    overflow-x: auto;
+  }
+
+  &__grid {
+    min-width: 46rem;
+  }
+
+  &__row {
+    display: flex;
+    border-top: 1px solid var(--bs-border-color);
+  }
+
+  &__ruler {
+    border-top: 0;
+  }
+
+  &__label {
+    flex: 0 0 6rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--bs-body-bg);
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    border-right: 1px solid var(--bs-border-color);
+  }
+
+  // Grid lines every 30 minutes; --tick-pct is set by the template.
+  &__track {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 2.5rem;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--bs-border-color) 0,
+      var(--bs-border-color) 1px,
+      transparent 1px,
+      var(--tick-pct, 5%)
+    );
+  }
+
+  &__ruler &__track {
+    min-height: 1.5rem;
+    background-image: none;
+  }
+
+  &__tick {
+    position: absolute;
+    top: 0.1rem;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: var(--bs-secondary-color);
+    white-space: nowrap;
+  }
+
+  &__track--booking {
+    min-height: 3rem;
+  }
+
+  &__booking {
+    position: absolute;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    padding: 0 0.4rem;
+    overflow: hidden;
+    border-radius: 0.25rem;
+    border: 1px solid var(--bs-primary-border-subtle);
+    background: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary-text-emphasis);
+    font-size: 0.8rem;
+  }
+
+  &__bar {
+    position: absolute;
+    height: 1.75rem;
+    display: flex;
+    align-items: center;
+    padding: 0 0.35rem;
+    overflow: hidden;
+    border-radius: 0.25rem;
+    background: var(--bs-secondary-bg);
+    border: 1px solid var(--bs-border-color);
+    font-size: 0.75rem;
+    white-space: nowrap;
+
+    // Still unloading: runs up to "now".
+    &--live {
+      background: var(--bs-success-bg-subtle);
+      border-color: var(--bs-success);
+      color: var(--bs-success-text-emphasis);
+      background-image: repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 6px,
+        rgb(0 0 0 / 6%) 6px,
+        rgb(0 0 0 / 6%) 12px
+      );
+    }
+  }
+
+  &__now {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--bs-danger);
+    z-index: 1;
+    pointer-events: none;
+  }
 }
