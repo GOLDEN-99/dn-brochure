@@ -72,6 +72,15 @@
     font-size: 0.7rem;
     color: var(--bs-secondary-color);
     white-space: nowrap;
+
+    // The end labels would be cut by the track's edges when centred on their tick.
+    &:first-child {
+      transform: none;
+    }
+
+    &:last-child {
+      transform: translateX(-100%);
+    }
   }
 
   &__track--booking {
